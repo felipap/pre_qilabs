@@ -106,14 +106,14 @@ exports.Pages = {
 			req.user.tags = chosen;
 			req.user.save()
 
-			api.sendNotification req.user.facebookId, 'You are now following the topics #{chosen} on MeAvisa.'
+			api.sendNotification req.user.facebookId, 'You are following the topics #{JSON.stringify(chosen)} on MeAvisa.'
 
 			getPostsWithTags chosen, ->
 			res.redirect 'back'
 
 	dropall:
 		get: (req, res) ->
-			if req.user?._id is "51e31a315aeae90200000001"
+			if req.user?.facebookId is "100000366187376"
 				User.remove {}, (err) ->
 					res.write "collection removed"
 					res.end err

@@ -137,7 +137,7 @@
         console.log('chosen: ', chosen, req.query['topic']);
         req.user.tags = chosen;
         req.user.save();
-        api.sendNotification(req.user.facebookId, 'You are now following the topics #{chosen} on MeAvisa.');
+        api.sendNotification(req.user.facebookId, 'You are following the topics #{JSON.stringify(chosen)} on MeAvisa.');
         getPostsWithTags(chosen, function() {});
         return res.redirect('back');
       }
@@ -145,7 +145,7 @@
     dropall: {
       get: function(req, res) {
         var _ref;
-        if (((_ref = req.user) != null ? _ref._id : void 0) === "51e31a315aeae90200000001") {
+        if (((_ref = req.user) != null ? _ref.facebookId : void 0) === "100000366187376") {
           User.remove({}, function(err) {
             res.write("collection removed");
             return res.end(err);

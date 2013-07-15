@@ -29,9 +29,9 @@
           return new Date(post.date) > new Date(user.lastUpdate);
         }), 'tags'));
         if (tags.length) {
-          api.sendNotification(user.facebookId, "We have updated on some of the tags you are following.");
+          api.sendNotification(user.facebookId, "We have updated on some of the tags you are following." + tags);
         }
-        user.lastUpdate = new Date(Date.now());
+        user.lastUpdate = new Date();
         console.log('updated?', user);
         _results.push(user.save(function(e) {
           return console.log('erro?', e);

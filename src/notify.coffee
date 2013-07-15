@@ -28,9 +28,9 @@ onGetPosts = (posts, callback) ->
 						), 'tags'
 
 			if tags.length
-				api.sendNotification user.facebookId, "We have updated on some of the tags you are following."
+				api.sendNotification user.facebookId, "We have updated on some of the tags you are following."+tags
 			
-			user.lastUpdate = new Date(Date.now())
+			user.lastUpdate = new Date()
 			console.log('updated?', user)
 			user.save (e) ->
 				console.log('erro?', e)
