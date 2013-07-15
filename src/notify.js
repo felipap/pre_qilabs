@@ -24,6 +24,7 @@ var blog = api.getBlog("meavisa.tumblr.com");
 // }
 
 onGetPosts = function (posts) {
+	console.log('call 1')
 	User.find({}, function (err, users) {
 		console.log('oi')
 		users.forEach(function (user) {
