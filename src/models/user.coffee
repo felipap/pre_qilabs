@@ -17,10 +17,7 @@ UserSchema = new mongoose.Schema
 	tags:				type: Array,  	default: ''
 	facebookId:			type: String, 	default: ''
 	accessToken:		type: String,	default: ''
-	lastUpdate:			type: Date, 	default: Date.now
-
-# Validations
-validatePresenceOf = (value) -> value and value.length
+	lastUpdate:			type: Date, 	default: Date(0)
 
 # Methods
 UserSchema.methods = {}
