@@ -35,7 +35,7 @@ onGetPosts = (posts, callback) ->
 			user.save (e) ->
 				console.log('erro?', e)
 
-		if callback then callback()
+		# if callback then callback()
 
 blog.posts (err, data) -> 
 	if err then throw err

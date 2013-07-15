@@ -20,8 +20,9 @@
 
   onGetPosts = function(posts, callback) {
     return User.find({}, function(err, users) {
-      var tags, user, _i, _len;
+      var tags, user, _i, _len, _results;
       console.log('oi');
+      _results = [];
       for (_i = 0, _len = users.length; _i < _len; _i++) {
         user = users[_i];
         tags = _.union.apply(null, _.pluck(_.filter(posts, function(post) {
@@ -32,13 +33,11 @@
         }
         user.lastUpdate = new Date(Date.now());
         console.log('updated?', user);
-        user.save(function(e) {
+        _results.push(user.save(function(e) {
           return console.log('erro?', e);
-        });
+        }));
       }
-      if (callback) {
-        return callback();
-      }
+      return _results;
     });
   };
 
