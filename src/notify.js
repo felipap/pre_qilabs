@@ -31,25 +31,25 @@ var mongoose = require('mongoose');
 mongoose.connect(mongoUri);
 
 onGetPosts = function (posts) {
-	console.log('call 1')
-	User.find({}, function (err, docs) {
-		console.log('oi', docs);
-	});
+	console.log('call 1');
+	
+	User.find({}, function (err, users) {
+		console.log('oi')
+		
+		users.forEach(function (user) {
+			var tags = _.union.apply(null, _.pluck(_.filter(posts, function (post) {
+					return new Date(post.date) > new Date(user.lastUpdate);
+				}), 'tags'));
 
-	// User.find({}, function (err, users) {
-	// 	console.log('oi')
-	// 	users.forEach(function (user) {
-	// 		var tags = _.union.apply(null, _.pluck(_.filter(posts, function (post) {
-	// 				return new Date(post.date) > new Date(user.lastUpdate);
-	// 			}), 'tags'));
-
-	// 		if (tags.length)
-	// 			api.sendNotification(user._id, tags)
+			if (tags.length)
+				api.sendNotification(user._id, tags)
 			
-	// 		user.lastUpdate = new Date(0);
-	// 		user.save();
-	// 	});
-	// });
+			user.lastUpdate = new Date(0);
+			user.save();
+		});
+		
+		mongoose.connection.close();
+	});
 }
 
 
