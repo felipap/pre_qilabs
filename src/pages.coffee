@@ -2,8 +2,8 @@
 _   	= require 'underscore'
 api 	= require './apis.js'
 request = require 'request'
+User 	= require './models/user.js'
 
-# db  	= require './db.js'
 try
 	env = require './env.js'
 catch e
@@ -32,14 +32,6 @@ blog.posts (err, data) ->
 				console.log('pushing found tag', tag)
 
 
-sendNotification = (user_id, template, callback) ->
-	access_token = '521238787943358|irzJJKJ0-Z8-LiUshAfFazAirac'
-	url =  "https://graph.facebook.com/#{user_id}/notifications?access_token=#{access_token}&template=#{template}"
-	request.post url,
-		(error, response, body) ->
-			console.log 'Notification request to #{url} response:', body, error
-			if callback then callback(error, response, body)
-
 getPostsWithTags = (tags, callback) ->
 	blog.posts({ limit: -1 }, (err, data) ->
 		# console.log('posts: ', data.posts)
@@ -53,13 +45,14 @@ getPostsWithTags = (tags, callback) ->
 	)
 
 
-User = require './models/user.js'
 
 exports.Pages = {
 	index:
 		get: (req, res) ->
 			# res.render('index')
 			if req.user
+				req.user.lastUpdate = new Date(0)
+				req.user.save()
 				req.session.messages = [JSON.stringify(req.user)]
 				getPostsWithTags req.user.tags, ->
 					res.render 'panel', 
@@ -113,7 +106,7 @@ exports.Pages = {
 			req.user.tags = chosen;
 			req.user.save()
 
-			sendNotification req.user.facebookId, 'You are now following the topics #{chosen} on MeAvisa.'
+			api.sendNotification req.user.facebookId, 'You are now following the topics #{chosen} on MeAvisa.'
 
 			getPostsWithTags chosen, ->
 			res.redirect 'back'

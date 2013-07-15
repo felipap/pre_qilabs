@@ -13,10 +13,11 @@ authTypes = []
 
 # Schema
 UserSchema = new mongoose.Schema
-	name:				type: String, default: ''
-	tags:				type: Array,  default: ''
-	facebookId:			type: String, default: ''
-	accessToken:		type: String, default: ''
+	name:				type: String, 	default: ''
+	tags:				type: Array,  	default: ''
+	facebookId:			type: String, 	default: ''
+	accessToken:		type: String,	default: ''
+	lastUpdate:			type: Date, 	default: Date.now
 
 # Validations
 validatePresenceOf = (value) -> value and value.length

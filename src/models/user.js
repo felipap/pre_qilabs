@@ -26,6 +26,10 @@
     accessToken: {
       type: String,
       "default": ''
+    },
+    lastUpdate: {
+      type: Date,
+      "default": Date.now
     }
   });
 
