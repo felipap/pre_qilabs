@@ -137,7 +137,7 @@
         console.log('chosen: ', chosen, req.query['topic']);
         req.user.tags = chosen;
         req.user.save();
-        api.sendNotification(req.user.facebookId, 'You are following the topics #{JSON.stringify(chosen)} on MeAvisa.');
+        api.sendNotification(req.user.facebookId, "You are following the topics " + (JSON.stringify(chosen)) + " on MeAvisa.");
         getPostsWithTags(chosen, function() {});
         return res.redirect('back');
       }
