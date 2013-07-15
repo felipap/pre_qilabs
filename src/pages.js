@@ -117,9 +117,11 @@
         chosen = _.filter(req.query['topic'], function(topic) {
           return topic != null;
         });
+        if (chosen && !_.isEqual(chosen, req.user.tags)) {
+          api.sendNotification(req.user.facebookId, "You are following the topics " + (chosen.join(", ")) + ".");
+        }
         req.user.tags = chosen;
         req.user.save();
-        api.sendNotification(req.user.facebookId, "You are following the topics " + (chosen.join(", ")) + ".");
         getPostsWithTags(chosen, function() {});
         return res.redirect('back');
       }

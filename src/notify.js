@@ -30,6 +30,8 @@
         }), 'tags'));
         if (tags.length) {
           api.sendNotification(user.facebookId, "We have updated on some of the tags you are following: " + tags.join(', '));
+        } else {
+          console.log("fuck you");
         }
         user.lastUpdate = new Date();
         _results.push(user.save(function(e) {
