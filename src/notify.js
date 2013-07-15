@@ -18,7 +18,7 @@
 
   mongoose.connect(mongoUri);
 
-  onGetPosts = function(posts) {
+  onGetPosts = function(posts, callback) {
     return User.find({}, function(err, users) {
       var tags, user, _i, _len;
       console.log('oi');
@@ -30,10 +30,13 @@
         if (tags.length) {
           api.sendNotification(user.facebookId, "We have updated on some of the tags you are following.");
         }
-        user.lastUpdate = new Date();
+        user.lastUpdate = new Date(Date.now());
+        console.log('updated?', user);
         user.save();
       }
-      return mongoose.connection.close();
+      if (callback) {
+        return callback();
+      }
     });
   };
 
@@ -41,7 +44,9 @@
     if (err) {
       throw err;
     }
-    return onGetPosts(data.posts);
+    return onGetPosts(data.posts, function() {
+      return mongoose.connection.close();
+    });
   });
 
 }).call(this);

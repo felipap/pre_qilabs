@@ -12,7 +12,7 @@ mongoUri = process.env.MONGOLAB_URI or process.env.MONGOHQ_URL or 'mongodb://loc
 
 mongoose.connect(mongoUri)
 
-onGetPosts = (posts) ->
+onGetPosts = (posts, callback) ->
 	User.find {}, (err, users) ->
 		console.log('oi')
 		
@@ -30,12 +30,19 @@ onGetPosts = (posts) ->
 			if tags.length
 				api.sendNotification user.facebookId, "We have updated on some of the tags you are following."
 			
-			user.lastUpdate = new Date()
+			user.lastUpdate = new Date(Date.now())
+			console.log('updated?', user)
 			user.save()
-		
-		mongoose.connection.close()
 
+		if callback then callback()
 
 blog.posts (err, data) -> 
 	if err then throw err
-	onGetPosts data.posts
+	onGetPosts data.posts, ->
+		mongoose.connection.close()
+
+# module.exports = {
+# 	notify: (req, res) ->
+# 		onGetPosts*
+# 		res.end('')
+# }
