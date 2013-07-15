@@ -40,10 +40,8 @@ onGetPosts = function (posts) {
 }
 
 
-db.openDb(function () {
-	blog.posts(function (err, data) {
-		if (err) throw err;
-		onGetPosts(data.posts);
-	})	
-})
+blog.posts(function (err, data) {
+	if (err) throw err;
+	onGetPosts(data.posts);
+})	
 
