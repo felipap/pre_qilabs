@@ -144,7 +144,8 @@
     },
     dropall: {
       get: function(req, res) {
-        if (req.user._id === "51e31a315aeae90200000001") {
+        var _ref;
+        if (((_ref = req.user) != null ? _ref._id : void 0) === "51e31a315aeae90200000001") {
           User.remove({}, function(err) {
             res.write("collection removed");
             return res.end(err);

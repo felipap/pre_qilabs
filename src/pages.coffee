@@ -113,7 +113,7 @@ exports.Pages = {
 
 	dropall:
 		get: (req, res) ->
-			if req.user._id is "51e31a315aeae90200000001"
+			if req.user?._id is "51e31a315aeae90200000001"
 				User.remove {}, (err) ->
 					res.write "collection removed"
 					res.end err
