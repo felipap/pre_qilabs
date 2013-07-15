@@ -1,0 +1,9 @@
+
+*~
+*.swp
+
+node_modules
+env.js
+
+*.sublime-project
+*.sublime-workspace
