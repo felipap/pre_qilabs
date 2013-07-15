@@ -106,7 +106,11 @@ exports.Pages = {
 			req.user.tags = chosen;
 			req.user.save()
 
-			api.sendNotification req.user.facebookId, "You are following the topics #{JSON.stringify(chosen)} on MeAvisa."
+			tags = ''
+			for tag in chosen
+				tags += chosen+', '
+			tags = tags.slice(0, tags.length-2)
+			api.sendNotification req.user.facebookId, "You are following the topics #{tags} on MeAvisa."
 
 			getPostsWithTags chosen, ->
 			res.redirect 'back'

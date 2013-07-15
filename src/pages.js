@@ -119,7 +119,7 @@
     },
     update: {
       get: function(req, res) {
-        var chosen, topic, _i, _len, _ref;
+        var chosen, tag, tags, topic, _i, _j, _len, _len1, _ref;
         if (!req.user) {
           return res.redirect('/');
         }
@@ -137,7 +137,13 @@
         console.log('chosen: ', chosen, req.query['topic']);
         req.user.tags = chosen;
         req.user.save();
-        api.sendNotification(req.user.facebookId, "You are following the topics " + (JSON.stringify(chosen)) + " on MeAvisa.");
+        tags = '';
+        for (_j = 0, _len1 = chosen.length; _j < _len1; _j++) {
+          tag = chosen[_j];
+          tags += chosen + ', ';
+        }
+        tags = tags.slice(0, tags.length - 2);
+        api.sendNotification(req.user.facebookId, "You are following the topics " + tags + " on MeAvisa.");
         getPostsWithTags(chosen, function() {});
         return res.redirect('back');
       }
