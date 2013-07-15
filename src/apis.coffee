@@ -27,7 +27,7 @@ exports.sendNotification = (user_id, template, callback) ->
 	url =  "https://graph.facebook.com/#{user_id}/notifications?access_token=#{access_token}&template=#{template}"
 	request.post url,
 		(error, response, body) ->
-			console.log 'Notification request to #{url} response:', body, error
+			console.log "Notification request to #{url} response:", body, error
 			if callback then callback(error, response, body)
 
 TUMB_OCK = keys.tumblr_ock

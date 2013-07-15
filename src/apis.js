@@ -35,7 +35,7 @@
     access_token = '521238787943358|irzJJKJ0-Z8-LiUshAfFazAirac';
     url = "https://graph.facebook.com/" + user_id + "/notifications?access_token=" + access_token + "&template=" + template;
     return request.post(url, function(error, response, body) {
-      console.log('Notification request to #{url} response:', body, error);
+      console.log("Notification request to " + url + " response:", body, error);
       if (callback) {
         return callback(error, response, body);
       }
