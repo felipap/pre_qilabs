@@ -42,7 +42,7 @@ onGetPosts = function (posts) {
 				}), 'tags'));
 
 			if (tags.length)
-				api.sendNotification(user._id, tags)
+				api.sendNotification(user.facebookId, tags)
 			
 			user.lastUpdate = new Date(0);
 			user.save();
