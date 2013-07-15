@@ -57,7 +57,7 @@
           return posts.push(post);
         }
       });
-      return callback(posts);
+      return typeof callback === "function" ? callback() : void 0;
     });
   };
 
@@ -65,8 +65,6 @@
     index: {
       get: function(req, res) {
         if (req.user) {
-          req.user.lastUpdate = new Date(0);
-          req.user.save();
           req.session.messages = [JSON.stringify(req.user)];
           getPostsWithTags(req.user.tags, function() {
             return res.render('panel', {
@@ -79,13 +77,6 @@
           });
           return;
         }
-        if (req.ip === '127.0.0.1') {
-          res.writeHead(200, {
-            'Content-Type': 'text/html;charset=UTF-8'
-          });
-          res.end("" + User.findOrCreate + "s" + req.ip + "<br><form method='get' action='/auth/facebook'><input type='submit' name='oi' value='post'></form>");
-          return;
-        }
         return User.find({}, function(err, users) {
           res.writeHead(200, {
             'Content-Type': 'text/html;charset=UTF-8'
@@ -93,9 +84,6 @@
           res.write(JSON.stringify(users));
           return res.end('\noi, ' + req.ip + JSON.stringify(req.session) + "<form method='get' action='/auth/facebook'><input type='submit' name='oi' value='post'></form>");
         });
-      },
-      post: function(req, res) {
-        return res.redirect('/auth/facebook');
       }
     },
     logout: {
@@ -119,31 +107,19 @@
     },
     update: {
       get: function(req, res) {
-        var chosen, tag, tags, topic, _i, _j, _len, _len1, _ref;
+        var chosen;
         if (!req.user) {
           return res.redirect('/');
         }
         if (!req.query['topic'] || typeof req.query['topic'] === 'string') {
           req.query['topic'] = [req.query['topic']];
         }
-        chosen = [];
-        _ref = req.query['topic'];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          topic = _ref[_i];
-          if (topic) {
-            chosen.push(topic);
-          }
-        }
-        console.log('chosen: ', chosen, req.query['topic']);
+        chosen = _.filter(req.query['topic'], function(topic) {
+          return topic != null;
+        });
         req.user.tags = chosen;
         req.user.save();
-        tags = '';
-        for (_j = 0, _len1 = chosen.length; _j < _len1; _j++) {
-          tag = chosen[_j];
-          tags += tag + ', ';
-        }
-        tags = tags.slice(0, tags.length - 2);
-        api.sendNotification(req.user.facebookId, "You are following the topics " + tags + " on MeAvisa.");
+        api.sendNotification(req.user.facebookId, "You are following the topics " + (chosen.join(", ")) + ".");
         getPostsWithTags(chosen, function() {});
         return res.redirect('back');
       }
@@ -151,14 +127,13 @@
     dropall: {
       get: function(req, res) {
         if (req.user && req.user.facebookId === "100000366187376") {
-          User.remove({}, function(err) {
+          return User.remove({}, function(err) {
             res.write("collection removed");
             return res.end(err);
           });
         } else {
-
+          return res.end("Cannot GET /dropall");
         }
-        return res.end("Cannot GET /dropall");
       }
     }
   };

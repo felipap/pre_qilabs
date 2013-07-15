@@ -41,7 +41,7 @@ getPostsWithTags = (tags, callback) ->
 			int = _.intersection(post.tags, tags)
 			if int[0]
 				posts.push(post)
-		callback posts
+		callback?()
 	)
 
 
@@ -49,10 +49,9 @@ getPostsWithTags = (tags, callback) ->
 exports.Pages = {
 	index:
 		get: (req, res) ->
-			# res.render('index')
 			if req.user
-				req.user.lastUpdate = new Date(0)
-				req.user.save()
+				# req.user.lastUpdate = new Date(0)
+				# req.user.save()
 				req.session.messages = [JSON.stringify(req.user)]
 				getPostsWithTags req.user.tags, ->
 					res.render 'panel', 
@@ -62,18 +61,12 @@ exports.Pages = {
 						blog_url: blog_url
 						messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
 				return
-			if req.ip is '127.0.0.1'
-				res.writeHead(200, {'Content-Type': 'text/html;charset=UTF-8'});
-				res.end("#{User.findOrCreate}s#{req.ip}<br><form method='get' action='/auth/facebook'><input type='submit' name='oi' value='post'></form>")
-				return
 
 			User.find {}, (err, users) ->
 				res.writeHead(200, {'Content-Type': 'text/html;charset=UTF-8'});
 				res.write(JSON.stringify(users))
 				res.end('\noi, '+req.ip+JSON.stringify(req.session)+"<form method='get' action='/auth/facebook'><input type='submit' name='oi' value='post'></form>")
-
-		post: (req, res) ->
-			res.redirect('/auth/facebook')
+			# res.render('index')
 
 	logout:
 		get: (req, res) ->
@@ -97,20 +90,12 @@ exports.Pages = {
 			if not req.query['topic'] or typeof req.query['topic'] is 'string'
 				req.query['topic'] = [req.query['topic']]
 
-			chosen = []
-			for topic in req.query['topic']
-				chosen.push(topic) if topic
-
-			console.log 'chosen: ', chosen, req.query['topic']
+			chosen = _.filter(req.query['topic'], (topic) -> topic?)
 
 			req.user.tags = chosen;
 			req.user.save()
 
-			tags = ''
-			for tag in chosen
-				tags += tag+', '
-			tags = tags.slice(0, tags.length-2)
-			api.sendNotification req.user.facebookId, "You are following the topics #{tags} on MeAvisa."
+			api.sendNotification req.user.facebookId, "You are following the topics #{chosen.join(", ")}."
 
 			getPostsWithTags chosen, ->
 			res.redirect 'back'
@@ -122,5 +107,5 @@ exports.Pages = {
 					res.write "collection removed"
 					res.end err
 			else
-			res.end "Cannot GET /dropall" # Fake page.
+				res.end "Cannot GET /dropall" # Fake page.
 }

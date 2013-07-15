@@ -1,7 +1,7 @@
 
+var mongoose = require('mongoose');
 var express = require('express');
-var http	= require('http');
-require('./db.js')
+var http = require('http');
 
 try {
 	var env = require('./env.js');
@@ -16,16 +16,12 @@ try {
 }
 
 var msgmid 	= require('./lib/messages.js');
-
-// var db = require('./db.js');
-// db.connect();
-
 var User	= require('./models/user.js');
+
 var mongoUri = process.env.MONGOLAB_URI
 	|| process.env.MONGOHQ_URL
 	|| 'mongodb://localhost/madb';
 
-var mongoose = require('mongoose');
 mongoose.connect(mongoUri);
 
 // console.log(User)
@@ -33,7 +29,6 @@ mongoose.connect(mongoUri);
 // u.save(function () { console.log('saved', arguments); })
 
 var passport = require('passport');
-
 
 start = process.env.MONGOHQ_URL?'http://meavisa.herokuapp.com':'http://localhost:3000';
 

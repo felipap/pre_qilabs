@@ -20,8 +20,8 @@
 
   onGetPosts = function(posts, callback) {
     return User.find({}, function(err, users) {
-      var tags, user, _i, _len, _results;
-      console.log('oi');
+      var notSaved, tags, user, _i, _len, _results;
+      notSaved = users.length;
       _results = [];
       for (_i = 0, _len = users.length; _i < _len; _i++) {
         user = users[_i];
@@ -29,12 +29,14 @@
           return new Date(post.date) > new Date(user.lastUpdate);
         }), 'tags'));
         if (tags.length) {
-          api.sendNotification(user.facebookId, "We have updated on some of the tags you are following." + tags);
+          api.sendNotification(user.facebookId, "We have updated on some of the tags you are following: " + tags.join(', '));
         }
         user.lastUpdate = new Date();
-        console.log('updated?', user);
         _results.push(user.save(function(e) {
-          return console.log('erro?', e);
+          notSaved -= 1;
+          if (notSaved === 0) {
+            return typeof callback === "function" ? callback() : void 0;
+          }
         }));
       }
       return _results;

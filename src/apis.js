@@ -15,12 +15,6 @@
   } catch (_error) {
     e = _error;
     keys = {
-      twitter: {
-        cons_key: process.env.TWT_CONS_KEY,
-        cons_sec: process.env.TWT_CONS_SEC,
-        access_key: process.env.TWT_ACCESS_KEY,
-        access_sec: process.env.TWT_ACCESS_SEC
-      },
       tumblr_ock: process.env.TUMBLR_OCK,
       facebook: {
         app_id: process.env.facebook_app_id,
@@ -33,7 +27,7 @@
   exports.sendNotification = function(user_id, template, callback) {
     var access_token, url;
     access_token = '521238787943358|irzJJKJ0-Z8-LiUshAfFazAirac';
-    url = "https://graph.facebook.com/" + user_id + "/notifications?access_token=" + access_token + "&template=" + template;
+    url = "https://graph.facebook.com/" + user_id + "/notifications?access_token=" + access_token + "&template=" + (encodeURIComponent(template));
     return request.post(url, function(error, response, body) {
       console.log("Notification request to " + url + " response:", body, error);
       if (callback) {
