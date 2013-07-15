@@ -108,7 +108,7 @@ exports.Pages = {
 
 			tags = ''
 			for tag in chosen
-				tags += chosen+', '
+				tags += tag+', '
 			tags = tags.slice(0, tags.length-2)
 			api.sendNotification req.user.facebookId, "You are following the topics #{tags} on MeAvisa."
 

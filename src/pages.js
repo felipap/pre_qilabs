@@ -140,7 +140,7 @@
         tags = '';
         for (_j = 0, _len1 = chosen.length; _j < _len1; _j++) {
           tag = chosen[_j];
-          tags += chosen + ', ';
+          tags += tag + ', ';
         }
         tags = tags.slice(0, tags.length - 2);
         api.sendNotification(req.user.facebookId, "You are following the topics " + tags + " on MeAvisa.");
