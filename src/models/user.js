@@ -33,47 +33,9 @@
     return value && value.length;
   };
 
-  UserSchema.methods = {
-    /*
-    	Authenticate - check if the passwords are the same
-    		@param {String} plainText
-    		@return {Boolean}
-    		@api public
-    */
+  UserSchema.methods = {};
 
-    /*
-    	Make salt
-    		@return {String}
-    		@api public
-    */
-
-    makeSalt: function() {
-      return Math.round(new Date().valueOf() * Math.random()) + "";
-    },
-    /*
-    	Encrypt password
-    		@param {String} password
-    		@return {String}
-    		@api public
-    */
-
-    encryptPassword: function(password) {
-      var encrypred, err;
-      if (!password) {
-        return "";
-      }
-      encrypred = void 0;
-      try {
-        encrypred = crypto.createHmac("sha1", this.salt).update(password).digest("hex");
-        return encrypred;
-      } catch (_error) {
-        err = _error;
-        return "";
-      }
-    }
-  };
-
-  findOrCreate = function(schema, options) {
+  UserSchema.plugin(findOrCreate = function(schema, options) {
     return schema.statics.findOrCreate = function(conditions, doc, options, callback) {
       var self;
       if (arguments.length < 4) {
@@ -111,12 +73,8 @@
         }
       });
     };
-  };
-
-  UserSchema.plugin(findOrCreate);
+  });
 
   module.exports = mongoose.model("User", UserSchema);
-
-  console.log(module.exports.findOrCreate);
 
 }).call(this);

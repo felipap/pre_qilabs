@@ -20,7 +20,7 @@ var msgmid 	= require('./lib/messages.js');
 // var db = require('./db.js');
 // db.connect();
 
-var User	= require('./app/models/user.js');
+var User	= require('./models/user.js');
 var mongoUri = process.env.MONGOLAB_URI
 	|| process.env.MONGOHQ_URL
 	|| 'mongodb://localhost/madb';
@@ -76,9 +76,9 @@ app.use(express.cookieParser()); // support cookies
 app.use(express.methodOverride()); // support _method (PUT in forms etc)
 app.use(express.logger()); // log stuff
 app.use(express.session({ secret: process.env.SESSION_SECRET || 'mysecret' })); // support sessions
-app.use(msgmid.message); // addMessageMiddleWare
 app.use(passport.initialize());
 app.use(passport.session()); 
+app.use(msgmid.message); // addMessageMiddleWare
 app.use(app.router);
 app.use(express.static(__dirname + '/public')); // serve static files (put after router)
 

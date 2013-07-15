@@ -31,12 +31,13 @@ blog.posts (err, data) ->
 				topics.push(tag);
 				console.log('pushing found tag', tag)
 
+
 sendNotification = (user_id, template, callback) ->
 	access_token = '521238787943358|irzJJKJ0-Z8-LiUshAfFazAirac'
-	url = "https://graph.facebook.com/#{user_id}/notifications?access_token=#{access_token}&template=#{template}"
+	url =  "https://graph.facebook.com/#{user_id}/notifications?access_token=#{access_token}&template=#{template}"
 	request.post url,
 		(error, response, body) ->
-			console.log 'request with given token:', body, error, url
+			console.log 'Notification request to #{url} response:', body, error
 			if callback then callback(error, response, body)
 
 getPostsWithTags = (tags, callback) ->
@@ -52,7 +53,7 @@ getPostsWithTags = (tags, callback) ->
 	)
 
 
-User = require './app/models/user.js'
+User = require './models/user.js'
 
 exports.Pages = {
 	index:
@@ -72,6 +73,7 @@ exports.Pages = {
 				res.writeHead(200, {'Content-Type': 'text/html;charset=UTF-8'});
 				res.end("#{User.findOrCreate}s#{req.ip}<br><form method='get' action='/auth/facebook'><input type='submit' name='oi' value='post'></form>")
 				return
+
 			User.find {}, (err, users) ->
 				res.writeHead(200, {'Content-Type': 'text/html;charset=UTF-8'});
 				res.write(JSON.stringify(users))
@@ -79,8 +81,6 @@ exports.Pages = {
 
 		post: (req, res) ->
 			res.redirect('/auth/facebook')
-			# res.end("oi")
-
 
 	logout:
 		get: (req, res) ->
@@ -90,8 +90,11 @@ exports.Pages = {
 	session:
 		get: (req, res) ->
 			User.find {}, (err, users) ->
-				res.write(JSON.stringify(users))
-				res.end('\noi, '+req.ip+JSON.stringify(req.session))
+				obj =
+					ip: req.ip
+					session: req.session
+					users: users
+				res.end(JSON.stringify(obj))
 
 	update:
 		get: (req, res) -> 
@@ -117,7 +120,10 @@ exports.Pages = {
 
 	dropall:
 		get: (req, res) ->
-			User.remove {}, (err) ->
-				res.write "collection removed"
-				res.end err
+			if req.user._id is "51e31a315aeae90200000001"
+				User.remove {}, (err) ->
+					res.write "collection removed"
+					res.end err
+			else
+			res.end "Cannot GET /dropall" # Fake page.
 }

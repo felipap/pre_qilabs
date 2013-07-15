@@ -48,7 +48,7 @@
     access_token = '521238787943358|irzJJKJ0-Z8-LiUshAfFazAirac';
     url = "https://graph.facebook.com/" + user_id + "/notifications?access_token=" + access_token + "&template=" + template;
     return request.post(url, function(error, response, body) {
-      console.log('request with given token:', body, error, url);
+      console.log('Notification request to #{url} response:', body, error);
       if (callback) {
         return callback(error, response, body);
       }
@@ -71,7 +71,7 @@
     });
   };
 
-  User = require('./app/models/user.js');
+  User = require('./models/user.js');
 
   exports.Pages = {
     index: {
@@ -117,8 +117,13 @@
     session: {
       get: function(req, res) {
         return User.find({}, function(err, users) {
-          res.write(JSON.stringify(users));
-          return res.end('\noi, ' + req.ip + JSON.stringify(req.session));
+          var obj;
+          obj = {
+            ip: req.ip,
+            session: req.session,
+            users: users
+          };
+          return res.end(JSON.stringify(obj));
         });
       }
     },
@@ -149,10 +154,15 @@
     },
     dropall: {
       get: function(req, res) {
-        return User.remove({}, function(err) {
-          res.write("collection removed");
-          return res.end(err);
-        });
+        if (req.user._id === "51e31a315aeae90200000001") {
+          User.remove({}, function(err) {
+            res.write("collection removed");
+            return res.end(err);
+          });
+        } else {
+
+        }
+        return res.end("Cannot GET /dropall");
       }
     }
   };
