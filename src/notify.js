@@ -5,8 +5,8 @@ var api = require('./apis.js');
 var User = require('./models/user.js');
 
 var blog_url = 'http://meavisa.tumblr.com' // 'http://meavisa.tumblr.com'
-
 var blog = api.getBlog("meavisa.tumblr.com");
+
 // var twit = api.getTwitterApi();
 
 // function notifyUser (user, tags) {
@@ -25,6 +25,7 @@ var blog = api.getBlog("meavisa.tumblr.com");
 
 onGetPosts = function (posts) {
 	User.find({}, function (err, users) {
+		console.log('oi')
 		users.forEach(function (user) {
 			var tags = _.union.apply(null, _.pluck(_.filter(posts, function (post) {
 					return new Date(post.date) > new Date(user.lastUpdate);
