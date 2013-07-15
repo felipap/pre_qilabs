@@ -32,7 +32,9 @@
         }
         user.lastUpdate = new Date(Date.now());
         console.log('updated?', user);
-        user.save();
+        user.save(function(e) {
+          return console.log('erro?', e);
+        });
       }
       if (callback) {
         return callback();

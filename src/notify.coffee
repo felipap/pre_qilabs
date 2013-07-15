@@ -32,7 +32,8 @@ onGetPosts = (posts, callback) ->
 			
 			user.lastUpdate = new Date(Date.now())
 			console.log('updated?', user)
-			user.save()
+			user.save (e) ->
+				console.log('erro?', e)
 
 		if callback then callback()
 
