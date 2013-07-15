@@ -113,7 +113,7 @@ exports.Pages = {
 
 	dropall:
 		get: (req, res) ->
-			if req.user?.facebookId is "100000366187376"
+			if req.user and req.user.facebookId is "100000366187376"
 				User.remove {}, (err) ->
 					res.write "collection removed"
 					res.end err

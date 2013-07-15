@@ -144,8 +144,7 @@
     },
     dropall: {
       get: function(req, res) {
-        var _ref;
-        if (((_ref = req.user) != null ? _ref.facebookId : void 0) === "100000366187376") {
+        if (req.user && req.user.facebookId === "100000366187376") {
           User.remove({}, function(err) {
             res.write("collection removed");
             return res.end(err);
