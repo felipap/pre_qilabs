@@ -23,11 +23,19 @@ var blog = api.getBlog("meavisa.tumblr.com");
 // 	})
 // }
 
+var mongoUri = process.env.MONGOLAB_URI
+	|| process.env.MONGOHQ_URL
+	|| 'mongodb://localhost/madb';
+
+var mongoose = require('mongoose');
+mongoose.connect(mongoUri);
+
 onGetPosts = function (posts) {
 	console.log('call 1')
 	User.find({}, function (err, docs) {
 		console.log('oi', docs);
 	});
+
 	// User.find({}, function (err, users) {
 	// 	console.log('oi')
 	// 	users.forEach(function (user) {
