@@ -4,8 +4,11 @@ tumblr	= require 'tumblr'
 oauth	= require 'oauth'
 request = require 'request'
 
-require './env.js'
-
+try
+	require './env.js'
+catch e
+	null
+	
 exports.sendNotification = (user_id, template, callback) ->
 	access_token = process.env.facebook_access_token
 	url =  "https://graph.facebook.com/#{user_id}/notifications?access_token=#{access_token}&template=#{encodeURIComponent(template)}"

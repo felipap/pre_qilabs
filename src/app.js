@@ -4,7 +4,9 @@
 var msgmid = require('./lib/messages.js');
 var User = require('./models/user.js');
 
-require('./env.js');
+try {
+	require('./env.js');
+} catch (e) {}
 
 var mongoUri = process.env.MONGOLAB_URI
 	|| process.env.MONGOHQ_URL

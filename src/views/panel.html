@@ -92,6 +92,9 @@
 				<div class="span8">
 					<div class="posts">
 						<h3>Últimas atualizações dessas tags</h3>
+						<% if (!posts.length) { %>
+							<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>
+						<% } %>
 						<% posts.forEach(function (post) { %>
 							<li class="post">
 								<div class="title">
