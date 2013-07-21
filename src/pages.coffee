@@ -4,24 +4,12 @@ api 	= require './apis.js'
 request = require 'request'
 User 	= require './models/user.js'
 
-try
-	env = require './env.js'
-catch e
-	env = {
-		facebook: {
-			app_id: process.env.facebook_app_id
-			secret: process.env.facebook_secret
-			canvas: process.env.facebook_canvas
-		}
-	}
-
 
 blog_url = 'http://meavisa.tumblr.com' # 'http://meavisa.tumblr.com'
 blog = api.getBlog("meavisa.tumblr.com");
 topics = []; # 'physics', 'mathematics', 'chemistry', 'wizardry', 'programming', 'code'];
 posts = []
 
-# console.log 'blog:', blog
 
 blog.posts (err, data) ->
 	throw err if err;
@@ -60,13 +48,8 @@ exports.Pages = {
 						posts: posts
 						blog_url: blog_url
 						messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
-				return
-
-			User.find {}, (err, users) ->
-				res.writeHead(200, {'Content-Type': 'text/html;charset=UTF-8'});
-				res.write(JSON.stringify(users))
-				res.end('\noi, '+req.ip+JSON.stringify(req.session)+"<form method='get' action='/auth/facebook'><input type='submit' name='oi' value='post'></form>")
-			# res.render('index')
+			else	
+				res.render('index')
 
 	logout:
 		get: (req, res) ->
@@ -84,9 +67,10 @@ exports.Pages = {
 
 	update:
 		get: (req, res) -> 
+			# Require user to be logged
 			if not req.user then return res.redirect '/'
 
-			# if only one topic is checked, req.query.topic is a string
+			# If only one topic is checked, req.query.topic is a string
 			if not req.query['topic'] or typeof req.query['topic'] is 'string'
 				req.query['topic'] = [req.query['topic']]
 
@@ -95,18 +79,20 @@ exports.Pages = {
 			if chosen and not _.isEqual(chosen, req.user.tags)
 				api.sendNotification req.user.facebookId, "You are following the topics #{chosen.join(", ")}."
 			
-			req.user.tags = chosen;
+			# Update tags and save
+			req.user.tags = chosen
 			req.user.save()
 
+			# Update posts for user
 			getPostsWithTags chosen, ->
-			res.redirect 'back'
+				res.redirect 'back'
 
 	dropall:
 		get: (req, res) ->
-			if req.user and req.user.facebookId is "100000366187376"
+			if req.user?.facebookId is "100000366187376"
 				User.remove {}, (err) ->
 					res.write "collection removed"
 					res.end err
 			else
-				res.end "Cannot GET /dropall" # Fake page.
+				res.end "Cannot POST /dropall"
 }
