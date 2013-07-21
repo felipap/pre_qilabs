@@ -10,98 +10,104 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width">
 
-		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
+		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.css" rel="stylesheet">
+		<link rel="stylesheet" href="/static/css/main.css">
 		<style>
-			body {
-			padding-top: 60px;
-			padding-bottom: 40px;
-			}
-
-			.posts {
-				float: right;
-				position: absolute;
-				top: 0; right: 0;
-				width: 700px;
-			}
 
 			.post {
-				border: 1px dashed gray;
+				/*border: 1px dashed gray;*/
 				margin-bottom: 10px;
-				padding: 10px;
+				padding: 5px 15px;
 				list-style: none;
 				box-shadow: 0 0 5px rgba(0, 0, 0, .4);
 			}
 
 			.post .title h3 {
-				display: inline-block;
-				margin-right: 5px;
+				margin-bottom: 0;
 			}
 
 			.post .title h3 a {
 				text-decoration: none;
-				border-bottom: 1px dashed gray ;
+				/*border-bottom: 1px dashed gray ;*/
 			}
 
-		</style>
-		<link rel="stylesheet" href="css/bootstrap-responsive.min.css">
-		<link rel="stylesheet" href="css/main.css">
+			.post .body {
+				margin: 20px auto;
+				font: 13px "Open Sans";
+			}
 
-		<script src="js/vendor/modernizr-2.6.2.min.js"></script>
+
+		</style>
+	
 	</head>
 	<body>
 		<!--[if lt IE 7]>
 		<p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
 		<![endif]-->
-		<%= messages %>
+	
 
-		<div class="container-fluid" style="position: relative">
-			<h3>Hi, <%= user.name %>!</h3>
-			<h5>Please select the topics you wish to follow.</h5>
+		<div class="container" style="position: relative">
+			<div class="navbar">
+				<div class="navbar-inner">
+				<a class="brand" href="#"><strong>MeAvisa</strong></a>
+				<ul class="nav">
+					<li class="active"><a href="#">Home</a></li>
+					<li><a href="/logout">Logout</a></li>
+				</ul>
+				</div>
+			</div>
+
 
 			<div class="row-fluid">
-				<div class="span-5">
-					<form action="/update" method="GET">
+				<div class="span4">
+					<h3>Oi, <%= user.name %>!</h3>
+					<h5>Selecione as tags que você deseja seguir.</h5>
+					<div class="alert" id="confirmChangesAlert" style="display: none">
+						<button type="button" class="close" data-dismiss="alert">&times;</button>
+						Por favor <strong>Confirme</strong> para atualizar os posts. 
+					</div>
+					<form class="form" action="/update" method="GET">
 						<fieldset>
 							<% topics.forEach(function(topic){ %>
 								<label class="checkbox">
-									<% if (user.tags.indexOf(topic) != -1) { %>
-										<input type="checkbox" name="topic" value="<%=topic%>" checked><%= topic %>
-									<% } else { %>
-										<input type="checkbox" name="topic" value="<%=topic%>"><%= topic %>
-									<% } %>
-										</label>
+									<input type="checkbox" name="topic" value="<%=topic%>" 
+										<%= (user.tags.indexOf(topic)!=-1)?("checked"):""%>
+										> <%= topic %>
+									</label>
 							<% }) %>
 						</fieldset>
-
-
-						<div style="width: 300px; margin-top: 20px">
+						<div>
 							<button class="btn btn-large btn-block btn-primary" type="submit">
-								<strong>Confirm</strong> Changes
+								<strong>Confirmar</strong> as Mudanças
 							</button>
-							<a class="btn btn-large btn-block btn-danger" href="/logout" type="button">
-								<strong>Cancel</strong> (and logout)
+							<a class="btn btn-large btn-block btn-danger" type="button">
+								<strong>Cancelar</strong>
 							</a>
 						</div>
 					</form>
 				</div>
 
-				<div class="span-7">
+				<div class="span8">
 					<div class="posts">
-						<h3>Posts with the selected tags from <a href="<%= blog_url %>">the blog</a></h3>
+						<h3>Últimas atualizações dessas tags</h3>
 						<% posts.forEach(function (post) { %>
 							<li class="post">
 								<div class="title">
 									<% if (post.title) { %>
 										<h3><a href="<%= post.short_url %>"><%= post.title %></a></h3>
 									<% } %>
-									<span class=""><%= Math.round((new Date - new Date(post.date)) / (1000 * 60 * 60 * 24)) %> days ago</span>
+									<small class=""><%= Math.round((new Date-new Date(post.date))/(1000*60*60*24)) %> dias atrás</small>
 								</div>
 								<% if (post.type === 'photo') { %>
 									<% post.photos.forEach(function (photo) { %>
 										<a href="<%= post.short_url %>"><img src="<%= photo.alt_sizes[0].url %>" /></a>
 									<% }) %>
 								<% } else { %>
-									<p><%- post.body %></p>
+									<div class="body">
+										<p><%- post.body %></p>
+									</div>
 								<% } %>
 								<div>
 									tags:
@@ -121,19 +127,31 @@
 		
 		<!-- sds -->
 
+		<!--
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+		<script>window.jQuery || document.write('<script src="/static/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+		-->
 
-		<script src="js/vendor/bootstrap.min.js"></script>
+		<script src="/static/js/vendor/jquery-1.9.1.min.js"></script>
+		<script src="/static/js/vendor/bootstrap.js"></script>
 
-		<script src="js/plugins.js"></script>
-		<script src="js/main.js"></script>
+		<script src="/static/js/plugins.js"></script>
+		<script src="/static/js/main.js"></script>
 
 		<script>
 			var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
 			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
 			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
 			s.parentNode.insertBefore(g,s)}(document,'script'));
+		</script>
+
+		<script>
+			var alerted = false;
+			$(".form").find('input[type=checkbox]').click(function () {
+				if (alerted) return;
+				$("#confirmChangesAlert").slideDown();
+				alerted = true;
+			})
 		</script>
 	</body>
 </html>

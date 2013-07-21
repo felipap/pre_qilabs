@@ -1,23 +1,15 @@
 
 # notify.coffee
+# Notifies users of new posts on the tags they follow.
+# When called directly, this file notifies the users.
 
 _ 	= require 'underscore'
 api = require './apis.js'
-mongoose = require 'mongoose'
-
 User = require './models/user.js'
-
-blog_url = 'http://meavisa.tumblr.com'
-blog = api.getBlog "meavisa.tumblr.com"
-
-mongoUri = process.env.MONGOLAB_URI or process.env.MONGOHQ_URL or 'mongodb://localhost/madb'
-
-mongoose.connect(mongoUri)
 
 onGetPosts = (posts, callback) ->
 	User.find {}, (err, users) ->
-		notSaved = users.length
-		
+		numUsersNotSaved = users.length
 		for user in users
 			tags = _.union.apply null,
 						_.pluck \
@@ -28,21 +20,29 @@ onGetPosts = (posts, callback) ->
 			if tags.length
 				api.sendNotification user.facebookId, "We have updated on some of the tags you are following: "+tags.join(', ')
 			else
-				console.log "fuck you", tags
+				console.log "No updates", tags
 			
 			user.lastUpdate = new Date()
 			user.save (e) ->
-				notSaved -= 1
-				if notSaved == 0
+				numUsersNotSaved -= 1
+				if numUsersNotSaved == 0
 					callback?()
 
-blog.posts (err, data) -> 
-	if err then throw err
-	onGetPosts data.posts, ->
-		mongoose.connection.close()
+notifyUpdates = (callback) ->
+	# Get blog posts.
+	blog = api.getBlog "meavisa.tumblr.com"
+	blog.posts (err, data) ->
+		if err then throw err
+		onGetPosts(data.posts, callback)
 
-# module.exports = {
-# 	notify: (req, res) ->
-# 		onGetPosts*
-# 		res.end('')
-# }
+if module is require.main
+	# If being executed directly, first open the database.
+	mongoose = require 'mongoose'
+	mongoUri = process.env.MONGOLAB_URI or process.env.MONGOHQ_URL or 'mongodb://localhost/madb'
+	mongoose.connect(mongoUri)
+	notifyUpdates ->
+			# Close database at the end.
+			# Otherwise, the script won't close.
+			mongoose.connection.close()
+else
+	exports.notifyNewPosts = notifyUpdates

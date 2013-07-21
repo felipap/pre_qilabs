@@ -1,41 +1,24 @@
 
-var mongoose = require('mongoose');
-var express = require('express');
-var http = require('http');
+// apps.js
 
-try {
-	var env = require('./env.js');
-} catch (e) {
-	var env = {
-		facebook: {
-			app_id: process.env.facebook_app_id,
-			secret: process.env.facebook_secret,
-			canvas: process.env.facebook_canvas,
-		}
-	}
-}
+var msgmid = require('./lib/messages.js');
+var User = require('./models/user.js');
 
-var msgmid 	= require('./lib/messages.js');
-var User	= require('./models/user.js');
+require('./env.js');
 
 var mongoUri = process.env.MONGOLAB_URI
 	|| process.env.MONGOHQ_URL
 	|| 'mongodb://localhost/madb';
 
-mongoose.connect(mongoUri);
+require('mongoose').connect(mongoUri);
 
-// console.log(User)
-// var u = new User({name: 'felipe2', password: '123', email: '12312s@gmail.com'});
-// u.save(function () { console.log('saved', arguments); })
+// var start = app.get('env')=='development'?'http://meavisa.herokuapp.com':'http://localhost:3000';
 
 var passport = require('passport');
-
-start = process.env.MONGOHQ_URL?'http://meavisa.herokuapp.com':'http://localhost:3000';
-
 (function setPassport() {
 	passport.use(new (require('passport-facebook').Strategy)({
-			clientID: env.facebook.app_id,
-			clientSecret: env.facebook.secret,
+			clientID: process.env.facebook_app_id,
+			clientSecret: process.env.facebook_secret,
 			callbackURL: "/auth/facebook/callback"
 		},
 		function (accessToken, refreshToken, profile, done) {
@@ -60,29 +43,30 @@ start = process.env.MONGOHQ_URL?'http://meavisa.herokuapp.com':'http://localhost
 	})
 })();
 
+var express = require('express');
 var app = module.exports = express();
 
-app.use(express.bodyParser()); // parse request bodies (req.body)
 app.set('view engine', 'html'); // make ".html" the default
 app.set('views', __dirname + '/views'); // set views for error and 404 pages
 app.set("view options", {layout: false}); // disable layout
-app.engine('html', require('ejs').renderFile); // map .renderFile to ".html" files
-app.use(express.cookieParser()); // support cookies
-app.use(express.methodOverride()); // support _method (PUT in forms etc)
 app.use(express.logger()); // log stuff
+app.use(express.cookieParser()); // support cookies
+app.use(express.bodyParser()); // parse request bodies (req.body)
+app.use(express.methodOverride()); // support _method (PUT in forms etc)
 app.use(express.session({ secret: process.env.SESSION_SECRET || 'mysecret' })); // support sessions
 app.use(passport.initialize());
-app.use(passport.session()); 
-app.use(msgmid.message); // addMessageMiddleWare
+app.use(passport.session());
+app.use(require('./lib/messages.js').message); // addMessageMiddleWare
 app.use(app.router);
-app.use(express.static(__dirname + '/public')); // serve static files (put after router)
+app.use('/static', express.static(__dirname + '/public')); // serve static files (put after router)
+app.engine('html', require('ejs').renderFile); // map .renderFile to ".html" files
 
 msgmid.setUp(app);
 
 require('./routes.js')(app);
 
-var port = process.env.PORT || 3000;
-var server = http.createServer(app);
-server.listen(port, function () {
-	console.log("Express server listening on port %d in %s mode", server.address().port, app.settings.env);
+var server = require('http')
+				.createServer(app)
+				.listen(process.env.PORT || 3000, function () {
+	console.log("Server on port %d in %s mode", server.address().port, app.settings.env);
 });
