@@ -1,13 +1,10 @@
 
-util = require 'util'
+# apis.coffee
+
 tumblr	= require 'tumblr'
-oauth	= require 'oauth'
 request = require 'request'
 
-try
-	require './env.js'
-catch e
-	null
+# Assumes app.js was run (and possibly updated process.env).
 	
 exports.sendNotification = (user_id, template, callback) ->
 	access_token = process.env.facebook_access_token
