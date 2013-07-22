@@ -16,7 +16,7 @@
       for (_i = 0, _len = users.length; _i < _len; _i++) {
         user = users[_i];
         tags = _.union.apply(null, _.pluck(_.filter(posts, function(post) {
-          return new Date(post.date) > new Date(user.lastUpdate);
+          return true;
         }), 'tags'));
         if (tags.length) {
           api.sendNotification(user.facebookId, "We have updated on some of the tags you are following: " + tags.join(', '));

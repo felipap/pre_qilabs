@@ -24,7 +24,7 @@ var passport = require('passport');
 			callbackURL: "/auth/facebook/callback"
 		},
 		function (accessToken, refreshToken, profile, done) {
-			console.log('profile', profile)
+			console.log('Connected to profile', profile)
 			User.findOrCreate({ facebookId: profile.id, name: profile.displayName }, function (err, user) {
 				user.accessToken = accessToken;
 				user.save();
@@ -51,7 +51,6 @@ var app = module.exports = express();
 app.set('view engine', 'html'); // make ".html" the default
 app.set('views', __dirname + '/views'); // set views for error and 404 pages
 app.set("view options", {layout: false}); // disable layout
-app.use(express.logger()); // log stuff
 app.use(express.cookieParser()); // support cookies
 app.use(express.bodyParser()); // parse request bodies (req.body)
 app.use(express.methodOverride()); // support _method (PUT in forms etc)
@@ -59,8 +58,10 @@ app.use(express.session({ secret: process.env.SESSION_SECRET || 'mysecret' })); 
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(require('./lib/messages.js').message); // addMessageMiddleWare
+app.use('/static', express.static(__dirname + '/public')); // serve static files
 app.use(app.router);
-app.use('/static', express.static(__dirname + '/public')); // serve static files (put after router)
+app.use('/', express.static(__dirname + '/public')); // serve static files from root (put after router)
+app.use(express.logger()); // log stuff
 app.engine('html', require('ejs').renderFile); // map .renderFile to ".html" files
 
 msgmid.setUp(app);

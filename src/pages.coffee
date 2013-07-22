@@ -1,50 +1,50 @@
 
-_   	= require 'underscore'
-api 	= require './apis.js'
-request = require 'request'
-User 	= require './models/user.js'
+# pages.coffee
 
+_    = require 'underscore'
+api  = require './apis.js'
+User = require './models/user.js'
 
-blog_url = 'http://meavisa.tumblr.com' # 'http://meavisa.tumblr.com'
-blog = api.getBlog("meavisa.tumblr.com");
-topics = []; # 'physics', 'mathematics', 'chemistry', 'wizardry', 'programming', 'code'];
+notify = require './notify.js'
+
+blog_url = 'http://meavisa.tumblr.com'
+blog = api.getBlog("meavisa.tumblr.com")
+tags = []
 posts = []
 
-
-blog.posts (err, data) ->
-	throw err if err;
-	data.posts.forEach (post, i) ->
-		post.tags.forEach (tag) ->
-			if topics.indexOf(tag) == -1
-				topics.push(tag);
-				console.log('pushing found tag', tag)
+getBlogTags = (callback) ->
+	blog.posts (err, data) ->
+		throw err if err
+		for post in data.posts
+			for tag in post.tags
+				if tags.indexOf(tag) == -1
+					tags.push(tag);
+					console.log('pushing found tag: #' + tag)
+		callback?()
+getBlogTags()
 
 
 getPostsWithTags = (tags, callback) ->
 	blog.posts({ limit: -1 }, (err, data) ->
-		# console.log('posts: ', data.posts)
-		posts = []
-		# console.log(data.posts[2].photos[0].alt_sizes)
+		_posts = []
 		data.posts.forEach (post) ->
 			int = _.intersection(post.tags, tags)
 			if int[0]
-				posts.push(post)
+				_posts.push(post)
+		posts = _posts # Update global.
 		callback?()
 	)
-
 
 
 exports.Pages = {
 	index:
 		get: (req, res) ->
 			if req.user
-				# req.user.lastUpdate = new Date(0)
-				# req.user.save()
-				req.session.messages = [JSON.stringify(req.user)]
+				console.log('logged:', req.user.name)
 				getPostsWithTags req.user.tags, ->
 					res.render 'panel', 
 						user: req.user
-						topics: topics
+						tags: tags
 						posts: posts
 						blog_url: blog_url
 						messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
@@ -53,11 +53,14 @@ exports.Pages = {
 
 	logout:
 		get: (req, res) ->
+			if not req.user then return res.redirect '/'
 			req.logout()
 			res.redirect('/')
 
 	session:
 		get: (req, res) ->
+			if not req.user or req.user.facebookId isnt process.env.facebook_me
+				return res.redirect '/'
 			User.find {}, (err, users) ->
 				obj =
 					ip: req.ip
@@ -65,19 +68,25 @@ exports.Pages = {
 					users: users
 				res.end(JSON.stringify(obj))
 
+	notify:
+		get: (req, res) ->
+			if not req.user or req.user.facebookId isnt process.env.facebook_me
+				return res.redirect '/'
+			notify.notifyNewPosts()
+			res.redirect('/')
+
 	update:
-		get: (req, res) -> 
-			# Require user to be logged
+		get: (req, res) ->
 			if not req.user then return res.redirect '/'
 
-			# If only one topic is checked, req.query.topic is a string
-			if not req.query['topic'] or typeof req.query['topic'] is 'string'
-				req.query['topic'] = [req.query['topic']]
+			# If only one tag is checked, req.query.tag is a string
+			if not req.query['tag'] or typeof req.query['tag'] is 'string'
+				req.query['tag'] = [req.query['tag']]
 
-			chosen = _.filter(req.query['topic'], (topic) -> topic?)
+			chosen = _.filter(req.query['tag'], (tag) -> tag?)
 
 			if chosen and not _.isEqual(chosen, req.user.tags)
-				api.sendNotification req.user.facebookId, "You are following the topics #{chosen.join(", ")}."
+				api.sendNotification req.user.facebookId, "You are following the tags #{chosen.join(", ")}."
 			
 			# Update tags and save
 			req.user.tags = chosen
@@ -89,7 +98,8 @@ exports.Pages = {
 
 	dropall:
 		get: (req, res) ->
-			if req.user?.facebookId is "100000366187376"
+			# Require user to be me
+			if req.user.facebookId is process.env.facebook_me
 				User.remove {}, (err) ->
 					res.write "collection removed"
 					res.end err

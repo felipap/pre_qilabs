@@ -53,7 +53,9 @@
 				<div class="navbar-inner">
 				<a class="brand" href="#"><strong>MeAvisa</strong></a>
 				<ul class="nav">
-					<li class="active"><a href="#">Home</a></li>
+					<li class="active"><a href="/">Home</a></li>
+					<li><a href="/update">Update</a></li>
+					<li><a href="/notify">Notify</a></li>
 					<li><a href="/logout">Logout</a></li>
 				</ul>
 				</div>
@@ -64,17 +66,13 @@
 				<div class="span4">
 					<h3>Oi, <%= user.name %>!</h3>
 					<h5>Selecione as tags que você deseja seguir.</h5>
-					<div class="alert" id="confirmChangesAlert" style="display: none">
-						<button type="button" class="close" data-dismiss="alert">&times;</button>
-						Por favor <strong>Confirme</strong> para atualizar os posts. 
-					</div>
 					<form class="form" action="/update" method="GET">
 						<fieldset>
-							<% topics.forEach(function(topic){ %>
+							<% tags.forEach(function(tag){ %>
 								<label class="checkbox">
-									<input type="checkbox" name="topic" value="<%=topic%>" 
-										<%= (user.tags.indexOf(topic)!=-1)?("checked"):""%>
-										> <%= topic %>
+									<input type="checkbox" name="tag" value="<%=tag%>" 
+										<%= (user.tags.indexOf(tag)!=-1)?("checked"):""%>
+										> <%= tag %>
 									</label>
 							<% }) %>
 						</fieldset>
@@ -82,7 +80,7 @@
 							<button class="btn btn-large btn-block btn-primary" type="submit">
 								<strong>Confirmar</strong> as Mudanças
 							</button>
-							<a class="btn btn-large btn-block btn-danger" type="button">
+							<a class="btn btn-large btn-block btn-danger" href="/" type="button">
 								<strong>Cancelar</strong>
 							</a>
 						</div>
@@ -90,6 +88,10 @@
 				</div>
 
 				<div class="span8">
+					<div class="alert" id="confirmChangesAlert" style="display: none">
+						<button type="button" class="close" data-dismiss="alert">&times;</button>
+						Clique em <strong>Confirmar as Mudanças</strong> para atualizar os posts. 
+					</div>
 					<div class="posts">
 						<h3>Últimas atualizações dessas tags</h3>
 						<% if (!posts.length) { %>
