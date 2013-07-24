@@ -83,13 +83,14 @@
       get: function(req, res) {
         if (req.user) {
           console.log('user selcting tags:', req.user.name);
-          return res.render('tags', {
+          res.render('tags', {
             user: req.user,
             tags: tags,
             blog_url: blog_url,
             messages: req.session.messages
           });
         }
+        return res.redirect('/');
       }
     },
     logout: {

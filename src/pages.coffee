@@ -60,6 +60,7 @@ exports.Pages = {
 					tags: tags
 					blog_url: blog_url
 					messages: req.session.messages
+			res.redirect('/')
 
 	logout:
 		get: (req, res) ->
