@@ -51,6 +51,16 @@ exports.Pages = {
 			else	
 				res.render('index')
 
+	tags:
+		get: (req, res) ->
+			if req.user
+				console.log('user selcting tags:', req.user.name)
+				res.render 'tags',
+					user: req.user
+					tags: tags
+					blog_url: blog_url
+					messages: req.session.messages
+
 	logout:
 		get: (req, res) ->
 			if not req.user then return res.redirect '/'
