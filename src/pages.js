@@ -89,6 +89,7 @@
             blog_url: blog_url,
             messages: req.session.messages
           });
+          return;
         }
         return res.redirect('/');
       }
