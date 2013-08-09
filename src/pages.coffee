@@ -3,7 +3,7 @@
 
 _	= require 'underscore'
 
-api  = require './apis.js'
+api = require './api.js'
 notify = require './notify.js'
 models = require './models/models.js'
 
@@ -20,11 +20,11 @@ api.pushBlogTags(blog,
 		console.log(tags)
 )
 
+# Notice this is updating the global variable.
 getPostsWithTags = (tags, callback) ->
 	api.getPostsWithTags(blog, tags, (err, _posts) ->
-			posts = _posts; # Update global
-			throw err if err;
-			callback?(_posts);
+			posts = _posts; # Update global;
+			callback?(err, _posts);
 		)
 
 exports.Pages = {
@@ -32,7 +32,7 @@ exports.Pages = {
 		get: (req, res) ->
 			if req.user
 				console.log('logged:', req.user.name, req.user.tags)
-				getPostsWithTags req.user.tags, () ->
+				getPostsWithTags req.user.tags, (err, posts) ->
 					res.render 'panel', 
 						user: req.user
 						tags: tags
@@ -101,7 +101,7 @@ exports.Pages = {
 			req.user.save()
 
 			# Update posts for user
-			getPostsWithTags chosen, ->
+			getPostsWithTags chosen, (err, posts) ->
 				res.redirect 'back'
 
 	dropall:

@@ -1,6 +1,10 @@
 
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+
 gnome-terminal -x sh -c "coffee -wc -o . ."
 gnome-terminal -x sh -c "nodemon src/app.js"
-nautilus . & disown
+# nautilus . & disown
+
 sleep 3
 x-www-browser http://localhost:3000
+gnome-terminal -x sh -c "bash src/public/watch.sh"

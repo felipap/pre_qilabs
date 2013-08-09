@@ -4,7 +4,7 @@
 
   _ = require('underscore');
 
-  api = require('./apis.js');
+  api = require('./api.js');
 
   models = require('./models/models.js');
 

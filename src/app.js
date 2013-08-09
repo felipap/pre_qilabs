@@ -52,19 +52,35 @@ app.set('view engine', 'html'); // make ".html" the default
 app.set('views', __dirname + '/views'); // set views for error and 404 pages
 app.set("view options", {layout: false}); // disable layout
 app.use(express.cookieParser()); // support cookies
+app.use(express.session({ secret: process.env.SESSION_SECRET || 'mysecret' })); // support sessions
 app.use(express.bodyParser()); // parse request bodies (req.body)
 app.use(express.methodOverride()); // support _method (PUT in forms etc)
-app.use(express.session({ secret: process.env.SESSION_SECRET || 'mysecret' })); // support sessions
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(require('./lib/messages.js').message); // addMessageMiddleWare
 app.use('/static', express.static(__dirname + '/public')); // serve static files
 app.use(app.router);
+app.use(express.csrf());
 app.use('/', express.static(__dirname + '/public')); // serve static files from root (put after router)
 app.use(express.logger()); // log stuff
 app.engine('html', require('ejs').renderFile); // map .renderFile to ".html" files
 
 msgmid.setUp(app);
+
+app.configure('development', function() {
+	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+	app.locals.pretty = true;
+	sendgrid = {
+		send: function(opts, cb) {
+			console.log('Email:', opts);
+			cb(true, opts);
+		}
+	};
+});
+
+app.configure('production', function() {
+	app.use(express.errorHandler());
+});
 
 require('./routes.js')(app);
 

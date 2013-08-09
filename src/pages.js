@@ -4,7 +4,7 @@
 
   _ = require('underscore');
 
-  api = require('./apis.js');
+  api = require('./api.js');
 
   notify = require('./notify.js');
 
@@ -31,10 +31,7 @@
   getPostsWithTags = function(tags, callback) {
     return api.getPostsWithTags(blog, tags, function(err, _posts) {
       posts = _posts;
-      if (err) {
-        throw err;
-      }
-      return typeof callback === "function" ? callback(_posts) : void 0;
+      return typeof callback === "function" ? callback(err, _posts) : void 0;
     });
   };
 
@@ -43,7 +40,7 @@
       get: function(req, res) {
         if (req.user) {
           console.log('logged:', req.user.name, req.user.tags);
-          return getPostsWithTags(req.user.tags, function() {
+          return getPostsWithTags(req.user.tags, function(err, posts) {
             return res.render('panel', {
               user: req.user,
               tags: tags,
@@ -133,7 +130,7 @@
         }
         req.user.tags = chosen;
         req.user.save();
-        return getPostsWithTags(chosen, function() {
+        return getPostsWithTags(chosen, function(err, posts) {
           return res.redirect('back');
         });
       }

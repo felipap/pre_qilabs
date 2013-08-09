@@ -4,7 +4,7 @@
 # When called directly, this file notifies the users.
 
 _ 	= require 'underscore'
-api = require './apis.js'
+api = require './api.js'
 models = require './models/models.js'
 
 User = models.User

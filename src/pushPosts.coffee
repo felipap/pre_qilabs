@@ -3,7 +3,7 @@
 # Push new posts to database.
 
 _ 	= require 'underscore'
-api = require './apis.js'
+api = require './api.js'
 models = require './models/models.js'
 
 User = models.User
