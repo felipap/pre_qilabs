@@ -1,47 +1,38 @@
 
 # pages.coffee
 
-_    = require 'underscore'
+_	= require 'underscore'
+
 api  = require './apis.js'
-User = require './models/user.js'
-
 notify = require './notify.js'
+models = require './models/models.js'
 
+User = models.User
 blog_url = 'http://meavisa.tumblr.com'
-blog = api.getBlog("meavisa.tumblr.com")
+blog = api.getBlog 'meavisa.tumblr.com'
 tags = []
 posts = []
 
-getBlogTags = (callback) ->
-	blog.posts (err, data) ->
+api.pushBlogTags(blog,
+	(err, _tags) ->
 		throw err if err
-		for post in data.posts
-			for tag in post.tags
-				if tags.indexOf(tag) == -1
-					tags.push(tag);
-					console.log('pushing found tag: #' + tag)
-		callback?()
-getBlogTags()
-
+		tags =  _tags
+		console.log(tags)
+)
 
 getPostsWithTags = (tags, callback) ->
-	blog.posts({ limit: -1 }, (err, data) ->
-		_posts = []
-		data.posts.forEach (post) ->
-			int = _.intersection(post.tags, tags)
-			if int[0]
-				_posts.push(post)
-		posts = _posts # Update global.
-		callback?()
-	)
-
+	api.getPostsWithTags(blog, tags, (err, _posts) ->
+			posts = _posts; # Update global
+			throw err if err;
+			callback?(_posts);
+		)
 
 exports.Pages = {
 	index:
 		get: (req, res) ->
 			if req.user
-				console.log('logged:', req.user.name)
-				getPostsWithTags req.user.tags, ->
+				console.log('logged:', req.user.name, req.user.tags)
+				getPostsWithTags req.user.tags, () ->
 					res.render 'panel', 
 						user: req.user
 						tags: tags
@@ -54,14 +45,15 @@ exports.Pages = {
 	tags:
 		get: (req, res) ->
 			if req.user
-				console.log('user selcting tags:', req.user.name)
+				console.log('user selecting tags:', req.user, req.user.tags)
 				res.render 'tags',
 					user: req.user
+					usertags: req.user.tags
 					tags: tags
 					blog_url: blog_url
-					messages: req.session.messages
-				return
-			res.redirect('/')
+					messages: []
+			else
+				res.redirect('/')
 
 	logout:
 		get: (req, res) ->
@@ -86,6 +78,10 @@ exports.Pages = {
 				return res.redirect '/'
 			notify.notifyNewPosts()
 			res.redirect('/')
+
+	post:
+		get: (req, res, id) ->
+			return blogObj.post({id:id}, ((err, data) -> res.write(JSON.stringify(data));))
 
 	update:
 		get: (req, res) ->

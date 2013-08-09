@@ -11,9 +11,11 @@
 		<meta name="viewport" content="width=device-width">
 
 		<script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
-		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+		<!-- <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet"> -->
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css" rel="stylesheet">
 		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.css" rel="stylesheet">
 		<link rel="stylesheet" href="/static/css/main.css">
+
 		<style>
 
 			.post {
@@ -49,22 +51,9 @@
 	
 
 		<div class="container" style="position: relative">
-			<div class="navbar">
-				<div class="navbar-inner">
-				<a class="brand" href="#"><strong>MeAvisa</strong></a>
-				<ul class="nav">
-					<li class="active"><a href="/">Home</a></li>
-					<li><a href="/update">Update</a></li>
-					<li><a href="/notify">Notify</a></li>
-					<li><a href="/tags">Change the Tags You Follow</a></li>
-					<li><a href="/logout">Logout</a></li>
-				</ul>
-				</div>
-			</div>
-
+			<%- include navbar.ejs %>
 
 			<div class="row-fluid">
-
 				<div class="span8">
 					<div class="alert" id="confirmChangesAlert" style="display: none">
 						<button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -95,7 +84,7 @@
 								<div>
 									tags:
 									<% post.tags.forEach(function(tag) {%>
-										<a class="badge badge-info" href="http://<%= post.blog_name %>.tumblr.com/tagged/<%= tag%>">#<%= tag %></a>
+										<a class="label label-info" href="http://<%= post.blog_name %>.tumblr.com/tagged/<%= tag%>">#<%= tag %></a>
 									<% })%>
 								</div>
 
@@ -107,8 +96,6 @@
 			</div>
 
 		</div>
-		
-		<!-- sds -->
 
 		<!--
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -129,6 +116,7 @@
 		</script>
 
 		<script>
+			$('.navbar li[name=home]').addClass('active');
 			var alerted = false;
 			$(".form").find('input[type=checkbox]').click(function () {
 				if (alerted) return;

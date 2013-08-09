@@ -1,6 +1,6 @@
 
 var passport = require('passport');
-var pages 	= require('./pages.js');
+var pages = require('./pages.js');
 
 function requireLogged (req, res, next) {
 	if (!req.user)
@@ -24,6 +24,7 @@ module.exports = function (app) {
 	app.get('/notify',	pages.Pages.notify.get);
 	app.get('/session',	pages.Pages.session.get);
 	app.get('/dropall',	pages.Pages.dropall.get);
+	app.get('/post/:id', pages.Pages.post.get);
 
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));

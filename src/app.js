@@ -2,7 +2,8 @@
 // apps.js
 
 var msgmid = require('./lib/messages.js');
-var User = require('./models/user.js');
+var models = require('./models/models.js');
+var User = models.User;
 
 try {
 	require('./env.js');
@@ -14,7 +15,6 @@ var mongoUri = process.env.MONGOLAB_URI
 
 require('mongoose').connect(mongoUri);
 
-// var start = app.get('env')=='development'?'http://meavisa.herokuapp.com':'http://localhost:3000';
 
 var passport = require('passport');
 (function setPassport() {

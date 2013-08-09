@@ -5,7 +5,9 @@
 
 _ 	= require 'underscore'
 api = require './apis.js'
-User = require './models/user.js'
+models = require './models/models.js'
+
+User = models.User
 
 onGetPosts = (posts, callback) ->
 	User.find {}, (err, users) ->
@@ -41,6 +43,7 @@ if module is require.main
 	mongoose = require 'mongoose'
 	mongoUri = process.env.MONGOLAB_URI or process.env.MONGOHQ_URL or 'mongodb://localhost/madb'
 	mongoose.connect(mongoUri)
+	console.log('> notify.js executed')
 	notifyUpdates ->
 			# Close database at the end.
 			# Otherwise, the script won't close.

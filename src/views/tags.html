@@ -11,9 +11,11 @@
 		<meta name="viewport" content="width=device-width">
 
 		<script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
-		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+		<!-- <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet"> -->
+		<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css" rel="stylesheet">
 		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.css" rel="stylesheet">
 		<link rel="stylesheet" href="/static/css/main.css">
+
 		<style>
 
 			.post {
@@ -49,33 +51,21 @@
 	
 
 		<div class="container" style="position: relative">
-			<div class="navbar">
-				<div class="navbar-inner">
-				<a class="brand" href="#"><strong>MeAvisa</strong></a>
-				<ul class="nav">
-					<li><a href="/">Home</a></li>
-					<li><a href="/update">Update</a></li>
-					<li><a href="/notify">Notify</a></li>
-					<li class="active"><a href="/tags">Change the Tags You Follow</a></li>
-					<li><a href="/logout">Logout</a></li>
-				</ul>
-				</div>
-			</div>
+			<%- include navbar.ejs %>
 
-
-			<div class="row-fluid">
-				<div class="span4">
+			<div class="row">
+				<div class="col-4">
 					<h3>Oi, <%= user.name %>!</h3>
 					<h5>Selecione as tags que você deseja seguir.</h5>
 					<form class="form" action="/update" method="GET">
 						<fieldset>
-							<% tags.forEach(function(tag){ %>
-								<label class="checkbox">
-									<input type="checkbox" name="tag" value="<%=tag%>" 
-										<%= (user.tags.indexOf(tag)!=-1)?("checked"):""%>
-										> <%= tag %>
-									</label>
-							<% }) %>
+						<% tags.forEach(function(tag){ %>
+							<label class="checkbox">
+								<input type="checkbox" name="tag" value="<%=tag%>" 
+									<%= (user.tags.indexOf(tag)!=-1)?("checked"):""%>
+									> <%= tag %>
+								</label>
+						<% }) %>
 						</fieldset>
 						<div>
 							<button class="btn btn-large btn-block btn-primary" type="submit">
@@ -113,6 +103,7 @@
 		</script>
 
 		<script>
+			$('.navbar li[name=tags]').addClass('active');
 			var alerted = false;
 			$(".form").find('input[type=checkbox]').click(function () {
 				if (alerted) return;
