@@ -109,7 +109,7 @@
     },
     post: {
       get: function(req, res, id) {
-        return blogObj.post({
+        return blog.posts({
           id: id
         }, (function(err, data) {
           return res.write(JSON.stringify(data));

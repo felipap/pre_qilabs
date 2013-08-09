@@ -81,7 +81,7 @@ exports.Pages = {
 
 	post:
 		get: (req, res, id) ->
-			return blogObj.post({id:id}, ((err, data) -> res.write(JSON.stringify(data));))
+			return blog.posts {id:id}, ((err, data) -> res.write(JSON.stringify(data));)
 
 	update:
 		get: (req, res) ->

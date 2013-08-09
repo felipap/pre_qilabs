@@ -19,8 +19,7 @@
   };
 
   exports.getBlog = function(blogurl) {
-    var blog;
-    return blog = new tumblr.Tumblr(blogurl, process.env.tumblr_ock);
+    return new tumblr.Tumblr(blogurl, process.env.tumblr_ock);
   };
 
   exports.pushBlogTags = function(blog, callback) {

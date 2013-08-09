@@ -12,7 +12,7 @@ User = models.User
 onGetPosts = (posts, callback) ->
 	User.find {}, (err, users) ->
 		numUsersNotSaved = users.length
-		for user in users
+		for user in users when user.facebookId == process.env.facebook_me
 			tags = _.union.apply null,
 						_.pluck \
 							_.filter(posts, (post) ->
@@ -33,17 +33,20 @@ onGetPosts = (posts, callback) ->
 
 notifyUpdates = (callback) ->
 	# Get blog posts.
-	blog = api.getBlog "meavisa.tumblr.com"
-	blog.posts (err, data) ->
-		if err then throw err
-		onGetPosts(data.posts, callback)
+	blog = api.getBlog 'meavisa.tumblr.com'
+	blog.posts { limit: -1 }, ((err, data) ->
+		if err then callback?(err)
+		onGetPosts(data.posts, callback))
 
 if module is require.main
-	# If being executed directly, first open the database.
+	# If being executed directly...
+	# > load keys
+	try require('./env.js') catch e ;
+	# > open database
 	mongoose = require 'mongoose'
 	mongoUri = process.env.MONGOLAB_URI or process.env.MONGOHQ_URL or 'mongodb://localhost/madb'
 	mongoose.connect(mongoUri)
-	console.log('> notify.js executed')
+	# ready to go
 	notifyUpdates ->
 			# Close database at the end.
 			# Otherwise, the script won't close.

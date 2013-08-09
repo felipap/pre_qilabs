@@ -1,5 +1,5 @@
 
-# apis.coffee
+# api.coffee
 
 tumblr	= require 'tumblr'
 request = require 'request'
@@ -16,7 +16,7 @@ exports.sendNotification = (user_id, template, callback) ->
 			callback?(error, response, body)
 
 exports.getBlog = (blogurl) ->
-	return blog = new tumblr.Tumblr(blogurl, process.env.tumblr_ock)
+	return new tumblr.Tumblr(blogurl, process.env.tumblr_ock)
 
 exports.pushBlogTags = (blog, callback) ->
 	blog.posts (err, data) ->
