@@ -65,11 +65,9 @@
     });
   };
 
-  notifyNewPosts = function(blog, callback) {
-    var onGetTPosts;
-    if (blog == null) {
-      blog = api.getBlog('meavisa.tumblr.com');
-    }
+  notifyNewPosts = function(callback) {
+    var blog, onGetTPosts;
+    blog = api.getBlog('meavisa.tumblr.com');
     onGetTPosts = (function(posts) {
       var onGetUsers;
       onGetUsers = (function(users) {
@@ -122,11 +120,9 @@
     });
   };
 
-  pushNewPosts = function(blog, callback) {
-    var onGetTPosts;
-    if (blog == null) {
-      blog = api.getBlog('meavisa.tumblr.com');
-    }
+  pushNewPosts = function(callback) {
+    var blog, onGetTPosts;
+    blog = api.getBlog('meavisa.tumblr.com');
     onGetTPosts = (function(posts) {
       var onGetDBPosts;
       return onGetDBPosts = (function(dbposts) {
