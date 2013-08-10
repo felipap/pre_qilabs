@@ -43,7 +43,7 @@ getPostsWithTags = (blog, tags, callback) ->
 
 # Notifies users of new posts with the tags that they follow.
 notifyNewPosts = (callback) ->
-	blog = api.getBlog('meavisa.tumblr.com')
+	blog = getBlog('meavisa.tumblr.com')
 	onGetTPosts = ((posts) ->
 		onGetUsers = ((users) ->
 			numUsersNotSaved = users.length
@@ -78,7 +78,7 @@ notifyNewPosts = (callback) ->
 		onGetTPosts(data.posts)
 
 pushNewPosts = (callback) ->
-	blog = api.getBlog('meavisa.tumblr.com')
+	blog = getBlog('meavisa.tumblr.com')
 	onGetTPosts = ((posts) ->
 		onGetDBPosts = ((dbposts) ->
 			postsNotSaved = 0

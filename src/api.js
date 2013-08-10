@@ -67,7 +67,7 @@
 
   notifyNewPosts = function(callback) {
     var blog, onGetTPosts;
-    blog = api.getBlog('meavisa.tumblr.com');
+    blog = getBlog('meavisa.tumblr.com');
     onGetTPosts = (function(posts) {
       var onGetUsers;
       onGetUsers = (function(users) {
@@ -122,7 +122,7 @@
 
   pushNewPosts = function(callback) {
     var blog, onGetTPosts;
-    blog = api.getBlog('meavisa.tumblr.com');
+    blog = getBlog('meavisa.tumblr.com');
     onGetTPosts = (function(posts) {
       var onGetDBPosts;
       return onGetDBPosts = (function(dbposts) {
