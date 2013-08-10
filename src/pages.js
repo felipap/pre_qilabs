@@ -50,6 +50,7 @@
             });
           });
         } else {
+          console.log(req);
           return res.render('index');
         }
       }

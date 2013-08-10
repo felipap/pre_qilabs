@@ -39,7 +39,8 @@ exports.Pages = {
 						posts: posts
 						blog_url: blog_url
 						messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
-			else	
+			else
+				console.log(req)
 				res.render('index')
 
 	tags:

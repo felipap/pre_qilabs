@@ -53,8 +53,31 @@
 		<%- include navbar.ejs %>
 		<div class="container" style="position: relative">
 
-			<div class="row-fluid">
-				<div class="span8">
+			<div class="row">
+				<div class="col-4">
+					<h3>Oi, <%= user.name %>!</h3>
+					<h5>Selecione aqui os assuntos de seu interesse.</h5>
+					<form class="form" action="/update" method="GET">
+						<fieldset>
+						<% tags.forEach(function(tag){ %>
+							<label class="checkbox">
+								<input type="checkbox" name="tag" value="<%=tag%>" 
+									<%= (user.tags.indexOf(tag)!=-1)?("checked"):""%>
+									> <%= tag %>
+								</label>
+						<% }) %>
+						</fieldset>
+						<div>
+							<button class="btn btn-large btn-block btn-primary" type="submit">
+								<strong>Confirmar</strong> as Mudanças
+							</button>
+							<a class="btn btn-large btn-block btn-danger" href="/" type="button">
+								<strong>Cancelar</strong>
+							</a>
+						</div>
+					</form>
+				</div>
+				<div class="col-8">
 					<div class="alert" id="confirmChangesAlert" style="display: none">
 						<button type="button" class="close" data-dismiss="alert">&times;</button>
 						Clique em <strong>Confirmar as Mudanças</strong> para atualizar os posts. 

@@ -26,7 +26,6 @@ onGetPosts = (posts, callback) ->
 				api.sendNotification user.facebookId, msg
 			else
 				console.log "No updates for #{user.name}."
-			
 			user.lastUpdate = new Date()
 			user.save (e) ->
 				numUsersNotSaved -= 1
