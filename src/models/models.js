@@ -33,22 +33,24 @@
   });
 
   PostSchema = new mongoose.Schema({
-    id: {
-      type: Number,
-      tumblrId: {
-        type: String,
-        tags: {
-          type: Array,
-          lastUpdated: {
-            type: Date,
-            "default": Date(0)
-          }
-        }
-      }
+    tumblrId: {
+      type: Number
+    },
+    tags: {
+      type: Array
     },
     urlTemplate: {
       type: String,
       "default": '/{id}'
+    },
+    tumblrUrl: {
+      type: String
+    },
+    tumblrPostType: {
+      type: String
+    },
+    date: {
+      type: Date
     }
   }, {
     id: false

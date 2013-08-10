@@ -11,27 +11,29 @@ User = models.User
 Post = models.Post
 
 onGetPosts = (posts, callback) ->
-	User.find {}, (err, users) ->
-		numUsersNotSaved = users.length
-		for user in users when user.facebookId == process.env.facebook_me
-			tags = _.union.apply null,
-						_.pluck \
-							_.filter(posts, (post) ->
-								return true;
-								new Date(post.date) > new Date(user.lastUpdate)
-						), 'tags'
+	Post.find {}, (err, dbposts) ->
+		if err then callback?(err)
+		postsNotSaved = 0
+		newposts = []
+		for post in posts when not _.findWhere(dbposts, {tumblrId:post.id})
+			++postsNotSaved
+			newposts.push(post)
+			console.log("pushing new post \"#{post.title}\"")
+			Post.create(
+				{tumblrId:post.id
+				tags:post.tags
+				tumblrUrl:post.post_url
+				tumblrPostType:post.type
+				date:post.date},
+				((err, data) ->
+					if err then callback?(err)
+					if --postsNotSaved is 0
+						callback?(null, newposts)
+				)
+			)
+		if newposts.length is 0
+			callback(null, [])
 
-			if tags.length
-				msg = "We have updates on some of the tags you are following: "+tags.slice(0,2).join(', ')+' and more!'
-				console.log(msg)
-				api.sendNotification user.facebookId, msg
-			else
-				console.log "No updates for #{user.name}."
-			user.lastUpdate = new Date()
-			user.save (e) ->
-				numUsersNotSaved -= 1
-				if numUsersNotSaved == 0
-					callback?()
 
 pushNewPosts = (callback) ->
 	# Get blog posts.

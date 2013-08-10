@@ -24,7 +24,7 @@ var passport = require('passport');
 			callbackURL: "/auth/facebook/callback"
 		},
 		function (accessToken, refreshToken, profile, done) {
-			console.log('Connected to profile', profile)
+			// console.log('Connected to profile', profile)
 			User.findOrCreate({ facebookId: profile.id, name: profile.displayName }, function (err, user) {
 				user.accessToken = accessToken;
 				user.save();

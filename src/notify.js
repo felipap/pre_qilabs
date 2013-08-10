@@ -21,7 +21,6 @@
           continue;
         }
         tags = _.union.apply(null, _.pluck(_.filter(posts, function(post) {
-          return true;
           return new Date(post.date) > new Date(user.lastUpdate);
         }), 'tags'));
         if (tags.length) {

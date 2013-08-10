@@ -21,11 +21,12 @@ UserSchema = new mongoose.Schema {
 	}, { id: true } # default
 
 PostSchema = new mongoose.Schema {
-		id:					type: Number,
-		tumblrId:			type: String,
-		tags:				type: Array,
-		lastUpdated:		type: Date,		default: Date(0)
-		urlTemplate:		type: String,	default: '/{id}'
+		tumblrId:			{ type: Number, }
+		tags:				{ type: Array, }
+		urlTemplate:		{ type: String,	default: '/{id}' }
+		tumblrUrl:			{ type: String }
+		tumblrPostType:		{ type: String }
+		date:				{ type: Date }
 	}, { id: false }
 
 # Virtuals

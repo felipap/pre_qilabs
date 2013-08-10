@@ -13,35 +13,45 @@
   Post = models.Post;
 
   onGetPosts = function(posts, callback) {
-    return User.find({}, function(err, users) {
-      var msg, numUsersNotSaved, tags, user, _i, _len, _results;
-      numUsersNotSaved = users.length;
-      _results = [];
-      for (_i = 0, _len = users.length; _i < _len; _i++) {
-        user = users[_i];
-        if (!(user.facebookId === process.env.facebook_me)) {
+    return Post.find({}, function(err, dbposts) {
+      var newposts, post, postsNotSaved, _i, _len;
+      if (err) {
+        if (typeof callback === "function") {
+          callback(err);
+        }
+      }
+      postsNotSaved = 0;
+      newposts = [];
+      for (_i = 0, _len = posts.length; _i < _len; _i++) {
+        post = posts[_i];
+        if (!(!_.findWhere(dbposts, {
+          tumblrId: post.id
+        }))) {
           continue;
         }
-        tags = _.union.apply(null, _.pluck(_.filter(posts, function(post) {
-          return true;
-          return new Date(post.date) > new Date(user.lastUpdate);
-        }), 'tags'));
-        if (tags.length) {
-          msg = "We have updates on some of the tags you are following: " + tags.slice(0, 2).join(', ') + ' and more!';
-          console.log(msg);
-          api.sendNotification(user.facebookId, msg);
-        } else {
-          console.log("No updates for " + user.name + ".");
-        }
-        user.lastUpdate = new Date();
-        _results.push(user.save(function(e) {
-          numUsersNotSaved -= 1;
-          if (numUsersNotSaved === 0) {
-            return typeof callback === "function" ? callback() : void 0;
+        ++postsNotSaved;
+        newposts.push(post);
+        console.log("pushing new post \"" + post.title + "\"");
+        Post.create({
+          tumblrId: post.id,
+          tags: post.tags,
+          tumblrUrl: post.post_url,
+          tumblrPostType: post.type,
+          date: post.date
+        }, (function(err, data) {
+          if (err) {
+            if (typeof callback === "function") {
+              callback(err);
+            }
+          }
+          if (--postsNotSaved === 0) {
+            return typeof callback === "function" ? callback(null, newposts) : void 0;
           }
         }));
       }
-      return _results;
+      if (newposts.length === 0) {
+        return callback(null, []);
+      }
     });
   };
 

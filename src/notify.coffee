@@ -16,7 +16,6 @@ onGetPosts = (posts, callback) ->
 			tags = _.union.apply null,
 						_.pluck \
 							_.filter(posts, (post) ->
-								return true;
 								new Date(post.date) > new Date(user.lastUpdate)
 						), 'tags'
 

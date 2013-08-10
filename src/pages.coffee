@@ -5,42 +5,50 @@ _	= require 'underscore'
 
 api = require './api.js'
 notify = require './notify.js'
+pushPosts = require './pushPosts.js'
 models = require './models/models.js'
 
 User = models.User
+Post = models.Post
+
 blog_url = 'http://meavisa.tumblr.com'
 blog = api.getBlog 'meavisa.tumblr.com'
 tags = []
 posts = []
+tposts = []
 
 api.pushBlogTags(blog,
 	(err, _tags) ->
 		throw err if err
 		tags =  _tags
-		console.log(tags)
 )
 
 # Notice this is updating the global variable.
-getPostsWithTags = (tags, callback) ->
+getTPostsWithTags = (tags, callback) ->
 	api.getPostsWithTags(blog, tags, (err, _posts) ->
 			posts = _posts; # Update global;
 			callback?(err, _posts);
 		)
+
+
+# Notice this is updating the global variable.
+getPost = (callback) ->
+	pushPosts.pushNewPosts (err, data) ->
+		posts = data
 
 exports.Pages = {
 	index:
 		get: (req, res) ->
 			if req.user
 				console.log('logged:', req.user.name, req.user.tags)
-				getPostsWithTags req.user.tags, (err, posts) ->
+				getPostsWithTags req.user.tags, (err, tposts) ->
 					res.render 'panel', 
 						user: req.user
 						tags: tags
-						posts: posts
+						posts: tposts
 						blog_url: blog_url
 						messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
 			else
-				console.log(req)
 				res.render('index')
 
 	tags:
@@ -95,7 +103,8 @@ exports.Pages = {
 			chosen = _.filter(req.query['tag'], (tag) -> tag?)
 
 			if chosen and not _.isEqual(chosen, req.user.tags)
-				api.sendNotification req.user.facebookId, "You are following the tags #{chosen.join(", ")}."
+				# api.sendNotification req.user.facebookId,
+				#	"You are following the tags #{chosen.join(", ")}."
 			
 			# Update tags and save
 			req.user.tags = chosen
@@ -105,13 +114,22 @@ exports.Pages = {
 			getPostsWithTags chosen, (err, posts) ->
 				res.redirect 'back'
 
+	leave:
+		get: (req, res) ->
+			if not req.user then return res.redirect '/'
+			User.remove {id:req.user.id}, (err) ->
+				throw err if err
+				res.end('success')
+
 	dropall:
 		get: (req, res) ->
 			# Require user to be me
-			if req.user.facebookId is process.env.facebook_me
+			if req.user?.facebookId is process.env.facebook_me
 				User.remove {}, (err) ->
-					res.write "collection removed"
-					res.end err
+					res.write "users removed"
+					Post.remove {}, (err) ->
+						res.write "\nposts removed"
+						res.end err
 			else
-				res.end "Cannot POST /dropall"
+				res.redirect "/"
 }

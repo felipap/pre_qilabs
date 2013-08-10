@@ -20,6 +20,7 @@ module.exports = function (app) {
 	app.post('/',	pages.Pages.index.get);
 	app.get('/update',	pages.Pages.update.get);
 	app.get('/logout',	pages.Pages.logout.get);
+	app.get('/leave',	pages.Pages.leave.get);
 	app.get('/tags', pages.Pages.tags.get);
 	app.get('/notify',	pages.Pages.notify.get);
 	app.get('/session',	pages.Pages.session.get);
