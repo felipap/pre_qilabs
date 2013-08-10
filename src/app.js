@@ -2,8 +2,7 @@
 // apps.js
 
 var msgmid = require('./lib/messages.js');
-var models = require('./models/models.js');
-var User = models.User;
+var User = require('./models/user.js');
 
 try {
 	require('./env.js');
@@ -58,10 +57,10 @@ app.use(express.methodOverride()); // support _method (PUT in forms etc)
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(require('./lib/messages.js').message); // addMessageMiddleWare
-app.use('/static', express.static(__dirname + '/public')); // serve static files
+app.use('/static', express.static(__dirname + '/static')); // serve static files
 app.use(app.router);
 app.use(express.csrf());
-app.use('/', express.static(__dirname + '/public')); // serve static files from root (put after router)
+app.use('/', express.static(__dirname + '/static')); // serve static files from root (put after router)
 app.use(express.logger()); // log stuff
 app.engine('html', require('ejs').renderFile); // map .renderFile to ".html" files
 

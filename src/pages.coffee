@@ -4,12 +4,9 @@
 _	= require 'underscore'
 
 api = require './api.js'
-notify = require './notify.js'
-pushPosts = require './pushPosts.js'
-models = require './models/models.js'
 
-User = models.User
-Post = models.Post
+User = require './models/user.js'
+Post = require './models/post.js'
 
 blog_url = 'http://meavisa.tumblr.com'
 blog = api.getBlog 'meavisa.tumblr.com'
@@ -24,7 +21,7 @@ api.pushBlogTags(blog,
 )
 
 # Notice this is updating the global variable.
-getTPostsWithTags = (tags, callback) ->
+getPostsWithTags = (tags, callback) ->
 	api.getPostsWithTags(blog, tags, (err, _posts) ->
 			posts = _posts; # Update global;
 			callback?(err, _posts);
@@ -33,7 +30,7 @@ getTPostsWithTags = (tags, callback) ->
 
 # Notice this is updating the global variable.
 getPost = (callback) ->
-	pushPosts.pushNewPosts (err, data) ->
+	api.pushNewPosts (err, data) ->
 		posts = data
 
 exports.Pages = {
@@ -70,28 +67,26 @@ exports.Pages = {
 			req.logout()
 			res.redirect('/')
 
+	# Returns session and db information.
 	session:
 		get: (req, res) ->
 			if not req.user or req.user.facebookId isnt process.env.facebook_me
 				return res.redirect '/'
 			User.find {}, (err, users) ->
-				obj =
-					ip: req.ip
-					session: req.session
-					users: users
-				res.end(JSON.stringify(obj))
+				Post.find {}, (err, posts) ->
+					obj =
+						ip: req.ip
+						session: req.session
+						users: users
+						posts: posts
+					res.end(JSON.stringify(obj))
 
-	notify:
-		get: (req, res) ->
-			if not req.user or req.user.facebookId isnt process.env.facebook_me
-				return res.redirect '/'
-			notify.notifyNewPosts()
-			res.redirect('/')
-
+	# Get post information. :id
 	post:
 		get: (req, res, id) ->
 			return blog.posts {id:id}, ((err, data) -> res.write(JSON.stringify(data));)
 
+	# Update user tags.
 	update:
 		get: (req, res) ->
 			if not req.user then return res.redirect '/'
@@ -103,6 +98,7 @@ exports.Pages = {
 			chosen = _.filter(req.query['tag'], (tag) -> tag?)
 
 			if chosen and not _.isEqual(chosen, req.user.tags)
+				;
 				# api.sendNotification req.user.facebookId,
 				#	"You are following the tags #{chosen.join(", ")}."
 			
@@ -114,6 +110,7 @@ exports.Pages = {
 			getPostsWithTags chosen, (err, posts) ->
 				res.redirect 'back'
 
+	# Deletes then user account.
 	leave:
 		get: (req, res) ->
 			if not req.user then return res.redirect '/'
@@ -121,6 +118,7 @@ exports.Pages = {
 				throw err if err
 				res.end('success')
 
+	# This is a bomb.
 	dropall:
 		get: (req, res) ->
 			# Require user to be me

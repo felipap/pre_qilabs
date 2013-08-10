@@ -1,9 +1,9 @@
 
-# User and Post models.
+# User models.
 # Reference: https://github.com/madhums/node-express-mongoose-demo
 # Removed from example:
 # - validation of removed fields,
-# - virtual password (which was removed)
+# - virtual password
 
 mongoose = require 'mongoose'
 crypto = require 'crypto'
@@ -20,24 +20,13 @@ UserSchema = new mongoose.Schema {
 		lastUpdate:			{ type: Date, 	default: Date(0) }
 	}, { id: true } # default
 
-PostSchema = new mongoose.Schema {
-		tumblrId:			{ type: Number, }
-		tags:				{ type: Array, }
-		urlTemplate:		{ type: String,	default: '/{id}' }
-		tumblrUrl:			{ type: String }
-		tumblrPostType:		{ type: String }
-		date:				{ type: Date }
-	}, { id: false }
-
 # Virtuals
-PostSchema.virtual('path').get(() ->
-	return @urlTemplate.replace(/{id}/, @id);
-)
+
 
 # Methods
 UserSchema.methods = {}
-PostSchema.methods = {}
 
+# Taken from https://github.com/drudge/mongoose-findorcreate
 findOrCreate = (conditions, doc, options, callback) ->
 	if arguments.length < 4
 		if typeof options is 'function' # Scenario: findOrCreate(conditions, doc, callback)
@@ -67,11 +56,6 @@ findOrCreate = (conditions, doc, options, callback) ->
 				callback(err, obj, true)
 
 
-# Taken from https://github.com/drudge/mongoose-findorcreate
 UserSchema.statics.findOrCreate = findOrCreate
-PostSchema.static.findOrCreate = findOrCreate
 
-module.exports = {
-	User: mongoose.model "User", UserSchema
-	Post: mongoose.model "Post", PostSchema
-}
+module.exports = mongoose.model "User", UserSchema

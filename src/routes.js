@@ -22,7 +22,6 @@ module.exports = function (app) {
 	app.get('/logout',	pages.Pages.logout.get);
 	app.get('/leave',	pages.Pages.leave.get);
 	app.get('/tags', pages.Pages.tags.get);
-	app.get('/notify',	pages.Pages.notify.get);
 	app.get('/session',	pages.Pages.session.get);
 	app.get('/dropall',	pages.Pages.dropall.get);
 	app.get('/post/:id', pages.Pages.post.get);

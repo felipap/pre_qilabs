@@ -7,7 +7,7 @@ _ = require 'underscore'
 
 # Assumes app.js was run (and possibly updated process.env).
 	
-exports.sendNotification = (user_id, template, callback) ->
+sendNotification = (user_id, template, callback) ->
 	access_token = process.env.facebook_access_token
 	url =  "https://graph.facebook.com/#{user_id}/notifications?access_token=#{access_token}&template=#{encodeURIComponent(template)}"
 	request.post url,
@@ -15,10 +15,10 @@ exports.sendNotification = (user_id, template, callback) ->
 			console.log "Notification request to #{url} response:", body, error
 			callback?(error, response, body)
 
-exports.getBlog = (blogurl) ->
+getBlog = (blogurl) ->
 	return new tumblr.Tumblr(blogurl, process.env.tumblr_ock)
 
-exports.pushBlogTags = (blog, callback) ->
+pushBlogTags = (blog, callback) ->
 	blog.posts (err, data) ->
 		if err then return callback?(err, [])
 		tags = []
@@ -29,7 +29,8 @@ exports.pushBlogTags = (blog, callback) ->
 					console.log('pushing found tag: #' + tag)
 		callback?(null, tags)
 
-exports.getPostsWithTags = (blog, tags, callback) ->
+getPostsWithTags = (blog, tags, callback) ->
+	# Get tumblr posts.
 	blog.posts({ limit: -1 }, (err, data) ->
 		if err then return callback?(err)
 		_posts = []
@@ -39,3 +40,82 @@ exports.getPostsWithTags = (blog, tags, callback) ->
 				_posts.push(post)
 		callback?(null, _posts)
 	)
+
+# Notifies users of new posts with the tags that they follow.
+notifyNewPosts = (blog = api.getBlog('meavisa.tumblr.com'), callback) ->
+	onGetTPosts = ((posts) ->
+		onGetUsers = ((users) ->
+			numUsersNotSaved = users.length
+			for user in users when user.facebookId == process.env.facebook_me
+				tags = _.union.apply(null,
+							_.pluck \
+								_.filter(posts, (post) ->
+									return new Date(post.date) >
+										new Date(user.lastUpdate)
+							), 'tags')
+
+				if tags.length
+					msg = "We have updates on some of the tags you are following: "+tags.slice(0,2).join(', ')+' and more!'
+					api.sendNotification user.facebookId, msg
+					console.log("To #{user.name}: #{msg}")
+				else
+					console.log "No updates for #{user.name}."
+				user.lastUpdate = new Date()
+				user.save (e) ->
+					numUsersNotSaved -= 1
+					if numUsersNotSaved == 0
+						callback?()
+		)
+		User.find {}, (err, users) ->
+			if err then callback?(err)
+			onGetUsers(users)
+	)
+
+	# Get tumblr posts.
+	blog.posts { limit: -1 }, (err, data) ->
+		if err then callback?(err)
+		onGetTPosts(data.posts)
+
+pushNewPosts = (blog = api.getBlog('meavisa.tumblr.com'), callback) ->
+	
+	onGetTPosts = ((posts) ->
+		onGetDBPosts = ((dbposts) ->
+			postsNotSaved = 0
+			newposts = []
+			for post in posts when not _.findWhere(dbposts, {tumblrId:post.id})
+				++postsNotSaved
+				newposts.push(post)
+				console.log("pushing new post \"#{post.title}\"")
+				Post.create(
+					{tumblrId:post.id
+					tags:post.tags
+					tumblrUrl:post.post_url
+					tumblrPostType:post.type
+					date:post.date},
+					((err, data) ->
+						if err then callback?(err)
+						if --postsNotSaved is 0
+							callback?(null, newposts)
+					)
+				)
+			if newposts.length is 0
+				console.log('No new posts to push. Quitting.')
+				callback(null, [])
+
+		# Get database posts.
+		Post.find {}, (err, dbposts) ->
+			if err then callback?(err)
+			onGetDBPosts(dbposts)
+		)
+	)
+
+	# Get tumblr posts.
+	blog.posts { limit: -1 }, (err, data) ->
+		if err then callback?(err)
+		onGetTPosts(data.posts)
+
+exports.sendNotification = sendNotification
+exports.getBlog = getBlog
+exports.pushBlogTags = pushBlogTags
+exports.getPostsWithTags = getPostsWithTags
+exports.notifyNewPosts = notifyNewPosts
