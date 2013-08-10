@@ -16,14 +16,16 @@ onGetPosts = (posts, callback) ->
 			tags = _.union.apply null,
 						_.pluck \
 							_.filter(posts, (post) ->
-								# return new Date(post.date) > new Date(user.lastUpdate);
 								return true;
+								new Date(post.date) > new Date(user.lastUpdate)
 						), 'tags'
 
 			if tags.length
-				api.sendNotification user.facebookId, "We have updated on some of the tags you are following: "+tags.join(', ')
+				msg = "We have updates on some of the tags you are following: "+tags.slice(0,2).join(', ')+' and more!'
+				console.log(msg)
+				api.sendNotification user.facebookId, msg
 			else
-				console.log "No updates", tags
+				console.log "No updates for #{user.name}."
 			
 			user.lastUpdate = new Date()
 			user.save (e) ->
@@ -41,7 +43,7 @@ notifyUpdates = (callback) ->
 if module is require.main
 	# If being executed directly...
 	# > load keys
-	try require('./env.js') catch e ;
+	try require('./env.js') catch e
 	# > open database
 	mongoose = require 'mongoose'
 	mongoUri = process.env.MONGOLAB_URI or process.env.MONGOHQ_URL or 'mongodb://localhost/madb'
