@@ -14,7 +14,6 @@ var mongoUri = process.env.MONGOLAB_URI
 
 require('mongoose').connect(mongoUri);
 
-
 var passport = require('passport');
 (function setPassport() {
 	passport.use(new (require('passport-facebook').Strategy)({
@@ -56,7 +55,7 @@ app.use(express.bodyParser()); // parse request bodies (req.body)
 app.use(express.methodOverride()); // support _method (PUT in forms etc)
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(require('./lib/messages.js').message); // addMessageMiddleWare
+// app.use(require('./lib/messages.js').message); // addMessageMiddleWare
 app.use('/static', express.static(__dirname + '/static')); // serve static files
 app.use(app.router);
 app.use(express.csrf());
@@ -64,7 +63,7 @@ app.use('/', express.static(__dirname + '/static')); // serve static files from 
 app.use(express.logger()); // log stuff
 app.engine('html', require('ejs').renderFile); // map .renderFile to ".html" files
 
-msgmid.setUp(app);
+// msgmid.setUp(app);
 
 app.configure('development', function() {
 	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
