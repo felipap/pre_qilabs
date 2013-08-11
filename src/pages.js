@@ -148,6 +148,7 @@
           if (err) {
             throw err;
           }
+          req.logout();
           return res.end('success');
         });
       }

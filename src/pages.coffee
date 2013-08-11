@@ -120,6 +120,7 @@ exports.Pages = {
 			if not req.user then return res.redirect '/'
 			User.remove {id:req.user.id}, (err) ->
 				throw err if err
+				req.logout()
 				res.end('success')
 
 	# This is a bomb.
