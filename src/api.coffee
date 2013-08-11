@@ -5,6 +5,9 @@ tumblr	= require 'tumblr'
 request = require 'request'
 _ = require 'underscore'
 
+User = require './models/user.js'
+Post = require './models/post.js'
+
 # Assumes app.js was run (and possibly updated process.env).
 	
 sendNotification = (user_id, template, callback) ->
