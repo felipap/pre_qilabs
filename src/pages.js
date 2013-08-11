@@ -62,27 +62,17 @@
             });
           });
         } else {
-          return res.render('index');
+          return User.find().sort({
+            '_id': 'descending'
+          }).limit(10).find(function(err, data) {
+            return res.render('index', {
+              latestSignIns: data
+            });
+          });
         }
       },
       post: function(req, res) {
         return res.end('<html><head></head><body><script type="text/javascript">' + 'window.top.location="http://meavisa.herokuapp.com";</script>' + '</body></html>');
-      }
-    },
-    tags: {
-      get: function(req, res) {
-        if (req.user) {
-          console.log('user selecting tags:', req.user, req.user.tags);
-          return res.render('tags', {
-            user: req.user,
-            usertags: req.user.tags,
-            tags: tags,
-            blog_url: blog_url,
-            messages: []
-          });
-        } else {
-          return res.redirect('/');
-        }
       }
     },
     logout: {

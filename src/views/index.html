@@ -32,6 +32,15 @@
 					<h1><strong>MeAvisa</strong> <small>protótipo: versão 0.1.6</small></h1>
 				</div>
 				<p><strong>Quer ficar sabendo das últimas notícias dos vestibulares, olimpíadas escolares e oportunidades de intercâmbio?</strong> Ou até mesmo cursos grátis? Seu lugar é aqui. O MeAvisa é um serviço gratuito de divulgação de oportunidades acadêmicas e extra-curriculares para jovens. <strong>No MeAvisa, a informação que você quer procura você!</strong></p>
+				
+				<% if (locals.latestSignIns) { %>
+					<h4><strong>Últimos usuários cadastrados:</strong></h4>
+					<div>
+						<% for (var i=0; i<latestSignIns.length && i<5; i++) {%>
+							<img title="<%=latestSignIns[i].name%>" src="https://graph.facebook.com/<%=latestSignIns[i].facebookId%>/picture"></img>
+						<% } %>
+					</div>
+				<% } %>
 			</div>
 		</div>
 		

@@ -48,24 +48,19 @@ exports.Pages = {
 						blog_url: blog_url
 						messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
 			else
-				res.render('index')
+				User.find()
+					.sort({'_id': 'descending'})
+					.limit(10)
+					.find((err, data) ->
+						res.render 'index',
+							latestSignIns: data
+						)
+
 		post: (req, res) ->
+
 			res.end('<html><head></head><body><script type="text/javascript">'+
 					'window.top.location="http://meavisa.herokuapp.com";</script>'+
 					'</body></html>')
-
-	tags:
-		get: (req, res) ->
-			if req.user
-				console.log('user selecting tags:', req.user, req.user.tags)
-				res.render 'tags',
-					user: req.user
-					usertags: req.user.tags
-					tags: tags
-					blog_url: blog_url
-					messages: []
-			else
-				res.redirect('/')
 
 	logout:
 		get: (req, res) ->
