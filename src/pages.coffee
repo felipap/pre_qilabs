@@ -47,6 +47,10 @@ exports.Pages = {
 						messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
 			else
 				res.render('index')
+		post: (req, res) ->
+			res.end('<html><head></head><body><script type="text/javascript">'+
+					'window.top.location="http://meavisa.herokuapp.com";</script>'+
+					'</body></html>')
 
 	tags:
 		get: (req, res) ->

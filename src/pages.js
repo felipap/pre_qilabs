@@ -57,6 +57,9 @@
         } else {
           return res.render('index');
         }
+      },
+      post: function(req, res) {
+        return res.end('<html><head></head><body><script type="text/javascript">' + 'window.top.location="http://meavisa.herokuapp.com";</script>' + '</body></html>');
       }
     },
     tags: {
