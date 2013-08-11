@@ -79,9 +79,6 @@
         _results = [];
         for (_i = 0, _len = users.length; _i < _len; _i++) {
           user = users[_i];
-          if (!(user.facebookId === process.env.facebook_me)) {
-            continue;
-          }
           tags = _.union.apply(null, _.pluck(_.filter(posts, function(post) {
             return new Date(post.date) > new Date(user.lastUpdate);
           }), 'tags'));
