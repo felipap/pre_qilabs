@@ -41,7 +41,6 @@
           tag = _ref1[_j];
           if (tags.indexOf(tag) === -1) {
             tags.push(tag);
-            console.log('pushing found tag: #' + tag);
           }
         }
       }

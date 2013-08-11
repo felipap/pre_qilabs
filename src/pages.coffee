@@ -18,6 +18,8 @@ api.pushBlogTags(blog,
 	(err, _tags) ->
 		throw err if err
 		tags =  _tags
+		for tag in _tags
+			console.log('pushing found tag: #' + tag)
 )
 
 # Notice this is updating the global variable.
@@ -118,10 +120,10 @@ exports.Pages = {
 	leave:
 		get: (req, res) ->
 			if not req.user then return res.redirect '/'
-			User.remove {id:req.user.id}, (err) ->
-				throw err if err
+			req.user.remove (err, data) ->
+				if err then throw err
 				req.logout()
-				res.end('success')
+				res.redirect('/')
 
 	# This is a bomb.
 	dropall:

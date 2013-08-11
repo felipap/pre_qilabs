@@ -3,7 +3,7 @@
 
 var msgmid = require('./lib/messages.js');
 var User = require('./models/user.js');
-
+var api = require('./api.js');
 try {
 	require('./env.js');
 } catch (e) {}
@@ -13,8 +13,14 @@ var mongoUri = process.env.MONGOLAB_URI
 	|| 'mongodb://localhost/madb';
 
 require('mongoose').connect(mongoUri);
-
 var passport = require('passport');
+
+var tags;
+api.pushBlogTags(api.getBlog('meavisa.tumblr.com'), function (err, _tags) {
+	if (err) throw err;
+	tags =  _tags
+});
+
 (function setPassport() {
 	passport.use(new (require('passport-facebook').Strategy)({
 			clientID: process.env.facebook_app_id,
@@ -23,12 +29,26 @@ var passport = require('passport');
 		},
 		function (accessToken, refreshToken, profile, done) {
 			// console.log('Connected to profile', profile)
-			User.findOrCreate({ facebookId: profile.id, name: profile.displayName }, function (err, user) {
-				user.accessToken = accessToken;
-				user.save();
-				if (err) { return done(err); }
+			User.findOne({ facebookId: profile.id }, function (err, user) {
+				if (err)
+				 	return done(err);
+				if (user) { // old user
+					user.accessToken = accessToken;
+					user.name = profile.displayName;
+					user.save();
 					done(null, user);
-				});
+				} else { // new user
+					console.log('new user: ', profile.displayName)
+					User.create({
+							facebookId: profile.id,
+							name: profile.displayName,
+							tags: tags,
+						}, function (err, user) {
+							if (err) done(err);
+							done(null, user);
+						});
+				}
+			})
 		}
 	));
 

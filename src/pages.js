@@ -21,10 +21,17 @@
   tposts = [];
 
   api.pushBlogTags(blog, function(err, _tags) {
+    var tag, _i, _len, _results;
     if (err) {
       throw err;
     }
-    return tags = _tags;
+    tags = _tags;
+    _results = [];
+    for (_i = 0, _len = _tags.length; _i < _len; _i++) {
+      tag = _tags[_i];
+      _results.push(console.log('pushing found tag: #' + tag));
+    }
+    return _results;
   });
 
   getPostsWithTags = function(tags, callback) {
@@ -142,14 +149,12 @@
         if (!req.user) {
           return res.redirect('/');
         }
-        return User.remove({
-          id: req.user.id
-        }, function(err) {
+        return req.user.remove(function(err, data) {
           if (err) {
             throw err;
           }
           req.logout();
-          return res.end('success');
+          return res.redirect('/');
         });
       }
     },

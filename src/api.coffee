@@ -29,7 +29,6 @@ pushBlogTags = (blog, callback) ->
 			for tag in post.tags
 				if tags.indexOf(tag) == -1
 					tags.push(tag);
-					console.log('pushing found tag: #' + tag)
 		callback?(null, tags)
 
 getPostsWithTags = (blog, tags, callback) ->
