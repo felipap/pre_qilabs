@@ -16,6 +16,8 @@
 		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.css" rel="stylesheet">
 		<link rel="stylesheet" href="/static/css/main.css">
 
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500' rel='stylesheet' type='text/css'>
+
 		<style>
 
 			.post {
@@ -37,7 +39,7 @@
 
 			.post .body {
 				margin: 20px auto;
-				font: 14px "Open Sans";
+				font: 14px Ubuntu, "Open Sans";
 			}
 
 			body { padding-top: 70px; }
@@ -88,7 +90,7 @@
 						Clique em <strong>Confirmar as Mudanças</strong> para atualizar os posts. 
 					</div>
 					<div class="posts">
-						<h3>Últimas atualizações dessas tags</h3>
+						<h3>Últimas atualizações dos assuntos que você segue...</h3>
 						<% if (!posts.length) { %>
 							<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>
 						<% } %>
@@ -98,7 +100,12 @@
 									<% if (post.title) { %>
 										<h3><a href="<%= post.short_url %>"><%= post.title %></a></h3>
 									<% } %>
-									<small class=""><%= Math.round((new Date-new Date(post.date))/(1000*60*60*24)) %> dias atrás</small>
+									<% var days = Math.round((new Date-new Date(post.date))/(1000*60*60*24)) %>
+									<% if (days === 0) {%>
+										<small class="">Hoje</small>
+									<% } else { %>
+										<small class=""><%= days %> dia<%= days>1?'s':''%> atrás</small>
+									<% } %>
 								</div>
 								<% if (post.type === 'photo') { %>
 									<% post.photos.forEach(function (photo) { %>
