@@ -27,7 +27,7 @@
 		<div class="container">
 
 			<div class="jumbotron">
-				<img class="pull-right" width=450 src="/static/img/logo.jpg" alt="MeAvisa">
+				<img class="pull-right" style="margin: 5px" width=450 src="/static/img/logo.jpg" alt="MeAvisa">
 				<div class="page-header">
 					<h1><strong>MeAvisa</strong> <small>protótipo: versão 0.1.6</small></h1>
 				</div>
@@ -36,7 +36,7 @@
 				<% if (locals.latestSignIns) { %>
 					<h4><strong>Últimos usuários cadastrados:</strong></h4>
 					<div>
-						<% for (var i=0; i<latestSignIns.length && i<5; i++) {%>
+						<% for (var i=0; i<latestSignIns.length && i<20; i++) {%>
 							<img title="<%=latestSignIns[i].name%>" src="https://graph.facebook.com/<%=latestSignIns[i].facebookId%>/picture"></img>
 						<% } %>
 					</div>

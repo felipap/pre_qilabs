@@ -52,6 +52,8 @@
       get: function(req, res) {
         if (req.user) {
           console.log('logged:', req.user.name, req.user.tags);
+          req.user.lastUpdate = new Date();
+          req.user.save();
           return getPostsWithTags(req.user.tags, function(err, tposts) {
             return res.render('panel', {
               user: req.user,
