@@ -74,9 +74,8 @@
     onGetTPosts = (function(posts) {
       var onGetUsers;
       onGetUsers = (function(users) {
-        var msg, numUsersNotSaved, tags, user, _i, _len, _results;
+        var msg, numUsersNotSaved, tags, user, _i, _len;
         numUsersNotSaved = users.length;
-        _results = [];
         for (_i = 0, _len = users.length; _i < _len; _i++) {
           user = users[_i];
           tags = _.union.apply(null, _.pluck(_.filter(posts, function(post) {
@@ -90,14 +89,17 @@
             console.log("No updates for " + user.name + ".");
           }
           user.lastUpdate = new Date();
-          _results.push(user.save(function(e) {
+          user.save(function(e) {
             numUsersNotSaved -= 1;
             if (numUsersNotSaved === 0) {
               return typeof callback === "function" ? callback() : void 0;
             }
-          }));
+          });
         }
-        return _results;
+        if (users.length === 0) {
+          console.log('No users to notify. Quitting.');
+          return callback(null, []);
+        }
       });
       return User.find({}, function(err, users) {
         if (err) {

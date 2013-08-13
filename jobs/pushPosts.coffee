@@ -13,8 +13,8 @@ if module is require.main
 	mongoose.connect(mongoUri)
 	# ready to go
 	api.pushNewPosts ->
-			# Close database at the end.
-			# Otherwise, the script won't close.
-			mongoose.connection.close()
+		# Close database at the end.
+		# Otherwise, the script won't close.
+		mongoose.connection.close()
 else
 	throw "This module is supposed to be executed as a job."

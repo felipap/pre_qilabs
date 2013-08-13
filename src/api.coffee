@@ -67,6 +67,9 @@ notifyNewPosts = (callback) ->
 					numUsersNotSaved -= 1
 					if numUsersNotSaved == 0
 						callback?()
+			if users.length is 0
+				console.log('No users to notify. Quitting.')
+				callback(null, [])
 		)
 		User.find {}, (err, users) ->
 			if err then callback?(err)
