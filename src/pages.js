@@ -121,6 +121,7 @@
           return res.redirect('/');
         }
         chosen = req.body.tags.split(',');
+        console.log(chosen);
         req.user.tags = chosen;
         req.user.save();
         return getPostsWithTags(chosen, function(err, posts) {

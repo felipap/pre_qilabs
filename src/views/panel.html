@@ -203,8 +203,9 @@
 				tags = _.pluck($(this).find('button[data-checked=true]'),'name')
 				$.post('/update', {
 					'tags': tags.join(','),
+				}).success(function() {
+					location.href = '/';
 				})
-				location.reload();
 				event.stopPropagation();
 				event.preventDefault();
 			})

@@ -95,6 +95,7 @@ exports.Pages = {
 			if not req.user then return res.redirect '/'
 
 			chosen = req.body.tags.split(',')
+			console.log(chosen)
 			# Update tags and save
 			req.user.tags = chosen
 			req.user.save()
