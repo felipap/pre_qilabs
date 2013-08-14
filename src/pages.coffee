@@ -91,24 +91,18 @@ exports.Pages = {
 
 	# Update user tags.
 	update:
-		get: (req, res) ->
+		post: (req, res) ->
 			if not req.user then return res.redirect '/'
 
-			# If only one tag is checked, req.query.tag is a string
-			if not req.query['tag'] or typeof req.query['tag'] is 'string'
-				req.query['tag'] = [req.query['tag']]
-
-			chosen = _.filter(req.query['tag'], (tag) -> tag?)
-
-			if chosen and not _.isEqual(chosen, req.user.tags)
-				;
-				# api.sendNotification req.user.facebookId,
-				#	"You are following the tags #{chosen.join(", ")}."
-			
+			chosen = req.body.tags.split(',')
 			# Update tags and save
 			req.user.tags = chosen
 			req.user.save()
 
+			# if chosen and not _.isEqual(chosen, req.user.tags)
+				# api.sendNotification req.user.facebookId,
+				#	"You are following the tags #{chosen.join(", ")}."
+			
 			# Update posts for user
 			getPostsWithTags chosen, (err, posts) ->
 				res.redirect 'back'

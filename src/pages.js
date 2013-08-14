@@ -115,20 +115,12 @@
       }
     },
     update: {
-      get: function(req, res) {
+      post: function(req, res) {
         var chosen;
         if (!req.user) {
           return res.redirect('/');
         }
-        if (!req.query['tag'] || typeof req.query['tag'] === 'string') {
-          req.query['tag'] = [req.query['tag']];
-        }
-        chosen = _.filter(req.query['tag'], function(tag) {
-          return tag != null;
-        });
-        if (chosen && !_.isEqual(chosen, req.user.tags)) {
-
-        }
+        chosen = req.body.tags.split(',');
         req.user.tags = chosen;
         req.user.save();
         return getPostsWithTags(chosen, function(err, posts) {
