@@ -2,7 +2,7 @@
 # notify.coffee
 # This is a job. It botifies users of new posts with the tags they follow.
 
-`api = require('../src/api.js');`
+api = require('../src/api.js')
 
 if module is require.main
 	# If being executed directly...
