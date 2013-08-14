@@ -105,6 +105,8 @@
 							<fieldset>
 							<% tags.forEach(function(tag){ %>
 								<% var checked = user.tags.indexOf(tag)!=-1; %>
+								<div>
+								<div class="btn-group" style="width: 100%">
 								<% if (checked) { %>
 									<button name="<%=tag%>" class="btn tag-btn btn-info tg-btn" data-checked=true>
 										<div class="tg icon-check-sign">
@@ -113,9 +115,14 @@
 										<div class="tg icon-check-empty">
 								<% } %>
 									</div>
-									<%= tag %>
+									#<%= tag %>
+										<!-- <i class="icon-collapse"></i> -->
 									</button>
-								</button>
+									<button onClick="return false" class="btn <%= checked?"btn-info":"btn-default" %>">
+										<i class="icon-collapse"></i>
+									</button>
+								</div>
+								</div>
 							<% }) %>
 							</fieldset>
 							<br>
@@ -215,8 +222,9 @@
 				this.dataset.checked = !(this.dataset.checked==='true');
 				icon.toggleClass('icon-check-empty');
 				icon.toggleClass('icon-check-sign');
-				$(this).toggleClass('btn-default');
-				$(this).toggleClass('btn-info');
+				var btns = $(this.parentElement).find('button');
+				$(btns).toggleClass('btn-default');
+				$(btns).toggleClass('btn-info');
 				event.stopPropagation();
 				event.preventDefault();
 			})
