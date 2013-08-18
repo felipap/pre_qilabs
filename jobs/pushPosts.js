@@ -13,7 +13,7 @@
     mongoose = require('mongoose');
     mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/madb';
     mongoose.connect(mongoUri);
-    api.pushNewPosts(function() {
+    require('../src/api.js').pushNewPosts(function() {
       return mongoose.connection.close();
     });
   } else {
