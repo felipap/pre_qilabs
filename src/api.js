@@ -193,4 +193,6 @@
 
   exports.notifyNewPosts = notifyNewPosts;
 
+  exports.pushNewPosts = pushNewPosts;
+
 }).call(this);

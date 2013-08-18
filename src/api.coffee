@@ -124,3 +124,4 @@ exports.getBlog = getBlog
 exports.pushBlogTags = pushBlogTags
 exports.getPostsWithTags = getPostsWithTags
 exports.notifyNewPosts = notifyNewPosts
+exports.pushNewPosts = pushNewPosts
