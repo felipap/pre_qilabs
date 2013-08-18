@@ -2,6 +2,8 @@
 (function() {
   var api, e, mongoUri, mongoose;
 
+  api = require('../src/api.js');
+
   if (module === require.main) {
     try {
       require('../src/env.js');

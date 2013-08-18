@@ -13,7 +13,7 @@ if module is require.main
 	mongoUri = process.env.MONGOLAB_URI or process.env.MONGOHQ_URL or 'mongodb://localhost/madb'
 	mongoose.connect(mongoUri)
 	# ready to go
-	api.notifyNewPosts ->
+	require('../src/api.js').notifyNewPosts ->
 		# Close database at the end.
 		# Otherwise, the script won't close.
 		mongoose.connection.close()
