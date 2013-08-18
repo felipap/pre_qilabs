@@ -2,8 +2,6 @@
 (function() {
   var api, e, mongoUri, mongoose;
 
-  api = require('../src/api.js');
-
   if (module === require.main) {
     try {
       require('../src/env.js');
@@ -13,7 +11,7 @@
     mongoose = require('mongoose');
     mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/madb';
     mongoose.connect(mongoUri);
-    api.notifyNewPosts(function() {
+    require('../src/api.js').notifyNewPosts(function() {
       return mongoose.connection.close();
     });
   } else {
