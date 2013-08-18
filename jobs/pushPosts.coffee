@@ -2,8 +2,6 @@
 # pushPosts.coffee
 # This is a job. It pushes new posts to the database.
 
-api = require('../src/api.js')
-
 if module is require.main
 	# If being executed directly...
 	# > load keys

@@ -83,7 +83,7 @@
           }), 'tags'));
           if (tags.length) {
             msg = "We have updates on some of the tags you are following: " + tags.slice(0, 2).join(', ') + ' and more!';
-            api.sendNotification(user.facebookId, msg);
+            sendNotification(user.facebookId, msg);
             console.log("To " + user.name + ": " + msg);
           } else {
             console.log("No updates for " + user.name + ".");
