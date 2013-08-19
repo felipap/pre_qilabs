@@ -7,6 +7,7 @@ _ = require 'underscore'
 
 User = require './models/user.js'
 Post = require './models/post.js'
+Tag = require './models/tag.js'
 
 # Assumes app.js was run (and possibly updated process.env).
 	
@@ -24,12 +25,11 @@ getBlog = (blogurl) ->
 pushBlogTags = (blog, callback) ->
 	blog.posts (err, data) ->
 		if err then return callback?(err, [])
-		tags = []
-		for post in data.posts
-			for tag in post.tags
-				if tags.indexOf(tag) == -1
-					tags.push(tag);
-		callback?(null, tags)
+		tags = _.chain(data.posts)
+				.pluck('tags')
+				.reduceRight(((a, b) -> a.concat(b)), [])
+				.value();
+		callback?(null, Tag.recursify(tags))
 
 getPostsWithTags = (blog, tags, callback) ->
 	# Get tumblr posts.

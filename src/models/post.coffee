@@ -58,6 +58,6 @@ findOrCreate = (conditions, doc, options, callback) ->
 				callback(err, obj, true)
 
 
-PostSchema.static.findOrCreate = findOrCreate
+PostSchema.statics.findOrCreate = findOrCreate
 
 module.exports = mongoose.model "Post", PostSchema

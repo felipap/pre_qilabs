@@ -51,7 +51,45 @@ findOrCreate = (conditions, doc, options, callback) ->
 			obj.save (err) ->
 				callback(err, obj, true)
 
+`String.prototype.toCamel = function(){
+	return this.replace(/([a-z]+)/g, function(a){return a[0].toUpperCase()+a.slice(1);});
+};`
 
-TagSchema.static.findOrCreate = findOrCreate
+transTable = {
+	'estagio': 'Estágio',
+	'olimpiadas': 'Olimpíadas',
+	'voluntariado': 'Voluntariado',
+	'bolsasdeestudo': 'Bolsas de Estudo',
+	'matematica': 'Matemática',
+	'cursos': 'Cursos',
+	'intercambio': '',
+}
+
+# Turn a horizontal list of tags into a recursive structure with label and children.
+recursify = (tags) ->
+	# console.log('tags', tags)
+	tagsObj = {label: null, children: {}}
+	for hashtag in tags
+		tagList = hashtag.split(':')
+		parent = tagsObj
+		while tagList.length
+			hashtag = tagList.shift()
+			# if parent.children[hashtag] # tag already there
+			# 	if tagList.length is 0 # tag is repeated
+			# 		break
+			# 	parent = parent.children[hashtag]
+			# else
+			parent = parent.children[hashtag] ?= {label:getLabel(hashtag), children:{}}
+			# console.log('parent is now', '\n\t parent', parent, '\n\t obj', '\n\t', tagsObj)
+
+	# console.log('tagsObj is now', tagsObj)
+	return tagsObj.children
+
+getLabel = (hashtag) ->
+	return transTable[hashtag.toLowerCase()] or hashtag.toCamel()
+
+TagSchema.statics.findOrCreate = findOrCreate
+TagSchema.statics.getLabel = getLabel
+TagSchema.statics.recursify = recursify
 
 module.exports = mongoose.model "Tag", TagSchema

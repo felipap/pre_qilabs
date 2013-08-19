@@ -4,3 +4,5 @@ footer{padding:15px 0;font-size:13px;}
 .tg-btn{width:300px;text-align:left;margin-bottom:5px;}.tg-btn .tg{display:table;display:inline-block;margin-right:5px;}
 .tg-btn .icon-collapse{float:right;margin-top:3px;}
 .btn-reset{background:none;display:inline-block;padding:6px 12px;margin-bottom:0;font-size:14px;font-weight:bold;line-height:1.428571429;text-align:center;white-space:nowrap;vertical-align:middle;cursor:pointer;border:1px solid transparent;border-radius:4px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;-o-user-select:none;user-select:none;}
+.btn-default{color:#333;background-color:#fff;border-color:#ccc;}
+#tags-form .children i{font-size:70%;margin-right:5px;margin-bottom:3px;}

@@ -11,6 +11,8 @@
 		<meta name="viewport" content="width=device-width">
 
 		<script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
+
+		<link rel="stylesheet" href="http://getbootstrap.com/dist/css/bootstrap.css"> 
 		<!-- <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet"> -->
 		<link rel="stylesheet" href="/static/css/bootstrap.min.css">
 		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.0/css/font-awesome.css" rel="stylesheet">
@@ -103,25 +105,41 @@
 						<h5>Selecione aqui os assuntos de seu interesse.</h5>
 						<form id="tags-form" class="form" action="/update" method="POST">
 							<fieldset>
-							<% tags.forEach(function(tag){ %>
-								<% var checked = user.tags.indexOf(tag)!=-1; %>
+							<% for (var tag in tags) if (tags.hasOwnProperty(tag)) { %>
+								<%
+								var label = tags[tag].label;
+								var children = tags[tag].children;
+								%>
 								<div>
+								<% var checked = user.tags.indexOf(tag)!=-1; %>
 								<% if (checked) { %>
-									<button name="<%=tag%>" class="btn tag-btn btn-info tg-btn" data-checked=true>
+									<button name="<%=tags[tag].label%>" class="btn tag-btn btn-info tg-btn" data-checked=true>
 										<div class="tg icon-check-sign">
 								<% } else { %>
-									<button name="<%=tag%>" class="btn tag-btn btn-default tg-btn" data-checked=false>
+									<button name="<%=tags[tag].label%>" class="btn tag-btn btn-default tg-btn" data-checked=false>
 										<div class="tg icon-check-empty">
 								<% } %>
 									</div>
-									#<%= tag %>
+										<%= tags[tag].label %>
 										<!-- <i class="icon-collapse"></i> -->
 									</button>
+									<% if (tags[tag].children != {}) { %>
 									<button onClick="return false" class="btn-reset">
-										<i class="icon-collapse"></i>
+										<i class="icon-angle-down"></i>
 									</button>
+									<% } %>
+									<ul>
+										<div class="children">
+										<% for (var stag in tags[tag].children) if (tags) { %>
+											<button class="btn btn-default">
+												<i class="icon-circle"></i> <%= tags[tag].children[stag].label %></li>
+											</button>
+										<% } %>
+										</div>
+									</ul>
+									<!-- icon-circle icon-circle-blank -->
 								</div>
-							<% }) %>
+							<% } %>
 							</fieldset>
 							<br>
 							<div>
@@ -167,7 +185,8 @@
 								<div>
 									tags:
 									<% post.tags.forEach(function(tag) {%>
-										<a class="label label-success" href="http://<%= post.blog_name %>.tumblr.com/tagged/<%= tag%>">#<%= tag %></a>
+										<a class="label label-success" href="http://<%= post.blog_name %>.tumblr.com/tagged/<%= tag%>">
+											<i class="icon-tag"></i> <%= tag %></a>
 									<% })%>
 								</div>
 

@@ -18,7 +18,7 @@ api.pushBlogTags(blog,
 	(err, _tags) ->
 		throw err if err
 		tags =  _tags
-		for tag in _tags
+		for tag, meta of _tags
 			console.log('pushing found tag: #' + tag)
 )
 
@@ -28,12 +28,6 @@ getPostsWithTags = (tags, callback) ->
 			posts = _posts; # Update global;
 			callback?(err, _posts);
 		)
-
-
-# Notice this is updating the global variable.
-getPost = (callback) ->
-	api.pushNewPosts (err, data) ->
-		posts = data
 
 exports.Pages = {
 	index:
@@ -88,6 +82,11 @@ exports.Pages = {
 	post:
 		get: (req, res, id) ->
 			return blog.posts {id:id}, ((err, data) -> res.write(JSON.stringify(data));)
+
+	# Get tag. :tag
+	tag:
+		get: (req, res, tag) ->
+			res.end('oi', tag)
 
 	# Update user tags.
 	update:

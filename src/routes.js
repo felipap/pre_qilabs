@@ -24,6 +24,7 @@ module.exports = function (app) {
 	app.get('/session',	pages.Pages.session.get);
 	app.get('/dropall',	pages.Pages.dropall.get);
 	app.get('/post/:id',pages.Pages.post.get);
+	app.get('/tags/:tag', pages.Pages.tag.get);
 
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));
