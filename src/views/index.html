@@ -24,7 +24,7 @@
 		<![endif]-->
 		<script>if(window!=window.top){top.location="http://meavisa.herokuapp.com";}</script>
 
-		<%- include navbar.ejs %>
+		{% include "navbar.ejs" %}
 		<div class="container">
 
 			<div class="jumbotron">
@@ -34,21 +34,22 @@
 				</div>
 				<p><strong>Quer ficar sabendo das últimas notícias dos vestibulares, olimpíadas escolares e oportunidades de intercâmbio?</strong> Ou até mesmo cursos grátis? Seu lugar é aqui. O MeAvisa é um serviço gratuito de divulgação de oportunidades acadêmicas e extra curriculares para jovens. <strong>No MeAvisa, a informação que você quer procura você!</strong></p>
 				
-				<% if (locals.latestSignIns) { %>
+				{% if latestSignIns %}
 					<h4><strong>Últimos usuários cadastrados:</strong></h4>
 					<div>
-						<% for (var i=0; i<latestSignIns.length && i<20; i++) {%>
-							<img title="<%=latestSignIns[i].name%>" src="https://graph.facebook.com/<%=latestSignIns[i].facebookId%>/picture"></img>
-						<% } %>
+						{% for user in latestSignIns %}
+							{% if loop.index < 20 %}
+								<img title="{{user.name}}" src="https://graph.facebook.com/{{user.facebookId}}/picture"></img>
+							{% endif %}
+						{% endfor %}
 					</div>
-				<% } %>
+				{% endif %}
 			</div>
 		</div>
 		
-		<% include footer.ejs %>
+		{% include "footer.ejs" %}
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="/static/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
 
 		<script src="/static/js/vendor/bootstrap.min.js"></script>
 

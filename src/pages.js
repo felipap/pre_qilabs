@@ -62,7 +62,8 @@
             '_id': 'descending'
           }).limit(10).find(function(err, data) {
             return res.render('index', {
-              latestSignIns: data
+              latestSignIns: data,
+              messages: [JSON.stringify(req.session)]
             });
           });
         }

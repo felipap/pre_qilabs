@@ -1,87 +1,50 @@
 
 // apps.js
+// por meavisa.org, @f03lipe
 
-var msgmid = require('./lib/messages.js');
-var User = require('./models/user.js');
-var api = require('./api.js');
-try {
-	require('./env.js');
-} catch (e) {}
+// This is the main script.
+// Set up everything.
 
-var mongoUri = process.env.MONGOLAB_URI
+// Attempt to import environment keys (if on production)
+try { require('./env.js') } catch (e) {}
+
+// Connect to mongoose database (taken from Heroku)
+require('mongoose').connect(
+	process.env.MONGOLAB_URI
 	|| process.env.MONGOHQ_URL
-	|| 'mongodb://localhost/madb';
+	|| 'mongodb://localhost/madb');
 
-require('mongoose').connect(mongoUri);
+
+// require('./config/messages.js')();
+require('./config/passport.js')();
+require('./config/swig.js')();
+
 var passport = require('passport');
 
-var tags;
-api.pushBlogTags(api.getBlog('meavisa.tumblr.com'), function (err, _tags) {
-	if (err) throw err;
-	tags =  _tags
-});
-
-(function setPassport() {
-	passport.use(new (require('passport-facebook').Strategy)({
-			clientID: process.env.facebook_app_id,
-			clientSecret: process.env.facebook_secret,
-			callbackURL: "/auth/facebook/callback"
-		},
-		function (accessToken, refreshToken, profile, done) {
-			// console.log('Connected to profile', profile)
-			User.findOne({ facebookId: profile.id }, function (err, user) {
-				if (err)
-				 	return done(err);
-				if (user) { // old user
-					user.accessToken = accessToken;
-					user.name = profile.displayName;
-					user.save();
-					done(null, user);
-				} else { // new user
-					console.log('new user: ', profile.displayName)
-					User.create({
-							facebookId: profile.id,
-							name: profile.displayName,
-							tags: tags,
-						}, function (err, user) {
-							if (err) done(err);
-							done(null, user);
-						});
-				}
-			})
-		}
-	));
-
-	passport.serializeUser(function (user, done) {
-		return done(null, user._id);
-	});
-
-	passport.deserializeUser(function (id, done) {
-		User.findOne({_id: id}, function (err, user) {
-			return done(err, user);
-		});
-	})
-})();
-
-var express = require('express');
-var app = module.exports = express();
+var express = require('express'),
+	app = module.exports = express();
 
 app.set('view engine', 'html'); // make ".html" the default
 app.set('views', __dirname + '/views'); // set views for error and 404 pages
 app.set("view options", {layout: false}); // disable layout
+// Swig will cache templates for you, but you can disable
+// that and use Express's caching instead, if you like.
+app.set('view cache', false);
+app.engine('html', require('consolidate').swig)
+
 app.use(express.cookieParser()); // support cookies
 app.use(express.session({ secret: process.env.SESSION_SECRET || 'mysecret' })); // support sessions
-app.use(express.bodyParser()); // parse request bodies (req.body)
 app.use(express.methodOverride()); // support _method (PUT in forms etc)
+app.use(express.bodyParser()); // parse request bodies (req.body)
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use(require('./lib/messages.js').message); // addMessageMiddleWare
+app.use(require('./config/messages.js').message);
 app.use('/static', express.static(__dirname + '/static')); // serve static files
 app.use(app.router);
 app.use(express.csrf());
 app.use('/', express.static(__dirname + '/static')); // serve static files from root (put after router)
-app.use(express.logger()); // log stuff
-app.engine('html', require('ejs').renderFile); // map .renderFile to ".html" files
+app.use(express.logger());
+
 
 // msgmid.setUp(app);
 

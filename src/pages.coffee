@@ -50,6 +50,7 @@ exports.Pages = {
 					.find((err, data) ->
 						res.render 'index',
 							latestSignIns: data
+							messages: [JSON.stringify(req.session)]
 						)
 
 		post: (req, res) ->

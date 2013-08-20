@@ -6,7 +6,7 @@
 				<!-- <strong>MeAvisa</strong> -->
 			</a>
 		</div>
-		<% if (locals.user) { %>
+		{% if user %}
 	<!-- 		<ul class="nav navbar-nav">
 				<li name="home"><a href="/">Home</a></li>
 			</ul> -->
@@ -35,12 +35,12 @@
 					<button type="submit" class="btn btn-default">Procurar Assunto</button>
 				</form>
 			</div> -->
-		<% } else {%>		
+		{% else %}
 			<ul class="nav navbar-nav btn-group">
-				<a class="btn btn-success btn-default pull-right navbar-btn" href="/auth/facebook">
+				<a class="btn btn-success pull-right navbar-btn" href="/auth/facebook">
 					Login using <strong>Facebook</strong>
 				</a>
 			</ul>
-		<% } %>
+		{% endif %}
 	</div>
 </nav>

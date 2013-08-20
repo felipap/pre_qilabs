@@ -62,7 +62,7 @@ transTable = {
 	'bolsasdeestudo': 'Bolsas de Estudo',
 	'matematica': 'Matemática',
 	'cursos': 'Cursos',
-	'intercambio': '',
+	'intercambio': 'Intercâmbio',
 }
 
 # Turn a horizontal list of tags into a recursive structure with label and children.

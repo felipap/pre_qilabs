@@ -73,7 +73,7 @@
     'bolsasdeestudo': 'Bolsas de Estudo',
     'matematica': 'Matemática',
     'cursos': 'Cursos',
-    'intercambio': ''
+    'intercambio': 'Intercâmbio'
   };
 
   recursify = function(tags) {
