@@ -1,4 +1,7 @@
 
+// routes.js
+// for meavisa.org, by @f03lipe
+
 var passport = require('passport');
 var pages = require('./pages.js');
 
@@ -23,8 +26,13 @@ module.exports = function (app) {
 	app.get('/leave',	pages.Pages.leave.get);
 	app.get('/session',	pages.Pages.session.get);
 	app.get('/dropall',	pages.Pages.dropall.get);
-	app.get('/post/:id',pages.Pages.post.get);
-	app.get('/tags/:tag', pages.Pages.tag.get);
+	app.get('/post/:id',	pages.Pages.post.get);
+	app.get('/tags/:tag', 	pages.Pages.tag.get);
+
+	app.get('/tags/:tag', 	pages.Tag.get);
+	app.post('/tags/:tag', 	pages.Tag.post);
+	app.put('/tags/:tag', 	pages.Tag.put);
+	app.delete('/tags/:tag', 	pages.Tag.delete);
 
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));

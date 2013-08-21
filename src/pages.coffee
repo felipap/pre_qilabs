@@ -1,5 +1,6 @@
 
 # pages.coffee
+# for meavisa.org, by @f03lipe
 
 _	= require 'underscore'
 
@@ -28,6 +29,13 @@ getPostsWithTags = (tags, callback) ->
 			posts = _posts; # Update global;
 			callback?(err, _posts);
 		)
+
+exports.Tag = {
+	get: (req, res) ->
+	put: (req, res) ->
+	post: (req, res) ->
+	delete: (req, res) ->
+}
 
 exports.Pages = {
 	index:

@@ -1,9 +1,37 @@
 
 @import "macros.less";
 
+html {
+	// font-size: 16px;
+}
+
 body {
+	// font-size: 62.5%;
 	font-family: Arial;
 }
+
+.post {
+	/*border: 1px dashed gray;*/
+	margin-bottom: 10px;
+	padding: 5px 15px;
+	list-style: none;
+	box-shadow: 0 0 5px rgba(0, 0, 0, .4);
+	
+	.title h3 {
+		margin-bottom: 0;
+	}
+
+	.title h3 a {
+		text-decoration: none;
+		/*border-bottom: 1px dashed gray ;*/
+	}
+
+	.body {
+		margin: 20px auto;
+		font: 14px Ubuntu, "Open Sans", Arial;
+	}
+}
+
 
 .navbar {
 	.box-shadow(0,0,5px,.5);

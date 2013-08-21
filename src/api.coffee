@@ -1,5 +1,6 @@
 
 # api.coffee
+# for meavisa.org, by @f03lipe
 
 tumblr	= require 'tumblr'
 request = require 'request'

@@ -41,6 +41,13 @@
     });
   };
 
+  exports.Tag = {
+    get: function(req, res) {},
+    put: function(req, res) {},
+    post: function(req, res) {},
+    "delete": function(req, res) {}
+  };
+
   exports.Pages = {
     index: {
       get: function(req, res) {

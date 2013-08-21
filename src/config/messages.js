@@ -1,8 +1,8 @@
 
 // config/messages.js
-// for meavisa.org, @f03lipe
+// for meavisa.org, by @f03lipe
 
-function setUp (app) {
+function start (app) {
 	return app.response.message = function(msg) {
 		var sess;
 		sess = this.req.session;
@@ -28,5 +28,5 @@ function message (req, res, next) {
 	return req.session.messages = [];
 }
 
-module.exports.setUp = setUp
+module.exports.start = start
 module.exports.message = message
