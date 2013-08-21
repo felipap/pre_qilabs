@@ -38,9 +38,7 @@
 					<h4><strong>Últimos usuários cadastrados:</strong></h4>
 					<div>
 						{% for user in latestSignIns %}
-							{% if loop.index < 20 %}
-								<img title="{{user.name}}" src="https://graph.facebook.com/{{user.facebookId}}/picture"></img>
-							{% endif %}
+							<img title="{{user.name}}" src="https://graph.facebook.com/{{user.facebookId}}/picture"></img>
 						{% endfor %}
 					</div>
 				{% endif %}

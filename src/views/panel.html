@@ -163,11 +163,11 @@
 									{% if post.title %}
 										<h3><a href="{{ post.short_url }}">{{ post.title }}</a></h3>
 									{% endif %}
-									{% set days = post.data|daysFromToday %}
+									{% set days = (post.date|daysFromToday) %}
 									{% if days === 0 %}
 										<small class="">Hoje</small>
 									{% else %}
-										<small class="">{{days}} dia{% if days>1 %}{{s}}{% endif %} atrás</small>
+										<small class="">{{days}} dia{% if days>1 %}s{% endif %} atrás</small>
 									{% endif %}
 								</div>
 								{% if post.type === 'photo' %}
