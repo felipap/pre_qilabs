@@ -3,6 +3,7 @@
 // for meavisa.org, @f03lipe
 
 var swig = require('swig');
+var _ = require('underscore');
 
 function setUpSwig() {
 
@@ -13,8 +14,13 @@ function setUpSwig() {
 	swig.setFilter('slice', function (obj, arg) {
 	});
 
+	swig.setFilter('isEmpty', function (obj) {
+		return _.isEmpty(obj)
+	});
+
 	swig.setFilter('in', function (obj, arg) {
-		return obj in arg;
+		console.log(obj, 'in', arg)
+		return (obj in arg) || ((arg instanceof Array) && arg.indexOf(obj) != -1);
 	});
 
 }

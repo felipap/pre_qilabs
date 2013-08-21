@@ -105,7 +105,7 @@
 							<fieldset>
 							{% for tag in tags %}
 								{% set label = tag.label %}
-								{% set checked = 12 %}
+								{% set checked = loop.key|in(user.tags) %}
 								{% set children = tag.children %}
 								<div>
 									<button name="{{loop.key}}"
@@ -120,15 +120,15 @@
 										{{tag.label}}
 										<!-- <i class="icon-collapse"></i> -->
 									</button>
-									{% if tag.children.length %}
+									{% if not tag.children|isEmpty %}
 										<button onClick="return false" class="btn-reset">
 											<i class="icon-angle-down"></i>
 										</button>
 										<ul style="list-style: none">
 											<div class="children">
-											{% for stag in tag.children %}
+											{% for ctag in tag.children %}
 												<button class="btn btn-default">
-													<li><i class="icon-circle"></i> {{stag.label}}</li>
+													<li><i class="icon-circle"></i> {{ctag.label}}</li>
 												</button>
 											{% endfor %}
 											</div>

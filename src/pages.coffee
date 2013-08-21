@@ -19,7 +19,7 @@ api.pushBlogTags(blog,
 		throw err if err
 		tags =  _tags
 		for tag, meta of _tags
-			console.log('pushing found tag: #' + tag)
+			console.log('pushing found tag: #' + tag, _.keys(meta.children))
 )
 
 # Notice this is updating the global variable.

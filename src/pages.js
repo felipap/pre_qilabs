@@ -29,7 +29,7 @@
     _results = [];
     for (tag in _tags) {
       meta = _tags[tag];
-      _results.push(console.log('pushing found tag: #' + tag));
+      _results.push(console.log('pushing found tag: #' + tag, _.keys(meta.children)));
     }
     return _results;
   });
