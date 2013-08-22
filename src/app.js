@@ -36,11 +36,11 @@ app.use(express.bodyParser()); // parse request bodies (req.body)
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(require('./config/messages.js').message);
-// app.use('/static', express.static(__dirname + '/static')); // serve static files
+app.use('/static', express.static(__dirname + '/static')); // serve static files
+app.use(express.logger());
 app.use(app.router);
 app.use(express.csrf());
 app.use('/', express.static(__dirname + '/static')); // serve static files from root (put after router)
-app.use(express.logger());
 
 require('./routes.js')(app);
 

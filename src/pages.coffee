@@ -8,6 +8,7 @@ api = require './api.js'
 
 User = require './models/user.js'
 Post = require './models/post.js'
+Tag  = require './models/tag.js'
 
 blog_url = 'http://meavisa.tumblr.com'
 blog = api.getBlog 'meavisa.tumblr.com'
@@ -30,11 +31,17 @@ getPostsWithTags = (tags, callback) ->
 			callback?(err, _posts);
 		)
 
-exports.Tag = {
+exports.Tags = {
 	get: (req, res) ->
+		console.log('getting', JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
+		res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
+	
 	put: (req, res) ->
+	
 	post: (req, res) ->
+	
 	delete: (req, res) ->
+	
 }
 
 exports.Pages = {

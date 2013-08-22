@@ -12,9 +12,9 @@ authTypes = []
 
 # Schema
 TagSchema = new mongoose.Schema {
-		description:		{ type: String, }
 		name:				{ type: String, }
 		children:			{ type: Array, }
+		description:		{ type: String, }
 	}
 
 # Virtuals
@@ -81,9 +81,24 @@ recursify = (tags) ->
 			# else
 			parent = parent.children[hashtag] ?= {label:getLabel(hashtag), children:{}}
 			# console.log('parent is now', '\n\t parent', parent, '\n\t obj', '\n\t', tagsObj)
-
+	array = []
+	for hashtag, tag of tagsObj.children
+		array.push(_.extend(tag, {hashtag:hashtag}))
 	# console.log('tagsObj is now', tagsObj)
-	return tagsObj.children
+	return array
+
+# Takes as input
+# rtags: a recursive tags object
+# followed: a plain list of tags the user follows.
+# Returns a recursive tags object with attributes checked in each tag
+checkFollowed = (_rtags, followed) ->
+	rtags = _.clone(_rtags)
+	for key, rtag of rtags
+		rtag.checked = if (key in followed) then true else false
+		for ckey, ctag of rtag.children
+			ctag.checked = if ('#{key}:#{ckey}' in followed) then true else false
+	return rtags
+
 
 getLabel = (hashtag) ->
 	return transTable[hashtag.toLowerCase()] or hashtag.toCamel()
@@ -91,5 +106,6 @@ getLabel = (hashtag) ->
 TagSchema.statics.findOrCreate = findOrCreate
 TagSchema.statics.getLabel = getLabel
 TagSchema.statics.recursify = recursify
+TagSchema.statics.checkFollowed = checkFollowed
 
 module.exports = mongoose.model "Tag", TagSchema

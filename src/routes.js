@@ -29,10 +29,10 @@ module.exports = function (app) {
 	app.get('/post/:id',	pages.Pages.post.get);
 	app.get('/tags/:tag', 	pages.Pages.tag.get);
 
-	app.get('/tags/:tag', 	pages.Tag.get);
-	app.post('/tags/:tag', 	pages.Tag.post);
-	app.put('/tags/:tag', 	pages.Tag.put);
-	app.delete('/tags/:tag', 	pages.Tag.delete);
+	app.get('/api/tags', 	pages.Tags.get);
+	app.post('/api/tags/:tag', 	pages.Tags.post);
+	app.put('/api/tags/:tag', 	pages.Tags.put);
+	app.delete('/api/tags/:tag',pages.Tags.delete);
 
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));
