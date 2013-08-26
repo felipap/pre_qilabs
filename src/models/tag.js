@@ -78,8 +78,9 @@
   };
 
   recursify = function(tags) {
-    var array, hashtag, parent, tag, tagList, tagsObj, _base, _i, _len, _ref;
+    var hashtag, obj, parent, tagList, tagsObj, _base, _i, _len, _ref;
     tagsObj = {
+      hashtag: '',
       label: null,
       children: {}
     };
@@ -90,20 +91,23 @@
       while (tagList.length) {
         hashtag = tagList.shift();
         parent = (_base = parent.children)[hashtag] != null ? (_base = parent.children)[hashtag] : _base[hashtag] = {
+          hashtag: parent.hashtag + ':' + hashtag,
           label: getLabel(hashtag),
           children: {}
         };
       }
     }
-    array = [];
     _ref = tagsObj.children;
     for (hashtag in _ref) {
-      tag = _ref[hashtag];
-      array.push(_.extend(tag, {
-        hashtag: hashtag
-      }));
+      obj = _ref[hashtag];
+      obj.children['estagio'] = {
+        "hashtag": hashtag + ":estagio",
+        "label": "Estágio",
+        "children": {},
+        "checked": false
+      };
     }
-    return array;
+    return tagsObj.children;
   };
 
   checkFollowed = function(_rtags, followed) {

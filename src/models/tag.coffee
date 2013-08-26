@@ -66,9 +66,10 @@ transTable = {
 }
 
 # Turn a horizontal list of tags into a recursive structure with label and children.
+# TODO! this implementation looks expensive
 recursify = (tags) ->
 	# console.log('tags', tags)
-	tagsObj = {label: null, children: {}}
+	tagsObj = {hashtag:'', label: null, children: {}}
 	for hashtag in tags
 		tagList = hashtag.split(':')
 		parent = tagsObj
@@ -79,13 +80,14 @@ recursify = (tags) ->
 			# 		break
 			# 	parent = parent.children[hashtag]
 			# else
-			parent = parent.children[hashtag] ?= {label:getLabel(hashtag), children:{}}
+			parent = parent.children[hashtag] ?= {
+				hashtag:parent.hashtag+':'+hashtag, label:getLabel(hashtag), children:{}}
 			# console.log('parent is now', '\n\t parent', parent, '\n\t obj', '\n\t', tagsObj)
-	array = []
-	for hashtag, tag of tagsObj.children
-		array.push(_.extend(tag, {hashtag:hashtag}))
-	# console.log('tagsObj is now', tagsObj)
-	return array
+	
+	for hashtag, obj of tagsObj.children
+		obj.children['estagio'] = {"hashtag":hashtag+":estagio","label":"Estágio","children":{},"checked":false}
+	
+	return tagsObj.children
 
 # Takes as input
 # rtags: a recursive tags object

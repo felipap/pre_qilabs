@@ -1,5 +1,6 @@
 
 @import "macros.less";
+@import "bootstrap.min.css";
 
 html {
 	// font-size: 16px;
@@ -44,6 +45,30 @@ body {
 			.unselectable();
 		}
 		.unselectable();
+	}
+}
+
+#tags {
+
+	li {
+		width: 100%;
+		display: block;
+		.btn-default();
+	}
+
+	li[data-checked=true] {
+		border: 1px solid green;
+	}
+
+	ul {
+		list-style: none;
+	}
+
+	& > ul {
+		width: 300px;
+		& > ul {
+			width: 220px;
+		}
 	}
 }
 

@@ -75,8 +75,7 @@
 					<div data-spy="affix" data-offset-top="0" style="width:350px">
 						<h3>Oi, {{user.name}}!</h3>
 						<h5>Selecione aqui os assuntos de seu interesse.</h5>
-						<form id="tags-form" class="form" action="/update" method="POST">
-							<fieldset>
+						<form id="tags" class="form" action="/update" method="POST">
 							{#
 							{% for tag in tags %}
 								{% set key = loop.key %}
@@ -110,7 +109,6 @@
 								</div>
 							{% endfor %}
 							#}
-							</fieldset>
 							<br>
 							<div>
 								<button class="btn btn-large btn-block btn-primary btn-lg" type="submit">
