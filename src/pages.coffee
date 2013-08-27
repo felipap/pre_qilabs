@@ -58,6 +58,7 @@ exports.Pages = {
 						tags: tags
 						posts: tposts
 						blog_url: blog_url
+						# token: req.session._csrf
 						messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
 			else
 				User.find()

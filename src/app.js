@@ -8,7 +8,6 @@
 // Attempt to import environment keys (if on production)
 try { require('./env.js') } catch (e) {}
 
-
 var mongoose = require('mongoose');
 mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/madb');
 
@@ -35,19 +34,23 @@ app.use('/static', express.static(__dirname + '/static')) // serve static files
 app.use(express.bodyParser()) // parse request bodies (req.body)
 app.use(express.methodOverride()) // support _method (PUT in forms etc)
 app.use(express.cookieParser()) // support cookies
-// app.use(express.session({
-// 	secret: process.env.SESSION_SECRET || 'mysecret',
-// 	maxAge: new Date(Date.now() + 3600000),
-// 	store: 	new (require('connect-mongo')(express))({ mongoose_connection: mongoose.connection })
-// })) // support sessions
-app.use(express.session({secret: process.env.SESSION_SECRET || 'mysecret'}));
+app.use(express.session({
+	secret: process.env.SESSION_SECRET || 'mysecret',
+	maxAge: new Date(Date.now() + 3600000),
+	store: 	new (require('connect-mongo')(express))({ mongoose_connection: mongoose.connection })
+})) // support sessions
+// app.use(express.session({secret: process.env.SESSION_SECRET || 'mysecret'}));
 app.use(express.csrf())
+app.use(function(req, res, next){ res.locals.token = req.session._csrf; next(); });
 // app.use(require('./config/messages.js').message)
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(app.router)
 // app.use('/', express.static(__dirname + '/static')) // serve static files from root (put after router)
 app.use(express.logger())
+
+app.locals.errors = {}
+app.locals.message = {}
 
 require('./routes.js')(app);
 

@@ -6,6 +6,9 @@ var swig = require('swig');
 var _ = require('underscore');
 
 function setUpSwig() {
+	console.log(swig)
+	swig =  new swig.Swig({ cache: false, allowErrors: false, filters: {} })
+	console.log(swig)
 
 	swig.setFilter('daysFromToday', function (obj, arg) {
 		return Math.round((new Date()-new Date(obj))/(1000*60*60*24));
@@ -22,6 +25,7 @@ function setUpSwig() {
 		console.log(obj, 'in', arg)
 		return (obj in arg) || ((arg instanceof Array) && arg.indexOf(obj) != -1);
 	});
+	
 
 }
 

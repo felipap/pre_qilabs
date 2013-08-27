@@ -19,7 +19,7 @@ var TagItem = Backbone.Model.extend({
 		} else {
 			this.set({'checked': 'true'});
 		}
-		this.save({patch: true});
+		this.save(['checked'], {patch:true});
 	},
 
 	loadChildren: function () {
@@ -103,6 +103,22 @@ var TagListView = Backbone.View.extend({
 		}, this);
 	}
 });
+
+// Extend PATCH:true option of Backbone
+var originalSync = Backbone.sync;
+Backbone.sync = function(method, model, options) {
+	if (method === 'patch') {
+		options.type = 'PUT';
+		while (e = options.attrs.pop()) {
+			console.log('e', e)
+			options.attrs[e] = model.get(e)
+		}
+		options.attrs = _.exnted({}, options.attrs)
+		console.log('options', options)
+		
+	}
+	return originalSync(method, model, options);
+};
 
 var tagList = new TagList;
 var tagListView = new TagListView({collection: tagList});

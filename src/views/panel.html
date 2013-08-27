@@ -9,7 +9,6 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width">
 		<meta name="csrf-token" content="{{ token }}">
-		
 		<title>MeAvisa</title>
 
 		<link rel="stylesheet" href="http://getbootstrap.com/dist/css/bootstrap.css"> 
@@ -190,13 +189,13 @@
 		</script>
 
 		<script>
-			$(function(){
-			var tokenValue = $("meta[name='csrf-token']").attr('content');
-
-			$.ajaxSetup({
-			headers: {'X-CSRF-Token': tokenValue}
-			});
-			})
+			(function setCSRFToken () {
+				jQuery.ajaxPrefilter(function(options, _, xhr) {
+				if (!xhr.crossDomain) 
+					xhr.setRequestHeader('X-CSRF-Token',
+						$("meta[name='csrf-token']").attr('content'));
+				});
+			})();
 		</script>
 		
 		<script>

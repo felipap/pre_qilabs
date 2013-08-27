@@ -30,7 +30,7 @@ module.exports = function (app) {
 	app.get('/tags/:tag', 	pages.Pages.tag.get);
 
 	app.get('/api/tags', 	pages.Tags.get);
-	app.post('/api/tags/:tag', 	pages.Tags.post);
+	app.post('/api/tags', 	pages.Tags.post);
 	app.put('/api/tags/:tag', 	pages.Tags.put);
 	app.delete('/api/tags/:tag',pages.Tags.delete);
 
