@@ -21,7 +21,6 @@ function requireMe (req, res, next) {
 module.exports = function (app) {
 	app.get('/', 		pages.Pages.index.get);
 	app.post('/',		pages.Pages.index.post);
-	app.post('/update',	pages.Pages.update.post);
 	app.get('/logout',	pages.Pages.logout.get);
 	app.get('/leave',	pages.Pages.leave.get);
 	app.get('/session',	pages.Pages.session.get);

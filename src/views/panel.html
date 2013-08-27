@@ -76,7 +76,7 @@
 					<div data-spy="affix" data-offset-top="0" style="width:350px">
 						<h3>Oi, {{user.name}}!</h3>
 						<h5>Selecione aqui os assuntos de seu interesse.</h5>
-						<form id="tags" class="form" action="/update" method="POST">
+						<form id="tags" class="form">
 							{#
 							{% for tag in tags %}
 								{% set key = loop.key %}
@@ -171,6 +171,17 @@
 			</div>
 		</div>
 
+		<script id="template-tagview" type="text/template">
+			<button class="btn tag-btn tag btn-default" data-checked= <%= checked %> >
+			<i class="<%=checked?"icon-check-sign":"icon-check-empty"%>"></i>
+				<%= label %>
+			</button>
+			<% if (!_.isEmpty(children)) { %>
+			<button class="btn-reset expand">
+				<i class="icon-angle-down"></i>
+			</button>
+			<% } %>
+		</script>
 		
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<!-- <script>window.jQuery || document.write("<script src='/static/js/vendor/jquery-1.9.1.min.js'><\/script>")</script> -->
@@ -200,28 +211,22 @@
 		
 		<script>
 
-			$("#tags-form").submit(function (evt) {
-				console.log('tags', $(this).serialize())
-				tags = _.pluck($(this).find('button[data-checked=true]'),'name')
-				$.post('/update', {
-					'tags': tags.join(','),
-				}).success(function() {
-					location.href = '/';
-				})
+			$("#tags").submit(function (event) {
 				event.stopPropagation();
 				event.preventDefault();
+				location.href = '/';
 			})
 
 			$('.tag-btn').click(function(evt) {
-				var icon = $(this).find('.tg');
-				this.dataset.checked = !(this.dataset.checked==='true');
-				icon.toggleClass('icon-check-empty');
-				icon.toggleClass('icon-check-sign');
-				var btns = $(this.parentElement).find('button');
-				$(btns).toggleClass('btn-default');
-				$(btns).toggleClass('btn-info');
-				event.stopPropagation();
-				event.preventDefault();
+				// var icon = $(this).find('.tg');
+				// this.dataset.checked = !(this.dataset.checked==='true');
+				// icon.toggleClass('icon-check-empty');
+				// icon.toggleClass('icon-check-sign');
+				// var btns = $(this.parentElement).find('button');
+				// $(btns).toggleClass('btn-default');
+				// $(btns).toggleClass('btn-info');
+				// event.stopPropagation();
+				// event.preventDefault();
 			})
 		</script>
 	</body>

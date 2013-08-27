@@ -31,35 +31,45 @@ var TagItem = Backbone.Model.extend({
 var TagView = Backbone.View.extend({
 
 	tagName: 	'li',
-	className: 	'tag',
 
-	template: _.template(['<button class="btn tag-btn btn-default" data-checked= <%= checked %> >',
-		'<i class="<%=checked?"icon-check-sign":"icon-check-empty"%>"></i>',
-		'<%= label %>',
-		'</button>'].join('')),
+	template: _.template($("#template-tagview").html()),
 	
 	initialize: function () {
 		// this.model.on(change, this.render, this);
+		this.hideChildren = true;
 		this.childrenView = new TagListView({collection: this.model.children, className:'children'});
 	},
 
 	render: function () {
+		// render template
 		this.$el.html(this.template(this.model.toJSON()));
+		// render childrenViews
+		if (this.hideChildren) {
+			this.childrenView.$el.hide();
+		}
 		this.$el.append(this.childrenView.el);
-
 		return this;
 	},
 
 	events: {
-		'click >button': 	'toggleChecked',
+		'click >.tag-btn': 'toggleChecked',
+		'click >.expand':  'tgShowChildren',
 	},
 
 	toggleChecked: function (e) {
 		e.preventDefault();
 		this.model.toggleChecked();
-		this.$('> button > i').toggleClass('icon-check-empty');
-		this.$('> button > i').toggleClass('icon-check-sign');
+		this.$('> .tag-btn > i').toggleClass('icon-check-empty');
+		this.$('> .tag-btn > i').toggleClass('icon-check-sign');
 	},
+
+	tgShowChildren: function (e) {
+		e.preventDefault();
+		this.tgShowChildren = !this.hideChildren;
+		this.$('>.expand i').toggleClass("icon-angle-down");
+		this.$('>.expand i').toggleClass("icon-angle-up");
+		this.childrenView.$el.toggle();
+	}
 });
 
 var TagList = Backbone.Collection.extend({
