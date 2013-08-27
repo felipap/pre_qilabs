@@ -91,7 +91,7 @@
       while (tagList.length) {
         hashtag = tagList.shift();
         parent = (_base = parent.children)[hashtag] != null ? (_base = parent.children)[hashtag] : _base[hashtag] = {
-          hashtag: parent.hashtag + ':' + hashtag,
+          hashtag: parent.hashtag + (!parent.hashtag ? '' : ':') + hashtag,
           label: getLabel(hashtag),
           children: {}
         };
@@ -101,10 +101,9 @@
     for (hashtag in _ref) {
       obj = _ref[hashtag];
       obj.children['estagio'] = {
-        "hashtag": hashtag + ":estagio",
+        hashtag: hashtag + ":estagio",
         "label": "Estágio",
-        "children": {},
-        "checked": false
+        "children": {}
       };
     }
     return tagsObj.children;
@@ -119,7 +118,7 @@
       _ref = rtag.children;
       for (ckey in _ref) {
         ctag = _ref[ckey];
-        ctag.checked = (__indexOf.call(followed, '#{key}:#{ckey}') >= 0) ? true : false;
+        ctag.checked = true;
       }
     }
     return rtags;

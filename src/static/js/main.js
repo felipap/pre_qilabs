@@ -1,7 +1,9 @@
 
 
 var TagItem = Backbone.Model.extend({
-	urlRoot: '/api/tags',
+
+	idAttribute: "hashtag",
+
 	defaults: {
 		children: []
 	},
@@ -17,7 +19,7 @@ var TagItem = Backbone.Model.extend({
 		} else {
 			this.set({'checked': 'true'});
 		}
-		this.save();
+		this.save({patch: true});
 	},
 
 	loadChildren: function () {
@@ -32,28 +34,33 @@ var TagView = Backbone.View.extend({
 	className: 	'tag',
 
 	template: _.template(['<button class="btn tag-btn btn-default" data-checked= <%= checked %> >',
+		'<i class="<%=checked?"icon-check-sign":"icon-check-empty"%>"></i>',
 		'<%= label %>',
 		'</button>'].join('')),
 	
 	initialize: function () {
 		// this.model.on(change, this.render, this);
-		// this.collection.on('add', this.addOne, this);
 		this.childrenView = new TagListView({collection: this.model.children, className:'children'});
-		// console.log('childrenView', this.childrenView)
-		// this.$el.append($("<ul class='children'/>").append(this.childrenView));
 	},
 
 	render: function () {
-		var attributes = this.model.toJSON();
-		console.log("TagView().render called", this)
-
-		this.$el.html(this.template(attributes));
+		this.$el.html(this.template(this.model.toJSON()));
 		this.$el.append(this.childrenView.el);
 
-//		this.childrenView.render();
 		return this;
 	},
 
+	events: {
+		'click >button': 	'toggleChecked',
+	},
+
+	toggleChecked: function (e) {
+		this.model.toggleChecked();
+		this.$('> button > i').toggleClass('icon-check-empty');
+		this.$('> button > i').toggleClass('icon-check-sign');
+
+		e.preventDefault();
+	},
 });
 
 var TagList = Backbone.Collection.extend({

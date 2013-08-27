@@ -49,7 +49,9 @@
       return res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)));
     },
     put: function(req, res) {},
-    post: function(req, res) {},
+    post: function(req, res) {
+      return console.log('putting', req.body);
+    },
     "delete": function(req, res) {}
   };
 

@@ -16,7 +16,9 @@
     "passport-facebook": "0.1.5",
     "request": "2.22.0",
     "swig": "~1.0.0-pre2",
-    "consolidate": "~0.9.1"
+    "consolidate": "~0.9.1",
+    "connect-mongo": "~0.3.3",
+    "connect": "~2.8.5"
   },
   "readmeFilename": "README.md",
   "gitHead": "a9ef3dfea8d0873be9a7d7f78b211a0abc978de6",

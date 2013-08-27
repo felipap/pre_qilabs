@@ -81,13 +81,17 @@ recursify = (tags) ->
 			# 	parent = parent.children[hashtag]
 			# else
 			parent = parent.children[hashtag] ?= {
-				hashtag:parent.hashtag+':'+hashtag, label:getLabel(hashtag), children:{}}
+				hashtag: 	parent.hashtag+(unless parent.hashtag then '' else ':')+hashtag,
+				label:		getLabel(hashtag),
+				children:	{}}
 			# console.log('parent is now', '\n\t parent', parent, '\n\t obj', '\n\t', tagsObj)
 	
 	for hashtag, obj of tagsObj.children
-		obj.children['estagio'] = {"hashtag":hashtag+":estagio","label":"Estágio","children":{},"checked":false}
+		obj.children['estagio'] = {hashtag:hashtag+":estagio", "label":"Estágio","children":{}}
 	
 	return tagsObj.children
+
+#TODO substitute this for multiple levels tags
 
 # Takes as input
 # rtags: a recursive tags object
@@ -98,7 +102,7 @@ checkFollowed = (_rtags, followed) ->
 	for key, rtag of rtags
 		rtag.checked = if (key in followed) then true else false
 		for ckey, ctag of rtag.children
-			ctag.checked = if ('#{key}:#{ckey}' in followed) then true else false
+			ctag.checked = true # if ('#{key}:#{ckey}' in followed) then true else false
 	return rtags
 
 

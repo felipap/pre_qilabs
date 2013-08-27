@@ -39,6 +39,7 @@ exports.Tags = {
 	put: (req, res) ->
 	
 	post: (req, res) ->
+		console.log('putting', req.body)
 	
 	delete: (req, res) ->
 	
