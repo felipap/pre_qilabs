@@ -24,7 +24,7 @@ app.set('views', __dirname + '/views'); // set views for error and 404 pages
 app.set('view options', {layout: false}); // disable layout
 // Swig will cache templates for you, but you can disable
 // that and use Express's caching instead, if you like.
-// app.set('view cache', false);
+app.set('view cache', false);
 app.engine('html', require('consolidate').swig)
 
 app.use(express.static(__dirname + '/static/robots.txt'))
@@ -38,8 +38,7 @@ app.use(express.session({
 	secret: process.env.SESSION_SECRET || 'mysecret',
 	maxAge: new Date(Date.now() + 3600000),
 	store: 	new (require('connect-mongo')(express))({ mongoose_connection: mongoose.connection })
-})) // support sessions
-// app.use(express.session({secret: process.env.SESSION_SECRET || 'mysecret'}));
+})) // support sessions // app.use(express.session({secret: process.env.SESSION_SECRET || 'mysecret'}));
 app.use(express.csrf())
 app.use(function(req, res, next){ res.locals.token = req.session._csrf; next(); });
 // app.use(require('./config/messages.js').message)
