@@ -1,5 +1,8 @@
 
-# User models.
+# models/user.coffee
+# for meavisa.org, by @f03lipe
+
+# User model.
 # Reference: https://github.com/madhums/node-express-mongoose-demo
 # Removed from example:
 # - validation of removed fields,

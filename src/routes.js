@@ -12,10 +12,10 @@ function requireLogged (req, res, next) {
 }
 
 function requireMe (req, res, next) {
-	// Require user to be me.
+	// Require user to be me. :D
 	if (!req.user || req.user.id != process.env.facebook_me)
-		return res.redirect('/')
-	next()
+		return res.redirect('/');
+	next();
 }
 
 module.exports = function (app) {
@@ -30,9 +30,9 @@ module.exports = function (app) {
 	app.get('/tags/:tag', 	pages.Pages.tag.get);
 
 	app.get('/api/tags', 	pages.Tags.get);
-	app.post('/api/tags', 	pages.Tags.post);
+//	app.post('/api/tags', 	pages.Tags.post);		// Users are not supposed to create tags.
 	app.put('/api/tags/:tag', 	pages.Tags.put);
-	app.delete('/api/tags/:tag',pages.Tags.delete);
+//	app.delete('/api/tags/:tag',pages.Tags.delete); // Users are not supposed to delete tags.
 
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));

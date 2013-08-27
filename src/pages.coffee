@@ -31,21 +31,27 @@ getPostsWithTags = (tags, callback) ->
 			callback?(err, _posts);
 		)
 
-exports.Tags = {
+Tags =
 	get: (req, res) ->
+		# Get all tags.
 		console.log('getting', JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
 		res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
 	
 	put: (req, res) ->
-	
-	post: (req, res) ->
-		console.log('putting', req.body)
-	
-	delete: (req, res) ->
-	
-}
+		# Update tag.
+		# All this does is accept a {checked:...} object and update the user
+		# model accordingly.
+		console.log req.params.tag, req.user.tags
+		if req.params.tag in req.user.tags
+			console.log 'did follow'
+			req.user.tags.splice(req.user.tags.indexOf(req.params.tag), 1)
 
-exports.Pages = {
+		else
+			console.log 'didn\'t follow'
+			req.user.tags.push(req.params.tag)
+		req.user.save()
+
+Pages = {
 	index:
 		get: (req, res) ->
 			if req.user
@@ -147,3 +153,7 @@ exports.Pages = {
 			else
 				res.redirect "/"
 }
+
+module.exports =
+	Pages: Pages
+	Tags: Tags

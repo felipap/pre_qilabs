@@ -1,8 +1,8 @@
 
+# models/post.coffee
+# for meavisa.org, by @f03lipe
+
 # Post model.
-# Reference: https://github.com/madhums/node-express-mongoose-demo
-# Removed from example:
-# - validation of removed fields,
 
 mongoose = require 'mongoose'
 crypto = require 'crypto'

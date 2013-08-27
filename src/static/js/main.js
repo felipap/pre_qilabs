@@ -1,12 +1,11 @@
 
+// main.js
+// for meavisa.org, by @f03lipe
 
 var TagItem = Backbone.Model.extend({
 
 	idAttribute: "hashtag",
-
-	defaults: {
-		children: []
-	},
+	defaults: { children: [] },
 
 	initialize: function () {
 		this.children = new TagList;
@@ -30,6 +29,7 @@ var TagItem = Backbone.Model.extend({
 });
 
 var TagView = Backbone.View.extend({
+
 	tagName: 	'li',
 	className: 	'tag',
 
@@ -55,11 +55,10 @@ var TagView = Backbone.View.extend({
 	},
 
 	toggleChecked: function (e) {
+		e.preventDefault();
 		this.model.toggleChecked();
 		this.$('> button > i').toggleClass('icon-check-empty');
 		this.$('> button > i').toggleClass('icon-check-sign');
-
-		e.preventDefault();
 	},
 });
 
@@ -89,14 +88,10 @@ var TagListView = Backbone.View.extend({
 	tagName: "ul",
 	
 	initialize: function () {
-		this.collection.on('reset', this.addAll, this);
-	},
-	
-	render: function () {
-		this.addAll();
+		this.collection.on('reset', this.render, this);
 	},
 
-	addAll: function () {
+	render: function () {
 		this.collection.each(function (tagItem) {
 			var tagView = new TagView({model:tagItem});
 			this.$el.append(tagView.render().el);
@@ -104,18 +99,19 @@ var TagListView = Backbone.View.extend({
 	}
 });
 
-// Extend PATCH:true option of Backbone
+// Extend PATCH:true option of Backbone.
+// When model.save([attrs], {patch:true}) is called:
+// - the method is changed to PUT;
+// - the data sent is a hash with the passed attributes and their values;
 var originalSync = Backbone.sync;
 Backbone.sync = function(method, model, options) {
-	if (method === 'patch') {
+	if (method === 'patch' && options.attrs instanceof Array) {
+		// pop attributes and add their values
+		while (e = options.attrs.pop())
+			options.attrs[e] = model.get(e);
 		options.type = 'PUT';
-		while (e = options.attrs.pop()) {
-			console.log('e', e)
-			options.attrs[e] = model.get(e)
-		}
-		options.attrs = _.exnted({}, options.attrs)
-		console.log('options', options)
-		
+		// turn options.attrs into an Object
+		options.attrs = _.extend({}, options.attrs);
 	}
 	return originalSync(method, model, options);
 };
@@ -127,6 +123,7 @@ tagList.fetch({reset:true});
 tagListView.render();
 console.log(tagList);
 
+// Central functionality for of the app.
 var app = new (Backbone.Router.extend({
 	routes: {
 		"": "index",

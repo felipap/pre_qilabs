@@ -78,7 +78,7 @@
   };
 
   recursify = function(tags) {
-    var hashtag, obj, parent, tagList, tagsObj, _base, _i, _len, _ref;
+    var hashtag, parent, tagList, tagsObj, _base, _i, _len;
     tagsObj = {
       hashtag: '',
       label: null,
@@ -96,15 +96,6 @@
           children: {}
         };
       }
-    }
-    _ref = tagsObj.children;
-    for (hashtag in _ref) {
-      obj = _ref[hashtag];
-      obj.children['estagio'] = {
-        hashtag: hashtag + ":estagio",
-        "label": "Estágio",
-        "children": {}
-      };
     }
     return tagsObj.children;
   };

@@ -1,8 +1,8 @@
 
-# Post model.
-# Reference: https://github.com/madhums/node-express-mongoose-demo
-# Removed from example:
-# - validation of removed fields,
+# models/tag.coffee
+# for meavisa.org, by @f03lipe
+
+# Tag model.
 
 mongoose = require 'mongoose'
 crypto = require 'crypto'
@@ -86,8 +86,8 @@ recursify = (tags) ->
 				children:	{}}
 			# console.log('parent is now', '\n\t parent', parent, '\n\t obj', '\n\t', tagsObj)
 	
-	for hashtag, obj of tagsObj.children
-		obj.children['estagio'] = {hashtag:hashtag+":estagio", "label":"Estágio","children":{}}
+	# for hashtag, obj of tagsObj.children
+	# 	obj.children['estagio'] = {hashtag:hashtag+":estagio", "label":"Estágio","children":{}}
 	
 	return tagsObj.children
 
