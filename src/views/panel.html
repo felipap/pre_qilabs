@@ -19,7 +19,8 @@
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:400,500" type="text/css">
 
 		<script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
-		<script>window._tags={{tags|raw}};window._posts={{posts|raw}};</script>
+		<script>window._tags={{tags|raw}};</script>
+		<script>window._posts={{posts|json|raw}};</script>
 	</head>
 	<body style="padding-top: 70px">
 		<!--[if lt IE 7]>
@@ -80,7 +81,7 @@
 						<form id="tags" class="form">
 							<br>
 							<div>
-								<button class="btn btn-large btn-block btn-info btn-lg" type="submit">
+								<button id="btn-preview" class="btn btn-large btn-block btn-info btn-lg">
 									<strong>Prever</strong> Mudanças
 								</button>
 								<button class="btn btn-large btn-block btn-primary btn-lg" type="submit">
@@ -97,48 +98,12 @@
 				</div>
 				<!-- posts -->
 				<div class="col-8">
+					<h3>Últimas atualizações dos assuntos que você segue...</h3>
 					<div id="posts" class="posts">
-						<h3>Últimas atualizações dos assuntos que você segue...</h3>
 						{% if !posts.length %}
 							<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>
 						{% endif %}
-						{#
-						{% for post in posts %}
-							<li class="post">
-								<div class="title">
-									{% if post.title %}
-										<h3><a href="{{ post.short_url }}">{{ post.title }}</a></h3>
-									{% endif %}
-									{% set days = (post.date|daysFromToday) %}
-									{% if days === 0 %}
-										<small class="">Hoje</small>
-									{% else %}
-										<small class="">{{days}} dia{% if days>1 %}s{% endif %} atrás</small>
-									{% endif %}
-								</div>
-								{% if post.type === 'photo' %}
-									{% for photo in post.photos %}
-										<a href="{{post.short_url}}"><img src="{{photo.alt_sizes[0].url}}" /></a>
-									{% endfor %}
-								{% else %}
-									<div class="body">
-										{% autoescape false %}
-										<p>{{ post.body }}</p>
-										{% endautoescape %}
-									</div>
-								{% endif %}
-								<div>
-									tags:
-									{% for tag in post.tags %}
-										<a class="label label-success" href="http://{{post.blog_name}}.tumblr.com/tagged/{{tag}}">
-											<i class="icon-tag"></i> {{ tag }}</a>
-									{% endfor %}
-								</div>
-							</li>
-						{% endfor %}
-						#}
 						<hr>
-
 					</div>
 				</div>
 			</div>
@@ -179,6 +144,11 @@
 				event.stopPropagation();
 				event.preventDefault();
 				location.href = '/';
+			});
+			$("#btn-preview").click(function (event) {
+				event.stopPropagation();
+				event.preventDefault();
+				window.app.previewPosts();
 			});
 		</script>
 	</body>

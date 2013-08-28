@@ -143,6 +143,13 @@ var Post = (function (window, undefined) {
 	var PostView = Backbone.View.extend({
 		tagName: 'li',
 		// template: _.template($("#template-tagview").html()),
+		initialize: function () {
+			this.model.collection.on('reset', this.destroy, this);
+		},
+		destroy: function () {
+			console.log('Removing me ="(', this);
+			this.remove();
+		},
 		render: function () {
 			TemplateManager.get('/api/posts/template', function (err, tmpl) {
 				this.$el.html(_.template(tmpl, {post: this.model.toJSON()}));
@@ -154,22 +161,30 @@ var Post = (function (window, undefined) {
 	var PostList = Backbone.Collection.extend({
 		model: PostItem,
 		url: '/api/posts',
+		// fetch: function (tags) {
+		// 	Backbone.Model.prototype.fetch.call(this, {reset:true});
+		// }
 	});
 
 	var PostListView = Backbone.View.extend({
 		el: "#posts",
 		_views: [],
+		template: _.template('<% if (!length) { %>\
+			<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>\
+			<% } %>\
+			<hr>'),
 		
 		initialize: function () {
 			this.collection.on('reset', this.addAll, this);
 		},
 
 		addAll: function () {
-			this._views = [];
+			console.log('doing new stuff', this);
+			var views = [];
 			this.collection.each(function(postItem) {
 				this._views.push(new PostView({model:postItem}));
 			}, this);
-			// console.log('reset', this._views)
+			this._views = views;
 			return this.render();
 		},
 
@@ -179,7 +194,7 @@ var Post = (function (window, undefined) {
 			_.each(this._views, function (postView) {
 				container.appendChild(postView.render().el)
 			}, this);
-			// this.$el.empty();
+			this.$el.empty();
 			this.$el.append(container);
 			return this;
 		}
@@ -238,22 +253,37 @@ var app = new (Backbone.Router.extend({
 	
 	start: function () {
 		Backbone.history.start({pushState: false});
-		// var tagList = new TagList;
-		// var tagListView = new TagListView({collection: tagList});
-		var tagList = new Tag.list;
-		var tagListView = new Tag.listView({collection: tagList});
-		$("#tags").prepend(tagListView.$el);
-		// Put this after tagListView.render();
-		tagList.parseAndReset(window._tags);
 
-		postList = new Post.list;
-		postListView = new Post.listView({collection: postList});
-		$("#posts").prepend(postListView.$el);
-		postList.fetch({reset:true});
+		this.tagList = new Tag.list;
+		this.tagListView = new Tag.listView({collection: this.tagList});
+		$("#tags").prepend(this.tagListView.$el);
+		this.tagList.parseAndReset(window._tags);
+
+		this.postList = new Post.list;
+		this.postListView = new Post.listView({collection: this.postList});
+		$("#posts").prepend(this.postListView.$el);
+		this.postList.reset(window._posts);
+	},
+
+	previewPosts: function () {
+		// var checkedTags = tagList.filter(function (tagView))
+		var tags = app.tagList.chain()
+			.map(function rec(t){return [t].concat((t.children.length)?t.children.map(rec):[]) })
+			.flatten()
+			.value();
+		var checkedTags = tags
+			.filter(function(t){return t.get('checked') === true;})
+			.map(function(t){return t.get('hashtag');});
+		console.log(checkedTags)
+		this.postList.fetch({
+			data: {tags: checkedTags.join(',')},
+			processData: true,
+			reset: true
+		})
 	},
 	
 	routes: { "": "index", },
-	index: function () {},
+	index: function () { },
 }));
 
 $(function () {
