@@ -19,6 +19,7 @@
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:400,500" type="text/css">
 
 		<script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
+		<script>window._tags={{tags|raw}};</script>
 	</head>
 	<body style="padding-top: 70px">
 		<!--[if lt IE 7]>
@@ -77,46 +78,16 @@
 						<h3>Oi, {{user.name}}!</h3>
 						<h5>Selecione aqui os assuntos de seu interesse.</h5>
 						<form id="tags" class="form">
-							{#
-							{% for tag in tags %}
-								{% set key = loop.key %}
-								{% set checked = loop.key|in(user.tags) %}
-								<div>
-									<button name="{{key}}"
-									{% if loop.key|in(user.tags) %}
-											class="btn tag-btn btn-info tg-btn" data-checked=true><div class="tg icon-check-sign">
-									{% else %}
-											class="btn tag-btn btn-default tg-btn" data-checked=false><div class="tg icon-check-empty">
-									{% endif %}
-									</div>
-										{{tag.label}}
-										<!-- <i class="icon-collapse"></i> -->
-									</button>
-									{% if not tag.children|isEmpty %}
-										<button onClick="return false" class="btn-reset">
-											<i class="icon-angle-down"></i>
-										</button>
-										<ul style="list-style: none">
-											<div class="children">
-											{% for ctag in tag.children %}
-												<button class="btn btn-default" name="{{tag+":"+loop.key}}">
-													<li><i class="icon-circle"></i> {{ctag.label}}</li>
-												</button>
-											{% endfor %}
-											</div>
-										</ul>
-									{% endif %}
-									<!-- icon-circle icon-circle-blank -->
-								</div>
-							{% endfor %}
-							#}
 							<br>
 							<div>
+								<button class="btn btn-large btn-block btn-info btn-lg" type="submit">
+									<strong>Prever</strong> Mudanças
+								</button>
 								<button class="btn btn-large btn-block btn-primary btn-lg" type="submit">
-									<strong>Confirmar</strong> as Mudanças
+									<strong>Confirmar</strong> Mudanças
 								</button>
 								<a class="btn btn-large btn-block btn-danger btn-lg" href="/" type="button">
-									<strong>Cancelar</strong>
+									<strong>Cancelar</strong> Mudanças
 								</a>
 							</div>
 						</form>
@@ -172,15 +143,7 @@
 		</div>
 
 		<script id="template-tagview" type="text/template">
-			<button class="btn tag-btn tag btn-default" data-checked= <%= checked %> >
-			<i class="<%=checked?"icon-check-sign":"icon-check-empty"%>"></i>
-				<%= label %>
-			</button>
-			<% if (!_.isEmpty(children)) { %>
-			<button class="btn-reset expand">
-				<i class="icon-angle-down"></i>
-			</button>
-			<% } %>
+			add stuff here in the future
 		</script>
 		
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -208,26 +171,13 @@
 				});
 			})();
 		</script>
-		
-		<script>
 
+		<script>
 			$("#tags").submit(function (event) {
 				event.stopPropagation();
 				event.preventDefault();
 				location.href = '/';
-			})
-
-			$('.tag-btn').click(function(evt) {
-				// var icon = $(this).find('.tg');
-				// this.dataset.checked = !(this.dataset.checked==='true');
-				// icon.toggleClass('icon-check-empty');
-				// icon.toggleClass('icon-check-sign');
-				// var btns = $(this.parentElement).find('button');
-				// $(btns).toggleClass('btn-default');
-				// $(btns).toggleClass('btn-info');
-				// event.stopPropagation();
-				// event.preventDefault();
-			})
+			});
 		</script>
 	</body>
 </html>

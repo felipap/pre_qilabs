@@ -51,7 +51,6 @@
     },
     put: function(req, res) {
       var _ref;
-      console.log(req.params.tag, req.user.tags);
       if (_ref = req.params.tag, __indexOf.call(req.user.tags, _ref) >= 0) {
         console.log('did follow');
         req.user.tags.splice(req.user.tags.indexOf(req.params.tag), 1);
@@ -59,7 +58,14 @@
         console.log('didn\'t follow');
         req.user.tags.push(req.params.tag);
       }
-      return req.user.save();
+      req.user.save();
+      return res.end();
+    },
+    template: function(req, res) {
+      res.set({
+        'Content-Type': 'text/plain'
+      });
+      return res.sendfile(__dirname + '/static/template.html');
     }
   };
 
@@ -73,7 +79,7 @@
           return getPostsWithTags(req.user.tags, function(err, tposts) {
             return res.render('panel', {
               user: req.user,
-              tags: tags,
+              tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags)),
               posts: tposts,
               blog_url: blog_url,
               messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
@@ -167,18 +173,27 @@
     },
     dropall: {
       get: function(req, res) {
-        var _ref;
-        if (((_ref = req.user) != null ? _ref.facebookId : void 0) === process.env.facebook_me) {
-          return User.remove({}, function(err) {
-            res.write("users removed");
-            return Post.remove({}, function(err) {
-              res.write("\nposts removed");
-              return res.end(err);
-            });
-          });
-        } else {
-          return res.redirect("/");
-        }
+        var waiting;
+        waiting = 3;
+        console.log('you there');
+        User.remove({}, function(err) {
+          res.write("users removed");
+          if (!--waiting) {
+            return res.end(err);
+          }
+        });
+        Post.remove({}, function(err) {
+          res.write("\nposts removed");
+          if (!--waiting) {
+            return res.end(err);
+          }
+        });
+        return Tag.remove({}, function(err) {
+          res.write("\nposts removed");
+          if (!--waiting) {
+            return res.end(err);
+          }
+        });
       }
     }
   };

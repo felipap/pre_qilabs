@@ -50,35 +50,43 @@ body {
 
 #tags {
 
-	li {
-		.tag {
-			width: 80%;
-			text-align: left;
-		}
-		display: block;
-		.btn-default();
-		text-align: left;
-		margin: 5px 0;
-	}
-
-	i {
-		margin-right: 5px;
-	}
-
-	li[data-checked=true] {
-		border: 1px solid green;
-	}
-
 	ul {
+		padding: 0 0 0 20px;
 		list-style: none;
-	}
+	
+		i {
+			margin-right: 5px;
+		}
+		
+		li {
+			.tag {
+				width: 85%;
+				text-align: left;
+			}
+			display: block;
+			.btn-default();
+			text-align: left;
+			margin: 5px 0;
+	
+			& .tag[data-checked=true] {
+				border: 1px solid green;
+				background: green;
+			}
+			& .tag[data-checked=true] {
+				color: #fff;
+				background-color: #5cb85c;
+				border-color: #4cae4c;
 
-	& > ul {
-		width: 300px;
-		& > ul {
-			width: 220px;
+				&:hover, &:focus, &:active, &.active {
+					color: #ffffff;
+					background-color: #47a447;
+					border-color: #398439;
+				}
+			}
 		}
 	}
+
+
 }
 
 footer {

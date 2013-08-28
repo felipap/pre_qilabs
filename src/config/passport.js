@@ -3,6 +3,7 @@
 // for meavisa.org, @f03lipe
 
 var passport = require('passport');
+
 var User = require('../models/user.js');
 
 function setUpPassport() {
@@ -26,7 +27,7 @@ function setUpPassport() {
 					User.create({
 							facebookId: profile.id,
 							name: profile.displayName,
-							tags: tags,
+							tags: [],
 						}, function (err, user) {
 							if (err) done(err);
 							done(null, user);

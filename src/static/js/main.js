@@ -5,6 +5,7 @@
 var TagItem = Backbone.Model.extend({
 
 	idAttribute: "hashtag",
+
 	defaults: { children: [] },
 
 	initialize: function () {
@@ -12,42 +13,45 @@ var TagItem = Backbone.Model.extend({
 		this.collection.on('reset', this.loadChildren, this);
 	},
 
-	toggleChecked: function () {
-		if (this.get('checked') === 'true') {
-			this.set({'checked': 'false'});
-		} else {
-			this.set({'checked': 'true'});
-		}
-		this.save(['checked'], {patch:true});
+	// The solo interaction of the user with the tags.
+	toggleChecked: function (callback) {
+		var checked = this.get('checked');
+		// Also check for string, just to be safe.
+		if (checked && checked !== 'false')
+			this.set({'checked': false});
+		else
+			this.set({'checked': true});
+		this.save(['checked'], {patch:true, success: callback, error: callback});
 	},
 
+	// Load the content from this.attributes['children'] into this.children
+	// (a TagList). This is essential to allow the nested strategy to work.
 	loadChildren: function () {
-		// console.log('TagItem.loadChildren', this, this.attributes.children)
 		this.children.parseAndReset(this.get('children'));
-		// console.log('hi, loading children', this.children, this.get('children'));
 	},
 });
 
 var TagView = Backbone.View.extend({
 
-	tagName: 	'li',
+	tagName: 'li',
 
-	template: _.template($("#template-tagview").html()),
+	// template: _.template($("#template-tagview").html()),
 	
 	initialize: function () {
-		// this.model.on(change, this.render, this);
 		this.hideChildren = true;
 		this.childrenView = new TagListView({collection: this.model.children, className:'children'});
 	},
 
 	render: function () {
-		// render template
-		this.$el.html(this.template(this.model.toJSON()));
-		// render childrenViews
-		if (this.hideChildren) {
-			this.childrenView.$el.hide();
-		}
-		this.$el.append(this.childrenView.el);
+		console.log('rendering', this.model.toJSON())
+		TemplateManager.get('/api/tags/template', function (err, tmpl) {
+			this.$el.html(_.template(tmpl, this.model.toJSON()));
+			if (this.hideChildren) {
+				this.childrenView.$el.hide();
+			}
+			// render childrenViews
+			this.$el.append(this.childrenView.el);
+		}, this);
 		return this;
 	},
 
@@ -58,14 +62,17 @@ var TagView = Backbone.View.extend({
 
 	toggleChecked: function (e) {
 		e.preventDefault();
-		this.model.toggleChecked();
-		this.$('> .tag-btn > i').toggleClass('icon-check-empty');
-		this.$('> .tag-btn > i').toggleClass('icon-check-sign');
+		var _this = this;
+		this.model.toggleChecked(function (e) {
+			console.log('callbacked :P', arguments)
+			_this.render();
+		});
 	},
 
 	tgShowChildren: function (e) {
 		e.preventDefault();
-		this.tgShowChildren = !this.hideChildren;
+		console.log('clicked')
+		this.hideChildren = !this.hideChildren;
 		this.$('>.expand i').toggleClass("icon-angle-down");
 		this.$('>.expand i').toggleClass("icon-angle-up");
 		this.childrenView.$el.toggle();
@@ -81,7 +88,6 @@ var TagList = Backbone.Collection.extend({
 	},
 
 	parse: function (res) {
-		console.log('res', res);
 		return _.toArray(res);
 	},
 
@@ -98,16 +104,49 @@ var TagListView = Backbone.View.extend({
 	tagName: "ul",
 	
 	initialize: function () {
-		this.collection.on('reset', this.render, this);
+		this.collection.on('reset', this.addAll, this);
+	},
+
+	addAll: function () {
+		this._views = [];
+		this.collection.each(function(tagItem) {
+			this._views.push(new TagView({model:tagItem}));
+		}, this);
+		// console.log('reset', this._views)
+		return this.render();
 	},
 
 	render: function () {
-		this.collection.each(function (tagItem) {
-			var tagView = new TagView({model:tagItem});
-			this.$el.append(tagView.render().el);
+		this.$el.empty();
+		var container = document.createDocumentFragment();
+		// render each tagView
+		_.each(this._views, function (tagView) {
+			container.appendChild(tagView.render().el)
 		}, this);
+		this.$el.append(container);
+		return this;
 	}
 });
+
+// Quick first-attempt at a TemplateManager for the views.
+// Not sure if this is production-quality solution, but for now it'll save
+// me the pain of having to wait for the app to reload everytime the html is
+// changed.
+var TemplateManager = {
+	get: function (url, callback, context) {
+		var template = this.templates[url];
+		if (template)
+			callback.call(context, null, template);
+		else {
+			var that = this;
+			$.get(url, function (tmpl) {
+				that.templates[url] = tmpl;
+				callback.call(context, null, tmpl);
+			})
+		}
+	},
+	templates: {},
+}
 
 // Extend PATCH:true option of Backbone.
 // When model.save([attrs], {patch:true}) is called:
@@ -126,27 +165,24 @@ Backbone.sync = function(method, model, options) {
 	return originalSync(method, model, options);
 };
 
-var tagList = new TagList;
-var tagListView = new TagListView({collection: tagList});
-
-tagList.fetch({reset:true});
-tagListView.render();
-console.log(tagList);
 
 // Central functionality for of the app.
 var app = new (Backbone.Router.extend({
-	routes: {
-		"": "index",
-	},
-	initialize: function () {
-	},
+	
+	initialize: function () { },
+	
 	start: function () {
 		Backbone.history.start({pushState: false});
+		var tagList = new TagList;
+		var tagListView = new TagListView({collection: tagList});
 		$("#tags").prepend(tagListView.el);
+		tagListView.render();
+		// Put this after tagListView.render();
+		tagList.parseAndReset(window._tags);
 	},
-	index: function () {
-		console.log('/: index called');
-	},
+	
+	routes: { "": "index", },
+	index: function () {},
 }));
 
 $(function () {

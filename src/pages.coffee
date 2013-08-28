@@ -41,7 +41,7 @@ Tags =
 		# Update tag.
 		# All this does is accept a {checked:...} object and update the user
 		# model accordingly.
-		console.log req.params.tag, req.user.tags
+		## console.log req.params.tag, req.user.tags
 		if req.params.tag in req.user.tags
 			console.log 'did follow'
 			req.user.tags.splice(req.user.tags.indexOf(req.params.tag), 1)
@@ -50,6 +50,11 @@ Tags =
 			console.log 'didn\'t follow'
 			req.user.tags.push(req.params.tag)
 		req.user.save()
+		res.end()
+
+	template: (req, res) ->
+		res.set({'Content-Type': 'text/plain'});
+		res.sendfile(__dirname+'/static/template.html');
 
 Pages = {
 	index:
@@ -61,7 +66,7 @@ Pages = {
 				getPostsWithTags req.user.tags, (err, tposts) ->
 					res.render 'panel', 
 						user: req.user
-						tags: tags
+						tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
 						posts: tposts
 						blog_url: blog_url
 						# token: req.session._csrf
@@ -77,7 +82,7 @@ Pages = {
 						)
 
 		post: (req, res) ->
-
+			# Redirect from frame inside Facebook?
 			res.end('<html><head></head><body><script type="text/javascript">'+
 					'window.top.location="http://meavisa.herokuapp.com";</script>'+
 					'</body></html>')
@@ -144,14 +149,17 @@ Pages = {
 	dropall:
 		get: (req, res) ->
 			# Require user to be me
-			if req.user?.facebookId is process.env.facebook_me
-				User.remove {}, (err) ->
-					res.write "users removed"
-					Post.remove {}, (err) ->
-						res.write "\nposts removed"
-						res.end err
-			else
-				res.redirect "/"
+			waiting = 3
+			console.log('you there')
+			User.remove {}, (err) ->
+				res.write "users removed"
+				if not --waiting then res.end(err)
+			Post.remove {}, (err) ->
+				res.write "\nposts removed"
+				if not --waiting then res.end(err)
+			Tag.remove {}, (err) ->
+				res.write "\nposts removed"
+				if not --waiting then res.end(err)
 }
 
 module.exports =

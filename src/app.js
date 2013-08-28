@@ -50,6 +50,7 @@ app.use(express.logger())
 
 app.locals.errors = {}
 app.locals.message = {}
+app.locals.tags = {}
 
 require('./routes.js')(app);
 

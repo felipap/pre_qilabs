@@ -1,0 +1,21 @@
+<% if (checked && checked !== 'false') { %>
+	<button class="btn tag-btn tag btn-default" data-checked=true >
+		<i class="icon-check-sign"></i>
+		<%= label %>
+	</button>
+	<% if (!_.isEmpty(children)) { %>
+	<button class="btn-reset expand">
+		<i class="icon-angle-down"></i>
+	</button>
+	<% } %>
+<% } else { %>
+	<button class="btn tag-btn tag btn-default" data-checked=false >
+		<i class="icon-check-empty"></i>
+		<%= label %>
+	</button>
+	<% if (!_.isEmpty(children)) { %>
+		<button class="btn-reset expand">
+			<i class="icon-angle-down"></i>
+		</button>
+	<% } %>
+<% } %>
