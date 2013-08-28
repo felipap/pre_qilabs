@@ -15,13 +15,14 @@ var TagItem = Backbone.Model.extend({
 
 	// The solo interaction of the user with the tags.
 	toggleChecked: function (callback) {
+		callback = callback || function(){};
 		var checked = this.get('checked');
 		// Also check for string, just to be safe.
 		if (checked && checked !== 'false')
 			this.set({'checked': false});
 		else
 			this.set({'checked': true});
-		this.save(['checked'], {patch:true, success: callback, error: callback});
+		this.save(['checked'], {patch:true}); // , success: callback, error: callback});
 	},
 
 	// Load the content from this.attributes['children'] into this.children
@@ -56,22 +57,19 @@ var TagView = Backbone.View.extend({
 	},
 
 	events: {
-		'click >.tag-btn': 'toggleChecked',
+		'click >.tag': 'tgChecked',
 		'click >.expand':  'tgShowChildren',
 	},
 
-	toggleChecked: function (e) {
+	tgChecked: function (e) {
+		console.log('ok')
 		e.preventDefault();
-		var _this = this;
-		this.model.toggleChecked(function (e) {
-			console.log('callbacked :P', arguments)
-			_this.render();
-		});
+		this.model.toggleChecked();
+		this.render();
 	},
 
 	tgShowChildren: function (e) {
 		e.preventDefault();
-		console.log('clicked')
 		this.hideChildren = !this.hideChildren;
 		this.$('>.expand i').toggleClass("icon-angle-down");
 		this.$('>.expand i').toggleClass("icon-angle-up");
@@ -117,12 +115,12 @@ var TagListView = Backbone.View.extend({
 	},
 
 	render: function () {
-		this.$el.empty();
 		var container = document.createDocumentFragment();
 		// render each tagView
 		_.each(this._views, function (tagView) {
 			container.appendChild(tagView.render().el)
 		}, this);
+		// this.$el.empty();
 		this.$el.append(container);
 		return this;
 	}
@@ -175,8 +173,7 @@ var app = new (Backbone.Router.extend({
 		Backbone.history.start({pushState: false});
 		var tagList = new TagList;
 		var tagListView = new TagListView({collection: tagList});
-		$("#tags").prepend(tagListView.el);
-		tagListView.render();
+		$("#tags").prepend(tagListView.$el);
 		// Put this after tagListView.render();
 		tagList.parseAndReset(window._tags);
 	},
