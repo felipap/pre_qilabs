@@ -26,14 +26,13 @@ module.exports = function (app) {
 	app.get('/logout',	requireLogged, pages.Pages.logout.get);
 	app.get('/leave',	requireLogged, pages.Pages.leave.get);
 	
-	app.get('/post/:id',	requireLogged, pages.Pages.post.get);
-	app.get('/tags/:tag', 	requireLogged, pages.Pages.tag.get);
-
 	app.get('/api/dropall',	requireMe, pages.Pages.dropall.get);
 	app.get('/api/session', requireMe, pages.Pages.session.get);
 
 	// Get all tags.
 	app.get('/api/tags', requireLogged, pages.Tags.get);
+	// Update tags with ?checked=[tags,]
+	app.post('/api/tags', requireLogged, pages.Tags.post);
 	// Update tags with {checked:true|false}.
 	app.put('/api/tags/:tag', requireLogged, pages.Tags.put);
 	// Serve the template.

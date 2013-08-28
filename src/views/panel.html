@@ -143,7 +143,9 @@
 			$("#tags").submit(function (event) {
 				event.stopPropagation();
 				event.preventDefault();
-				location.href = '/';
+				window.app.confirmTags(function () {
+					location.href = '/';
+				})
 			});
 			$("#btn-preview").click(function (event) {
 				event.stopPropagation();

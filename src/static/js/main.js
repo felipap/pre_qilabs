@@ -24,7 +24,8 @@ var Tag = (function (window, undefined) {
 				this.set({'checked': false});
 			else
 				this.set({'checked': true});
-			this.save(['checked'], {patch:true}); // , success: callback, error: callback});
+			// .save() through tagsList.save(), right?
+			// this.save(['checked'], {patch:true}); // , success: callback, error: callback});
 		},
 
 		// Load the content from this.attributes['children'] into this.children
@@ -98,6 +99,22 @@ var Tag = (function (window, undefined) {
 		onReset: function() {
 			this.each(function(t){t.loadChildren();});
 		},
+		
+		save: function (callback) {
+			$.post(this.url, {'checked': this.getCheckedTags()}, callback);
+		},
+
+		getChecked: function () {
+			var tags = this.chain()
+				.map(function rec(t){return [t].concat((t.children.length)?t.children.map(rec):[]) })
+				.flatten()
+				.value();
+			return tags.filter(function(t){return t.get('checked') === true;});
+		},
+
+		getCheckedTags: function () {
+			return this.getChecked().map(function(t){return t.get('hashtag');});
+		}
 	});
 
 	var TagListView = Backbone.View.extend({
@@ -161,9 +178,6 @@ var Post = (function (window, undefined) {
 	var PostList = Backbone.Collection.extend({
 		model: PostItem,
 		url: '/api/posts',
-		// fetch: function (tags) {
-		// 	Backbone.Model.prototype.fetch.call(this, {reset:true});
-		// }
 	});
 
 	var PostListView = Backbone.View.extend({
@@ -182,7 +196,7 @@ var Post = (function (window, undefined) {
 			console.log('doing new stuff', this);
 			var views = [];
 			this.collection.each(function(postItem) {
-				this._views.push(new PostView({model:postItem}));
+				views.push(new PostView({model:postItem}));
 			}, this);
 			this._views = views;
 			return this.render();
@@ -266,20 +280,15 @@ var app = new (Backbone.Router.extend({
 	},
 
 	previewPosts: function () {
-		// var checkedTags = tagList.filter(function (tagView))
-		var tags = app.tagList.chain()
-			.map(function rec(t){return [t].concat((t.children.length)?t.children.map(rec):[]) })
-			.flatten()
-			.value();
-		var checkedTags = tags
-			.filter(function(t){return t.get('checked') === true;})
-			.map(function(t){return t.get('hashtag');});
-		console.log(checkedTags)
 		this.postList.fetch({
-			data: {tags: checkedTags.join(',')},
+			data: {tags: app.tagList.getCheckedTags().join(',')},
 			processData: true,
-			reset: true
+			reset: true,
 		})
+	},
+
+	confirmTags: function (callback) {
+		this.tagList.save(callback);
 	},
 	
 	routes: { "": "index", },

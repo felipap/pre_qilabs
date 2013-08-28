@@ -68,7 +68,6 @@ transTable = {
 # Turn a horizontal list of tags into a recursive structure with label and children.
 # TODO! this implementation looks expensive
 recursify = (tags) ->
-	# console.log('tags', tags)
 	tagsObj = {hashtag:'', label: null, children: {}}
 	for hashtag in tags
 		tagList = hashtag.split(':')

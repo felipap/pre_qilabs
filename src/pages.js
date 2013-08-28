@@ -49,13 +49,20 @@
       console.log('getting', JSON.stringify(Tag.checkFollowed(tags, req.user.tags)));
       return res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)));
     },
+    post: function(req, res) {
+      var checked;
+      checked = req.body.checked;
+      req.user.tags = checked;
+      req.user.save();
+      return res.end();
+    },
     put: function(req, res) {
       var _ref;
+      console.log('did follow');
+      console.log('didn\'t follow');
       if (_ref = req.params.tag, __indexOf.call(req.user.tags, _ref) >= 0) {
-        console.log('did follow');
         req.user.tags.splice(req.user.tags.indexOf(req.params.tag), 1);
       } else {
-        console.log('didn\'t follow');
         req.user.tags.push(req.params.tag);
       }
       req.user.save();
@@ -128,6 +135,48 @@
         return res.redirect('/');
       }
     },
+    leave: {
+      get: function(req, res) {
+        return req.user.remove(function(err, data) {
+          if (err) {
+            throw err;
+          }
+          req.logout();
+          return res.redirect('/');
+        });
+      }
+    },
+    dropall: {
+      get: function(req, res) {
+        var waiting;
+        waiting = 3;
+        console.log('you there');
+        User.remove({
+          id: 'a'
+        }, function(err) {
+          res.write("users removed");
+          if (!--waiting) {
+            return res.end(err);
+          }
+        });
+        Post.remove({
+          id: 'a'
+        }, function(err) {
+          res.write("\nposts removed");
+          if (!--waiting) {
+            return res.end(err);
+          }
+        });
+        return Tag.remove({
+          id: 'a'
+        }, function(err) {
+          res.write("\nposts removed");
+          if (!--waiting) {
+            return res.end(err);
+          }
+        });
+      }
+    },
     session: {
       get: function(req, res) {
         if (!req.user || req.user.facebookId !== process.env.facebook_me) {
@@ -144,74 +193,6 @@
             };
             return res.end(JSON.stringify(obj));
           });
-        });
-      }
-    },
-    post: {
-      get: function(req, res, id) {
-        return blog.posts({
-          id: id
-        }, (function(err, data) {
-          return res.write(JSON.stringify(data));
-        }));
-      }
-    },
-    tag: {
-      get: function(req, res, tag) {
-        return res.end('oi', tag);
-      }
-    },
-    update: {
-      post: function(req, res) {
-        var chosen;
-        if (!req.user) {
-          return res.redirect('/');
-        }
-        chosen = req.body.tags.split(',');
-        console.log(chosen);
-        req.user.tags = chosen;
-        req.user.save();
-        return getPostsWithTags(chosen, function(err, posts) {
-          return res.redirect('back');
-        });
-      }
-    },
-    leave: {
-      get: function(req, res) {
-        if (!req.user) {
-          return res.redirect('/');
-        }
-        return req.user.remove(function(err, data) {
-          if (err) {
-            throw err;
-          }
-          req.logout();
-          return res.redirect('/');
-        });
-      }
-    },
-    dropall: {
-      get: function(req, res) {
-        var waiting;
-        waiting = 3;
-        console.log('you there');
-        User.remove({}, function(err) {
-          res.write("users removed");
-          if (!--waiting) {
-            return res.end(err);
-          }
-        });
-        Post.remove({}, function(err) {
-          res.write("\nposts removed");
-          if (!--waiting) {
-            return res.end(err);
-          }
-        });
-        return Tag.remove({}, function(err) {
-          res.write("\nposts removed");
-          if (!--waiting) {
-            return res.end(err);
-          }
         });
       }
     }

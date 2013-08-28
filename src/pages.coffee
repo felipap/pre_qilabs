@@ -37,18 +37,27 @@ Tags =
 		# Get all tags.
 		console.log('getting', JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
 		res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
-	
+
+	post: (req, res) ->
+		# Update checked tags.
+		# Checks for a ?checked=[tags,] parameter.
+		# Not sure if this is RESTful (who cares?). Certainly we're supposed to
+		# use POST when sending data to /api/posts (and not /api/posts/:post)
+		{checked} = req.body
+		# throw "ERR" if not Tag.isValid(checked)
+		req.user.tags = checked
+		req.user.save()
+		res.end()
+
 	put: (req, res) ->
 		# Update tag.
 		# All this does is accept a {checked:...} object and update the user
 		# model accordingly.
-		## console.log req.params.tag, req.user.tags
+		console.log 'did follow'
+		console.log 'didn\'t follow'
 		if req.params.tag in req.user.tags
-			console.log 'did follow'
 			req.user.tags.splice(req.user.tags.indexOf(req.params.tag), 1)
-
 		else
-			console.log 'didn\'t follow'
 			req.user.tags.push(req.params.tag)
 		req.user.save()
 		res.end()
@@ -101,12 +110,38 @@ Pages = {
 					'window.top.location="http://meavisa.herokuapp.com";</script>'+
 					'</body></html>')
 
+	# hm... logout?
 	logout:
 		get: (req, res) ->
 			if not req.user then return res.redirect '/'
 			req.logout()
 			res.redirect('/')
 
+	# Deletes then user account.
+	leave:
+		get: (req, res) ->
+			req.user.remove (err, data) ->
+				if err then throw err
+				req.logout()
+				res.redirect('/')
+
+	# This is a bomb.
+	dropall:
+		get: (req, res) ->
+			# Require user to be me
+			waiting = 3
+			console.log('you there')
+			User.remove {id:'a'}, (err) ->
+				res.write "users removed"
+				if not --waiting then res.end(err)
+			Post.remove {id:'a'}, (err) ->
+				res.write "\nposts removed"
+				if not --waiting then res.end(err)
+			Tag.remove {id:'a'}, (err) ->
+				res.write "\nposts removed"
+				if not --waiting then res.end(err)
+
+	# This is also a bomb. 
 	# Returns session and db information.
 	session:
 		get: (req, res) ->
@@ -120,60 +155,6 @@ Pages = {
 						users: users
 						posts: posts
 					res.end(JSON.stringify(obj))
-
-	# Get post information. :id
-	post:
-		get: (req, res, id) ->
-			return blog.posts {id:id}, ((err, data) -> res.write(JSON.stringify(data));)
-
-	# Get tag. :tag
-	tag:
-		get: (req, res, tag) ->
-			res.end('oi', tag)
-
-	# Update user tags.
-	update:
-		post: (req, res) ->
-			if not req.user then return res.redirect '/'
-
-			chosen = req.body.tags.split(',')
-			console.log(chosen)
-			# Update tags and save
-			req.user.tags = chosen
-			req.user.save()
-
-			# if chosen and not _.isEqual(chosen, req.user.tags)
-				# api.sendNotification req.user.facebookId,
-				#	"You are following the tags #{chosen.join(", ")}."
-			
-			# Update posts for user
-			getPostsWithTags chosen, (err, posts) ->
-				res.redirect 'back'
-
-	# Deletes then user account.
-	leave:
-		get: (req, res) ->
-			if not req.user then return res.redirect '/'
-			req.user.remove (err, data) ->
-				if err then throw err
-				req.logout()
-				res.redirect('/')
-
-	# This is a bomb.
-	dropall:
-		get: (req, res) ->
-			# Require user to be me
-			waiting = 3
-			console.log('you there')
-			User.remove {}, (err) ->
-				res.write "users removed"
-				if not --waiting then res.end(err)
-			Post.remove {}, (err) ->
-				res.write "\nposts removed"
-				if not --waiting then res.end(err)
-			Tag.remove {}, (err) ->
-				res.write "\nposts removed"
-				if not --waiting then res.end(err)
 }
 
 module.exports =
