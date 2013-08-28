@@ -78,7 +78,7 @@
 					<div data-spy="affix" data-offset-top="0" style="width:350px">
 						<h3>Oi, {{user.name}}!</h3>
 						<h5>Selecione aqui os assuntos de seu interesse.</h5>
-						<form id="tags" class="form">
+						<form id="tags" class="form" onsubmit="return false;">
 							<br>
 							<div>
 								<button id="btn-preview" class="btn btn-large btn-block btn-info btn-lg">
@@ -115,9 +115,9 @@
 		
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<!-- <script>window.jQuery || document.write("<script src='/static/js/vendor/jquery-1.9.1.min.js'><\/script>")</script> -->
-		<script src="/static/js/vendor/bootstrap.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
 		<script src="/static/js/plugins.js"></script>
 		<script src="/static/js/main.js"></script>
@@ -140,7 +140,7 @@
 		</script>
 
 		<script>
-			$("#tags").submit(function (event) {
+			$("#tags [type=submit]").click(function (event) {
 				event.stopPropagation();
 				event.preventDefault();
 				window.app.confirmTags(function () {

@@ -3,19 +3,19 @@
 		<i class="icon-check-sign"></i>
 		<%= tag.label %>
 	</button>
-	<% if (!_.isEmpty(tag.children)) { %>
-	<button class="btn-reset expand">
-		<i class="icon-angle-down"></i>
-	</button>
-	<% } %>
 <% } else { %>
 	<button class="btn btn-default tag tag-btn" data-checked=false >
 		<i class="icon-check-empty"></i>
 		<%= tag.label %>
 	</button>
-	<% if (!_.isEmpty(tag.children)) { %>
-		<button class="btn-reset expand">
-			<i class="icon-angle-down"></i>
-		</button>
-	<% } %>
+<% } %>
+<% if (!_.isEmpty(tag.children)) { %>
+	<button class="btn-reset expand">
+		<i class="icon-angle-down"></i>
+	</button>
+<% } %>
+<% if (true || tag.description) { %>
+	<button class="btn-reset info" style="float: right" title="<i class='icon-tag'></i> <%=tag.hashtag%>" data-content="<%= tag.description %>">
+		<i class="icon-info"></i>
+	</button>
 <% } %>

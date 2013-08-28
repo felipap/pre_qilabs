@@ -8,7 +8,7 @@ var Tag = (function (window, undefined) {
 
 		idAttribute: "hashtag",
 
-		defaults: { children: [] },
+		defaults: { children: [], description: "blábláblá" },
 
 		initialize: function () {
 			this.children = new TagList;
@@ -55,6 +55,12 @@ var Tag = (function (window, undefined) {
 				}
 				// render childrenViews
 				this.$el.append(this.childrenView.el);
+				this.$("> .info").popover({
+					content: this.description,
+					trigger: 'hover',
+					container: 'body',
+					html: true
+				});
 			}, this);
 			return this;
 		},
@@ -77,7 +83,7 @@ var Tag = (function (window, undefined) {
 			this.$('>.expand i').toggleClass("icon-angle-down");
 			this.$('>.expand i').toggleClass("icon-angle-up");
 			this.childrenView.$el.toggle();
-		}
+		},
 	});
 
 	var TagList = Backbone.Collection.extend({
