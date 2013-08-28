@@ -2,129 +2,196 @@
 // main.js
 // for meavisa.org, by @f03lipe
 
-var TagItem = Backbone.Model.extend({
+var Tag = (function (window, undefined) {
 
-	idAttribute: "hashtag",
+	var TagItem = Backbone.Model.extend({
 
-	defaults: { children: [] },
+		idAttribute: "hashtag",
 
-	initialize: function () {
-		this.children = new TagList;
-		this.collection.on('reset', this.loadChildren, this);
-	},
+		defaults: { children: [] },
 
-	// The solo interaction of the user with the tags.
-	toggleChecked: function (callback) {
-		callback = callback || function(){};
-		var checked = this.get('checked');
-		// Also check for string, just to be safe.
-		if (checked && checked !== 'false')
-			this.set({'checked': false});
-		else
-			this.set({'checked': true});
-		this.save(['checked'], {patch:true}); // , success: callback, error: callback});
-	},
+		initialize: function () {
+			this.children = new TagList;
+			this.collection.on('reset', this.loadChildren, this);
+		},
 
-	// Load the content from this.attributes['children'] into this.children
-	// (a TagList). This is essential to allow the nested strategy to work.
-	loadChildren: function () {
-		this.children.parseAndReset(this.get('children'));
-	},
-});
+		// The solo interaction of the user with the tags.
+		toggleChecked: function (callback) {
+			callback = callback || function(){};
+			var checked = this.get('checked');
+			// Also check for string, just to be safe.
+			if (checked && checked !== 'false')
+				this.set({'checked': false});
+			else
+				this.set({'checked': true});
+			this.save(['checked'], {patch:true}); // , success: callback, error: callback});
+		},
 
-var TagView = Backbone.View.extend({
+		// Load the content from this.attributes['children'] into this.children
+		// (a TagList). This is essential to allow the nested strategy to work.
+		loadChildren: function () {
+			this.children.parseAndReset(this.get('children'));
+		},
+	});
 
-	tagName: 'li',
+	var TagView = Backbone.View.extend({
 
-	// template: _.template($("#template-tagview").html()),
-	
-	initialize: function () {
-		this.hideChildren = true;
-		this.childrenView = new TagListView({collection: this.model.children, className:'children'});
-	},
+		tagName: 'li',
 
-	render: function () {
-		console.log('rendering', this.model.toJSON())
-		TemplateManager.get('/api/tags/template', function (err, tmpl) {
-			this.$el.html(_.template(tmpl, this.model.toJSON()));
-			if (this.hideChildren) {
-				this.childrenView.$el.hide();
-			}
-			// render childrenViews
-			this.$el.append(this.childrenView.el);
-		}, this);
-		return this;
-	},
+		// template: _.template($("#template-tagview").html()),
+		
+		initialize: function () {
+			this.hideChildren = true;
+			this.childrenView = new TagListView({collection: this.model.children, className:'children'});
+		},
 
-	events: {
-		'click >.tag': 'tgChecked',
-		'click >.expand':  'tgShowChildren',
-	},
+		render: function () {
+			console.log('rendering', this.model.toJSON())
+			TemplateManager.get('/api/tags/template', function (err, tmpl) {
+				this.$el.html(_.template(tmpl, {tag: this.model.toJSON()}));
+				if (this.hideChildren) {
+					this.childrenView.$el.hide();
+				}
+				// render childrenViews
+				this.$el.append(this.childrenView.el);
+			}, this);
+			return this;
+		},
 
-	tgChecked: function (e) {
-		console.log('ok')
-		e.preventDefault();
-		this.model.toggleChecked();
-		this.render();
-	},
+		events: {
+			'click >.tag': 'tgChecked',
+			'click >.expand':  'tgShowChildren',
+		},
 
-	tgShowChildren: function (e) {
-		e.preventDefault();
-		this.hideChildren = !this.hideChildren;
-		this.$('>.expand i').toggleClass("icon-angle-down");
-		this.$('>.expand i').toggleClass("icon-angle-up");
-		this.childrenView.$el.toggle();
+		tgChecked: function (e) {
+			console.log('ok')
+			e.preventDefault();
+			this.model.toggleChecked();
+			this.render();
+		},
+
+		tgShowChildren: function (e) {
+			e.preventDefault();
+			this.hideChildren = !this.hideChildren;
+			this.$('>.expand i').toggleClass("icon-angle-down");
+			this.$('>.expand i').toggleClass("icon-angle-up");
+			this.childrenView.$el.toggle();
+		}
+	});
+
+	var TagList = Backbone.Collection.extend({
+		model: TagItem,
+		url: '/api/tags',
+		
+		initialize: function () {
+			this.on({'reset': this.onReset});
+		},
+
+		parse: function (res) {
+			return _.toArray(res);
+		},
+
+		parseAndReset: function (object) {
+			this.reset(_.toArray(object));
+		},
+		
+		onReset: function() {
+			this.each(function(t){t.loadChildren();});
+		},
+	});
+
+	var TagListView = Backbone.View.extend({
+		tagName: "ul",
+		_views: [],
+
+		initialize: function () {
+			this.collection.on('reset', this.addAll, this);
+		},
+
+		addAll: function () {
+			this._views = [];
+			this.collection.each(function(tagItem) {
+				this._views.push(new TagView({model:tagItem}));
+			}, this);
+			return this.render();
+		},
+
+		render: function () {
+			var container = document.createDocumentFragment();
+			// render each tagView
+			_.each(this._views, function (tagView) {
+				container.appendChild(tagView.render().el)
+			}, this);
+			this.$el.empty();
+			this.$el.append(container);
+			return this;
+		}
+	});
+
+	return {
+		item: TagItem,
+		list: TagList,
+		view: TagView,
+		listView: TagListView,
 	}
-});
+})(this);
 
-var TagList = Backbone.Collection.extend({
-	model: TagItem,
-	url: '/api/tags',
-	
-	initialize: function () {
-		this.on({'reset': this.onReset});
-	},
+var Post = (function (window, undefined) {
+	var PostItem = Backbone.Model.extend({
+	});
 
-	parse: function (res) {
-		return _.toArray(res);
-	},
+	var PostView = Backbone.View.extend({
+		tagName: 'li',
+		// template: _.template($("#template-tagview").html()),
+		render: function () {
+			TemplateManager.get('/api/posts/template', function (err, tmpl) {
+				this.$el.html(_.template(tmpl, {post: this.model.toJSON()}));
+			}, this);
+			return this;
+		},
+	});
 
-	parseAndReset: function (object) {
-		this.reset(_.toArray(object));
-	},
-	
-	onReset: function() {
-		this.each(function(t){t.loadChildren();});
-	},
-});
+	var PostList = Backbone.Collection.extend({
+		model: PostItem,
+		url: '/api/posts',
+	});
 
-var TagListView = Backbone.View.extend({
-	tagName: "ul",
-	
-	initialize: function () {
-		this.collection.on('reset', this.addAll, this);
-	},
+	var PostListView = Backbone.View.extend({
+		el: "#posts",
+		_views: [],
+		
+		initialize: function () {
+			this.collection.on('reset', this.addAll, this);
+		},
 
-	addAll: function () {
-		this._views = [];
-		this.collection.each(function(tagItem) {
-			this._views.push(new TagView({model:tagItem}));
-		}, this);
-		// console.log('reset', this._views)
-		return this.render();
-	},
+		addAll: function () {
+			this._views = [];
+			this.collection.each(function(postItem) {
+				this._views.push(new PostView({model:postItem}));
+			}, this);
+			// console.log('reset', this._views)
+			return this.render();
+		},
 
-	render: function () {
-		var container = document.createDocumentFragment();
-		// render each tagView
-		_.each(this._views, function (tagView) {
-			container.appendChild(tagView.render().el)
-		}, this);
-		// this.$el.empty();
-		this.$el.append(container);
-		return this;
+		render: function () {
+			var container = document.createDocumentFragment();
+			// render each postView
+			_.each(this._views, function (postView) {
+				container.appendChild(postView.render().el)
+			}, this);
+			// this.$el.empty();
+			this.$el.append(container);
+			return this;
+		}
+	});
+
+	return {
+		item: PostItem,
+		list: PostList,
+		view: PostView,
+		listView: PostListView,
 	}
-});
+})(this);
 
 // Quick first-attempt at a TemplateManager for the views.
 // Not sure if this is production-quality solution, but for now it'll save
@@ -171,11 +238,18 @@ var app = new (Backbone.Router.extend({
 	
 	start: function () {
 		Backbone.history.start({pushState: false});
-		var tagList = new TagList;
-		var tagListView = new TagListView({collection: tagList});
+		// var tagList = new TagList;
+		// var tagListView = new TagListView({collection: tagList});
+		var tagList = new Tag.list;
+		var tagListView = new Tag.listView({collection: tagList});
 		$("#tags").prepend(tagListView.$el);
 		// Put this after tagListView.render();
 		tagList.parseAndReset(window._tags);
+
+		postList = new Post.list;
+		postListView = new Post.listView({collection: postList});
+		$("#posts").prepend(postListView.$el);
+		postList.fetch({reset:true});
 	},
 	
 	routes: { "": "index", },

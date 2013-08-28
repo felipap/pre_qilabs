@@ -23,11 +23,11 @@ function requireMe (req, res, next) {
 module.exports = function (app) {
 	app.get('/', 		pages.Pages.index.get);
 	app.post('/',		pages.Pages.index.post);
-	app.get('/logout',	pages.Pages.logout.get);
-	app.get('/leave',	pages.Pages.leave.get);
+	app.get('/logout',	requireLogged, pages.Pages.logout.get);
+	app.get('/leave',	requireLogged, pages.Pages.leave.get);
 	
-	app.get('/post/:id',	pages.Pages.post.get);
-	app.get('/tags/:tag', 	pages.Pages.tag.get);
+	app.get('/post/:id',	requireLogged, pages.Pages.post.get);
+	app.get('/tags/:tag', 	requireLogged, pages.Pages.tag.get);
 
 	app.get('/api/dropall',	requireMe, pages.Pages.dropall.get);
 	app.get('/api/session', requireMe, pages.Pages.session.get);
@@ -37,8 +37,13 @@ module.exports = function (app) {
 	// Update tags with {checked:true|false}.
 	app.put('/api/tags/:tag', requireLogged, pages.Tags.put);
 	// Serve the template.
-	app.get('/api/tags/template', pages.Tags.template);
+	app.get('/api/tags/template', requireLogged, pages.Tags.template);
 	
+	// Get all posts.
+	app.get('/api/posts', requireLogged, pages.Posts.get);
+	// Serve the template.
+	app.get('/api/posts/template', requireLogged, pages.Posts.template);
+
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));
 }

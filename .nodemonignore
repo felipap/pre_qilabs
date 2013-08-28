@@ -1,4 +1,5 @@
 
 /src/static/*
+/src/views/tmpls/*
 pages.coffee
 pages.jso

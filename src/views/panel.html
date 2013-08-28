@@ -19,7 +19,7 @@
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ubuntu:400,500" type="text/css">
 
 		<script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
-		<script>window._tags={{tags|raw}};</script>
+		<script>window._tags={{tags|raw}};window._posts={{posts|raw}};</script>
 	</head>
 	<body style="padding-top: 70px">
 		<!--[if lt IE 7]>
@@ -97,11 +97,12 @@
 				</div>
 				<!-- posts -->
 				<div class="col-8">
-					<div class="posts">
+					<div id="posts" class="posts">
 						<h3>Últimas atualizações dos assuntos que você segue...</h3>
 						{% if !posts.length %}
 							<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>
 						{% endif %}
+						{#
 						{% for post in posts %}
 							<li class="post">
 								<div class="title">
@@ -135,6 +136,7 @@
 								</div>
 							</li>
 						{% endfor %}
+						#}
 						<hr>
 
 					</div>

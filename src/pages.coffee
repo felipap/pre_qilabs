@@ -54,7 +54,20 @@ Tags =
 
 	template: (req, res) ->
 		res.set({'Content-Type': 'text/plain'});
-		res.sendfile(__dirname+'/static/template.html');
+		res.sendfile(__dirname+'/views/tmpls/tag.html');
+
+Posts =
+	get: (req, res) ->
+		# Get all posts.
+		console.log(req.query.tags)
+		if req.query.tags
+			seltags = req.query.tags.split(',')
+		getPostsWithTags (seltags or req.user.tags), (err, tposts) ->
+			res.end(JSON.stringify(tposts))
+
+	template: (req, res) ->
+		res.set({'Content-Type': 'text/plain'});
+		res.sendfile(__dirname+'/views/tmpls/post.html');
 
 Pages = {
 	index:
@@ -64,7 +77,7 @@ Pages = {
 				req.user.lastUpdate = new Date()
 				req.user.save()
 				getPostsWithTags req.user.tags, (err, tposts) ->
-					res.render 'panel', 
+					res.render 'panel',
 						user: req.user
 						tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
 						posts: tposts
@@ -164,4 +177,5 @@ Pages = {
 
 module.exports =
 	Pages: Pages
+	Posts: Posts
 	Tags: Tags
