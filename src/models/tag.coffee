@@ -66,9 +66,8 @@ transTable = {
 }
 
 descTable = {
-	'estagio': 'oi',
-	'olimpiadas': 'tchau',
-	'olimpiadas:matematica': 'talvez',
+	'estagio': 'Oportunidades de estágio para ...',
+	'olimpiadas:matematica': 'Novidades sobre a <a href="#">OBM</a>, <a href="#">OBMEP</a>, olimpíadas de matemática estaduais e cursos relacionados à elas.',
 }
 
 # Turn a horizontal list of tags into a recursive structure with label and children.
@@ -88,7 +87,7 @@ recursify = (tags) ->
 				label:		getLabel(hashtag),
 				description:getDescription(chashtag)
 				children:	{}}
-
+			console.log(parent)
 	return tagsObj.children
 
 #TODO substitute this for multiple levels tags?

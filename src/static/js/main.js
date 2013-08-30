@@ -28,6 +28,16 @@ var Tag = (function (window, undefined) {
 			// this.save(['checked'], {patch:true}); // , success: callback, error: callback});
 		},
 
+		// Returns true if this element has a checked child
+		// TODO: improve this, for it only performs searches 1-level deep AND
+		// this way of doing this through a method is not right. It shoudl be 
+		// triggered by the children or smthing.
+		hasCheckedChild: function (callback) {
+			if (!this.children.length) // optimize?
+				return false; 
+			return !_.all(this.children.map(function(t){return !t.get('checked');}))
+		},
+
 		// Load the content from this.attributes['children'] into this.children
 		// (a TagList). This is essential to allow the nested strategy to work.
 		loadChildren: function () {
@@ -49,17 +59,23 @@ var Tag = (function (window, undefined) {
 		render: function () {
 			console.log('rendering', this.model.toJSON())
 			TemplateManager.get('/api/tags/template', function (err, tmpl) {
-				this.$el.html(_.template(tmpl, {tag: this.model.toJSON()}));
+				console.log(this.model.hasCheckedChild())
+				this.$el.html(_.template(tmpl, {
+					tag: _.extend(this.model.toJSON(), {hasCheckedChild: this.model.hasCheckedChild()})
+				}));
 				if (this.hideChildren) {
 					this.childrenView.$el.hide();
 				}
 				// render childrenViews
 				this.$el.append(this.childrenView.el);
-				this.$("> .info").popover({
-					content: this.description,
-					trigger: 'hover',
+				this.$("> .tag .info").popover({
+					content: this.model.get("description"),
+					placement: 'bottom',
+					trigger: 'hover focus',
 					container: 'body',
-					html: true
+					delay: { show: 100, hide: 300 },
+					title: "<i class='icon-tag'></i> "+this.model.get("hashtag"),
+					html: true,
 				});
 			}, this);
 			return this;
@@ -71,7 +87,6 @@ var Tag = (function (window, undefined) {
 		},
 
 		tgChecked: function (e) {
-			console.log('ok')
 			e.preventDefault();
 			this.model.toggleChecked();
 			this.render();
