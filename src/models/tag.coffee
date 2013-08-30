@@ -87,25 +87,21 @@ recursify = (tags) ->
 				label:		getLabel(hashtag),
 				description:getDescription(chashtag)
 				children:	{}}
-			console.log(parent)
 	return tagsObj.children
-
-#TODO substitute this for multiple levels tags?
 
 # Takes as input
 # rtags: a recursive tags object
 # followed: a plain list of tags the user follows.
 # Returns a recursive tags object with attributes checked in each tag
 checkFollowed = (_rtags, followed) ->
-	rtags = _.clone(_rtags)
-	for key, rtag of rtags
-		rtag.checked = if (key in followed) then true else false
-		for ckey, ctag of rtag.children
-			ctag.checked = true # if ('#{key}:#{ckey}' in followed) then true else false
+	rtags = _.map _rtags, search = (t) ->
+		t.children = _.map(t.children, search)
+		t.checked = if t.hashtag in followed then true else false
+		return t
 	return rtags
 
 getDescription = (hashtag) ->
-	return descTable[hashtag.toLowerCase()]
+	return descTable[hashtag.toLowerCase()] || ''
 
 getLabel = (hashtag) ->
 	# Try to match lower(hashtag) or return a "beautified" version of hashtag.

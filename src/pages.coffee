@@ -72,7 +72,10 @@ Posts =
 		console.log(req.query.tags)
 		if req.query.tags
 			seltags = req.query.tags.split(',')
-		getPostsWithTags (seltags or req.user.tags), (err, tposts) ->
+		else
+			seltags = req.user.tags
+		getPostsWithTags seltags, (err, tposts) ->
+			console.log('returning', tposts)
 			res.end(JSON.stringify(tposts))
 
 	template: (req, res) ->
@@ -83,7 +86,7 @@ Pages = {
 	index:
 		get: (req, res) ->
 			if req.user
-				console.log('logged:', req.user.name, req.user.tags)
+				# console.log('logged:', req.user.name, req.user.tags)
 				req.user.lastUpdate = new Date()
 				req.user.save()
 				getPostsWithTags req.user.tags, (err, tposts) ->

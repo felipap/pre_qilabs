@@ -102,29 +102,24 @@
           description: getDescription(chashtag),
           children: {}
         };
-        console.log(parent);
       }
     }
     return tagsObj.children;
   };
 
   checkFollowed = function(_rtags, followed) {
-    var ckey, ctag, key, rtag, rtags, _ref;
-    rtags = _.clone(_rtags);
-    for (key in rtags) {
-      rtag = rtags[key];
-      rtag.checked = (__indexOf.call(followed, key) >= 0) ? true : false;
-      _ref = rtag.children;
-      for (ckey in _ref) {
-        ctag = _ref[ckey];
-        ctag.checked = true;
-      }
-    }
+    var rtags, search;
+    rtags = _.map(_rtags, search = function(t) {
+      var _ref;
+      t.children = _.map(t.children, search);
+      t.checked = (_ref = t.hashtag, __indexOf.call(followed, _ref) >= 0) ? true : false;
+      return t;
+    });
     return rtags;
   };
 
   getDescription = function(hashtag) {
-    return descTable[hashtag.toLowerCase()];
+    return descTable[hashtag.toLowerCase()] || '';
   };
 
   getLabel = function(hashtag) {

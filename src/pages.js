@@ -82,8 +82,11 @@
       console.log(req.query.tags);
       if (req.query.tags) {
         seltags = req.query.tags.split(',');
+      } else {
+        seltags = req.user.tags;
       }
-      return getPostsWithTags(seltags || req.user.tags, function(err, tposts) {
+      return getPostsWithTags(seltags, function(err, tposts) {
+        console.log('returning', tposts);
         return res.end(JSON.stringify(tposts));
       });
     },
@@ -99,7 +102,6 @@
     index: {
       get: function(req, res) {
         if (req.user) {
-          console.log('logged:', req.user.name, req.user.tags);
           req.user.lastUpdate = new Date();
           req.user.save();
           return getPostsWithTags(req.user.tags, function(err, tposts) {
