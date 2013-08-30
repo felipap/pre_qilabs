@@ -8,7 +8,7 @@ var Tag = (function (window, undefined) {
 
 		idAttribute: "hashtag",
 
-		defaults: { children: [], description: "blábláblá" },
+		defaults: { children: [], description: null },
 
 		initialize: function () {
 			this.children = new TagList;

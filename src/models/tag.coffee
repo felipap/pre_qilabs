@@ -65,8 +65,15 @@ transTable = {
 	'intercambio': 'Intercâmbio',
 }
 
+descTable = {
+	'estagio': 'oi',
+	'olimpiadas': 'tchau',
+	'olimpiadas:matematica': 'talvez',
+}
+
 # Turn a horizontal list of tags into a recursive structure with label and children.
 # TODO! this implementation looks expensive
+# TODO! Rename this to buildTag, or smthing.
 recursify = (tags) ->
 	tagsObj = {hashtag:'', label: null, children: {}}
 	for hashtag in tags
@@ -74,23 +81,17 @@ recursify = (tags) ->
 		parent = tagsObj
 		while tagList.length
 			hashtag = tagList.shift()
-			# if parent.children[hashtag] # tag already there
-			# 	if tagList.length is 0 # tag is repeated
-			# 		break
-			# 	parent = parent.children[hashtag]
-			# else
+			# Build composed hashtag (with <parent>:<hashtag>)
+			chashtag = parent.hashtag+(unless parent.hashtag then '' else ':')+hashtag
 			parent = parent.children[hashtag] ?= {
-				hashtag: 	parent.hashtag+(unless parent.hashtag then '' else ':')+hashtag,
+				hashtag: 	chashtag
 				label:		getLabel(hashtag),
+				description:getDescription(chashtag)
 				children:	{}}
-			# console.log('parent is now', '\n\t parent', parent, '\n\t obj', '\n\t', tagsObj)
-	
-	# for hashtag, obj of tagsObj.children
-	# 	obj.children['estagio'] = {hashtag:hashtag+":estagio", "label":"Estágio","children":{}}
-	
+
 	return tagsObj.children
 
-#TODO substitute this for multiple levels tags
+#TODO substitute this for multiple levels tags?
 
 # Takes as input
 # rtags: a recursive tags object
@@ -104,12 +105,16 @@ checkFollowed = (_rtags, followed) ->
 			ctag.checked = true # if ('#{key}:#{ckey}' in followed) then true else false
 	return rtags
 
+getDescription = (hashtag) ->
+	return descTable[hashtag.toLowerCase()]
 
 getLabel = (hashtag) ->
+	# Try to match lower(hashtag) or return a "beautified" version of hashtag.
 	return transTable[hashtag.toLowerCase()] or hashtag.toCamel()
 
 TagSchema.statics.findOrCreate = findOrCreate
 TagSchema.statics.getLabel = getLabel
+TagSchema.statics.getDescription = getDescription
 TagSchema.statics.recursify = recursify
 TagSchema.statics.checkFollowed = checkFollowed
 
