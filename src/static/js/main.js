@@ -116,9 +116,9 @@ var Tag = (function (window, undefined) {
 			if (this.collection === app.tagList) {
 				return;
 			}
-			// console.log('\n\nchildrenChanged', this)
-			// console.log('calling render from tgChecked')
-			// this.render();
+			console.log('\n\nchildrenChanged', this)
+			console.log('calling render from tgChecked')
+			this.render();
 		},
 
 		destroy: function () {
@@ -169,14 +169,15 @@ var Tag = (function (window, undefined) {
 		tgChecked: function (e) {
 			console.log('\n\ntgChecked called', e.target);
 			e.preventDefault();
-			if (true || this.hideChildren) {
-				console.log('start')
-				if (this.model.get('checked'))
-					this.model.children.trigger('uncheckAll');
-				else
-					this.model.children.trigger('checkAll');
-				console.log('stop')
-			}
+
+			console.log('start')
+			if (this.model.get('checked'))
+				this.model.children.trigger('uncheckAll');
+			else
+				this.model.children.trigger('checkAll');
+			console.log('stop')
+			this.model.children.trigger('render');
+
 			this.model.toggleChecked();
 			// Reset this
 			console.log('calling render from tgChecked')
