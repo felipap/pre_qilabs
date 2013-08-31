@@ -4,28 +4,37 @@
 
 var Tag = (function (window, undefined) {
 
+	// Model for each tag
 	var TagItem = Backbone.Model.extend({
 
-		idAttribute: "hashtag",
+		idAttribute: "hashtag",		// how it's identified in the tags
+		saveOnChange: false, 		// save everytime tag is toggled, disable
 
+		// Prevent errors if server doesn't send any children or description
+		// attributes.
 		defaults: { children: [], description: null },
 
 		initialize: function () {
+			// Children are lists of tags.
 			this.children = new TagList;
+			// Each time our collection is reseted, load children as views.
 			this.collection.on('reset', this.loadChildren, this);
 		},
 
 		// The solo interaction of the user with the tags.
 		toggleChecked: function (callback) {
-			callback = callback || function(){};
 			var checked = this.get('checked');
 			// Also check for string, just to be safe.
 			if (checked && checked !== 'false')
 				this.set({'checked': false});
 			else
 				this.set({'checked': true});
-			// .save() through tagsList.save(), right?
-			// this.save(['checked'], {patch:true}); // , success: callback, error: callback});
+			if (this.saveOnChange) {
+				callback = callback || function(){};
+				this.save(['checked'], {
+					patch:true, success:callback, error:callback
+				});
+			}
 		},
 
 		// Returns true if this element has a checked child
@@ -54,10 +63,23 @@ var Tag = (function (window, undefined) {
 		initialize: function () {
 			this.hideChildren = true;
 			this.childrenView = new TagListView({collection: this.model.children, className:'children'});
+			this.model.children.on('change', this.childrenChanged, this);
+		},
+
+		// Called everytime a children tag is checked, to update our icon.
+		childrenChanged: function () {
+			// For now, ignore if the event is triggered in the outtermost
+			// tagList, for changing in the outtermost elements should not
+			// interfer with the app.tagList. No difference.
+			if (this.collection === app.tagList) {
+				return;
+			}
+			console.log('\n\nchildrenChanged', this)
+			this.render();
 		},
 
 		render: function () {
-			console.log('rendering', this.model.toJSON())
+			console.log('rendering tagView', this.model.toJSON())
 			TemplateManager.get('/api/tags/template', function (err, tmpl) {
 				this.$el.html(_.template(tmpl, {
 					tag: _.extend(this.model.toJSON(), {hasCheckedChild: this.model.hasCheckedChild()})
@@ -71,16 +93,16 @@ var Tag = (function (window, undefined) {
 				this.$("> .tag .info").click(function (e) {
 					e.stopPropagation();
 				})
-				
-					this.$("> .tag .info").popover({
-						content: this.model.get("description"),
-						placement: 'bottom',
-						trigger: 'hover',
-						container: 'body',
-						delay: { show: 100, hide: 300 },
-						title: "<i class='icon-tag'></i> "+this.model.get("hashtag"),
-						html: true,
-					});
+
+				this.$("> .tag .info").popover({
+					content: this.model.get("description"),
+					placement: 'bottom',
+					trigger: 'hover',
+					container: 'body',
+					delay: { show: 100, hide: 300 },
+					title: "<i class='icon-tag'></i> "+this.model.get("hashtag"),
+					html: true,
+				});
 			}, this);
 			return this;
 		},
@@ -91,11 +113,15 @@ var Tag = (function (window, undefined) {
 		},
 
 		tgChecked: function (e) {
-			console.log('getChecked')
+			console.log('checked', e.target)
 			e.preventDefault();
 			this.model.toggleChecked();
+
+			// Reset this
 			this.render();
+			// and reset children
 			this.model.children.trigger('reset')
+			this.model.trigger('toggleChecked');
 		},
 
 		tgShowChildren: function (e) {
@@ -124,9 +150,11 @@ var Tag = (function (window, undefined) {
 		},
 		
 		onReset: function() {
+			// For each element here, load children as a TagList. 
 			this.each(function(t){t.loadChildren();});
 		},
 		
+		// Only send information about the checked tags when saving the TagList.
 		save: function (callback) {
 			$.post(this.url, {'checked': this.getCheckedTags()}, callback);
 		},
@@ -150,6 +178,7 @@ var Tag = (function (window, undefined) {
 
 		initialize: function () {
 			this.collection.on('reset', this.addAll, this);
+			this.collection.on('render', this.render, this);
 		},
 
 		addAll: function () {
@@ -191,7 +220,7 @@ var Post = (function (window, undefined) {
 			this.model.collection.on('reset', this.destroy, this);
 		},
 		destroy: function () {
-			console.log('Removing me ="(', this);
+			console.log('Removing me post ="(', this);
 			this.remove();
 		},
 		render: function () {
@@ -220,7 +249,6 @@ var Post = (function (window, undefined) {
 		},
 
 		addAll: function () {
-			console.log('doing new stuff', this);
 			var views = [];
 			this.collection.each(function(postItem) {
 				views.push(new PostView({model:postItem}));
