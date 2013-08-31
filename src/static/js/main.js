@@ -59,7 +59,6 @@ var Tag = (function (window, undefined) {
 		render: function () {
 			console.log('rendering', this.model.toJSON())
 			TemplateManager.get('/api/tags/template', function (err, tmpl) {
-				console.log(this.model.hasCheckedChild())
 				this.$el.html(_.template(tmpl, {
 					tag: _.extend(this.model.toJSON(), {hasCheckedChild: this.model.hasCheckedChild()})
 				}));
@@ -68,10 +67,11 @@ var Tag = (function (window, undefined) {
 				}
 				// render childrenViews
 				this.$el.append(this.childrenView.el);
+				this.$("> .tag .info").popover('destroy');
 				this.$("> .tag .info").popover({
 					content: this.model.get("description"),
 					placement: 'bottom',
-					trigger: 'hover focus',
+					trigger: 'hover',
 					container: 'body',
 					delay: { show: 100, hide: 300 },
 					title: "<i class='icon-tag'></i> "+this.model.get("hashtag"),
@@ -87,9 +87,11 @@ var Tag = (function (window, undefined) {
 		},
 
 		tgChecked: function (e) {
+			console.log('getChecked')
 			e.preventDefault();
 			this.model.toggleChecked();
 			this.render();
+			this.model.children.trigger('reset')
 		},
 
 		tgShowChildren: function (e) {
