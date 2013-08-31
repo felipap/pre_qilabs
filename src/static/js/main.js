@@ -328,6 +328,10 @@ var Post = (function (window, undefined) {
 			}, this);
 			this.$el.empty();
 			this.$el.append(container);
+			if (this._views.length)
+				$("#no-posts-msg").hide();
+			else
+				$("#no-posts-msg").show();
 			return this;
 		}
 	});
@@ -383,6 +387,15 @@ var app = new (Backbone.Router.extend({
 	
 	initialize: function () { },
 	
+	initPreview: function () { 
+		// Disable preview button.
+		$("#btn-preview").prop('disabled', true);
+		$(".tag").on('click', function (e) {
+			console.log('hey, I was called')
+			$("#btn-preview").prop('disabled', false);
+		})
+	},
+
 	start: function () {
 		Backbone.history.start({pushState: false});
 
@@ -393,14 +406,7 @@ var app = new (Backbone.Router.extend({
 
 		// Doesn't seem to work without a timeout, and I'm too lazy right now
 		// to implement callbacks for the function calls above.
-		setTimeout(function(){
-			// Disable preview button.
-			$("#btn-preview").prop('disabled', true);
-			$(".tag").on('click', function (e) {
-				console.log('hey, I was called')
-				$("#btn-preview").prop('disabled', false);
-			})
-		}, 300);
+		setTimeout(this.initPreview, 400);
 
 		this.postList = new Post.list;
 		this.postListView = new Post.listView({collection: this.postList});
@@ -409,15 +415,16 @@ var app = new (Backbone.Router.extend({
 
 	previewPosts: function () {
 		// Disable preview button.
-		$("#btn-preview").prop('disabled', true);
+		setTimeout(this.initPreview, 400);
 		// Push posts from server.
+		var tags = app.tagList.getCheckedTags().join(',') || ','; 
 		this.postList.fetch({
-			data: {tags: app.tagList.getCheckedTags().join(',')},
+			data: {tags: tags},
 			processData: true,
 			reset: true,
 		});
-		// Update message. 
-		$("#posts-desc").html("Esses são os assuntos que vão aparecer para você:")
+		// Update message.
+		$("#posts-desc").html("Esses são os assuntos que vão aparecer para você:");
 	},
 
 	confirmTags: function (callback) {
