@@ -202,13 +202,15 @@ var Tag = (function (window, undefined) {
 	var TagList = Backbone.Collection.extend({
 		model: TagItem,
 		url: '/api/tags',
-	
+		
+		// Parse everytime something is fetched.
 		parse: function (res) {
 			return _.toArray(res);
 		},
 
+		// Parse and then reset.
+		// Because this.parse isn't called when .reset() is used to input data.
 		parseAndReset: function (object) {
-			console.log('parseAndReset called once', object)
 			this.reset(_.toArray(object));
 		},
 		
@@ -217,6 +219,7 @@ var Tag = (function (window, undefined) {
 			$.post(this.url, {'checked': this.getCheckedTags()}, callback);
 		},
 
+		// Select those tagItem's which have t.attributes.checked === true
 		getChecked: function () {
 			var tags = this.chain()
 				.map(function rec(t){return [t].concat((t.children.length)?t.children.map(rec):[]) })
@@ -225,22 +228,26 @@ var Tag = (function (window, undefined) {
 			return tags.filter(function(t){return t.get('checked') === true;});
 		},
 
+		// Returns the hashtags of the tags from getChecked()
+		// Equivocal name?
 		getCheckedTags: function () {
 			return this.getChecked().map(function(t){return t.get('hashtag');});
 		}
 	});
 
 	var TagListView = Backbone.View.extend({
-		tagName: "ul",
-		_views: [],
+		tagName: "ul",	// 'o
+		_views: [], 	// a list of children views
 
 		initialize: function () {
-			this.collection.on('reset', this.addAll, this);
 			this.collection.on('render', this.render, this);
+			this.collection.on('reset', this.addAll, this);
 		},
 
 		addAll: function () {
-			// console.log('addAll called', this._views)
+			// There's no need to remove tagView's inside this._views one-by-one
+			// because they listen to the reset event on the collection and call
+			// themselves destroy. (suicide!)
 			this._views = [];
 			this.collection.each(function(tagItem) {
 				this._views.push(new TagView({model:tagItem}));
@@ -249,6 +256,7 @@ var Tag = (function (window, undefined) {
 		},
 
 		render: function () {
+			// Hack to prevent bumpiness in redering...
 			var container = document.createDocumentFragment();
 			// render each tagView
 			_.each(this._views, function (tagView) {
