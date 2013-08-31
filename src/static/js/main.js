@@ -15,22 +15,27 @@ var Tag = (function (window, undefined) {
 		defaults: { children: [], description: null },
 
 		initialize: function () {
-			// Children are lists of tags.
+			// this.children are lists of tags from this.attributes.children
 			this.children = new TagList;
 			// Each time our collection is reseted, load children as views.
 			this.collection.on('reset', this.loadChildren, this);
 		},
 
 		// The solo interaction of the user with the tags.
-		toggleChecked: function (callback) {
+		// By default saves to the server at the end if this.saveOnChange is set
+		// to true. Otherwise, the user may pass options.save === true and set
+		// the callback in options.callback
+		toggleChecked: function (options) {
 			var checked = this.get('checked');
 			// Also check for string, just to be safe.
 			if (checked && checked !== 'false')
 				this.set({'checked': false});
 			else
 				this.set({'checked': true});
-			if (this.saveOnChange) {
-				callback = callback || function(){};
+
+			if ((options && options['save'] !== undefined)?
+				(options.save===true):this.saveOnChange) {
+				callback = (options && options['callback']) || function(){};
 				this.save(['checked'], {
 					patch:true, success:callback, error:callback
 				});
@@ -61,8 +66,12 @@ var Tag = (function (window, undefined) {
 		// template: _.template($("#template-tagview").html()),
 		
 		initialize: function () {
+			// If children elements will be hidden in the html.
 			this.hideChildren = true;
+			// View for this.model.children.
 			this.childrenView = new TagListView({collection: this.model.children, className:'children'});
+			// Listen to change on children, so we can update the check icon 
+			// accordingly. (empty, checked or dash)
 			this.model.children.on('change', this.childrenChanged, this);
 		},
 
@@ -78,22 +87,22 @@ var Tag = (function (window, undefined) {
 			this.render();
 		},
 
+		// ?
 		render: function () {
 			console.log('rendering tagView', this.model.toJSON())
 			TemplateManager.get('/api/tags/template', function (err, tmpl) {
+				// Render our html.
 				this.$el.html(_.template(tmpl, {
 					tag: _.extend(this.model.toJSON(), {hasCheckedChild: this.model.hasCheckedChild()})
 				}));
+				// Hide children if necessary.
 				if (this.hideChildren) {
 					this.childrenView.$el.hide();
 				}
-				// render childrenViews
+				// Render our childrenViews.
 				this.$el.append(this.childrenView.el);
-				this.$("> .tag .info").popover('destroy');
-				this.$("> .tag .info").click(function (e) {
-					e.stopPropagation();
-				})
-
+				// Code our info popover. Do it here (not in the html) in order
+				// to diminish change of XSS attacks.
 				this.$("> .tag .info").popover({
 					content: this.model.get("description"),
 					placement: 'bottom',
@@ -103,6 +112,8 @@ var Tag = (function (window, undefined) {
 					title: "<i class='icon-tag'></i> "+this.model.get("hashtag"),
 					html: true,
 				});
+				// Prevent popover from persisting on click. (better solution?)
+				this.$("> .tag .info").click(function(e){e.stopPropagation();});
 			}, this);
 			return this;
 		},
@@ -112,9 +123,10 @@ var Tag = (function (window, undefined) {
 			'click >.expand':  'tgShowChildren',
 		},
 
+		// toggleChecked
 		tgChecked: function (e) {
-			console.log('checked', e.target)
 			e.preventDefault();
+			console.log('tgChecked called', e.target);
 			this.model.toggleChecked();
 
 			// Reset this
@@ -124,6 +136,7 @@ var Tag = (function (window, undefined) {
 			this.model.trigger('toggleChecked');
 		},
 
+		// toggleShowChildren
 		tgShowChildren: function (e) {
 			e.preventDefault();
 			this.hideChildren = !this.hideChildren;
