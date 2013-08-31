@@ -68,15 +68,19 @@ var Tag = (function (window, undefined) {
 				// render childrenViews
 				this.$el.append(this.childrenView.el);
 				this.$("> .tag .info").popover('destroy');
-				this.$("> .tag .info").popover({
-					content: this.model.get("description"),
-					placement: 'bottom',
-					trigger: 'hover',
-					container: 'body',
-					delay: { show: 100, hide: 300 },
-					title: "<i class='icon-tag'></i> "+this.model.get("hashtag"),
-					html: true,
-				});
+				this.$("> .tag .info").click(function (e) {
+					e.stopPropagation();
+				})
+				
+					this.$("> .tag .info").popover({
+						content: this.model.get("description"),
+						placement: 'bottom',
+						trigger: 'hover',
+						container: 'body',
+						delay: { show: 100, hide: 300 },
+						title: "<i class='icon-tag'></i> "+this.model.get("hashtag"),
+						html: true,
+					});
 			}, this);
 			return this;
 		},
