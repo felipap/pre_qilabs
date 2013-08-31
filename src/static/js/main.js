@@ -24,7 +24,7 @@ var Tag = (function (window, undefined) {
 		// The solo interaction of the user with the tags.
 		// By default saves to the server at the end if this.saveOnChange is set
 		// to true. Otherwise, the user may pass options.save === true and set
-		// the callback in options.callback
+		// the callback in options.callback.
 		toggleChecked: function (options) {
 			var checked = this.get('checked');
 			// Also check for string, just to be safe.
@@ -91,6 +91,8 @@ var Tag = (function (window, undefined) {
 		render: function () {
 			console.log('rendering tagView', this.model.toJSON())
 			TemplateManager.get('/api/tags/template', function (err, tmpl) {
+				// http://tbranyen.com/post/missing-jquery-events-while-rendering
+				this.childrenView.render().$el.detach();
 				// Render our html.
 				this.$el.html(_.template(tmpl, {
 					tag: _.extend(this.model.toJSON(), {hasCheckedChild: this.model.hasCheckedChild()})
@@ -100,7 +102,7 @@ var Tag = (function (window, undefined) {
 					this.childrenView.$el.hide();
 				}
 				// Render our childrenViews.
-				this.$el.append(this.childrenView.el);
+				this.$el.append(this.childrenView.render().el);
 				// Code our info popover. Do it here (not in the html) in order
 				// to diminish change of XSS attacks.
 				this.$("> .tag .info").popover({
@@ -120,20 +122,19 @@ var Tag = (function (window, undefined) {
 
 		events: {
 			'click >.tag': 'tgChecked',
-			'click >.expand':  'tgShowChildren',
+			'click >.expand': 'tgShowChildren',
 		},
 
 		// toggleChecked
 		tgChecked: function (e) {
 			e.preventDefault();
-			console.log('tgChecked called', e.target);
+			console.log('\n\ntgChecked called', e.target);
 			this.model.toggleChecked();
 
 			// Reset this
 			this.render();
 			// and reset children
-			this.model.children.trigger('reset')
-			this.model.trigger('toggleChecked');
+			// this.model.children.trigger('reset')
 		},
 
 		// toggleShowChildren
