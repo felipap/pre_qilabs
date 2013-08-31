@@ -107,13 +107,12 @@
     return tagsObj.children;
   };
 
-  checkFollowed = function(_rtags, followed) {
-    var rtags, search;
-    rtags = _.map(_rtags, search = function(t) {
+  checkFollowed = function(rtags, followed) {
+    var check;
+    _.each(rtags, check = function(e, i) {
       var _ref;
-      t.children = _.map(t.children, search);
-      t.checked = (_ref = t.hashtag, __indexOf.call(followed, _ref) >= 0) ? true : false;
-      return t;
+      _.each(e.children, check);
+      return e.checked = (_ref = e.hashtag, __indexOf.call(followed, _ref) >= 0) ? true : false;
     });
     return rtags;
   };

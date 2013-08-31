@@ -87,17 +87,21 @@ recursify = (tags) ->
 				label:		getLabel(hashtag),
 				description:getDescription(chashtag)
 				children:	{}}
+	# counter = 0
+	# for hashtag, tag of tagsObj.children
+	# 	tag.children = {'estagio':_.clone(tagsObj.children['estagio'])}
+	# 	tag.children['estagio'].label += counter++
+	# console.log(tagsObj.children)
 	return tagsObj.children
 
 # Takes as input
 # rtags: a recursive tags object
 # followed: a plain list of tags the user follows.
 # Returns a recursive tags object with attributes checked in each tag
-checkFollowed = (_rtags, followed) ->
-	rtags = _.map _rtags, search = (t) ->
-		t.children = _.map(t.children, search)
-		t.checked = if t.hashtag in followed then true else false
-		return t
+checkFollowed = (rtags, followed) ->
+	_.each rtags, check = (e, i) ->
+		_.each(e.children, check)
+		e.checked = if e.hashtag in followed then true else false
 	return rtags
 
 getDescription = (hashtag) ->

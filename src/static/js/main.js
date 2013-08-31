@@ -19,6 +19,10 @@ var Tag = (function (window, undefined) {
 			this.children = new TagList;
 			// Each time our collection is reseted, load children as views.
 			this.collection.on('reset', this.loadChildren, this);
+			// For when collection children are hidden and must be (un)checked.
+			this.collection.on('checkAll', this.check, this);
+			this.collection.on('uncheckAll', this.uncheck, this);
+			console.log('initialize tagitem', this)
 		},
 
 		// The solo interaction of the user with the tags.
@@ -33,6 +37,34 @@ var Tag = (function (window, undefined) {
 			else
 				this.set({'checked': true});
 
+			if ((options && options['save'] !== undefined)?
+				(options.save===true):this.saveOnChange) {
+				callback = (options && options['callback']) || function(){};
+				this.save(['checked'], {
+					patch:true, success:callback, error:callback
+				});
+			}
+		},
+
+		// To be triggered by events from the parent tag when the children are
+		// hidden (therefore and all must be effected).
+		check: function (options) {
+			console.log('check called', this)
+			this.set({'checked': true});
+			if ((options && options['save'] !== undefined)?
+				(options.save===true):this.saveOnChange) {
+				callback = (options && options['callback']) || function(){};
+				this.save(['checked'], {
+					patch:true, success:callback, error:callback
+				});
+			}
+		},
+
+		// To be triggered by events from the parent tag when the children are
+		// hidden (therefore and all must be effected).
+		uncheck: function (options) {
+			console.log('uncheck called', this)
+			this.set({'checked': false});
 			if ((options && options['save'] !== undefined)?
 				(options.save===true):this.saveOnChange) {
 				callback = (options && options['callback']) || function(){};
@@ -66,6 +98,7 @@ var Tag = (function (window, undefined) {
 		// template: _.template($("#template-tagview").html()),
 		
 		initialize: function () {
+			this.model.collection.on('reset', this.destroy, this);
 			// If children elements will be hidden in the html.
 			this.hideChildren = true;
 			// View for this.model.children.
@@ -83,8 +116,14 @@ var Tag = (function (window, undefined) {
 			if (this.collection === app.tagList) {
 				return;
 			}
-			console.log('\n\nchildrenChanged', this)
-			this.render();
+			// console.log('\n\nchildrenChanged', this)
+			// console.log('calling render from tgChecked')
+			// this.render();
+		},
+
+		destroy: function () {
+			console.log('Removing me view ="(', this);
+			this.remove();
 		},
 
 		// ?
@@ -92,7 +131,7 @@ var Tag = (function (window, undefined) {
 			console.log('rendering tagView', this.model.toJSON())
 			TemplateManager.get('/api/tags/template', function (err, tmpl) {
 				// http://tbranyen.com/post/missing-jquery-events-while-rendering
-				this.childrenView.render().$el.detach();
+				this.childrenView.$el.detach();
 				// Render our html.
 				this.$el.html(_.template(tmpl, {
 					tag: _.extend(this.model.toJSON(), {hasCheckedChild: this.model.hasCheckedChild()})
@@ -102,7 +141,8 @@ var Tag = (function (window, undefined) {
 					this.childrenView.$el.hide();
 				}
 				// Render our childrenViews.
-				this.$el.append(this.childrenView.render().el);
+				this.$el.append(this.childrenView.el);
+
 				// Code our info popover. Do it here (not in the html) in order
 				// to diminish change of XSS attacks.
 				this.$("> .tag .info").popover({
@@ -127,45 +167,48 @@ var Tag = (function (window, undefined) {
 
 		// toggleChecked
 		tgChecked: function (e) {
-			e.preventDefault();
 			console.log('\n\ntgChecked called', e.target);
+			e.preventDefault();
+			if (true || this.hideChildren) {
+				console.log('start')
+				if (this.model.get('checked'))
+					this.model.children.trigger('uncheckAll');
+				else
+					this.model.children.trigger('checkAll');
+				console.log('stop')
+			}
 			this.model.toggleChecked();
-
 			// Reset this
+			console.log('calling render from tgChecked')
 			this.render();
 			// and reset children
 			// this.model.children.trigger('reset')
 		},
 
 		// toggleShowChildren
+		// pretty straight-forward
 		tgShowChildren: function (e) {
 			e.preventDefault();
 			this.hideChildren = !this.hideChildren;
 			this.$('>.expand i').toggleClass("icon-angle-down");
 			this.$('>.expand i').toggleClass("icon-angle-up");
 			this.childrenView.$el.toggle();
+			// Render children or nobody will. :(
+			this.childrenView.render();
 		},
 	});
 
 	var TagList = Backbone.Collection.extend({
 		model: TagItem,
 		url: '/api/tags',
-		
-		initialize: function () {
-			this.on({'reset': this.onReset});
-		},
-
+	
 		parse: function (res) {
 			return _.toArray(res);
 		},
 
 		parseAndReset: function (object) {
+			console.log('parseAndReset called once', object)
 			this.reset(_.toArray(object));
-		},
-		
-		onReset: function() {
-			// For each element here, load children as a TagList. 
-			this.each(function(t){t.loadChildren();});
 		},
 		
 		// Only send information about the checked tags when saving the TagList.
@@ -196,6 +239,7 @@ var Tag = (function (window, undefined) {
 		},
 
 		addAll: function () {
+			// console.log('addAll called', this._views)
 			this._views = [];
 			this.collection.each(function(tagItem) {
 				this._views.push(new TagView({model:tagItem}));
