@@ -116,8 +116,8 @@ var Tag = (function (window, undefined) {
 			if (this.collection === app.tagList) {
 				return;
 			}
-			console.log('\n\nchildrenChanged', this)
-			console.log('calling render from tgChecked')
+			// console.log('\n\nchildrenChanged', this)
+			// console.log('calling render from tgChecked')
 			this.render();
 		},
 
@@ -128,7 +128,7 @@ var Tag = (function (window, undefined) {
 
 		// ?
 		render: function () {
-			console.log('rendering tagView', this.model.toJSON())
+			// console.log('rendering tagView', this.model.toJSON())
 			TemplateManager.get('/api/tags/template', function (err, tmpl) {
 				// http://tbranyen.com/post/missing-jquery-events-while-rendering
 				this.childrenView.$el.detach();
@@ -167,20 +167,16 @@ var Tag = (function (window, undefined) {
 
 		// toggleChecked
 		tgChecked: function (e) {
-			console.log('\n\ntgChecked called', e.target);
+			// console.log('\n\ntgChecked called', e.target);
 			e.preventDefault();
-
-			console.log('start')
 			if (this.model.get('checked'))
 				this.model.children.trigger('uncheckAll');
 			else
 				this.model.children.trigger('checkAll');
-			console.log('stop')
 			this.model.children.trigger('render');
 
 			this.model.toggleChecked();
 			// Reset this
-			console.log('calling render from tgChecked')
 			this.render();
 			// and reset children
 			// this.model.children.trigger('reset')
@@ -304,7 +300,7 @@ var Post = (function (window, undefined) {
 	});
 
 	var PostListView = Backbone.View.extend({
-		el: "#posts",
+		el: "#posts > ul",
 		_views: [],
 		template: _.template('<% if (!length) { %>\
 			<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>\
@@ -395,18 +391,33 @@ var app = new (Backbone.Router.extend({
 		$("#tags").prepend(this.tagListView.$el);
 		this.tagList.parseAndReset(window._tags);
 
+		// Doesn't seem to work without a timeout, and I'm too lazy right now
+		// to implement callbacks for the function calls above.
+		setTimeout(function(){
+			// Disable preview button.
+			$("#btn-preview").prop('disabled', true);
+			$(".tag").on('click', function (e) {
+				console.log('hey, I was called')
+				$("#btn-preview").prop('disabled', false);
+			})
+		}, 300);
+
 		this.postList = new Post.list;
 		this.postListView = new Post.listView({collection: this.postList});
-		$("#posts").prepend(this.postListView.$el);
 		this.postList.reset(window._posts);
 	},
 
 	previewPosts: function () {
+		// Disable preview button.
+		$("#btn-preview").prop('disabled', true);
+		// Push posts from server.
 		this.postList.fetch({
 			data: {tags: app.tagList.getCheckedTags().join(',')},
 			processData: true,
 			reset: true,
-		})
+		});
+		// Update message. 
+		$("#posts-desc").html("Esses são os assuntos que vão aparecer para você:")
 	},
 
 	confirmTags: function (callback) {
