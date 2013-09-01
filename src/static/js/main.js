@@ -413,7 +413,7 @@ var app = new (Backbone.Router.extend({
 
 	previewPosts: function () {
 		// Disable preview button.
-		setTimeout(this.initPreview, 400);
+		setTimeout(this.initPreview, 400); // not working without the timeout
 		// Push posts from server.
 		var tags = app.tagList.getCheckedTags().join(',') || ','; 
 		this.postList.fetch({
