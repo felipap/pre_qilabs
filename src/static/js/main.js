@@ -2,13 +2,14 @@
 // main.js
 // for meavisa.org, by @f03lipe
 
-var Tag = (function (window, undefined) {
 
+var Tag = (function (window, undefined) {
+	'use strict';
 	// Model for each tag
 	var TagItem = Backbone.Model.extend({
 
 		idAttribute: "hashtag",		// how it's identified in the tags
-		saveOnChange: false, 		// save everytime tag is toggled, disable
+		saveOnChange: false,		// save everytime tag is toggled, disable
 
 		// Prevent errors if server doesn't send any children or description
 		// attributes.
@@ -16,13 +17,12 @@ var Tag = (function (window, undefined) {
 
 		initialize: function () {
 			// this.children are lists of tags from this.attributes.children
-			this.children = new TagList;
+			this.children = new TagList();
 			// Each time our collection is reseted, load children as views.
 			this.collection.on('reset', this.loadChildren, this);
 			// For when collection children are hidden and must be (un)checked.
 			this.collection.on('checkAll', this.check, this);
 			this.collection.on('uncheckAll', this.uncheck, this);
-			console.log('initialize tagitem', this)
 		},
 
 		// The solo interaction of the user with the tags.
@@ -37,9 +37,9 @@ var Tag = (function (window, undefined) {
 			else
 				this.set({'checked': true});
 
-			if ((options && options['save'] !== undefined)?
+			if ((options && options.save !== undefined)?
 				(options.save===true):this.saveOnChange) {
-				callback = (options && options['callback']) || function(){};
+				var callback = (options && options.callback) || function(){};
 				this.save(['checked'], {
 					patch:true, success:callback, error:callback
 				});
@@ -49,11 +49,10 @@ var Tag = (function (window, undefined) {
 		// To be triggered by events from the parent tag when the children are
 		// hidden (therefore and all must be effected).
 		check: function (options) {
-			console.log('check called', this)
 			this.set({'checked': true});
-			if ((options && options['save'] !== undefined)?
+			if ((options && options.save !== undefined)?
 				(options.save===true):this.saveOnChange) {
-				callback = (options && options['callback']) || function(){};
+				var callback = (options && options.callback) || function(){};
 				this.save(['checked'], {
 					patch:true, success:callback, error:callback
 				});
@@ -63,11 +62,10 @@ var Tag = (function (window, undefined) {
 		// To be triggered by events from the parent tag when the children are
 		// hidden (therefore and all must be effected).
 		uncheck: function (options) {
-			console.log('uncheck called', this)
 			this.set({'checked': false});
-			if ((options && options['save'] !== undefined)?
+			if ((options && options.save !== undefined)?
 				(options.save===true):this.saveOnChange) {
-				callback = (options && options['callback']) || function(){};
+				var callback = (options && options.callback) || function(){};
 				this.save(['checked'], {
 					patch:true, success:callback, error:callback
 				});
@@ -81,10 +79,10 @@ var Tag = (function (window, undefined) {
 		hasCheckedChild: function (callback) {
 			if (!this.children.length) // optimize?
 				return false; 
-			return !_.all(this.children.map(function(t){return !t.get('checked');}))
+			return !_.all(this.children.map(function(t){return !t.get('checked');}));
 		},
 
-		// Load the content from this.attributes['children'] into this.children
+		// Load the content from this.attributes.children into this.children
 		// (a TagList). This is essential to allow the nested strategy to work.
 		loadChildren: function () {
 			this.children.parseAndReset(this.get('children'));
@@ -116,8 +114,8 @@ var Tag = (function (window, undefined) {
 			if (this.collection === app.tagList) {
 				return;
 			}
-			// console.log('\n\nchildrenChanged', this)
-			// console.log('calling render from tgChecked')
+			// console.log('\n\nchildrenChanged', this);
+			// console.log('calling render from tgChecked');
 			this.render();
 		},
 
@@ -128,7 +126,7 @@ var Tag = (function (window, undefined) {
 
 		// ?
 		render: function () {
-			// console.log('rendering tagView', this.model.toJSON())
+			// console.log('rendering tagView', this.model.toJSON());
 			TemplateManager.get('/api/tags/template', function (err, tmpl) {
 				// http://tbranyen.com/post/missing-jquery-events-while-rendering
 				this.childrenView.$el.detach();
@@ -167,7 +165,7 @@ var Tag = (function (window, undefined) {
 
 		// toggleChecked
 		tgChecked: function (e) {
-			// console.log('\n\ntgChecked called', e.target);
+			// console.log('\n\ntgChecked called', e.target);;
 			e.preventDefault();
 			if (this.model.get('checked'))
 				this.model.children.trigger('uncheckAll');
@@ -218,7 +216,7 @@ var Tag = (function (window, undefined) {
 		// Select those tagItem's which have t.attributes.checked === true
 		getChecked: function () {
 			var tags = this.chain()
-				.map(function rec(t){return [t].concat((t.children.length)?t.children.map(rec):[]) })
+				.map(function rec(t){return [t].concat((t.children.length)?t.children.map(rec):[]);})
 				.flatten()
 				.value();
 			return tags.filter(function(t){return t.get('checked') === true;});
@@ -256,7 +254,7 @@ var Tag = (function (window, undefined) {
 			var container = document.createDocumentFragment();
 			// render each tagView
 			_.each(this._views, function (tagView) {
-				container.appendChild(tagView.render().el)
+				container.appendChild(tagView.render().el);
 			}, this);
 			this.$el.empty();
 			this.$el.append(container);
@@ -269,12 +267,13 @@ var Tag = (function (window, undefined) {
 		list: TagList,
 		view: TagView,
 		listView: TagListView,
-	}
+	};
 })(this);
 
 var Post = (function (window, undefined) {
-	var PostItem = Backbone.Model.extend({
-	});
+	'use strict';
+	//
+	var PostItem = Backbone.Model.extend({});
 
 	var PostView = Backbone.View.extend({
 		tagName: 'li',
@@ -283,7 +282,6 @@ var Post = (function (window, undefined) {
 			this.model.collection.on('reset', this.destroy, this);
 		},
 		destroy: function () {
-			console.log('Removing me post ="(', this);
 			this.remove();
 		},
 		render: function () {
@@ -302,10 +300,10 @@ var Post = (function (window, undefined) {
 	var PostListView = Backbone.View.extend({
 		el: "#posts > ul",
 		_views: [],
-		template: _.template('<% if (!length) { %>\
-			<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>\
-			<% } %>\
-			<hr>'),
+		template: _.template(['<% if (!length) { %>',
+			'<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>',
+			'<% } %>',
+			'<hr>'].join('\n')),
 		
 		initialize: function () {
 			this.collection.on('reset', this.addAll, this);
@@ -324,7 +322,7 @@ var Post = (function (window, undefined) {
 			var container = document.createDocumentFragment();
 			// render each postView
 			_.each(this._views, function (postView) {
-				container.appendChild(postView.render().el)
+				container.appendChild(postView.render().el);
 			}, this);
 			this.$el.empty();
 			this.$el.append(container);
@@ -341,7 +339,7 @@ var Post = (function (window, undefined) {
 		list: PostList,
 		view: PostView,
 		listView: PostListView,
-	}
+	};
 })(this);
 
 // Quick first-attempt at a TemplateManager for the views.
@@ -391,7 +389,7 @@ var app = new (Backbone.Router.extend({
 		// Disable preview button.
 		$("#btn-preview").prop('disabled', true);
 		$(".tag").on('click', function (e) {
-			console.log('hey, I was called')
+			console.log('hey, I was called');
 			$("#btn-preview").prop('disabled', false);
 		})
 	},
@@ -399,7 +397,7 @@ var app = new (Backbone.Router.extend({
 	start: function () {
 		Backbone.history.start({pushState: false});
 
-		this.tagList = new Tag.list;
+		this.tagList = new Tag.list();
 		this.tagListView = new Tag.listView({collection: this.tagList});
 		$("#tags").prepend(this.tagListView.$el);
 		this.tagList.parseAndReset(window._tags);
@@ -408,7 +406,7 @@ var app = new (Backbone.Router.extend({
 		// to implement callbacks for the function calls above.
 		setTimeout(this.initPreview, 400);
 
-		this.postList = new Post.list;
+		this.postList = new Post.list();
 		this.postListView = new Post.listView({collection: this.postList});
 		this.postList.reset(window._posts);
 	},
