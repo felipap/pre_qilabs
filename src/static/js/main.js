@@ -388,7 +388,8 @@ var app = new (Backbone.Router.extend({
 	initPreview: function () { 
 		// Disable preview button.
 		$("#btn-preview").prop('disabled', true);
-		$(".tag").on('click', function (e) {
+		// Listen to clicks on tags to enable the disable button. #wtf
+		$(document).on("click", ".tag", function (e) {
 			console.log('hey, I was called');
 			$("#btn-preview").prop('disabled', false);
 		})
@@ -402,9 +403,8 @@ var app = new (Backbone.Router.extend({
 		$("#tags").prepend(this.tagListView.$el);
 		this.tagList.parseAndReset(window._tags);
 
-		// Doesn't seem to work without a timeout, and I'm too lazy right now
-		// to implement callbacks for the function calls above.
-		setTimeout(this.initPreview, 400);
+		// initiate the "change => preview" mechanism.
+		this.initPreview();
 
 		this.postList = new Post.list();
 		this.postListView = new Post.listView({collection: this.postList});
@@ -412,8 +412,9 @@ var app = new (Backbone.Router.extend({
 	},
 
 	previewPosts: function () {
-		// Disable preview button.
-		setTimeout(this.initPreview, 400); // not working without the timeout
+		// restart the preview button.
+		this.initPreview();
+
 		// Push posts from server.
 		var tags = app.tagList.getCheckedTags().join(',') || ','; 
 		this.postList.fetch({
