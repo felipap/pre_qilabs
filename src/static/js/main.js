@@ -451,5 +451,12 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		app.start();
 	});
-
+	
+	(function setCSRFToken () {
+		jQuery.ajaxPrefilter(function(options, _, xhr) {
+		if (!xhr.crossDomain) 
+			xhr.setRequestHeader('X-CSRF-Token',
+				$("meta[name='csrf-token']").attr('content'));
+		});
+	})();
 });
