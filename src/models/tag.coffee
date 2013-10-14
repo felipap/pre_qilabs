@@ -45,8 +45,7 @@ findOrCreate = (conditions, doc, options, callback) ->
 			else
 				callback(err, result, false)
 		else
-			for key in doc
-				conditions[key] = doc[key]
+			conditions = _.extend(conditions, doc)
 			obj = new self(conditions)
 			obj.save (err) ->
 				callback(err, obj, true)

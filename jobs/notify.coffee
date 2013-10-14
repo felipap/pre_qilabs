@@ -1,6 +1,6 @@
 
 # notify.coffee
-# This is a job. It botifies users of new posts with the tags they follow.
+# This is a job. It notifies users of new posts with the tags they follow.
 
 if module is require.main
 	# If being executed directly...

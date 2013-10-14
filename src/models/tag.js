@@ -39,7 +39,7 @@
     }
     self = this;
     return this.findOne(conditions, function(err, result) {
-      var key, obj, _i, _len;
+      var obj;
       if (err || result) {
         if (options && options.upsert && !err) {
           return self.update(conditions, doc, function(err, count) {
@@ -51,10 +51,7 @@
           return callback(err, result, false);
         }
       } else {
-        for (_i = 0, _len = doc.length; _i < _len; _i++) {
-          key = doc[_i];
-          conditions[key] = doc[key];
-        }
+        conditions = _.extend(conditions, doc);
         obj = new self(conditions);
         return obj.save(function(err) {
           return callback(err, obj, true);
