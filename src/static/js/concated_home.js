@@ -486,6 +486,14 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		var PostList = Backbone.Collection.extend({
 			model: PostItem,
 			url: '/api/posts',
+			page: 0,
+			parse: function (response, options) {
+				this.page = response.page
+				return Backbone.Collection.prototype.parse.call(this, response.data, options);
+			},
+			fetchMore: function () {
+				this.fetch({data: {page:this.page+1}, remove:false});
+			}
 		});
 
 		var PostListView = Backbone.View.extend({
@@ -499,6 +507,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			
 			initialize: function () {
 				this.collection.on('reset', this.addAll, this);
+				this.collection.on('add', this.addAll, this);
 			},
 
 			addAll: function () {
@@ -613,6 +622,13 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			this.postListView = new Post.listView({collection: this.postList});
 			this.postList.fetch({reset:true});
 			this.postListView.$el.appendTo('#posts-col > .placement');
+
+			var self = this;
+			$(window).scroll(function() {
+				if ($(document).height() - ($(window).scrollTop()+$(window).height()) < 200) {
+					self.postList.fetchMore();
+				}
+			});
 		},
 
 		confirmTags: function (callback) {

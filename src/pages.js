@@ -253,14 +253,20 @@ module.exports = {
         methods: {
           get: [
             require.isLogged, function(req, res) {
-              var seltags;
+              var page, seltags;
               if (req.query.tags) {
                 seltags = req.query.tags.split(',');
               } else {
                 seltags = req.user.tags;
               }
+              page = parseInt(req.query.page) || 0;
               return Post.getWithTags(seltags, function(err, docs) {
-                return res.end(JSON.stringify(docs));
+                docs = docs.slice(page * 5, page * 5 + 5);
+                console.log(docs.length);
+                return res.end(JSON.stringify({
+                  data: docs,
+                  page: page
+                }));
               });
             }
           ]
