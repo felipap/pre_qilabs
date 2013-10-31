@@ -48,7 +48,7 @@ notifyNewPosts = (callback) ->
 	onGetTPosts = ((posts) ->
 		onGetUsers = ((users) ->
 			numUsersNotSaved = users.length
-			for user in users # when user.facebookId == process.env.facebook_me
+			for user in users when user.notifiable # when user.facebookId is process.env.facebook_me
 				tags = _.union.apply(null,
 							_.pluck \
 								_.filter(posts, (post) ->

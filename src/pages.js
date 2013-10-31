@@ -41,11 +41,7 @@ require = {
   },
   isLogged: function(req, res, next) {
     if (!req.user) {
-      if (req.accepts('json')) {
-        return res.status(403).end();
-      } else {
-        return res.redirect('/');
-      }
+      return res.redirect('/');
     } else {
       return next();
     }
@@ -101,7 +97,18 @@ module.exports = {
       }
     }
   },
-  '/painel': staticPage('pages/panel', 'panel'),
+  '/painel': {
+    name: 'panel',
+    methods: {
+      get: [
+        require.isLogged, function(req, res) {
+          return res.render('pages/panel', {
+            user: req.user
+          });
+        }
+      ]
+    }
+  },
   '/sobre': staticPage('pages/about', 'about'),
   '/equipe': staticPage('pages/team', 'team'),
   '/participe': staticPage('pages/join-team', 'join-team'),
@@ -278,10 +285,14 @@ module.exports = {
         methods: {
           post: [
             require.isLogged, function(req, res) {
-              var _ref;
-              if ((_ref = req.body.notifiable) === true || _ref === false) {
-                req.user.notifiable = req.body.notifiable;
+              if ('off' === req.query.notifiable) {
+                req.user.notifiable = false;
+                req.user.save();
+              } else if (typeof req.query.notifiable === 'array' && __indexOf.call(req.query.notifiable, 'on') >= 0) {
+                req.user.notifiable = true;
+                req.user.save();
               }
+              console.log(req.user.notifiable, req.query.notifiable);
               return res.end();
             }
           ]

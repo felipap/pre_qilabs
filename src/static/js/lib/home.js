@@ -444,10 +444,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		new WorkspaceRouter;
 		Backbone.history.start({pushState: false});
 
-		_.delay(function() {
-			$("#sidebar #tags-wrapper > ul").perfectScrollbar({suppressScrollX:true});
-		}, 400);
-
 		$("#tags-wrapper [type=submit]").click(function (event) {
 			event.stopPropagation();
 			event.preventDefault();

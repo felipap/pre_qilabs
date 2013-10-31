@@ -32,9 +32,9 @@ require =
 
 	isLogged: (req, res, next) ->
 		unless req.user
-			if req.accepts 'json'
-				res.status(403).end()
-			else
+			# if req.accepts 'json'
+			# 	res.status(403).end()
+			# else
 				res.redirect('/')
 		else
 			next()
@@ -90,7 +90,16 @@ module.exports = {
 
 		}
 	},
-	'/painel': 	staticPage('pages/panel', 'panel'),
+	'/painel': {
+		name: 'panel',
+		methods: {
+			get: [require.isLogged, (req, res) ->
+				res.render('pages/panel', {
+					user: req.user
+				})
+			]
+		}
+	},
 	'/sobre': 	staticPage('pages/about', 'about'),
 	'/equipe': 	staticPage('pages/team', 'team'),
 	'/participe': 	staticPage('pages/join-team', 'join-team'),
@@ -238,8 +247,16 @@ module.exports = {
 				methods: {
 					post: [require.isLogged,
 						(req, res) ->
-							if req.body.notifiable in [true, false]
-								req.user.notifiable = req.body.notifiable
+
+							if 'off' is req.query.notifiable
+								req.user.notifiable = off
+								req.user.save()
+							else if typeof req.query.notifiable is 'array' and
+							'on' in req.query.notifiable
+								req.user.notifiable = on
+								req.user.save()
+
+							console.log(req.user.notifiable, req.query.notifiable)
 							res.end()
 						]
 				},

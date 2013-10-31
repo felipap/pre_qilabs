@@ -27,7 +27,7 @@ UserSchema = new mongoose.Schema({
     "default": Date(0)
   },
   notifiable: {
-    type: String,
+    type: Boolean,
     "default": true
   }
 }, {

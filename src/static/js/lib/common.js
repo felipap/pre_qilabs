@@ -2,9 +2,21 @@
 // Present in all built javascript.
 
 require(['jquery','bootstrap'], function ($) {
-	$("[data-action='logout']").click(function () {
-		$.post('/api/user/logout', function () {
-			window.location.href = "/";
+
+	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
+		var href = this.dataset['ajaxPostHref'];
+		console.log(this.dataset, href);
+		$.post(href, function () {
+			window.location.reload();
+		});
+	});
+
+	$("form[data-ajax-post-href]").on('submit', function (evt) {
+		evt.preventDefault();
+		var href = this.dataset['ajaxPostHref']+'?'+$(this).serialize();
+		console.log(this.dataset, href);
+		$.post(href, function () {
+			window.location.reload();
 		});
 	});
 

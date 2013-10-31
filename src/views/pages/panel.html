@@ -17,10 +17,13 @@
 				<h4>Esse é o seu painel de controle.</h4>
 
 				<hr>
-					<div>
-						Receber notificações pelo Facebook <input type="checkbox">
-					</div>
-					<button data-action="save">Salvar</button>
+					<form onSubmit='return false;' data-ajax-post-href='/api/user'>
+						Receber notificações pelo Facebook
+						<input type="hidden" name="notifiable" value="off" >
+						<input type="checkbox" name="notifiable" autocomplete="off" <%= user.notifiable?'checked':'' %>>
+						<input type="hidden" name="_csrf" value="<%= token %>" />
+						<button data-action="save">Salvar</button>
+					</form>
 				<hr>
 				
 				<a href="#delete-account" data-action="delete-account" data-toggle="dialog">
