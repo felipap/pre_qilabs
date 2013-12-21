@@ -68,6 +68,11 @@ app.locals.errors = {};
 app.locals.message = {};
 app.locals.tags = {};
 
+var path = require('path');
+app.locals.mediaUrl = function (media) {
+	return path.join('/static/', media);
+} 
+
 require('./routes.js')(app);
 
 if (app.get('env') === 'development') {
