@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 			build: {
 				files: {
 					'src/static/css/main.min.css':		'src/static/less/main.less',
-					'src/static/css/mobile.min.css':	'src/static/less/mobile.less',
+					// 'src/static/css/mobile.min.css':	'src/static/less/mobile.less',
 				},
 				options: { cleancss: true },
 			},
