@@ -29,6 +29,27 @@ h1,h2,h3 {
 	font-weight: bold;
 }
 
+
+.blackout (@opacity:0.5) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	opacity: @opacity;
+}
+
+/////////////////////////////////
+
+section {
+	position: relative;
+	cursor: default;
+
+	width: 100%;
+	text-align: center;
+}
+
 #jumbo {
 	// min-height: 450px;
 
@@ -39,8 +60,9 @@ h1,h2,h3 {
 	-o-background-size: cover;
 	background-size: cover;
 
-	position: relative;
-	cursor: default;
+	.box-blackout {
+		.blackout(.5);
+	}
 
 	.content {
 		color: white;
@@ -98,31 +120,12 @@ h1,h2,h3 {
 		bottom: 15px;
 
 		a {
-			color: #AAA;
+			color: #DDD;
 		}
 	}
 
-	.blackout {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: black;
-		opacity:.49;
-		.transition(opacity,.2s,easeIn);
-
-	}
-	&:hover .blackout {
-		opacity:.5;
-	}
 }
 
-section {
-
-	width: 100%;
-	text-align: center;
-}
 
 #parcerias {
 	.container-fixed;
@@ -149,11 +152,14 @@ section {
 
 #last-signins {
 	position: relative;
-	background: #7f8c8d;
 
 	width: 100%;
 	overflow: hidden;
 	height: 200px;
+
+	.box-blackout {
+		.blackout(.5);
+	}
 
 	h1 {
 		line-height: 165px;
@@ -171,7 +177,6 @@ section {
 		height: 100%;
 
 		li {
-			outline: 1px solid #444;
 			list-style: none;
 			float: left;
 		}
