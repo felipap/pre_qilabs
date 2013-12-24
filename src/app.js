@@ -68,6 +68,10 @@ app.locals.errors = {};
 app.locals.message = {};
 app.locals.tags = {};
 
+app.locals({
+	version_str: "alpha 0.2"
+});
+
 var path = require('path');
 app.locals.mediaUrl = function (media) {
 	return path.join('/static/', media);

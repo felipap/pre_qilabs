@@ -11,7 +11,7 @@
 		<title>Me Avisa</title>
 
 		<link rel="stylesheet" href="/static/css/index.min.css">
-		<link href='http://fonts.googleapis.com/css?family=Lato|Londrina+Solid|Ubuntu:400,500|Open+Sans:400,800,700,600' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Lato|Londrina+Solid|Ubuntu:400,500|Open+Sans:400,800,700,600|Londrina+Sketch' rel='stylesheet' type='text/css'>
 
 		<script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
 	</head>
@@ -30,36 +30,21 @@
 					<div class="half">
 						<h1>Quer chegar lá?<br>A gente te ajuda!</h1>
 						<p>
-							O <strong>Me Avisa</strong> é um serviço online gratuito que avisa estudantes sobre oportunidades acadêmicas e profissionais.
+							O <strong>Me Avisa</strong> é um serviço online gratuito que avisa estudantes sobre oportunidades acadêmicas e profissionais na área de interesse deles. No MeAvisa, a informação que você quer procura você!
 						</p>
 					</div>
 				</section>
 			</div>
 		</section>
 
-		<!-- container -->
-		<div class="container">
-			<div class="jumbotron">
-				<img class="pull-right" style="margin: 5px" width=450 src="/static/img/logo.jpg" alt="MeAvisa">
-				<div class="page-header">
-					<h1><strong>MeAvisa</strong> <small>protótipo: versão 0.2</small></h1>
-				</div>
-				<p>
-					<strong>
-					Quer ficar sabendo das últimas notícias dos vestibulares, olimpíadas escolares e oportunidades de intercâmbio?</strong> Ou até mesmo cursos grátis? Seu lugar é aqui. O MeAvisa é um serviço gratuito de divulgação de oportunidades acadêmicas e extra curriculares para jovens. <strong>No MeAvisa, a informação que você quer procura você!
-					</strong>
-				</p>
-				
-				<% if (latestSignIns) { %>
-					<h4><strong>Últimos usuários cadastrados:</strong></h4>
-					<div>
-						<% for (var user in latestSignIns) { %>
-							<img title="{{user.name}}" src="https://graph.facebook.com/{{user.facebookId}}/picture"></img>
-						<% } %>
-					</div>
+		<% if (latestSignIns) { %>
+			<h4><strong>Últimos usuários cadastrados:</strong></h4>
+			<div>
+				<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
+					<img src="https://graph.facebook.com/<%=user.facebookId%>/picture"></img>
 				<% } %>
 			</div>
-		</div>
+		<% } %>
 		
 		<!-- footer -->
 		<% include footer.html %>
