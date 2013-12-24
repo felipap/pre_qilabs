@@ -61,11 +61,13 @@
 		<% if (latestSignIns) { %>
 		<section id="last-signins">
 			<div class="avatars">
+				<% for (var i2=0; i2++<200;) { %>
+				<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
 				<li>
-					<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
 						<img src="https://graph.facebook.com/<%=user.facebookId%>/picture"></img>
-					<% } %>
 				</li>
+				<% } %>
+				<% } %>
 			</div>
 			<h1>Últimos usuários cadastrados</h1>
 		</section>
