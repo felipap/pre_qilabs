@@ -89,6 +89,7 @@ Pages = {
 				# console.log('logged:', req.user.name, req.user.tags)
 				req.user.lastUpdate = new Date()
 				req.user.save()
+				console.log(tposts, JSON.stringify(tposts))
 				getPostsWithTags req.user.tags, (err, tposts) ->
 					res.render 'panel',
 						user: req.user

@@ -2,6 +2,30 @@
   "name": "meavisa",
   "version": "0.0.2",
   "private": true,
+  "homepage": "http://meavisa.org",
+  "readmeFilename": "README.md",
+  "author": "Felipe Aragão Pires",
+  "license": "BSD",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "gitHead": "a9ef3dfea8d0873be9a7d7f78b211a0abc978de6",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:f03lipe/meavisa.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-less": "~0.8.3",
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-nodemon": "~0.1.2",
+    "grunt-concurrent": "~0.4.2"
+  },
   "dependencies": {
     "mongoose": "3.6.5",
     "express": "3.3.4",
@@ -18,22 +42,8 @@
     "swig": "~1.0.0-pre2",
     "consolidate": "~0.9.1",
     "connect-mongo": "~0.3.3",
-    "connect": "~2.8.5"
-  },
-  "readmeFilename": "README.md",
-  "gitHead": "a9ef3dfea8d0873be9a7d7f78b211a0abc978de6",
-  "description": "LOL",
-  "main": "app.js",
-  "devDependencies": {
-    "grunt": "~0.4.2"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:f03lipe/meavisa.git"
-  },
-  "author": "f03lipe",
-  "license": "BSD"
+    "connect": "~2.8.5",
+    "ejs-locals": "~1.0.2",
+    "connect-flash": "~0.1.1"
+  }
 }
