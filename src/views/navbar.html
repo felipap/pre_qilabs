@@ -1,10 +1,8 @@
-<nav class="navbar navbar-inverted" role="navigation">
-	<div class="container">
-		<div class="navbar-header">
-			<a class="navbar-brand brand" href="/">
-				MeAvisa.org <sup class="version"><%= version_str %></sup>
-			</a>
-		</div>
+<nav class="navbar" role="navigation">
+	<div>
+		<a class="brand" href="/">
+			MeAvisa.org <sup class="version"><%= version_str %></sup>
+		</a>
 		<% if (user) { %>
 			
 			<div class="nav navbar-nav btn-group">
@@ -18,26 +16,22 @@
 					<li><a data-toggle="modal" href="#leave" href="#">Excluir Conta</a></li>
 				</ul>
 			</div>
-
+			
 			<div class="nav navbar-nav pull-right">
 				<a href="/logout" class="btn btn-warning navbar-btn">Logout</a>
 			</div>
-<!-- 			<div class="nav navbar-nav pull-right">
-				<form class="navbar-form navbar-left" role="search">
-					<div class="form-group">
-						<input type="text" disabled class="form-control" placeholder="">
-					</div>
-					<button type="submit" disabled class="btn btn-default">Procurar Assunto</button>
-				</form>
-			</div> -->
+
 		<% } else { %>
 			<ul class="nav navbar-nav pull-right">
-				<a class="signin" href="/auth/facebook">
-					<strong>Registrar-se</strong>
+				<a class="bt0 wt-bg signin" href="/auth/facebook">
+					<strong>Solicitar Convite</strong>
 				</a>
-				<a class="login" href="/auth/facebook">
-					Log In
+				<a class="bt0 no-bg login" href="/auth/facebook">
+					Entrar
 				</a>
+				<button class="no-bg">
+					<i class="fa fa-question fa-lg"></i>
+				</button>
 			</ul>
 		<% } %>
 	</div>

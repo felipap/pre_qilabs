@@ -25,11 +25,12 @@ module.exports = function(grunt) {
 		},
 		
 		less: {
-			build: {
-				files: {
-					'src/static/css/main.min.css':	'src/static/less/main.less',
-					'src/static/css/index.min.css':	'src/static/less/index.less',
-				},
+			main: {
+				files: { 'src/static/css/main.min.css':'src/static/less/main.less' },
+				options: { cleancss: true },
+			},
+			index: {
+				files: { 'src/static/css/index.min.css':'src/static/less/index.less' },
 				options: { cleancss: true },
 			},
 		},
@@ -58,10 +59,20 @@ module.exports = function(grunt) {
 				options: { spawn: false },
 			},
 			css: {
-				files: ['src/static/**/*.less'],
+				files: ['src/static/less/**/*.less'],
 				tasks: ['less'],
-				options: { spawn: false },
+				options: { spawn: false },				
 			},
+			// css_index: {
+			// 	files: ['src/static/less/index.less'],
+			// 	tasks: ['less:index'],
+			// 	options: { spawn: false },
+			// },
+			// css_main: {
+			// 	files: ['src/static/less/main.less'],
+			// 	tasks: ['less:main'],
+			// 	options: { spawn: false },
+			// },
 			coffee: {
 				files: ['**/*.coffee'],
 				tasks: ['dist-coffee'],

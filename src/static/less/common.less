@@ -1,11 +1,48 @@
 
 // common.less
-// for vempraruavem.org, by @f03lipe
+// for meavisa.org, by @f03lipe
 
 @import "macros.less";
 @import "font-awesome/font-awesome.less";
 @import "bstp.less";
 @import "snshare.less";
+
+
+.btn0 {
+	.btn;
+	.btn-default;
+	.navbar-btn;
+
+	font-size: 13px;
+	font-weight: 800;
+	padding: 8px 20px;
+	border: none;
+	margin-top: 7px;
+	.border-radius(3px,3px,3px,3px);
+}
+
+.wt-bg {
+	.btn0;
+	color: white;
+
+	text-transform: uppercase;
+	padding-left: 30px;
+	padding-right: 30px;
+	font-weight: 700;
+	border: none;
+	.box-shadow(none);
+
+}
+
+.no-bg {
+	.btn0;
+
+	color: #888;
+	font-weight: 700;
+	&:hover {
+		background: none;
+	}
+}
 
 .btn-facebook {
 	background: #2b4b90 !important;

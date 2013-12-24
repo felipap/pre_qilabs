@@ -15,6 +15,34 @@
 }
 
 
+.trbl(@all:0) {
+  top: @all;
+  right: @all;
+  bottom: @all;
+  left: @all;
+}
+
+.trbl(@vertical,@horizontal) {
+  top: @vertical;
+  right: @horizontal;
+  bottom: @vertical;
+  left: @horizontal;
+}
+
+.trbl(@t,@horizontal,@b) {
+  top: @t;
+  right: @horizontal;
+  bottom: @b;
+  left: @horizontal;
+}
+
+.trbl(@t,@r,@b,@l) {
+  top: @t;
+  right: @r;
+  bottom: @b;
+  left: @l;
+}
+
 a.no-underline {
   text-decoration: none !important;
 }
