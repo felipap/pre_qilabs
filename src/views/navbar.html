@@ -1,8 +1,8 @@
-<nav class="navbar navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-inverted navbar-fixed-top" role="navigation">
 	<div class="container">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="/">
-				<i class="fa fa-bullhorn"></i> Meavisa
+			<a class="navbar-brand brand" href="/">
+				MeAvisa.org
 			</a>
 		</div>
 		<% if (user) { %>
@@ -31,9 +31,12 @@
 				</form>
 			</div> -->
 		<% } else { %>
-			<ul class="nav navbar-nav btn-group">
-				<a class="btn btn-success pull-right navbar-btn" href="/auth/facebook">
-					Login using <strong>Facebook</strong>
+			<ul class="nav navbar-nav sbtn-group pull-right">
+				<a class="btn btn-default navbar-btn" href="/auth/facebook">
+					Login
+				</a>
+				<a class="btn btn-success navbar-btn" href="/auth/facebook">
+					<strong>Registrar-se</strong>
 				</a>
 			</ul>
 		<% } %>
