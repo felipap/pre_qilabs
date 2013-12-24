@@ -24,7 +24,9 @@
   "gitHead": "a9ef3dfea8d0873be9a7d7f78b211a0abc978de6",
   "description": "LOL",
   "main": "app.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

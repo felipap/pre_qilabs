@@ -102,7 +102,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				// If children elements will be hidden in the html.
 				this.hideChildren = true;
 				// View for this.model.children.
-				this.childrenView = new TagListView({collection: this.model.children, className:'children'});
+				this.childrenView = new TagListView({collection:this.model.children, className:'children'});
 				// Listen to change on children, so we can update the check icon 
 				// accordingly. (empty, checked or dash)
 				this.model.children.on('change', this.childrenChanged, this);
@@ -232,7 +232,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		});
 
 		var TagListView = Backbone.View.extend({
-			tagName: "ul",	// 'o
+e			tagName: "ul",	// 'o
 			_views: [], 	// a list of children views
 
 			initialize: function () {
