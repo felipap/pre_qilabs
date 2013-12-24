@@ -43,17 +43,34 @@
 			</dfn>
 		</section>
 
-		<setcion id="">
-		</setcion>
+		<section id="parcerias">
+			<h1>Parceiros e Apoiadores</h1>
+			<section>
+				<li>
+					<img width=200 src="<%=mediaUrl('img/fe.png')%>"></img>
+				</li>
+				<li>
+					<img width=200 src="<%=mediaUrl('img/di.jpg')%>"></img>
+				</li>
+				<li>
+					<img width=200 src="<%=mediaUrl('img/eu.jpg')%>"></img>
+				</li>
+			</section>
+		</section>
 
 		<% if (latestSignIns) { %>
-			<h4><strong>Últimos usuários cadastrados:</strong></h4>
-			<div>
-				<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
-					<img src="https://graph.facebook.com/<%=user.facebookId%>/picture"></img>
-				<% } %>
+		<section id="last-signins">
+			<div class="avatars">
+				<li>
+					<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
+						<img src="https://graph.facebook.com/<%=user.facebookId%>/picture"></img>
+					<% } %>
+				</li>
 			</div>
+			<h1>Últimos usuários cadastrados</h1>
+		</section>
 		<% } %>
+
 		
 		<!-- footer -->
 		<% include footer.html %>
