@@ -1,0 +1,66 @@
+
+// main.less
+// for meavisa.org, by @f03lipe
+
+@import "common.less";
+@import "scrollbars.less";
+@import "parts/navbar.less";
+@import "parts/footer.less";
+
+
+html {
+	// font-size: 16px;
+}
+
+body {
+	// font-size: 62.5%;
+	// padding-top: @navbar-height;
+	font-family: "Open Sans";
+}
+
+.btn-default {
+	color: #333;
+	background-color: #fff;
+	border-color: #ccc;
+}
+
+.first {
+	min-height: 450px;
+
+	background: url(../img/asm.jpg) no-repeat center center;
+	background-clip: content-box;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+
+	.wide-background {
+		color: white;
+		text-shadow: 0 0 3px #000;
+
+		h1,h2 {
+			font-weight: 700;
+		}
+
+		p {
+			font-size: 22px;
+			font-weight: 600;
+		}
+
+		padding-top: 50px;
+
+		&:extend(.container);
+
+		& > section {
+			.make-row;
+			
+			.half {
+				background: rgba(0,0,0,.7);
+				border-radius: 5px;
+				padding: 20px;
+				display: table;
+				.make-md-column(6);
+			}
+		}
+	}
+}

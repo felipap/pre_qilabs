@@ -1,0 +1,58 @@
+
+.navbar {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-bottom: 0;
+	background: white;
+
+	// .box-shadow(0,0,5px,.5);
+	.border-radius(0);
+
+	.navbar-brand {
+		color: #00b5ca;
+		.unselectable();
+		cursor: pointer;
+		overflow: hidden;
+		font-family: "Londrina Solid";
+		font-size: 30px;
+
+		.version {
+			font-size: 20px;
+			font-weight: 400px;
+			color: #444;
+			font-family: "Londrina Shadow";
+		}
+	}
+
+	ul {
+		height: @navbar-height;
+		overflow-y: hidden;
+		padding-left: 10px;
+
+		a, button {
+			.btn;
+			.btn-default;
+			.navbar-btn;
+
+			font-size: 13px;
+			font-weight: 800;
+			padding: 8px 20px;
+			border: none;
+			margin-top: 8px;
+			.border-radius(3px,3px,3px,3px);
+		}
+	
+		.signin {
+			text-transform: uppercase;
+			border: 1px solid #AAA;
+			padding: 8px 25px;
+			font-weight: 700;
+			.invert(white, #00b5ca);
+		}
+
+		.login {
+			color: #444;
+			font-weight: 600;
+		}
+	}
+}
