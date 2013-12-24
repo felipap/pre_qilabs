@@ -1,4 +1,4 @@
-<nav class="navbar navbar-inverted navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-inverted" role="navigation">
 	<div class="container">
 		<div class="navbar-header">
 			<a class="navbar-brand brand" href="/">
@@ -31,12 +31,12 @@
 				</form>
 			</div> -->
 		<% } else { %>
-			<ul class="nav navbar-nav sbtn-group pull-right">
-				<a class="btn btn-default navbar-btn" href="/auth/facebook">
-					Login
-				</a>
-				<a class="btn btn-success navbar-btn" href="/auth/facebook">
+			<ul class="nav navbar-nav pull-right">
+				<a class="signin" href="/auth/facebook">
 					<strong>Registrar-se</strong>
+				</a>
+				<a class="login" href="/auth/facebook">
+					Log In
 				</a>
 			</ul>
 		<% } %>
