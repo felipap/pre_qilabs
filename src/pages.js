@@ -104,7 +104,7 @@ Pages = {
         req.user.save();
         console.log(tposts, JSON.stringify(tposts));
         return getPostsWithTags(req.user.tags, function(err, tposts) {
-          return res.render('home', {
+          return res.render('pages/home', {
             user: req.user,
             tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags)),
             posts: tposts,
@@ -116,7 +116,7 @@ Pages = {
         return User.find().sort({
           '_id': 'descending'
         }).limit(10).find(function(err, data) {
-          return res.render('frontpage', {
+          return res.render('pages/frontpage', {
             latestSignIns: data,
             messages: [JSON.stringify(req.session)]
           });
@@ -129,7 +129,7 @@ Pages = {
   },
   panel: {
     get: function(req, res) {
-      return res.render('panel', {
+      return res.render('pages/panel', {
         user: req.user
       });
     },

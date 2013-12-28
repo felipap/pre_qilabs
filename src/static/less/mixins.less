@@ -47,6 +47,15 @@
 	.color-btn-active(#444, #DDD, #AAA);
 }
 
+// Second flavor
+.inverted-btn2 (@color: #00b5ca) {
+	.color-btn-focus(@color, transparent, @color);
+	border: 2px solid transparent;
+	.color-btn(@color, transparent, @color);
+	.color-btn-hover(white, @color, @color);
+	.color-btn-active(#444, #DDD, #AAA);
+}
+
 .btn0 {
 	.btn;
 	.btn-default;
