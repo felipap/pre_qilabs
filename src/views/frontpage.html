@@ -25,8 +25,9 @@
 
 		<%
 		var bgs = [
-			{ label:'Harvard University, EUA', source:'hav.jpg'},
-			{ label:'Massachusetts Institute of Technology, EUA', source:'mit.jpg'},
+			{ label:'Harvard University, Boston', source:'hav.jpg'},
+			{ label:'Massachusetts Institute of Technology, Boston', source:'mit.jpg'},
+			{ label:'Stanford University, Santa Clara', source:'sta.jpg'},
 		];
 		var sel_bg = bgs[Math.floor(bgs.length*Math.random())];
 		%>
@@ -49,7 +50,7 @@
 			</dfn>
 		</section>
 
-		<% if (latestSignIns) { %>
+		<% if (false && latestSignIns) { %>
 		<section id="last-signins">
 			<div class="avatars">
 				<% for (var i2=0; i2++<200;) { %>
@@ -67,31 +68,27 @@
 		<% } %>
 
 		<section id="howto">
-			<h2>Como isso aqui funciona:</h2>
+			<h2>Funciona assim:</h2>
 			<section>
 				<div class="list-group">
 					<a href="#" class="list-group-item active">
-						<h4 class="list-group-item-heading">1º Você mostra pra gente o que te interessa</h4>
-						<p class="list-group-item-text">Existem vários assuntos que o Me Avisa cobre semanalmente.</p>
+						<h4 class="list-group-item-heading">1º Você escolhe os assuntos que você curte</h4>
+						<p class="list-group-item-text">Existem várias tags no <strong>Me Avisa</strong>, para os mais variados estilos de aluno.</p>
 					</a>
 					<a href="#" class="list-group-item">
-						<h4 class="list-group-item-heading">2º Nós coletamos o que te interessa</h4>
-						<p class="list-group-item-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+						<h4 class="list-group-item-heading">2º Nós ficamos de olho nas novidades</h4>
+						<p class="list-group-item-text">Não precisa mais entrar em todos aqueles sites de Olimpíada, estágio etc. A gente faz isso pra você.</p>
 					</a>
 					<a href="#" class="list-group-item">
-						<h4 class="list-group-item-heading">3º A gente te avisa por Facebook</h4>
-						<p class="list-group-item-text">E você pode voltar aqui para conferir.</p>
-					</a>
-					<a href="#" class="list-group-item">
-						<h4 class="list-group-item-heading">4º Você fica sabendo das oportunidades...</h4>
-						<p class="list-group-item-text">sem precisar visitar um bando de sites por aí.</p>
+						<h4 class="list-group-item-heading">3º A gente te avisa!</h4>
+						<p class="list-group-item-text">A gente te manda notificação por Facebook, email. Tudo pra você não perder as oportunidades por aí.</p>
 					</a>
 				</div>
 			</section>
 		</section>
 
 		<section id="parcerias">
-			<h1>Parceiros e Apoiadores</h1>
+			<h1>Parceiros e Colaboradores</h1>
 			<section>
 				<li>
 					<img width=200 src="<%=mediaUrl('img/fe.png')%>"></img>
