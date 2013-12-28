@@ -1,25 +1,25 @@
 <% if (tag.checked && tag.checked !== 'false') { %>
 	<button class="btn btn-default tag tag-btn" data-checked=true >
-		<i class="icon-check-sign"></i>
+		<i class="fa fa-check-square"></i>
 		<%= tag.label %>
 <% } else if (tag.hasCheckedChild) { %>
 	<button class="btn btn-default tag tag-btn" data-checked=false >
-		<i class="icon-check-minus"></i>
+		<i class="fa fa-minus-square"></i>
 		<%= tag.label %>
 <% } else { %>
 	<button class="btn btn-default tag tag-btn" data-checked=false>
-		<i class="icon-check-empty"></i>
+		<i class="fa fa-square-o"></i>
 		<%= tag.label %>
 <% } %>
 		<% if (tag.description) { %>
 			<div class="btn-reset info"
 				 style="float: right; padding: 0">
-					<i class="icon-info"></i>
+					<i class="fa fa-info"></i>
 			</div>
 		<% } %>
 	</button>
 <% if (!_.isEmpty(tag.children)) { %>
 	<button class="btn-reset expand">
-		<i class="icon-angle-down"></i>
+		<i class="fa fa-angle-down"></i>
 	</button>
 <% } %>

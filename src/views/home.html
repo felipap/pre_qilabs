@@ -61,13 +61,13 @@
 		</div>
 
 		<!-- navbar -->
-		<% include navbar.html %>
+		<% include layouts/navbar.html %>
 
 		<!-- container -->
 		<div class="container" style="position: relative">
 			<div class="row-fixed">
 				<!-- tags configuration -->
-				<div class="col-4">
+				<div class="col-md-4">
 					<div data-spy="affix" data-offset-top="0" style="width:350px">
 						<h3>Oi, <%= user.name %>!</h3>
 						<h5>Selecione aqui os assuntos de seu interesse.</h5>
@@ -88,7 +88,7 @@
 					</div>
 				</div>
 				<!-- posts -->
-				<div class="col-8">
+				<div class="col-md-8 col-offset-4">
 					<div id="posts" class="posts">
 						<h3 id="posts-desc">Últimas atualizações dos assuntos que você segue...</h3>
 						<ul></ul>
@@ -101,7 +101,7 @@
 		</div>
 
 		<!-- footer -->
-		<% include footer.html %>
+		<% include layouts/footer.html %>
 
 		<script id="template-tagview" type="text/template">
 			add stuff here in the future
