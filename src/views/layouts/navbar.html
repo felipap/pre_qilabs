@@ -6,25 +6,23 @@
 		<% if (user) { %>
 
 			<ul class="nav navbar-nav pull-right">
+				<button class="iconed" onClick="$(this).find('i').toggleClass('fa-bell-o').toggleClass('fa-bell');">
+					<i class="fa fa-bell fa-lg"></i>
+				</button>
 				<a data-role="sobre" href="/auth/facebook">
 					<strong>Sobre o Me Avisa</strong>
 				</a>
 				<a data-role="logout" href="/logout">
 					Sair
 				</a>
-				<button>
+				<button class="hidden">
 					<i class="fa fa-search fa-lg"></i>
+				</button>
+				<button class="">
+					<i class="fa fa-gear fa-lg"></i>
 				</button>
 			</ul>
 			<ul class="nav navbar-nav">
-				<button type="button" class="btn btn-info dropdown-toggle navbar-btn" data-toggle="dropdown">
-					Menu <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu">
-					<li><a data-toggle="modal" href="#sobre" href="#">Sobre o MeAvisa</a></li>
-					<li class="divider"></li>
-					<li><a data-toggle="modal" href="#leave" href="#">Excluir Conta</a></li>
-				</ul>
 			</div>
 			
 		<% } else { %>
@@ -35,7 +33,7 @@
 				<a data-role="login" href="/auth/facebook">
 					Entrar
 				</a>
-				<button>
+				<button class="">
 					<i class="fa fa-question fa-lg"></i>
 				</button>
 			</ul>

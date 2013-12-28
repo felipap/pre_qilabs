@@ -3,10 +3,17 @@
 @import "../common.less";
 
 .navbar {
+
+	
+	border-radius: 0 !important;
 	padding-top: 5px;
 	padding-bottom: 5px;
 	margin-bottom: 0;
 	background: white;
+
+	body.home & {
+		border-bottom: 1px solid #DDD;
+	}
 
 	.brand {
 		.navbar-brand;
@@ -26,46 +33,59 @@
 		}
 	}
 
+	button {
+		.btn0;
+		color: #666;
+		font-weight: 700;
+		&:hover, &:focus {
+			background: none;
+		}
+		box-shadow: none;
+	}
+
+	.iconed {
+		padding-right: 15px;
+		padding-left: 15px;
+		i.fa {
+			font-size: 18px;
+		}
+	}
+
+	[data-role=signin],
+	[data-role=sobre] {
+		.btn0;
+		.inverted-btn;
+		padding-left: 30px;
+		padding-right: 30px;
+		font-weight: 700;
+		.box-shadow(none);
+	}
+
+	[data-role=signin] {
+		text-transform: uppercase;
+	}
+
+	[data-role=sobre] {
+		background: #39b3d7;
+	}
+
+	[data-role=login],
+	[data-role=logout] {
+		.btn0;
+		color: #666;
+		font-weight: 700;
+		&:hover, &:focus {
+			background: none;
+		}
+	}
+	
+	button {
+		font-size: 13px;
+	}
 	ul {
 		margin: 0 !important;
 		height: @navbar-height;
 		overflow-y: hidden;
 
-		button {
-			.btn0;
-			color: #444;
-			font-weight: 700;
-			&:hover, &:focus {
-				background: none;
-			}
-		}
-	
-		[data-role=signin],
-		[data-role=sobre] {
-			.btn0;
-			.inverted-btn;
-			padding-left: 30px;
-			padding-right: 30px;
-			font-weight: 700;
-			.box-shadow(none);
-		}
-
-		[data-role=signin] {
-			text-transform: uppercase;
-		}
-
-		[data-role=login],
-		[data-role=logout] {
-			.btn0;
-			color: #666;
-			font-weight: 700;
-			&:hover, &:focus {
-				background: none;
-			}
-		}
-
-		i.fa {
-			font-size: 18px;
-		}
 	}
 }
