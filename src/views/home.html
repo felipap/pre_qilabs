@@ -9,8 +9,11 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width">
 		<meta name="csrf-token" content="<%= token %>">
-		<link rel="stylesheet" href="/static/css/main.min.css">
-		<title>MeAvisa</title>
+
+		<title>Me Avisa</title>
+
+		<link rel="stylesheet" href="/static/css/home.min.css">
+		<link href='http://fonts.googleapis.com/css?family=Lato|Londrina+Solid|Ubuntu:400,500|Open+Sans:400,800,700,600|Londrina+Sketch' rel='stylesheet' type='text/css'>
 		
 		<script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
 		<script>window._tags=<%- tags %>;</script>
@@ -82,8 +85,6 @@
 								</a>
 							</div>
 						</form>
-						<!-- footer -->
-						<% include footer.html %>
 					</div>
 				</div>
 				<!-- posts -->
@@ -98,6 +99,9 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- footer -->
+		<% include footer.html %>
 
 		<script id="template-tagview" type="text/template">
 			add stuff here in the future

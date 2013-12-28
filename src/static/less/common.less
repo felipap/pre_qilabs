@@ -1,81 +1,29 @@
 
-// common.less
-// for meavisa.org, by @f03lipe
+/* main.less
+** for meavisa.org, by @f03lipe
+**
+** Project-specific designs. All project .less files should import this. 
+*/
 
-@import "macros.less";
-@import "font-awesome/font-awesome.less";
+@import "mixins.less";
 @import "bstp.less";
-@import "snshare.less";
+@import "font-awesome/font-awesome.less";
+@import "plugins/scrollbars.less";
+@import "plugins/snshare.less";
+@import "layouts/navbar.less";
+@import "layouts/footer.less";
 
-.color-btn (@color, @bg, @border) {
-	color: @color;
-	background: @bg;
-	border-color: @border;
+html {
+	// font-size: 16px;
 }
 
-.color-btn-hover (@color, @bg, @border) {
-	&:hover {
-		.color-btn(@color, @bg, @border);
-	}
+body {
+	background: #EEE;
+	// font-size: 62.5%;
+	font-family: "Open Sans";
 }
 
-.color-btn-active (@color, @bg, @border) {
-	&:active {
-		.color-btn(@color, @bg, @border);
-	}
-}
-
-.color-btn-focus (@color, @bg, @border) {
-	&:focus {
-		.color-btn(@color, @bg, @border);
-	}
-}
-
-.inverted-btn (@color: white, @bg: #00b5ca) {
-	border: 2px solid transparent;
-	.color-btn(@color, @bg, transparent);
-	.color-btn-hover(@color, @color, @bg);
-	.color-btn-active(#444, #DDD, #AAA);
-}
-
-/* Don't change a thing. */
-.inverted-btn (@color: white, @bg: #00b5ca, @chover: @bg) {
-	.color-btn-focus(@color, @bg, transparent);
-	border: 2px solid transparent;
-	.color-btn(@color, @bg, transparent);
-	.color-btn-hover(@chover, transparent, @bg);
-	.color-btn-active(#444, #DDD, #AAA);
-}
-
-.btn0 {
-	.btn;
-	.btn-default;
-	.navbar-btn;
-
-	font-size: 13px;
-	font-weight: bold;
-	padding: 8px 20px;
-	&:focus {
-		outline: none;
-	}
-	border: none;
-	margin-top: 7px;
-	.border-radius(3px,3px,3px,3px);
-}
-
-/******************************************************************************/
-
-.btn-facebook {
-	background: #2b4b90 !important;
-	border-color: darken(#2b4b90,5%) !important;
-}
-
-.btn-twitter {
-	background: #55ACEE !important;
-	border-color: darken(#55ACEE,5%) !important;
-}
-
-.btn-gplus {
-	background: #dd4b39 !important;
-	border-color: darken(#dd4b39,5%) !important;
+.popover {
+	position: absolute;
+	z-index: 10;
 }

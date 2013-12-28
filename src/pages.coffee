@@ -91,7 +91,7 @@ Pages = {
 				req.user.save()
 				console.log(tposts, JSON.stringify(tposts))
 				getPostsWithTags req.user.tags, (err, tposts) ->
-					res.render 'panel',
+					res.render 'home',
 						user: req.user
 						tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
 						posts: tposts

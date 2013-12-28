@@ -1,5 +1,6 @@
 
-@import "common.less";
+@import "../mixins.less";
+@import "../common.less";
 
 .navbar {
 	padding-top: 5px;
@@ -39,17 +40,22 @@
 			}
 		}
 	
-		[data-role=signin] {
+		[data-role=signin],
+		[data-role=sobre] {
 			.btn0;
 			.inverted-btn;
-			text-transform: uppercase;
 			padding-left: 30px;
 			padding-right: 30px;
 			font-weight: 700;
 			.box-shadow(none);
 		}
 
-		[data-role=login] {
+		[data-role=signin] {
+			text-transform: uppercase;
+		}
+
+		[data-role=login],
+		[data-role=logout] {
 			.btn0;
 			color: #666;
 			font-weight: 700;

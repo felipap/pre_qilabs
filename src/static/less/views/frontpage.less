@@ -1,29 +1,13 @@
 
-// main.less
-// for meavisa.org, by @f03lipe
+/* frontpage.less
+** for meavisa.org, by @f03lipe
+**
+** Styles of the default page of unlogged users.
+*/
 
-@import "common.less";
-@import "scrollbars.less";
-@import "parts/navbar.less";
-@import "parts/footer.less";
+@import "../mixins.less";
+@import "../common.less";
 
-
-html {
-	// font-size: 16px;
-}
-
-body {
-	// font-size: 62.5%;
-	// padding-top: @navbar-height;
-	font-family: "Open Sans";
-	background: #EEE;
-}
-
-.btn-default {
-	color: #333;
-	background-color: #fff;
-	border-color: #ccc;
-}
 
 h1,h2,h3 {
 	font-family: "Open Sans";
@@ -83,7 +67,7 @@ body > section {
 
 			p {
 				font-size: 22px;
-				font-weight: 600;
+				font-weight: 500;
 			}
 
 			padding: 80px 0;
@@ -94,22 +78,6 @@ body > section {
 				.btn0;
 				.inverted-btn(white, #00b5ca, white);
 				font-size: 14px;
-
-				// color: white;
-				// // border: 2px solid #00b5ca;
-				// // background: transparent;
-				// outline: none !important;
-				// // &:hover, &:focus {
-				// 	background: #00b5ca;
-				// 	color: white;
-				// 	border: 2px solid transparent;
-				// // }
-				// &:active {
-				// 	color: #00b5ca;
-				// 	border: 2px solid #00b5ca;
-				// 	background: white;
-				// }
-				// .invert(#00b5ca, transparent);
 			}
 		}
 	}
@@ -120,13 +88,9 @@ body > section {
 		font-size: 13px;
 		font-style: normal;
 		font-weight: 600;
-		color: #AAA;
+		color: #DDD;
 		right: 15px;
 		bottom: 15px;
-
-		a {
-			color: #DDD;
-		}
 	}
 
 }

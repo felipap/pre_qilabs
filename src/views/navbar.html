@@ -4,9 +4,19 @@
 			MeAvisa.org <sup class="version"><%= version_str %></sup>
 		</a>
 		<% if (user) { %>
-			
-			<div class="nav navbar-nav btn-group">
 
+			<ul class="nav navbar-nav pull-right">
+				<a data-role="sobre" href="/auth/facebook">
+					<strong>Sobre o Me Avisa</strong>
+				</a>
+				<a data-role="logout" href="/logout">
+					Sair
+				</a>
+				<button>
+					<i class="fa fa-question fa-lg"></i>
+				</button>
+			</ul>
+			<ul class="nav navbar-nav">
 				<button type="button" class="btn btn-info dropdown-toggle navbar-btn" data-toggle="dropdown">
 					Menu <span class="caret"></span>
 				</button>
@@ -17,10 +27,6 @@
 				</ul>
 			</div>
 			
-			<div class="nav navbar-nav pull-right">
-				<a href="/logout" class="btn btn-warning navbar-btn">Logout</a>
-			</div>
-
 		<% } else { %>
 			<ul class="nav navbar-nav pull-right">
 				<a data-role="signin" href="/auth/facebook">
