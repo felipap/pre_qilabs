@@ -103,7 +103,7 @@ Pages = {
 					.sort({'_id': 'descending'})
 					.limit(10)
 					.find((err, data) ->
-						res.render 'index',
+						res.render 'frontpage',
 							latestSignIns: data
 							messages: [JSON.stringify(req.session)]
 						)

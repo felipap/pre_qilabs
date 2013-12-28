@@ -116,7 +116,7 @@ Pages = {
         return User.find().sort({
           '_id': 'descending'
         }).limit(10).find(function(err, data) {
-          return res.render('index', {
+          return res.render('frontpage', {
             latestSignIns: data,
             messages: [JSON.stringify(req.session)]
           });

@@ -88,22 +88,26 @@ section {
 			padding: 80px 0;
 			width: 600px;
 			margin: auto;
-			
-			& > button {
-				color: white;
-				// border: 2px solid #00b5ca;
-				// background: transparent;
-				outline: none !important;
-				// &:hover, &:focus {
-					background: #00b5ca;
-					color: white;
-					border: 2px solid transparent;
+
+			[data-role=join] {
+				.btn0;
+				.inverted-btn(white, #00b5ca, white);
+				font-size: 14px;
+
+				// color: white;
+				// // border: 2px solid #00b5ca;
+				// // background: transparent;
+				// outline: none !important;
+				// // &:hover, &:focus {
+				// 	background: #00b5ca;
+				// 	color: white;
+				// 	border: 2px solid transparent;
+				// // }
+				// &:active {
+				// 	color: #00b5ca;
+				// 	border: 2px solid #00b5ca;
+				// 	background: white;
 				// }
-				&:active {
-					color: #00b5ca;
-					border: 2px solid #00b5ca;
-					background: white;
-				}
 				// .invert(#00b5ca, transparent);
 			}
 		}
@@ -124,6 +128,10 @@ section {
 		}
 	}
 
+}
+
+#howto {
+	.container-fixed;
 }
 
 

@@ -69,12 +69,12 @@ app.locals.message = {};
 app.locals.tags = {};
 
 app.locals({
-	version_str: "alpha 0.2"
+	version_str: "alpha"
 });
 
 var path = require('path');
-app.locals.mediaUrl = function (media) {
-	return path.join('/static/', media);
+app.locals.mediaUrl = function () {
+	return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
 } 
 
 require('./routes.js')(app);

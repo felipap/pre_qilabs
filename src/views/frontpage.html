@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width">
+		<meta name="csrf-token" content="<%= token %>">
+
+		<title>Me Avisa</title>
+
+		<link rel="stylesheet" href="/static/css/index.min.css">
+		<link href='http://fonts.googleapis.com/css?family=Lato|Londrina+Solid|Ubuntu:400,500|Open+Sans:400,800,700,600|Londrina+Sketch' rel='stylesheet' type='text/css'>
+
+		<script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
+	</head>
+	<body>
+		<!-- <script>if(window!=window.top){top.location="http://meavisa.herokuapp.com";}</script> -->
+
+		<!-- navbar -->
+		<% include navbar.html %>
+
+		<%
+		var bgs = [
+			{ label:'Harvard University, EUA', source:'hav.jpg'},
+			{ label:'Massachusetts Institute of Technology, EUA', source:'mit.jpg'},
+		];
+		var sel_bg = bgs[Math.floor(bgs.length*Math.random())];
+		%>
+
+		<section id="jumbo" style="background-image: url(<%= mediaUrl('img/'+sel_bg.source) %>);">
+			<div class="box-blackout"></div>
+			<div class="content">
+				<section>
+					<h1>Quer chegar lá?<br>A gente te ajuda!</h1>
+					<p>
+						O <strong>Me Avisa</strong> é um serviço online gratuito que avisa estudantes sobre oportunidades acadêmicas e profissionais na área de interesse deles.
+					</p>
+					<button data-role="join">
+						Seja um Early-Tester!
+					</button>
+				</section>
+			</div>
+			<dfn>
+				foto: <%= sel_bg.label %>
+			</dfn>
+		</section>
+
+		<% if (latestSignIns) { %>
+		<section id="last-signins">
+			<div class="avatars">
+				<% for (var i2=0; i2++<200;) { %>
+				<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
+				<li>
+						<img src="https://graph.facebook.com/<%=user.facebookId%>/picture"></img>
+				</li>
+				<% } %>
+				<% } %>
+			</div>
+			<div class="box-blackout">
+			</div>
+			<h1>Últimos usuários cadastrados</h1>
+		</section>
+		<% } %>
+
+		<section id="howto">
+			<h2>Como isso aqui funciona:</h2>
+			<section>
+				<div class="list-group">
+					<a href="#" class="list-group-item active">
+						<h4 class="list-group-item-heading">1º Você mostra pra gente o que te interessa</h4>
+						<p class="list-group-item-text">Existem vários assuntos que o Me Avisa cobre semanalmente.</p>
+					</a>
+					<a href="#" class="list-group-item">
+						<h4 class="list-group-item-heading">2º Nós coletamos o que te interessa</h4>
+						<p class="list-group-item-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+					</a>
+					<a href="#" class="list-group-item">
+						<h4 class="list-group-item-heading">3º A gente te avisa por Facebook</h4>
+						<p class="list-group-item-text">E você pode voltar aqui para conferir.</p>
+					</a>
+					<a href="#" class="list-group-item">
+						<h4 class="list-group-item-heading">4º Você fica sabendo das oportunidades...</h4>
+						<p class="list-group-item-text">sem precisar visitar um bando de sites por aí.</p>
+					</a>
+				</div>
+			</section>
+		</section>
+
+		<section id="parcerias">
+			<h1>Parceiros e Apoiadores</h1>
+			<section>
+				<li>
+					<img width=200 src="<%=mediaUrl('img/fe.png')%>"></img>
+				</li>
+				<li>
+					<img width=200 src="<%=mediaUrl('img/di.jpg')%>"></img>
+				</li>
+				<li>
+					<img width=200 src="<%=mediaUrl('img/eu.jpg')%>"></img>
+				</li>
+			</section>
+		</section>
+
+
+		
+		<!-- footer -->
+		<% include footer.html %>
+	
+<!--	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="/static/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+
+		<script src="/static/js/vendor/bootstrap.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+
+		<script src="/static/js/plugins.js"></script>
+		<script src="/static/js/main.js"></script> -->
+
+		<script>
+			var _gaq=[["_setAccount","UA-XXXXX-X"],["_trackPageview"]];
+			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+			g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
+			s.parentNode.insertBefore(g,s)}(document,"script"));
+		</script>
+	</body>
+</html>

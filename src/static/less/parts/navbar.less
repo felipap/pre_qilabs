@@ -1,4 +1,6 @@
 
+@import "common.less";
+
 .navbar {
 	padding-top: 5px;
 	padding-bottom: 5px;
@@ -16,9 +18,10 @@
 
 		.version {
 			font-size: 20px;
-			font-weight: 400px;
+			font-weight: normal;
 			color: #444;
-			font-family: "Londrina Shadow";
+			cursor: default;
+			// font-family: "Arial";
 		}
 	}
 
@@ -26,12 +29,29 @@
 		margin: 0 !important;
 		height: @navbar-height;
 		overflow-y: hidden;
+
+		button {
+			.btn0;
+			color: #888;
+			font-weight: 700;
+		}
 	
-		.signin {
-			.invert(white, #00b5ca);
-			border: 1px solid #888;
+		[data-role=signin] {
+			.btn0;
+			.inverted-btn;
+			text-transform: uppercase;
+			padding-left: 30px;
+			padding-right: 30px;
+			font-weight: 700;
+			.box-shadow(none);
+		}
+
+		[data-role=login] {
+			.btn0;
+			color: #888;
+			font-weight: 700;
 			&:hover {
-				border: 1px solid #AAA;
+				background: none;
 			}
 		}
 
