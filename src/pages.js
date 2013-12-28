@@ -132,6 +132,11 @@ Pages = {
       user: req.user
     });
   },
+  us_get: function(req, res) {
+    return res.render('pages/us', {
+      user: req.user
+    });
+  },
   panel: {
     get: function(req, res) {
       return res.render('pages/panel', {

@@ -1,12 +1,10 @@
 <% layout('../stdbody') -%>
 
-<% stylesheet(mediaUrl('css','frontpage.min.css')) -%>
-<% stylesheet('http://fonts.googleapis.com/css?family=Lato|Londrina+Solid|Ubuntu:400,500|Open+Sans:400,800,700,600|Londrina+Sketch') -%>
+<% stylesheet(staticUrl('css','frontpage.min.css')) -%>
 
 <body class="front">
 	<!-- <script>if(window!=window.top){top.location="http://meavisa.herokuapp.com";}</script> -->
 
-	<!-- navbar -->
 	<% include ../layouts/navbar.html %>
 
 	<%
@@ -18,7 +16,7 @@
 	var sel_bg = bgs[Math.floor(bgs.length*Math.random())];
 	%>
 
-	<section id="jumbo" style="background-image: url(<%= mediaUrl('img/'+sel_bg.source) %>);">
+	<section id="jumbo" style="background-image: url(<%= staticUrl('img/'+sel_bg.source) %>);">
 		<div class="box-blackout"></div>
 		<div class="content">
 			<section>
@@ -77,32 +75,17 @@
 		<h1>Parceiros e Colaboradores</h1>
 		<section>
 			<li>
-				<img width=200 src="<%=mediaUrl('img/fe.png')%>"></img>
+				<img width=200 src="<%=staticUrl('img/fe.png')%>"></img>
 			</li>
 			<li>
-				<img width=200 src="<%=mediaUrl('img/di.jpg')%>"></img>
+				<img width=200 src="<%=staticUrl('img/di.jpg')%>"></img>
 			</li>
 			<li>
-				<img width=200 src="<%=mediaUrl('img/eu.jpg')%>"></img>
+				<img width=200 src="<%=staticUrl('img/eu.jpg')%>"></img>
 			</li>
 		</section>
 	</section>
-
 	<% include ../layouts/footer.html %>
 
-<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script>window.jQuery || document.write('<script src="/static/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
-
-	<script src="/static/js/vendor/bootstrap.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-
-	<script src="/static/js/plugins.js"></script>
-	<script src="/static/js/main.js"></script> -->
-
-	<script>
-		var _gaq=[["_setAccount","UA-XXXXX-X"],["_trackPageview"]];
-		(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-		g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
-		s.parentNode.insertBefore(g,s)}(document,"script"));
-	</script>
+	<script data-main="<%= staticUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>

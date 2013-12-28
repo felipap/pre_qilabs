@@ -75,7 +75,15 @@ app.locals({
 var path = require('path');
 app.locals.mediaUrl = function () {
 	return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
-} 
+}
+app.locals.staticUrl = function () {
+	return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
+}
+
+app.locals.isLogged = function () {
+	console.log(this)
+	console.log
+}
 
 require('./routes.js')(app);
 

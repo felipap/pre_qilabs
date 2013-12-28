@@ -8,19 +8,33 @@ module.exports = function(grunt) {
 
 		// Media files
 		concat: {
-			build: {
+			home: {
 				src: [
+					'src/static/js/lib/require.js',
+					'src/static/js/lib/common.js',
 					'src/static/js/lib/plugins.js',
-					'src/static/js/lib/main.js',
+					'src/static/js/lib/home.js',
 				],
-				dest: 'src/static/js/main.js',
+				dest: 'src/static/js/home.js',
+			},
+			all: {
+				src: [
+					'src/static/js/lib/require.js',
+					'src/static/js/lib/common.js',
+					'src/static/js/lib/plugins.js',
+				],
+				dest: 'src/static/js/all.js',
 			}
 		},
  
 		uglify: {
-			build: {
-				src: 'src/static/js/main.js',
-				dest: 'src/static/js/main.min.js'
+			home: {
+				src: 'src/static/js/home.js',
+				dest: 'src/static/js/home.min.js'
+			},
+			all: {
+				src: 'src/static/js/all.js',
+				dest: 'src/static/js/all.min.js'
 			}
 		},
 		
@@ -49,6 +63,18 @@ module.exports = function(grunt) {
 				ext: '.js'
 			}
 		},
+		// htmlmin: {
+		// 	dist: {
+		// 		options: {
+		// 			removeComments: true,
+		// 			collapseWhitespace: true
+		// 		},
+		// 		files: {
+		// 			'dist/index.html': 'src/index.html',
+		// 			'dist/contact.html': 'src/contact.html'
+		// 		}
+		// 	},
+		// },
 
 		// Higher-lever configuration
 		watch: {
@@ -72,6 +98,12 @@ module.exports = function(grunt) {
 				tasks: ['dist-coffee'],
 				options: { spawn: false },
 			},
+			// html: {
+			// 	files: {
+			// 		'src/views/dist/*.html': 'src/views/pages/*.html',
+			// 	},
+			// 	tasks: ['htmlmin']
+			// }
 		},
 
 		nodemon: {
@@ -107,6 +139,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-coffee');
 	grunt.loadNpmTasks('grunt-concurrent');
 	grunt.loadNpmTasks('grunt-nodemon');
+	grunt.loadNpmTasks('grunt-contrib-htmlmin');
 
 	grunt.registerTask('dist-coffee', ['coffee']);
 	grunt.registerTask('dist-static-js', ['concat', 'uglify']);

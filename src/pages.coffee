@@ -117,6 +117,11 @@ Pages = {
 		res.render 'pages/about',
 			user: req.user
 
+	us_get: (req, res) ->
+		res.render 'pages/us',
+			user: req.user
+
+
 	panel:
 		get: (req, res) ->
 			res.render('pages/panel', {

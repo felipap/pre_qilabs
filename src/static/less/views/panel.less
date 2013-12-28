@@ -2,11 +2,16 @@
 /* panel.less
 ** for meavisa.org, by @f03lipe
 **
-** Styles of the default page of logged users.
+** Styles of all panel pages (sobre, panel, us etc).
 */
 
 @import "../mixins.less";
 @import "../common.less";
+
+body.panel {
+	background: #1b1b24;
+	color: white;
+}
 
 #panel {
 	.container-fixed;
@@ -17,7 +22,7 @@
 		.make-row;
 		margin-top: 20px;
 
-		background: white;
+		// background: white;
 	
 	 	// .make-md-column(8, 2);
 	}
@@ -29,5 +34,10 @@
 	[data-role=cancel] {
 		.btn0;
 		.inverted-btn2(#e74c3c);
+	}
+
+	[data-role=delete-account] {
+		color: #e74c3c;
+		text-decoration: none;
 	}
 }
