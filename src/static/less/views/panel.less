@@ -1,0 +1,33 @@
+
+/* panel.less
+** for meavisa.org, by @f03lipe
+**
+** Styles of the default page of logged users.
+*/
+
+@import "../mixins.less";
+@import "../common.less";
+
+#panel {
+	.container-fixed;
+
+	&:extend(.container);
+	
+	.row {
+		.make-row;
+		margin-top: 20px;
+
+		background: white;
+	
+	 	// .make-md-column(8, 2);
+	}
+
+	[data-role=save] {
+		.btn0;
+		.inverted-btn(white, #2ecc71);
+	}
+	[data-role=cancel] {
+		.btn0;
+		.inverted-btn(white, #e74c3c);
+	}
+}
