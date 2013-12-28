@@ -114,6 +114,13 @@ Pages = {
 					'window.top.location="http://meavisa.herokuapp.com";</script>'+
 					'</body></html>')
 
+	panel:
+		get: (req, res) ->
+			res.render('panel', {
+				user: req.user
+				})
+		post: (req, res) ->
+
 	# hm... logout?
 	logout:
 		get: (req, res) ->
