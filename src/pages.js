@@ -145,25 +145,21 @@ Pages = {
     },
     post: function(req, res) {}
   },
-  logout: {
-    get: function(req, res) {
-      if (!req.user) {
-        return res.redirect('/');
+  logout_get: function(req, res) {
+    if (!req.user) {
+      return res.redirect('/');
+    }
+    req.logout();
+    return res.redirect('/');
+  },
+  leave_get: function(req, res) {
+    return req.user.remove(function(err, data) {
+      if (err) {
+        throw err;
       }
       req.logout();
       return res.redirect('/');
-    }
-  },
-  leave: {
-    get: function(req, res) {
-      return req.user.remove(function(err, data) {
-        if (err) {
-          throw err;
-        }
-        req.logout();
-        return res.redirect('/');
-      });
-    }
+    });
   },
   dropall: {
     get: function(req, res) {

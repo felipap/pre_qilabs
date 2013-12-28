@@ -130,15 +130,13 @@ Pages = {
 		post: (req, res) ->
 
 	# hm... logout?
-	logout:
-		get: (req, res) ->
+	logout_get: (req, res) ->
 			if not req.user then return res.redirect '/'
 			req.logout()
 			res.redirect('/')
 
 	# Deletes then user account.
-	leave:
-		get: (req, res) ->
+	leave_get: (req, res) ->
 			req.user.remove (err, data) ->
 				if err then throw err
 				req.logout()
