@@ -9,8 +9,8 @@
 				<button class="iconed" onClick="$(this).find('i').toggleClass('fa-bell-o').toggleClass('fa-bell');">
 					<i class="fa fa-bell fa-lg"></i>
 				</button>
-				<a data-role="sobre" href="/about">
-					<strong>Sobre o Me Avisa</strong>
+				<a href="/about" title="Sobre o MeAvisa" data-toggle="tooltip" data-placement="bottom">
+					<i class="fa fa-question fa-lg"></i>
 				</a>
 				<a data-role="logout" href="/logout">
 					Sair
@@ -31,9 +31,9 @@
 				<a data-role="login" href="/auth/facebook">
 					Entrar
 				</a>
-				<button class="">
+				<a href="/about">
 					<i class="fa fa-question fa-lg"></i>
-				</button>
+				</a>
 			</ul>
 		<% } %>
 	</div>

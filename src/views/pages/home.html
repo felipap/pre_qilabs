@@ -7,45 +7,6 @@
 <script>window._tags=<%- tags -%></script>
 
 <body class="home">
-	<!-- modal#sobre -->
-	<div class="modal fade" id="sobre">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Sobre o <strong>MeAvisa</strong></h4>
-				</div>
-				<div class="modal-body">
-					<p>O <strong>MeAvisa</strong> é um serviço para deixar as pessoas por dentro de oportunidades acadêmicas, como olimpíadas escolares, cursos, intercâmbio e projetos de pesquisa.</p>
-					O MeAvisa é desenvolvido usando <strong><a href="http://expressjs.com">express.js</a></strong> (um framework para <strong>node.js</strong>) e hosteado através do <strong><a href="http://heroku.com">heroku</a></strong>.
-					<h5>Feito por André Queiroz e Felipe Aragão Pires.</h5>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- modal#leave -->
-	<div class="modal fade" id="leave">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">Excluir sua conta?</h4>
-				</div>
-				<div class="modal-body">
-					<h3>Você tem <strong>certeza</strong> que deseja <strong>excluir a sua conta</strong>?</h3>
-					<img src="http://free-mobile-wallpapers.mobilclubs.com/sites/default/files/img-wallpapers/sad_cat.jpg" width=200>
-				</div>
-				<div class="modal-footer">
-					<a href="/leave" class="btn btn-default btn-danger">Sim :(</a>
-					<button type="button" class="btn btn-default btn-success" data-dismiss="modal">Cancelar :)</button>
-				</div>
-			</div>
-		</div>
-	</div>
 
 	<!-- navbar -->
 	<% include ../layouts/navbar.html %>
