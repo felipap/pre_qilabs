@@ -28,6 +28,7 @@ module.exports = function (app) {
 	
 	app.get('/panel', 		pages.Pages.panel.get);
 	app.post('/panel', 		pages.Pages.panel.post);
+	app.get('/about', 		pages.Pages.about_get);
 
 	app.get('/api/dropall',	requireMe, pages.Pages.dropall.get);
 	app.get('/api/session', requireMe, pages.Pages.session.get);

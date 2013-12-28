@@ -31,7 +31,6 @@ getPostsWithTags = (tags, callback) ->
 			callback?(err, _posts);
 		)
 
-
 Tags =
 	get: (req, res) ->
 		# Get all tags.
@@ -113,6 +112,10 @@ Pages = {
 			res.end('<html><head></head><body><script type="text/javascript">'+
 					'window.top.location="http://meavisa.herokuapp.com";</script>'+
 					'</body></html>')
+
+	about_get: (req, res) ->
+		res.render 'pages/about',
+			user: req.user
 
 	panel:
 		get: (req, res) ->

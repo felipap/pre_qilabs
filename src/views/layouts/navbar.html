@@ -3,13 +3,13 @@
 		<a class="brand" href="/">
 			MeAvisa.org <sup class="version"><%= version_str %></sup>
 		</a>
-		<% if (user) { %>
+		<% if (typeof user !== "undefined") { %>
 
 			<ul class="nav navbar-nav pull-right">
 				<button class="iconed" onClick="$(this).find('i').toggleClass('fa-bell-o').toggleClass('fa-bell');">
 					<i class="fa fa-bell fa-lg"></i>
 				</button>
-				<a data-role="sobre" href="/auth/facebook">
+				<a data-role="sobre" href="/about">
 					<strong>Sobre o Me Avisa</strong>
 				</a>
 				<a data-role="logout" href="/logout">

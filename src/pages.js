@@ -127,6 +127,11 @@ Pages = {
       return res.end('<html><head></head><body><script type="text/javascript">' + 'window.top.location="http://meavisa.herokuapp.com";</script>' + '</body></html>');
     }
   },
+  about_get: function(req, res) {
+    return res.render('pages/about', {
+      user: req.user
+    });
+  },
   panel: {
     get: function(req, res) {
       return res.render('pages/panel', {

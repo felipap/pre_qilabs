@@ -1,7 +1,6 @@
 
 // main.js
 // for meavisa.org, by @f03lipe
-// Uses require.js, jquery, Backbone, underscore and assumes twitter-bootstrap.
 
 require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone, _) {
 
@@ -409,7 +408,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 			this.postList = new Post.list();
 			this.postListView = new Post.listView({collection: this.postList});
-			this.postList.reset(window._posts);
+			this.postList.fetch({reset:true}); // (window._posts);
 		},
 
 		previewPosts: function () {
