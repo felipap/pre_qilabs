@@ -90,8 +90,8 @@ app.locals.staticUrl = function () {
 	return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
 }
 
-// Pass routes through router.js
-require('./lib/router.js')(app)(require('./routes.js'));
+// Pass pages through router.js
+require('./lib/router.js')(app)(require('./pages.js'));
 
 /* Handle 404 */
 app.get('*', function (req, res) {

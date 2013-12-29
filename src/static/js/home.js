@@ -42,10 +42,10 @@ require(['jquery','bootstrap'], function ($) {
 		if (!$(".flash-msgs")[0])
 			$("<div class='flash-msgs'>").prependTo($('body > section')[0]);
 		for (var i=0; msgs.warn && i<msgs.warn.length; i++)
-			("<div class='warn'><button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>"+msgs.warn[i]+"</div>")
+			$("<div class='warn'><button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>"+msgs.warn[i]+"</div>")
 				.hide().appendTo($(".flash-msgs")).slideDown();
 		for (var i=0; msgs.info && i<msgs.info.length; i++)
-			("<div class='info'><button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>"+msgs.info[i]+"</div>")
+			$("<div class='info'><button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>"+msgs.info[i]+"</div>")
 				.hide().appendTo($(".flash-msgs")).slideDown();
 	})(window._flash_msgs);
 });

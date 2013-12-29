@@ -3,6 +3,7 @@
 # for meavisa.org, by @f03lipe
 
 _	= require 'underscore'
+passport = require('passport')
 
 api = require './api.js'
 
@@ -16,44 +17,221 @@ tags = []
 posts = []
 
 Tag.fetchAndCache() 		# Fetch from Tumblr server and cache
-
 # Post.getWithTags() 		# 
 
+requireLogged = (req, res, next) ->
+	unless req.user
+		return res.redirect('/')
+	next()
 
-Tags =
-	get: (req, res) ->
-		# Get all tags.
-		res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
+requireMe = (req, res, next) ->
+	# Require user to be me. :D
+	if not req.user or req.user.facebookId isnt process.env.facebook_me
+		req.flash('warn', 'what do you think you\'re doing?')
+		return res.redirect('/')
+	next()
 
-	post: (req, res) ->
-		# Update checked tags.
-		# Checks for a ?checked=[tags,] parameter.
-		# Not sure if this is RESTful (who cares?). Certainly we're supposed to
-		# use POST when sending data to /api/posts (and not /api/posts/:post)
-		{checked} = req.body
-		# throw "ERR" if not Tag.isValid(checked)
-		req.user.tags = checked
-		req.user.save()
-		req.flash('info', 'Tags atualizadas com sucesso!')
-		res.end()
+staticPage = (template, name) ->
+	return {
+		name: name
+		methods: {
+			get: (req, res) -> 
+				res.render(template, {
+					user: req.user
+				})
+		}
+	}
 
-	put: (req, res) ->
-		# Update tag.
-		# All this does is accept a {checked:...} object and update the user
-		# model accordingly.
-		console.log 'did follow'
-		console.log 'didn\'t follow'
-		if req.params.tag in req.user.tags
-			req.user.tags.splice(req.user.tags.indexOf(req.params.tag), 1)
-		else
-			req.user.tags.push(req.params.tag)
-		req.user.save()
-		res.end()
+module.exports = {
+	'/': {
+		name: 'index',
+		methods: {
+			get: (req, res) ->
+				if req.user
+					# console.log('logged:', req.user.name, req.user.tags)
+					req.user.lastUpdate = new Date()
+					req.user.save()
+					Tag.getAll (err, tags) ->
+						res.render 'pages/home',
+								user: req.user
+								tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
+				else
+					User.find()
+						.sort({'_id': 'descending'})
+						.limit(10)
+						.find((err, data) ->
+							res.render 'pages/frontpage',
+								latestSignIns: data
+							)
 
-Posts = {}
-Pages = {}
+			post: (req, res) ->
+				# Redirect from frame inside Facebook?
+				res.end('<html><head></head><body><script type="text/javascript">'+
+						'window.top.location="http://meavisa.herokuapp.com"</script>'+
+						'</body></html>')
 
-module.exports =
-	Pages: Pages
-	Posts: Posts
-	Tags: Tags
+		}
+	},
+	'/logout': {
+		name: 'logout',
+		methods: {
+			post: [requireLogged,
+				(req, res) ->
+					if not req.user then return res.redirect '/'
+					req.logout()
+					res.redirect('/')
+			]
+		}
+	},
+	'/leave': {
+		name: 'leave',
+		methods: {
+			get: (req, res) -> # Deletes user account.
+				req.user.remove (err, data) ->
+					if err then throw err
+					req.logout()
+					res.redirect('/')
+		}
+	},
+	'/painel': 	staticPage('pages/panel', 'panel'),
+	'/sobre': 	staticPage('pages/about', 'about'),
+	'/equipe': 	staticPage('pages/team', 'team'),
+
+	'/tags/:tag': {
+		methods: {
+			get: (req, res) ->
+		}
+	},
+
+	'/api': {
+		children: {
+			'dropall': {
+				methods: {
+					get: [requireMe,
+						(req, res) ->
+							# Require user to be me
+							waiting = 3
+							User.remove {id:'a'}, (err) ->
+								res.write "users removed"
+								if not --waiting then res.end(err)
+							Post.remove {id:'a'}, (err) ->
+								res.write "\nposts removed"
+								if not --waiting then res.end(err)
+							Tag.remove {id:'a'}, (err) ->
+								res.write "\nposts removed"
+								if not --waiting then res.end(err)
+						]
+				}
+			},
+			'session': {
+				methods: {
+					get: [requireMe, 
+						(req, res) ->
+							if not req.user or req.user.facebookId isnt process.env.facebook_me
+								return res.redirect '/'
+							User.find {}, (err, users) ->
+								Post.find {}, (err, posts) ->
+									Tag.getAll (err, tags) ->
+										obj =
+											ip: req.ip
+											session: req.session
+											users: users
+											tags: tags
+											posts: posts
+										res.end(JSON.stringify(obj))
+						]
+				}
+			},
+			'tags': {
+				methods: {
+					get: [requireLogged, (req, res) ->
+						# Get all tags.
+						res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
+					],
+					# Update tags with ?checked=[tags,]
+					post: [requireLogged, 
+						(req, res) ->
+							# Update checked tags.
+							# Checks for a ?checked=[tags,] parameter.
+							# Not sure if this is RESTful (who cares?). Certainly we're supposed to
+							# use POST when sending data to /api/posts (and not /api/posts/:post)
+							{checked} = req.body
+							# throw "ERR" if not Tag.isValid(checked)
+							req.user.tags = checked
+							req.user.save()
+							req.flash('info', 'Tags atualizadas com sucesso!')
+							res.end()
+					],
+				},
+				children: {
+					':tag': {
+						methods: {
+							# Update tags with {checked:true|false}.
+							put: [requireLogged,
+								(req, res) ->
+									# Update tag.
+									# All this does is accept a {checked:...} object and update the user
+									# model accordingly.
+									console.log 'did follow'
+									console.log 'didn\'t follow'
+									if req.params.tag in req.user.tags
+										req.user.tags.splice(req.user.tags.indexOf(req.params.tag), 1)
+									else
+										req.user.tags.push(req.params.tag)
+									req.user.save()
+									res.end()
+							],
+						}
+					},
+					# 'template': {
+					# 	methods: {
+					# 		# Serve the template.
+					# 		get: [requireLogged,
+					# 			(req, res) ->
+					# 				res.set({'Content-Type': 'text/plain'})
+					# 				res.sendfile(__dirname+'/views/tmpls/post.html')
+					# 		],
+					# 	}
+					# }
+				}
+			},
+			'posts': {
+				methods: {
+					# Get all posts.
+					get: [requireLogged,
+						(req, res) ->
+							# Get all posts.
+							if req.query.tags
+								seltags = req.query.tags.split(',')
+							else
+								seltags = req.user.tags
+							Post.getWithTags seltags, (err, tposts) ->
+								res.end(JSON.stringify(tposts))
+					],
+				},
+				children: {
+					# 'template': {
+					# 	methods: {
+					# 		# Serve the template.
+					# 		get: [requireLogged,
+					# 			(req, res) ->
+					# 				res.set({'Content-Type': 'text/plain'})
+					# 				res.sendfile(__dirname+'/views/tmpls/tag.html')
+					# 		],
+					# 	}
+					# }
+				}
+			}
+		}
+	},
+
+	'/auth/facebook/callback': {
+		methods: {
+			get: passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }),
+		}
+	},
+
+	'/auth/facebook': {
+		methods: { get: passport.authenticate('facebook') }
+	}
+}
