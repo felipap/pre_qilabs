@@ -218,9 +218,10 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			// this way of doing this through a method is not right. It shoudl be 
 			// triggered by the children or smthing.
 			hasCheckedChild: function (callback) {
-				if (!this.children.length) // optimize?
-					return false; 
-				return !_.all(this.children.map(function(t){return !t.get('checked');}));
+				if (_.isEmpty(this.get('children'))) { // optimize?
+					return false;
+				}
+				return !_.all(_.map(this.get('children'), function(t){return !t.checked;}));
 			},
 
 			// Load the content from this.attributes.children into this.children
@@ -526,7 +527,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			$("#btn-preview").prop('disabled', true);
 			// Listen to clicks on tags to enable the disable button. #wtf
 			$(document).on("click", ".tag", function (e) {
-				console.log('hey, I was called');
+				// console.log('hey, I was called');
 				$("#btn-preview").prop('disabled', false);
 			})
 		},

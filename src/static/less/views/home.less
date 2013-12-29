@@ -8,10 +8,6 @@
 @import "../mixins.less";
 @import "../common.less";
 
-#posts-column {
-	position: relative;
-	top: 60px;
-}
 
 .navbar {
 	position: fixed;
@@ -25,6 +21,7 @@
 	bottom: 0;
 	border: 1px solid #DDD;
 	background: white;
+	z-index: 1;
 
 	padding: 10px 20px;
 
@@ -124,31 +121,41 @@
 	z-index: 10;
 }
 
-#posts {
 
-	list-style: none;
-	padding: 0;
+#posts-column {
+	position: relative;
+	top: 60px;
 
-	.post {
-		/*border: 1px dashed gray;*/
-		background: white;
-		margin-bottom: 10px;
-		padding: 5px 15px;
+	.container-fixed;
+	width: 100%;
+	padding-left: 330px;
+
+	#posts {
+
 		list-style: none;
-		box-shadow: 0 0 5px rgba(0, 0, 0, .4);
-		
-		.title h3 {
-			margin-bottom: 0;
-		}
+		padding: 0;
 
-		.title h3 a {
-			text-decoration: none;
-			/*border-bottom: 1px dashed gray ;*/
-		}
+		.post {
+			/*border: 1px dashed gray;*/
+			background: white;
+			margin-bottom: 10px;
+			padding: 5px 15px;
+			list-style: none;
+			box-shadow: 0 0 5px rgba(0, 0, 0, .4);
+			
+			.title h3 {
+				margin-bottom: 0;
+			}
 
-		.body {
-			margin: 20px auto;
-			font: 14px Ubuntu, "Open Sans", Arial;
+			.title h3 a {
+				text-decoration: none;
+				/*border-bottom: 1px dashed gray ;*/
+			}
+
+			.body {
+				margin: 20px auto;
+				font: 14px Ubuntu, "Open Sans", Arial;
+			}
 		}
 	}
 }
