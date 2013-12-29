@@ -435,15 +435,21 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 	var Post = (function () {
 		'use strict';
 		//
-		var PostItem = Backbone.Model.extend({});
+		var PostItem = Backbone.Model.extend({
+			urlRoot: '/api/posts'
+		});
 
 		var PostView = Backbone.View.extend({
 			tagName: 'li',
+			className: 'post',
 			template: _.template($("#template-postview").html()),
 			initialize: function () {
 				this.model.collection.on('reset', this.destroy, this);
 			},
 			destroy: function () {
+				this.undelegateEvents();
+				this.$el.removeData().unbind();
+				this.unbind();
 				this.remove();
 			},
 			render: function () {
@@ -458,11 +464,12 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		});
 
 		var PostListView = Backbone.View.extend({
-			el: "#posts",
+			id: "#posts",
 			_views: [],
 			template: _.template(['<@ if (!length) { @>',
 				'<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>',
 				'<@ } @>',
+				'<h3 id="posts-desc">Últimas atualizações dos assuntos que você segue...</h3>',
 				'<hr>'].join('\n')),
 			
 			initialize: function () {
@@ -491,7 +498,34 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				else
 					$("#no-posts-msg").show();
 				return this;
+			},
+
+			destroy: function () {
+				this.remove();
 			}
+		});
+
+		var PostItemSingleView = Backbone.View.extend({
+			id: "#post",
+			className: 'post',
+			template: _.template($("#template-postview-single").html()),
+
+			initialize: function () {
+				this.model.on('change', this.render, this);
+			},
+			
+			destroy: function () {
+				this.undelegateEvents();
+				this.$el.removeData().unbind();
+				this.unbind();
+				this.remove();
+			},
+
+			render: function () {
+				console.log('render');
+				this.$el.html(this.template({post: this.model.toJSON()}));
+				return this;
+			},
 		});
 
 		return {
@@ -499,6 +533,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			list: PostList,
 			view: PostView,
 			listView: PostListView,
+			singleView: PostItemSingleView,
 		};
 	})();
 
@@ -520,61 +555,51 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 	};
 
 	// Central functionality for of the app.
-	app = new (Backbone.Router.extend({
-		
-		initialize: function () { },
-		
-		initPreview: function () { 
-			// Disable preview button.
-			$("#btn-preview").prop('disabled', true);
-			// Listen to clicks on tags to enable the disable button. #wtf
-			$(document).on("click", ".tag", function (e) {
-				// console.log('hey, I was called');
-				$("#btn-preview").prop('disabled', false);
-			})
-		},
+	WorkspaceRouter = Backbone.Router.extend({
 
-		start: function () {
-			Backbone.history.start({pushState: false});
+		routes: {
+			'posts/:post': 'singlePost',
+			'': 'index',
+		},
+		
+		initialize: function () {
+			window.app = this;
 
 			this.tagList = new Tag.list();
 			this.tagListView = new Tag.listView({collection: this.tagList});
 			$("#tags-wrapper").prepend(this.tagListView.$el);
 			this.tagList.parseAndReset(window._tags);
+		},
 
-			// initiate the "change => preview" mechanism.
-			this.initPreview();
+		singlePost: function (postId) {
+			this.postListView && this.postListView.destroy();
+
+			this.selPostModel = new Post.item({id:postId});
+			this.postItemSingleView = new Post.singleView({model: this.selPostModel});
+			this.selPostModel.fetch({reset:true});
+			this.postItemSingleView.$el.appendTo('#posts-col > .placement');
+		},
+
+		index: function () {
+			console.log('index)')
+			this.postItemSingleView && this.postItemSingleView.destroy();
 
 			this.postList = new Post.list();
 			this.postListView = new Post.listView({collection: this.postList});
-			this.postList.fetch({reset:true}); // (window._posts);
-		},
-
-		previewPosts: function () {
-			// restart the preview button.
-			this.initPreview();
-
-			// Push posts from server.
-			var tags = app.tagList.getCheckedTags().join(',') || ','; 
-			this.postList.fetch({
-				data: {tags: tags},
-				processData: true,
-				reset: true,
-			});
-			// Update message.
-			$("#posts-desc").html("Esses são os assuntos que vão aparecer para você:");
+			this.postList.fetch({reset:true});
+			this.postListView.$el.appendTo('#posts-col > .placement');
 		},
 
 		confirmTags: function (callback) {
 			this.tagList.save(callback);
 		},
 		
-		routes: { "": "index", },
-		index: function () { },
-	}));
-
+	});
 
 	$(function () {
+		new WorkspaceRouter;
+		Backbone.history.start({pushState: false});
+
 		_.delay(function() {
 			$("#sidebar #tags-wrapper > ul").perfectScrollbar({suppressScrollX:true});
 		}, 400);
@@ -586,12 +611,5 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				location.href = '/';
 			})
 		});
-		$("#btn-preview").click(function (event) {
-			event.stopPropagation();
-			event.preventDefault();
-			window.app.previewPosts();
-		});
-
-		app.start();
 	});
 });

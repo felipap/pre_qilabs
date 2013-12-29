@@ -4,12 +4,12 @@
 ## Programming-side
 
 ### TODO Versão 1.0 (now)
-- [ ] /tag/:tag pages
 - [ ] feedback system
-- [ ] cache
+- [/] cache
 - [/] scroolbars for #sidebar
+- [/] flash messages
 - [ ] pagination for posts
-- [ ] flash messages
+- [ ] /tag/:tag pages
 - [ ] páginas automatizadas para cada tag, com estatísticas
 
 ### Versão 2.0

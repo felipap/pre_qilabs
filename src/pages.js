@@ -229,13 +229,27 @@ module.exports = {
               } else {
                 seltags = req.user.tags;
               }
-              return Post.getWithTags(seltags, function(err, posts) {
-                return res.end(JSON.stringify(posts));
+              return Post.getWithTags(seltags, function(err, docs) {
+                return res.end(JSON.stringify(docs));
               });
             }
           ]
         },
-        children: {}
+        children: {
+          ':id': {
+            methods: {
+              get: [
+                requireLogged, function(req, res) {
+                  return Post.findOne({
+                    tumblrId: req.params.id
+                  }, function(err, doc) {
+                    return res.end(JSON.stringify(doc));
+                  });
+                }
+              ]
+            }
+          }
+        }
       }
     }
   },

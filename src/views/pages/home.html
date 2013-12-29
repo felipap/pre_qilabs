@@ -29,16 +29,12 @@
 	</div>
 
 	<!-- container -->
-	<div id="posts-column">
-		<div class="col-md-10 col-md-offset-1">
-			<div class="flash-msgs">
-			</div>
-
-			<h3 id="posts-desc">Últimas atualizações dos assuntos que você segue...</h3>
-			<ul id="posts"></ul>
+	<div id="posts-col">
+		<div class="placement col-md-10 col-md-offset-1">
+			<div class="flash-msgs"></div>
 			<h3 id="no-posts-msg" style="display: none; color: #888">
-				Ops! Nenhum post visível. :/</h3>
-			<hr>
+				Ops! Nenhum post visível. :/
+			</h3>
 		</div>
 	</div>
 
@@ -68,42 +64,77 @@
 			</button>
 		<@ } @>
 	</script>
+
+	<script id="template-postview-single" type="text/template">
+		<@ var daysFromToday = function (arg) {
+			return Math.round((new Date()-new Date(arg))/(1000*60*60*24));
+		} @>
+
+		<div class="title">
+			<@ if (post.title) { @>
+				<h3><a href="<@= post.path @>"><@= post.title @></a></h3>
+			<@ } @>
+			<@ var days = daysFromToday(post.date) @>
+			<@ if (days === 0) { @>
+				<small class="">Hoje</small>
+			<@ } else { @>
+				<small class=""><@=days@> dia<@=days>1?"s":""@> atrás</small>
+			<@ } @>
+		</div>
+		<@ if (post.type === 'photo') { @>
+			<@ for (var i=0; i<post.photos.length; i++) { @>
+				<@ var photo = post.photos[i]; @>
+				<a href="<@= post.path @>"><img src="<@= photo.alt_sizes[0].url @>" /></a>
+			<@ } @>
+		<@ } else { @>
+			<div class="body">
+				<p><@= post.body @></p>
+			</div>
+		<@ } @>
+		<div>
+			tags:
+			<@ for (var i=0; i<post.tags.length; i++) { @>
+				<@ var tag = post.tags[i]; @>
+				<a class="label label-success" href="http://<@= post.blog_name @>.tumblr.com/tagged/<@= tag @>">
+					<i class="icon-tag"></i> <@= tag @></a>
+			<@ } @>
+		</div>
+	</script>
+
 	<script id="template-postview" type="text/template">
 		<@ var daysFromToday = function (arg) {
 			return Math.round((new Date()-new Date(arg))/(1000*60*60*24));
 		} @>
 
-		<li class="post">
-			<div class="title">
-				<@ if (post.title) { @>
-					<h3><a href="<@= post.short_url @>"><@= post.title @></a></h3>
-				<@ } @>
-				<@ var days = daysFromToday(post.date) @>
-				<@ if (days === 0) { @>
-					<small class="">Hoje</small>
-				<@ } else { @>
-					<small class=""><@=days@> dia<@=days>1?"s":""@> atrás</small>
-				<@ } @>
-			</div>
-			<@ if (post.type === 'photo') { @>
-				<@ for (var i=0; i<post.photos.length; i++) { @>
-					<@ var photo = post.photos[i]; @>
-					<a href="<@=post.short_url@>"><img src="<@=photo.alt_sizes[0].url@>" /></a>
-				<@ } @>
-			<@ } else { @>
-				<div class="body">
-					<p><@= post.body @></p>
-				</div>
+		<div class="title">
+			<@ if (post.title) { @>
+				<h3><a href="<@= post.path @>"><@= post.title @></a></h3>
 			<@ } @>
-			<div>
-				tags:
-				<@ for (var i=0; i<post.tags.length; i++) { @>
-					<@ var tag = post.tags[i]; @>
-					<a class="label label-success" href="http://<@=post.blog_name@>.tumblr.com/tagged/<@=tag@>">
-						<i class="icon-tag"></i> <@= tag @></a>
-				<@ } @>
+			<@ var days = daysFromToday(post.date) @>
+			<@ if (days === 0) { @>
+				<small class="">Hoje</small>
+			<@ } else { @>
+				<small class=""><@=days@> dia<@=days>1?"s":""@> atrás</small>
+			<@ } @>
+		</div>
+		<@ if (post.type === 'photo') { @>
+			<@ for (var i=0; i<post.photos.length; i++) { @>
+				<@ var photo = post.photos[i]; @>
+				<a href="<@= post.path @>"><img src="<@= photo.alt_sizes[0].url @>" /></a>
+			<@ } @>
+		<@ } else { @>
+			<div class="body">
+				<p><@= post.body @></p>
 			</div>
-		</li>
+		<@ } @>
+		<div>
+			tags:
+			<@ for (var i=0; i<post.tags.length; i++) { @>
+				<@ var tag = post.tags[i]; @>
+				<a class="label label-success" href="http://<@= post.blog_name @>.tumblr.com/tagged/<@= tag @>">
+					<i class="icon-tag"></i> <@= tag @></a>
+			<@ } @>
+		</div>
 	</script>
 
 	<script data-main="<%= staticUrl('js','home.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>

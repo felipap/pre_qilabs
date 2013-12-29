@@ -18,20 +18,24 @@ findOrCreate = require('./lib/findOrCreate')
 
 # Schema
 PostSchema = new mongoose.Schema {
-		tumblrId:			{ type: Number, }
-		tags:				{ type: Array, }
-		urlTemplate:		{ type: String,	default: '/{id}' }
-		tumblrUrl:			{ type: String }
-		tumblrPostType:		{ type: String }
-		date:				{ type: Date }
-		body:	 			{ type: String }
-		title:	 			{ type: String }
-	}, { id: false }
+		tumblrId:			Number
+		tags:				Array
+		urlTemplate:		{ type: String,	default: '/#posts/{id}' }
+		tumblrUrl:			String
+		tumblrPostType:		String
+		date:				Date
+		body:	 			String
+		title:	 			String
+		isHosted: 			Boolean
+	}, {
+		id: false,
+		toObject: { virtuals: true }
+		toJSON: { virtuals: true }
+	}
 
 # Virtuals
-PostSchema.virtual('path').get(() ->
-	return @urlTemplate.replace(/{id}/, @id);
-)
+PostSchema.virtual('path').get ->
+	@urlTemplate.replace(/{id}/, @tumblrId)
 
 getPostsWithTags = (tags, callback) ->
 

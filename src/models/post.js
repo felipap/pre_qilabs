@@ -22,37 +22,30 @@ api = require('./../api');
 findOrCreate = require('./lib/findOrCreate');
 
 PostSchema = new mongoose.Schema({
-  tumblrId: {
-    type: Number
-  },
-  tags: {
-    type: Array
-  },
+  tumblrId: Number,
+  tags: Array,
   urlTemplate: {
     type: String,
-    "default": '/{id}'
+    "default": '/#posts/{id}'
   },
-  tumblrUrl: {
-    type: String
-  },
-  tumblrPostType: {
-    type: String
-  },
-  date: {
-    type: Date
-  },
-  body: {
-    type: String
-  },
-  title: {
-    type: String
-  }
+  tumblrUrl: String,
+  tumblrPostType: String,
+  date: Date,
+  body: String,
+  title: String,
+  isHosted: Boolean
 }, {
-  id: false
+  id: false,
+  toObject: {
+    virtuals: true
+  },
+  toJSON: {
+    virtuals: true
+  }
 });
 
 PostSchema.virtual('path').get(function() {
-  return this.urlTemplate.replace(/{id}/, this.id);
+  return this.urlTemplate.replace(/{id}/, this.tumblrId);
 });
 
 getPostsWithTags = function(tags, callback) {

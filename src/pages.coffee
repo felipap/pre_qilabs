@@ -19,7 +19,6 @@ posts = []
 
 Tag.fetchAndCache() 		# Fetch from Tumblr server and cache
 Post.fetchAndCache()
-# Post.getWithTags() 		# 
 
 requireLogged = (req, res, next) ->
 	unless req.user
@@ -207,11 +206,21 @@ module.exports = {
 								seltags = req.query.tags.split(',')
 							else
 								seltags = req.user.tags
-							Post.getWithTags seltags, (err, posts) ->
-								res.end(JSON.stringify(posts))
+							Post.getWithTags seltags, (err, docs) ->
+								res.end(JSON.stringify(docs))
 					],
 				},
 				children: {
+					':id': {
+						methods: {
+							get: [requireLogged,
+								(req, res) ->
+									Post.findOne {tumblrId: req.params.id},
+										(err, doc) ->
+											res.end(JSON.stringify(doc))									
+							]
+						}
+					},
 					# 'template': {
 					# 	methods: {
 					# 		# Serve the template.
