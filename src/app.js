@@ -67,7 +67,8 @@ app.locals.tags = {};
 
 var path = require('path');
 app.locals({
-	version_str: "alpha",
+	version_label: "alpha",
+	version_str: 'versão 0.5, alpha',
 	getPageUrl: function (name) {
 		// if (typeof app.locals.urls[name] === 'undefined')
 			// throw "Page named "+name+" was referenced but doesn't exist."
@@ -75,13 +76,12 @@ app.locals({
 	},
 	staticUrl: function () {
 		return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
+	},
+	urls: {
+		'twitter': '#',
+		'facebook': '#',
 	}
 });
-
-app.locals.urls = {
-	'twitter': '#',
-	'facebook': '#',
-}
 
 // Pass pages through router.js
 require('./lib/router.js')(app)(require('./pages.js'));
