@@ -42,6 +42,10 @@ staticPage = (template, name) ->
 		}
 	}
 
+Post.fetchNew (err, r) ->
+	console.log(r)
+
+
 module.exports = {
 	'/': {
 		name: 'index',
@@ -205,8 +209,8 @@ module.exports = {
 								seltags = req.query.tags.split(',')
 							else
 								seltags = req.user.tags
-							Post.getWithTags seltags, (err, tposts) ->
-								res.end(JSON.stringify(tposts))
+							Post.getWithTags seltags, (err, posts) ->
+								res.end(JSON.stringify(posts))
 					],
 				},
 				children: {

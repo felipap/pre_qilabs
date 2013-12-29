@@ -51,6 +51,10 @@ staticPage = function(template, name) {
   };
 };
 
+Post.fetchNew(function(err, r) {
+  return console.log(r);
+});
+
 module.exports = {
   '/': {
     name: 'index',
@@ -227,8 +231,8 @@ module.exports = {
               } else {
                 seltags = req.user.tags;
               }
-              return Post.getWithTags(seltags, function(err, tposts) {
-                return res.end(JSON.stringify(tposts));
+              return Post.getWithTags(seltags, function(err, posts) {
+                return res.end(JSON.stringify(posts));
               });
             }
           ]

@@ -65,8 +65,17 @@ app.use(app.router);
 app.locals.errors = {};
 app.locals.tags = {};
 
+var path = require('path');
 app.locals({
-	version_str: "alpha"
+	version_str: "alpha",
+	getPageUrl: function (name) {
+		// if (typeof app.locals.urls[name] === 'undefined')
+			// throw "Page named "+name+" was referenced but doesn't exist."
+		return app.locals.urls[name] || "#";
+	},
+	staticUrl: function () {
+		return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
+	}
 });
 
 app.locals.urls = {
@@ -74,26 +83,10 @@ app.locals.urls = {
 	'facebook': '#',
 }
 
-
-app.locals.getPageUrl = function (name) {
-	// if (typeof app.locals.urls[name] === 'undefined')
-		// throw "Page named "+name+" was referenced but doesn't exist."
-	return app.locals.urls[name] || "#";
-}
-
-
-var path = require('path');
-app.locals.mediaUrl = function () {
-	return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
-}
-app.locals.staticUrl = function () {
-	return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
-}
-
 // Pass pages through router.js
 require('./lib/router.js')(app)(require('./pages.js'));
 
-/* Handle 404 */
+// Handle 404
 app.get('*', function (req, res) {
 	res.status(404);
 	

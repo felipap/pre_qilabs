@@ -66,8 +66,8 @@ module.exports = function(grunt) {
 			},
 			glob_to_multiple: {
 				expand: true,
-				src: 'src/**/*.coffee',
-				ext: '.js'
+				src: ['src/**/*.coffee','tasks/**/*.coffee'],
+				ext: '.js',
 			}
 		},
 		// htmlmin: {

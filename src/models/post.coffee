@@ -11,7 +11,6 @@ crypto = require 'crypto'
 memjs = require 'memjs'
 _ = require 'underscore'
 
-
 authTypes = []
 
 api = require('./../api')
@@ -25,6 +24,8 @@ PostSchema = new mongoose.Schema {
 		tumblrUrl:			{ type: String }
 		tumblrPostType:		{ type: String }
 		date:				{ type: Date }
+		body:	 			{ type: String }
+		title:	 			{ type: String }
 	}, { id: false }
 
 # Virtuals
@@ -33,10 +34,17 @@ PostSchema.virtual('path').get(() ->
 )
 
 getPostsWithTags = (tags, callback) ->
-	api.getPostsWithTags(blog, tags, (err, _posts) ->
-			posts = _posts; # Update global;
-			callback?(err, _posts);
-		)
+
+	# Get tumblr posts.
+	blog.posts({ limit: -1 }, (err, data) ->
+		if err then return callback?(err)
+		posts = []
+		data.posts.forEach (post) ->
+			int = _.intersection(post.tags, tags)
+			if int[0]
+				posts.push(post)
+		callback?(err, posts);
+	)
 
 # Methods
 PostSchema.methods = {}
@@ -49,23 +57,19 @@ PostSchema.statics.findOrCreate = findOrCreate
 blog_url = 'http://meavisa.tumblr.com'
 blog = api.getBlog 'meavisa.tumblr.com'
 
-# Notice this is updating the global variable.
-PostSchema.statics.getWithTags = (tags, cb) ->
-	api.getPostsWithTags(blog, tags, (err, _posts) ->
-			posts = _posts; # Update global;
-			cb?(err, _posts);
-		)
-	# @getCached (err, results) =>
-	# 	if err or not results.length
-	# 		api.pushBlogTags(blog,
-	# 			(err, _tags) =>
-	# 				cb(err) if err
-	# 				tags = @recursify(_tags)
-	# 				cb(null, tags)
-	# 		)
-	# 	else
-	# 		cb(null, results)
+PostSchema.statics.get = (cb) ->
+	@getCached (err, docs) =>
+		if err or not docs.length
+			@find {}, (err, docs) ->
+				cb(err, docs)
+		else
+			cb(null, docs)
 
+# TODO? optimize dis
+PostSchema.statics.getWithTags = (tags, cb) ->
+	@get (err, docs) ->
+		cb(err) if err
+		cb(null, _.filter(docs, (doc) -> _.intersection(doc.tags, tags).length))
 
 PostSchema.statics.getCached = (cb) ->
 	mc = memjs.Client.create()
@@ -80,31 +84,30 @@ PostSchema.statics.getCached = (cb) ->
 			ret = JSON.parse(val.toString())
 		cb(null, ret)
 
-PostSchema.statics.fetchAndCache = (cb) ->
+PostSchema.statics.flushCache = (cb) ->
 	mc = memjs.Client.create()
 	console.log('Flushing cached posts.')
-	api.pushBlogTags(blog,
-		(err, posts) =>
-			throw err if err
-			mc.set('posts', JSON.stringify(@recursify(posts)), cb)
-	)
-
+	@find {}, (err, docs) =>
+		throw err if err
+		mc.set('posts', JSON.stringify(docs), cb)
 
 PostSchema.statics.fetchNew = (callback) ->
 	blog = api.getBlog('meavisa.tumblr.com')
-	onGetTPosts = ((posts) ->
-		onGetDBPosts = ((dbposts) ->
+	onGetTPosts = (posts) =>
+		onGetDBPosts = (dbposts) =>
 			postsNotSaved = 0
 			newposts = []
 			for post in posts when not _.findWhere(dbposts, {tumblrId:post.id})
 				++postsNotSaved
 				newposts.push(post)
 				console.log("pushing new post \"#{post.title}\"")
-				Post.create(
+				@create(
 					{tumblrId:post.id
 					tags:post.tags
 					tumblrUrl:post.post_url
 					tumblrPostType:post.type
+					body:post.body
+					title:post.title
 					date:post.date},
 					((err, data) ->
 						if err then callback?(err)
@@ -117,11 +120,9 @@ PostSchema.statics.fetchNew = (callback) ->
 				callback(null, [])
 
 		# Get database posts.
-		Post.find {}, (err, dbposts) ->
+		@find {}, (err, dbposts) =>
 			if err then callback?(err)
 			onGetDBPosts(dbposts)
-		)
-	)
 
 	# Get tumblr posts.
 	blog.posts { limit: -1 }, (err, data) ->

@@ -18,9 +18,9 @@ authTypes = []
 
 # Schema
 TagSchema = new mongoose.Schema {
-		name:				{ type: String, }
-		children:			{ type: Array, }
-		description:		{ type: String, }
+		name:			{ type: String, }
+		children:		{ type: Array, }
+		description:	{ type: String, }
 	}
 
 # Virtuals
