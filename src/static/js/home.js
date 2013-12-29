@@ -37,6 +37,8 @@ require(['jquery','bootstrap'], function ($) {
 	})();
 
 	(function showFlashMessages (msgs) {
+		if (!$(".flash-msgs")[0])
+			$("<div class='flash-msgs'>").prependTo($('body > section')[0]);
 		for (var i=0; msgs.warn && i<msgs.warn.length; i++)
 			$(".flash-msgs").append("<div class='warn'><button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>"+msgs.warn[i]+"</div>");
 		for (var i=0; msgs.info && i<msgs.info.length; i++)

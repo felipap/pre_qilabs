@@ -40,21 +40,22 @@ body {
 	// border: 1px solid black;
 	// z-index: 3;
 
-	margin: 20px 0;
+	margin: 10px 0;
 
-	& > div {
-		margin: 10px 0;
+	.warn, .info {
+		margin: 5px 0;
+		margin-bottom: 0;
 	}
 
 	.warn {
 		&:extend(.alert);
 		&:extend(.alert-danger);
-		// &:extend(.alert-dismissable);
+		// background: #e74c3c;
 	}
 
 	.info {
 		&:extend(.alert);
 		&:extend(.alert-info);
-		// &:extend(.alert-dismissable);
+		// background: #54B8Fb;
 	}
 }
