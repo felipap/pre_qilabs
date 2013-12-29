@@ -81,7 +81,7 @@ app.locals.urls = {
 app.locals.getPageUrl = function (name) {
 	// if (typeof app.locals.urls[name] === 'undefined')
 		// throw "Page named "+name+" was referenced but doesn't exist."
-	return app.locals.urls[name];
+	return app.locals.urls[name] || "#";
 }
 
 

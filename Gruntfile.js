@@ -5,6 +5,14 @@ module.exports = function(grunt) {
 	// 1. All configuration goes here 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+		version: grunt.file.readJSON('package.json').version,
+		banner: '/*! <%= pkg.title || pkg.name %> - v<%= version %>\n' +
+			'<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
+			'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
+			' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
+		clean: {
+			files: ['min']
+		},
 
 		concat: {
 			home: {
@@ -79,7 +87,8 @@ module.exports = function(grunt) {
 		watch: {
 			options: {
 				// livereload: true,
-				atBegin: true
+				atBegin: true,
+        		banner: '<%= banner %>',
 			},
 			// Beware of the infinite loop
 			scripts: {

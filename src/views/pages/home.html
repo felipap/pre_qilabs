@@ -9,35 +9,34 @@
 	<!-- navbar -->
 	<% include ../layouts/navbar.html %>
 
-	<!-- container -->
-	<div class="container" style="position: relative">
-		<div class="row-fixed">
-			<!-- tags configuration -->
-			<div class="col-md-4">
-				<div data-spy="affix" data-offset-top="0" style="width:350px">
-					<h3>Oi, <%= user.name %>!</h3>
-					<h5>Selecione aqui os assuntos de seu interesse.</h5>
-					<form id="tags" class="form" onsubmit="return false;">
-						<br>
-						<div>
+	<!-- tags configuration -->
+	<div id="sidebar" style="width:350px">
+		<h4>Oi, <%= user.name %>!</h4>
+		<h5>Selecione aqui os assuntos de seu interesse.</h5>
+		<form id="tags" class="form" onsubmit="return false;">
+			<div>
 <!-- 								<button id="btn-preview" class="btn btn-large btn-block btn-info btn-lg">
-								<strong>Prever</strong> Mudanças
-							</button>
+					<strong>Prever</strong> Mudanças
+				</button>
 -->								<button class="btn btn-large btn-block btn-primary btn-lg" type="submit">
-								<strong>Confirmar</strong> Mudanças
-							</button>
-							<a class="btn btn-large btn-block btn-danger btn-lg" href="/" type="button">
-								<strong>Cancelar</strong> Mudanças
-							</a>
-						</div>
-					</form>
-				</div>
+					<strong>Confirmar</strong> Mudanças
+				</button>
+				<a class="btn btn-large btn-block btn-danger btn-lg" href="/" type="button">
+					<strong>Cancelar</strong> Mudanças
+				</a>
 			</div>
-			<!-- posts -->
-			<div class="col-md-8 col-offset-4">
+		</form>
+
+		<% include ../layouts/footer.html %>
+	</div>
+
+	<!-- container -->
+	<div id="posts-wrapper" style="position: relative">
+		<div class="row-fixed">
+			<div class="col-md-8 col-md-offset-4">
 				<div id="posts" class="posts">
 					<h3 id="posts-desc">Últimas atualizações dos assuntos que você segue...</h3>
-					<ul></ul>
+					<ul ></ul>
 					<h3 id="no-posts-msg" style="display: none; color: #888">
 						Ops! Você não está seguindo tag nenhuma. :/</h3>
 					<hr>

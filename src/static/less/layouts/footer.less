@@ -2,11 +2,20 @@
 @import "../mixins.less";
 @import "../common.less";
 
+body {
+	margin: 0 0 120px;
+}
+
 footer {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	height: 120px;
+	width: 100%;
 	background: white;
 	.border-radius(0);
 	padding: 30px;
-	border-top: 1px solid #CCC;
+	border-top: 1px solid #BBB;
 
 	.links {
 		text-align: center;
@@ -36,4 +45,29 @@ footer {
 		font: 700 14px "Open Sans";
 		color: #AAA;
 	}
+}
+
+
+#sidebar footer {
+
+	height: auto;
+	padding: 10px;
+	border-top: 1px solid #AA;
+
+	.links {
+		width: 100%;
+		padding: 0;
+
+		font: 500 14px "Open Sans";
+		text-transform: none;
+
+		.social {
+			display: none;
+		}
+	}
+
+	.reg {
+		display: none;
+	}
+
 }

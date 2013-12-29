@@ -5,7 +5,7 @@
   "homepage": "http://meavisa.org",
   "readmeFilename": "README.md",
   "author": "Felipe Aragão Pires",
-  "license": "BSD",
+  "licenses": ["BSD"],
   "description": "",
   "main": "app.js",
   "scripts": {

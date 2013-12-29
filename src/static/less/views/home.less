@@ -8,6 +8,28 @@
 @import "../mixins.less";
 @import "../common.less";
 
+#posts-wrapper {
+	position: relative;
+	top: 60px;
+}
+
+.navbar {
+	position: fixed;
+	width: 100%;
+	z-index: 1;
+}
+
+
+#sidebar {
+	position: fixed;
+	top: (@navbar-height+10px);
+	bottom: 0;
+	border: 1px solid #DDD;
+	background: white;
+
+	padding: 10px 20px;
+}
+
 .post {
 	/*border: 1px dashed gray;*/
 	background: white;
