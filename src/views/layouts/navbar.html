@@ -17,16 +17,19 @@
 					title="Temos 0 updates para você" data-toggle="tooltip" data-placement="bottom">
 					<i class="fa fa-bell fa-lg"></i>
 				</button>
+				<button title="Configurações" data-toggle="tooltip" data-placement="bottom">
+					<i class="fa fa-cog fa-lg"></i>
+				</button>
 				<button data-role="logout">
 					Sair
 				</button>
 				<button class="hidden">
 					<i class="fa fa-search fa-lg"></i>
 				</button>
-				<a href="<%= getPageUrl('about') %>" title="Sobre o MeAvisa.org" data-toggle="tooltip" data-placement="bottom">
+				<a href="<%= getPageUrl('about') %>" title="Sobre" data-toggle="tooltip" data-placement="bottom">
 					<i class="fa fa-question fa-lg"></i>
 				</a>
-				<a href="<%= getPageUrl('panel') %>" class="avatar-btn">
+				<a href="<%= getPageUrl('panel') %>" class="avatar-btn" title="Seu Perfil" data-toggle="tooltip" data-placement="bottom">
 					<img id="avatarDd" alt="seu avatar" width=45 class="" src="<%= user.avatarUrl %>" />
 					<i></i>
 				</a>
