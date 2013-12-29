@@ -79,15 +79,14 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				}
 			},
 
-			// Returns true if this element has a checked child
+			// Return true if this element has a checked child
 			// TODO: improve this, for it only performs searches 1-level deep AND
 			// this way of doing this through a method is not right. It shoudl be 
 			// triggered by the children or smthing.
 			hasCheckedChild: function (callback) {
-				if (_.isEmpty(this.get('children'))) { // optimize?
-					return false;
-				}
-				return !_.all(_.map(this.get('children'), function(t){return !t.checked;}));
+				return _.any(this.children.map(function (t) {
+					return t.get('checked');
+				}));
 			},
 
 			// Load the content from this.attributes.children into this.children
@@ -111,6 +110,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				this.childrenView = new TagListView({collection: this.model.children, className:'children'});
 				// Listen to change on children, so we can update the check icon 
 				// accordingly. (empty, checked or dash)
+				// if(this.)
 				this.model.children.on('change', this.childrenChanged, this);
 			},
 
@@ -122,7 +122,8 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				if (this.collection === app.tagList) {
 					return;
 				}
-				// console.log('\n\nchildrenChanged', this);
+				// this.set('children', );
+				console.log('\n\nchildrenChanged', this);
 				// console.log('calling render from tgChecked');
 				this.render();
 			},
@@ -132,7 +133,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				this.remove();
 			},
 
-			// ?
 			render: function () {
 				// console.log('rendering tagView', this.model.toJSON());
 				// http://tbranyen.com/post/missing-jquery-events-while-rendering
@@ -191,8 +191,8 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			tgShowChildren: function (e) {
 				e.preventDefault();
 				this.hideChildren = !this.hideChildren;
-				this.$('>.expand i').toggleClass("icon-angle-down");
-				this.$('>.expand i').toggleClass("icon-angle-up");
+				this.$('>.expand i').toggleClass("fa-angle-down");
+				this.$('>.expand i').toggleClass("fa-angle-up");
 				this.childrenView.$el.toggle();
 				// Render children or nobody will. :(
 				this.childrenView.render();
