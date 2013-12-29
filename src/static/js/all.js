@@ -35,7 +35,15 @@ require(['jquery','bootstrap'], function ($) {
 			}
 		});
 	})();
+
+	(function showFlashMessages (msgs) {
+		for (var i=0; msgs.warn && i<msgs.warn.length; i++)
+			$(".flash-msgs").append("<div class='warn'><button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>"+msgs.warn[i]+"</div>");
+		for (var i=0; msgs.info && i<msgs.info.length; i++)
+			$(".flash-msgs").append("<div class='info'><button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>"+msgs.info[i]+"</div>");
+	})(window._flash_msgs);
 });
+
 // Avoid `console` errors in browsers that lack a console.
 (function() {
 	var method;

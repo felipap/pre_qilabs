@@ -52,6 +52,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req, res, next) {
+	req.flash('warn', 'OOOOO');
+	req.flash('info', 'IIIIIII');
 	res.locals.messages = req.flash();
 	next();
 });
@@ -61,10 +63,8 @@ if (app.get('env') === 'development') {
 }
 
 app.use(app.router);
-// app.use('/', express.static(__dirname + '/static')); // serve static files from root (put after router)
 
 app.locals.errors = {};
-app.locals.message = {};
 app.locals.tags = {};
 
 app.locals({

@@ -19,7 +19,7 @@ requireLogged = function(req, res, next) {
 
 requireMe = function(req, res, next) {
   if (!req.user || req.user.facebookId !== process.env.facebook_me) {
-    res.locals.message = ['what do you think you\'re doing?'];
+    req.flash('warn', 'what do you think you\'re doing?');
     return res.redirect('/');
   }
   return next();
@@ -49,8 +49,7 @@ module.exports = {
           return Tag.getAll(function(err, tags) {
             return res.render('pages/home', {
               user: req.user,
-              tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags)),
-              messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
+              tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
             });
           });
         } else {
@@ -58,8 +57,7 @@ module.exports = {
             '_id': 'descending'
           }).limit(10).find(function(err, data) {
             return res.render('pages/frontpage', {
-              latestSignIns: data,
-              messages: [JSON.stringify(req.session)]
+              latestSignIns: data
             });
           });
         }

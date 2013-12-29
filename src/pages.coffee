@@ -34,6 +34,7 @@ Tags =
 		# throw "ERR" if not Tag.isValid(checked)
 		req.user.tags = checked
 		req.user.save()
+		req.flash('info', 'Tags atualizadas com sucesso!')
 		res.end()
 
 	put: (req, res) ->

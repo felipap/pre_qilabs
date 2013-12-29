@@ -19,7 +19,7 @@ requireLogged = (req, res, next) ->
 requireMe = (req, res, next) ->
 	# Require user to be me. :D
 	if not req.user or req.user.facebookId isnt process.env.facebook_me
-		res.locals.message = ['what do you think you\'re doing?']
+		req.flash('warn', 'what do you think you\'re doing?')
 		return res.redirect('/')
 	next()
 
@@ -47,8 +47,6 @@ module.exports = {
 						res.render 'pages/home',
 								user: req.user
 								tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
-								# token: req.session._csrf
-								messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
 				else
 					User.find()
 						.sort({'_id': 'descending'})
@@ -56,7 +54,6 @@ module.exports = {
 						.find((err, data) ->
 							res.render 'pages/frontpage',
 								latestSignIns: data
-								messages: [JSON.stringify(req.session)]
 							)
 
 			post: (req, res) ->

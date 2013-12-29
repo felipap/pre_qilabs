@@ -30,6 +30,7 @@ Tags = {
     checked = req.body.checked;
     req.user.tags = checked;
     req.user.save();
+    req.flash('info', 'Tags atualizadas com sucesso!');
     return res.end();
   },
   put: function(req, res) {

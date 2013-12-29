@@ -35,3 +35,26 @@ body {
 .modal {
 	color: #444;
 }
+
+.flash-msgs {
+	// border: 1px solid black;
+	// z-index: 3;
+
+	margin: 20px 0;
+
+	& > div {
+		margin: 10px 0;
+	}
+
+	.warn {
+		&:extend(.alert);
+		&:extend(.alert-danger);
+		// &:extend(.alert-dismissable);
+	}
+
+	.info {
+		&:extend(.alert);
+		&:extend(.alert-info);
+		// &:extend(.alert-dismissable);
+	}
+}
