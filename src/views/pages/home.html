@@ -65,6 +65,42 @@
 		<@ } @>
 	</script>
 
+	<script id="template-postview" type="text/template">
+		<@ var daysFromToday = function (arg) {
+			return Math.round((new Date()-new Date(arg))/(1000*60*60*24));
+		} @>
+
+		<div class="title">
+			<@ if (post.title) { @>
+				<h3><a href="<@= post.path @>"><@= post.title @></a></h3>
+			<@ } @>
+			<@ var days = daysFromToday(post.date) @>
+			<@ if (days === 0) { @>
+				<small class="">Hoje</small>
+			<@ } else { @>
+				<small class=""><@=days@> dia<@=days>1?"s":""@> atrás</small>
+			<@ } @>
+		</div>
+		<@ if (post.type === 'photo') { @>
+			<@ for (var i=0; i<post.photos.length; i++) { @>
+				<@ var photo = post.photos[i]; @>
+				<a href="<@= post.path @>"><img src="<@= photo.alt_sizes[0].url @>" /></a>
+			<@ } @>
+		<@ } else { @>
+			<div class="body">
+				<p><@= post.body @></p>
+			</div>
+		<@ } @>
+		<div>
+			tags:
+			<@ for (var i=0; i<post.tags.length; i++) { @>
+				<@ var tag = post.tags[i]; @>
+				<a class="label label-success" href="http://<@= post.blog_name @>.tumblr.com/tagged/<@= tag @>">
+					<i class="icon-tag"></i> <@= tag @></a>
+			<@ } @>
+		</div>
+	</script>
+
 	<script id="template-postview-single" type="text/template">
 		<@ var daysFromToday = function (arg) {
 			return Math.round((new Date()-new Date(arg))/(1000*60*60*24));
@@ -100,6 +136,8 @@
 			<@ } @>
 		</div>
 
+		<hr>
+
 		<div id="disqus_thread"></div>
 	    <script type="text/javascript">
 	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
@@ -114,42 +152,6 @@
 	    </script>
 	    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 	    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-	</script>
-
-	<script id="template-postview" type="text/template">
-		<@ var daysFromToday = function (arg) {
-			return Math.round((new Date()-new Date(arg))/(1000*60*60*24));
-		} @>
-
-		<div class="title">
-			<@ if (post.title) { @>
-				<h3><a href="<@= post.path @>"><@= post.title @></a></h3>
-			<@ } @>
-			<@ var days = daysFromToday(post.date) @>
-			<@ if (days === 0) { @>
-				<small class="">Hoje</small>
-			<@ } else { @>
-				<small class=""><@=days@> dia<@=days>1?"s":""@> atrás</small>
-			<@ } @>
-		</div>
-		<@ if (post.type === 'photo') { @>
-			<@ for (var i=0; i<post.photos.length; i++) { @>
-				<@ var photo = post.photos[i]; @>
-				<a href="<@= post.path @>"><img src="<@= photo.alt_sizes[0].url @>" /></a>
-			<@ } @>
-		<@ } else { @>
-			<div class="body">
-				<p><@= post.body @></p>
-			</div>
-		<@ } @>
-		<div>
-			tags:
-			<@ for (var i=0; i<post.tags.length; i++) { @>
-				<@ var tag = post.tags[i]; @>
-				<a class="label label-success" href="http://<@= post.blog_name @>.tumblr.com/tagged/<@= tag @>">
-					<i class="icon-tag"></i> <@= tag @></a>
-			<@ } @>
-		</div>
 	</script>
 
 	 <script type="text/javascript">
