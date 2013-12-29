@@ -40,7 +40,7 @@
 			<% for (var i2=0; i2++<200;) { %>
 			<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
 			<li>
-					<img src="https://graph.facebook.com/<%=user.facebookId%>/picture"></img>
+					<img src="<%=user.avatarUrl%>"></img>
 			</li>
 			<% } %>
 			<% } %>
@@ -71,21 +71,31 @@
 		</section>
 	</section>
 
-<!-- 	<section id="parcerias">
-		<h1>Parceiros e Colaboradores</h1>
+	<!--
+	<section id="parcerias">
 		<section>
 			<li>
-				<img width=200 src="<%=staticUrl('img/fe.png')%>"></img>
+				<h3>Colaboração:</h3>
+				</li>
+			<li>
+				<a href="http://www.estudar.org.br/‎" title="Fundação Estudar">
+					<img width=230 src="<%=staticUrl('img/fe.png')%>"></img>
+				</a>
 			</li>
 			<li>
-				<img width=200 src="<%=staticUrl('img/di.jpg')%>"></img>
+				<a href="https://www.facebook.com/duxrio" title="Dux Institute">
+					<img width=200 src="<%=staticUrl('img/di.jpg')%>"></img>
+				</a>
 			</li>
-			<li>
-				<img width=200 src="<%=staticUrl('img/eu.jpg')%>"></img>
+ 			<li>
+ 				<a href="http://turmacidada.org" title="Turma Cidadã Brasil">
+					<img width=150 src="<%=staticUrl('img/tc.png')%>"></img>
+				</a>
 			</li>
 		</section>
 	</section>
- -->	<% include ../layouts/footer.html %>
+	-->
+	<% include ../layouts/footer.html %>
 
 	<script data-main="<%= staticUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>

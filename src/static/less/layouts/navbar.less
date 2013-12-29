@@ -1,8 +1,10 @@
 
-@import "../mixins.less";
+@import "../font-awesome/font-awesome.less";
 @import "../common.less";
 
-.navbar {
+nav.bar {
+
+	&:extend(.navbar);
 	
 	border-radius: 0 !important;
 	padding-top: 5px;
@@ -10,13 +12,14 @@
 	padding-bottom: 5px;
 	margin-bottom: 0;
 	background: white;
+	// overflow-y: hidden;
 
 	body:not([data-page=front]) & {
 		border-bottom: 2px solid #DDD;
 	}
 
 	.tooltip {
-		margin-top: 7px;
+		margin-top: 9px;
 
 		.tooltip-inner {
 			border-radius: 0;
@@ -32,21 +35,21 @@
 		overflow: hidden;
 		font-family: "Londrina Solid";
 		font-size: 30px;
+		outline: none !important;
 
 		.version {
 			font-size: 20px;
 			font-weight: normal;
-			color: #444;
+			color: #888;
 			cursor: default;
 		}
 	}
 
-	ul {
+	& > ul {
 		margin: 0 !important;
 		height: @navbar-height;
-		overflow-y: hidden;
 
-		a, button {
+		& > a, & > button {
 			.btn0;
 			color: #888;
 			font-weight: 700;
@@ -54,6 +57,7 @@
 				background: none;
 				box-shadow: none;
 			}
+			vertical-align: top;
 			box-shadow: none;
 		}
 
@@ -63,6 +67,56 @@
 			background: none;
 			i.fa {
 				font-size: 18px;
+			}
+		}
+
+		li {
+			display: inline-block;
+			float: none;
+		}
+
+		li.dd {
+			.reset-button;
+			
+			cursor: pointer;
+			height: 50px;
+			margin: 0;
+			padding: 0;
+
+			ul {
+				right: 0;
+				left: auto;
+			}
+		}
+
+		.avatar-btn {
+			.reset-button;
+			margin-top: 2px;
+			margin-right: 10px;
+			position: relative;
+			
+			& > img {
+				border-radius: 30px;
+				margin-right: 5px;
+				box-shadow: 0 0 1px black;
+			}
+
+			& > i {
+				position: absolute;
+				top: 9px;
+				left: 8px;
+				.fa-mixin;
+				.fa-mixin-lg;
+				.fa-mixin-icon('cog');
+				font-size: 35px;
+				opacity: 0;
+				color: white;
+				text-shadow: 0 0 1px black;
+				.transition(all, .1s, linear);
+			}
+			&:hover i {
+				color: white;
+				opacity: 1;
 			}
 		}
 

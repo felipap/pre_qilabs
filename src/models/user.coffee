@@ -25,6 +25,8 @@ UserSchema = new mongoose.Schema {
 
 # Virtuals
 
+UserSchema.virtual('avatarUrl').get ->
+	'https://graph.facebook.com/'+@facebookId+'/picture'
 
 # Methods
 UserSchema.methods = {}

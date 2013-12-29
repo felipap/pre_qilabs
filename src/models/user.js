@@ -30,6 +30,10 @@ UserSchema = new mongoose.Schema({
   id: true
 });
 
+UserSchema.virtual('avatarUrl').get(function() {
+  return 'https://graph.facebook.com/' + this.facebookId + '/picture';
+});
+
 UserSchema.methods = {};
 
 findOrCreate = function(conditions, doc, options, callback) {
