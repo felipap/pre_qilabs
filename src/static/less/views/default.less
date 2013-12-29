@@ -7,8 +7,13 @@
 
 @import "../common.less";
 
-body.panel {
+body[data-page=panel] {
 	// background: #1b1b24;
+	
+	input[type=checkbox] {
+		vertical-align: top;
+		margin: 5px;
+	}
 }
 
 body > section {
@@ -32,6 +37,7 @@ body > section {
 	[data-role=save] {
 		.btn0;
 		.inverted-btn2(#2ecc71);
+		padding: 5px 10px;
 	}
 	
 	[data-role=cancel] {
