@@ -81,6 +81,14 @@ Posts =
 		res.set({'Content-Type': 'text/plain'});
 		res.sendfile(__dirname+'/views/tmpls/post.html');
 
+`
+function requireLogged (req, res, next) {
+	if (!req.user)
+		return res.redirect('/')
+	next()
+}
+`
+
 Pages = {
 	index:
 		get: (req, res) ->
@@ -113,27 +121,12 @@ Pages = {
 					'window.top.location="http://meavisa.herokuapp.com";</script>'+
 					'</body></html>')
 
-	about_get: (req, res) ->
-		res.render 'pages/about',
-			user: req.user
-
-	us_get: (req, res) ->
-		res.render 'pages/us',
-			user: req.user
-
-
-	panel:
-		get: (req, res) ->
-			res.render('pages/panel', {
-				user: req.user
-				})
-		post: (req, res) ->
 
 	# hm... logout?
-	logout_get: (req, res) ->
-			if not req.user then return res.redirect '/'
-			req.logout()
-			res.redirect('/')
+	logout: [requireLogged, (req, res) ->
+		if not req.user then return res.redirect '/'
+		req.logout()
+		res.redirect('/')]
 
 	# Deletes then user account.
 	leave_get: (req, res) ->

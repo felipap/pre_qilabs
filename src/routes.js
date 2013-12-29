@@ -15,12 +15,18 @@ function requireMe (req, res, next) {
 	// Require user to be me. :D
 	if (!req.user || req.user.facebookId != process.env.facebook_me) {
 		res.locals.message = ['what do you think you\'re doing?']
-		return res.redirect('/about');
+		return res.redirect('/');
 	}
 	next();
 }
 
 module.exports = function (app) {
+
+	app.locals.getPageUrl = function (name) {
+		if (typeof app.locals.urls[name] === 'undefined')
+			throw "Page named "+name+" not found."
+		return app.locals.urls[name];
+	}
 
 	/*
 	** Route ONE path.
@@ -51,16 +57,14 @@ module.exports = function (app) {
 	app.locals.urls = {};
 	routePages2 = function (object) {
 
-		for (var path in object) if (object.hasOwnProperty(path)) {
-			var pathRoute = object[path];
-			
+		function routePath (path, name, mToFunc) {
 			// TODO: prevent overriding urls with different paths.
-			app.locals.urls[pathRoute.name] = path;
-
-			// Use app[get/post/put/...] to route methods in pathRoute.methods.
-			for (var method in pathRoute.methods)
-			if (pathRoute.methods.hasOwnProperty(method)) {
-				var func = pathRoute.methods[method];
+			app.locals.urls[name] = path;
+			
+			// Use app[get/post/put/...] to route methods in mToFunc.
+			for (var method in mToFunc)
+			if (mToFunc.hasOwnProperty(method)) {
+				var func = mToFunc[method];
 				// If obj[method] is a list of functions to call, use apply.
 				if (func instanceof Array) {
 					app[method].apply(app, [path].concat(func));
@@ -70,48 +74,112 @@ module.exports = function (app) {
 			}
 		}
 
+		var joinPath = require('path').join.bind(require('path'));
+
+		function routeChildren(parentPath, childs) {
+			if (!childs) return {};
+
+			console.log('oooi', childs)
+
+			for (var relpath in childs)
+			if (childs.hasOwnProperty(relpath)) {
+				var abspath = joinPath(parentPath, relpath);
+				var name = childs[relpath].name || abspath.replace('/','_');
+				routePath(abspath, name, childs[relpath].methods);
+				routeChildren(abspath, childs[relpath].children);
+			}
+		}
+
+		for (var path in object) if (object.hasOwnProperty(path)) {
+			if (object[path].methods)
+				routePath(path, object[path].name, object[path].methods);
+			routeChildren(path, object[path].children);
+		}
+
 	}
-	
-	routePages('/', pages.Pages.index);
 
-	routePage('get', '/logout', requireLogged, pages.Pages.logout_get);
-	routePage('get', '/leave', requireLogged, pages.Pages.leave_get);
-	
-	// routePages2({
-	// 	'/': {
-	// 		name: 'index',
-	// 		methods: {
-	// 			get: function (req, res) {
-	// 				res.end('oi!')
-	// 			},
-	// 			post: [requireLogged, function (req, res) {
-	// 				res.end('welcome.');
-	// 			}],
-	// 		}
-	// 	}
-	// })
+	function staticPage (template, name) {
+		return {
+			name: name,
+			methods: {
+				get: function (req, res) {
+					res.render(template, {
+						user: req.user,
+					})
+				}
+			}
+		}
+	}
+		
+	routePages2({
+		'/': {
+			name: 'index',
+			methods: pages.Pages.index
+		},
+		'/logout': {
+			name: 'logout',
+			methods: {
+				get: pages.Pages.logout
+			}
+		},
+		'/leave': {
+			name: 'leave',
+			methods: {
+				get: pages.Pages.leave_get
+			}
+		},
+		'/painel': 	staticPage('pages/panel', 'panel'),
+		'/sobre': 	staticPage('pages/about', 'about'),
+		'/equipe': 	staticPage('pages/team', 'team'),
 
-	app.get('/panel', 	pages.Pages.panel.get);
-	app.post('/panel', 	pages.Pages.panel.post);
-	app.get('/about', 	pages.Pages.about_get);
-	app.get('/us', 		pages.Pages.us_get);
-
-	app.get('/api/dropall',	requireMe, pages.Pages.dropall.get);
-	app.get('/api/session', requireMe, pages.Pages.session.get);
-
-	// Get all tags.
-	app.get('/api/tags', requireLogged, pages.Tags.get);
-	// Update tags with ?checked=[tags,]
-	app.post('/api/tags', requireLogged, pages.Tags.post);
-	// Update tags with {checked:true|false}.
-	app.put('/api/tags/:tag', requireLogged, pages.Tags.put);
-	// Serve the template.
-	app.get('/api/tags/template', requireLogged, pages.Tags.template);
-	
-	// Get all posts.
-	app.get('/api/posts', requireLogged, pages.Posts.get);
-	// Serve the template.
-	app.get('/api/posts/template', requireLogged, pages.Posts.template);
+		'/api': {
+			children: {
+				'dropall': {
+					methods: { get: [requireMe, pages.Pages.dropall.get]}
+				},
+				'session': {
+					methods: { get: [requireMe, pages.Pages.session.get]}
+				},
+				'tags': {
+					methods: {
+						// Get all tags.
+						get: [requireLogged, pages.Tags.get],
+						// Update tags with ?checked=[tags,]
+						post: [requireLogged, pages.Tags.post],
+					},
+					children: {
+						':tag': {
+							methods: {
+								// Update tags with {checked:true|false}.
+								put: [requireLogged, pages.Tags.put],
+							}
+						},
+						'template': {
+							methods: {
+								// Serve the template.
+								get: [requireLogged, pages.Tags.template],
+							}
+						}
+					}
+				},
+				'posts': {
+					methods: {
+						// Get all posts.
+						get: [requireLogged, pages.Posts.get],
+					
+					},
+					children: {
+						'template': {
+							methods: {
+								// Serve the template.
+								get: [requireLogged, pages.Posts.template],
+							}
+						}
+					}
+				}
+			}
+		}
+	})
 
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));
