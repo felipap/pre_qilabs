@@ -7,8 +7,6 @@ request = require 'request'
 _ = require 'underscore'
 
 User = require './models/user.js'
-Post = require './models/post.js'
-Tag = require './models/tag.js'
 
 # Assumes app.js was run (and possibly updated process.env).
 	
@@ -30,7 +28,7 @@ pushBlogTags = (blog, callback) ->
 				.pluck('tags')
 				.reduceRight(((a, b) -> a.concat(b)), [])
 				.value();
-		callback?(null, Tag.recursify(tags))
+		callback?(null, tags)
 
 getPostsWithTags = (blog, tags, callback) ->
 	# Get tumblr posts.
@@ -82,47 +80,11 @@ notifyNewPosts = (callback) ->
 		if err then callback?(err)
 		onGetTPosts(data.posts)
 
-pushNewPosts = (callback) ->
-	blog = getBlog('meavisa.tumblr.com')
-	onGetTPosts = ((posts) ->
-		onGetDBPosts = ((dbposts) ->
-			postsNotSaved = 0
-			newposts = []
-			for post in posts when not _.findWhere(dbposts, {tumblrId:post.id})
-				++postsNotSaved
-				newposts.push(post)
-				console.log("pushing new post \"#{post.title}\"")
-				Post.create(
-					{tumblrId:post.id
-					tags:post.tags
-					tumblrUrl:post.post_url
-					tumblrPostType:post.type
-					date:post.date},
-					((err, data) ->
-						if err then callback?(err)
-						if --postsNotSaved is 0
-							callback?(null, newposts)
-					)
-				)
-			if newposts.length is 0
-				console.log('No new posts to push. Quitting.')
-				callback(null, [])
 
-		# Get database posts.
-		Post.find {}, (err, dbposts) ->
-			if err then callback?(err)
-			onGetDBPosts(dbposts)
-		)
-	)
-
-	# Get tumblr posts.
-	blog.posts { limit: -1 }, (err, data) ->
-		if err then callback?(err)
-		onGetTPosts(data.posts)
-
-exports.sendNotification = sendNotification
-exports.getBlog = getBlog
-exports.pushBlogTags = pushBlogTags
-exports.getPostsWithTags = getPostsWithTags
-exports.notifyNewPosts = notifyNewPosts
-exports.pushNewPosts = pushNewPosts
+module.exports = exports = {
+	sendNotification: sendNotification
+	getBlog: getBlog
+	pushBlogTags: pushBlogTags
+	getPostsWithTags: getPostsWithTags
+	notifyNewPosts: notifyNewPosts
+}

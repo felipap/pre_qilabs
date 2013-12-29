@@ -14,22 +14,11 @@ blog_url = 'http://meavisa.tumblr.com'
 blog = api.getBlog 'meavisa.tumblr.com'
 tags = []
 posts = []
-tposts = []
 
-api.pushBlogTags(blog,
-	(err, _tags) ->
-		throw err if err
-		tags =  _tags
-		for tag, meta of _tags
-			console.log('pushing found tag: #' + tag, _.keys(meta.children))
-)
+Tag.fetchAndCache() 		# Fetch from Tumblr server and cache
 
-# Notice this is updating the global variable.
-getPostsWithTags = (tags, callback) ->
-	api.getPostsWithTags(blog, tags, (err, _posts) ->
-			posts = _posts; # Update global;
-			callback?(err, _posts);
-		)
+# Post.getWithTags() 		# 
+
 
 Tags =
 	get: (req, res) ->
@@ -60,66 +49,8 @@ Tags =
 		req.user.save()
 		res.end()
 
-	template: (req, res) ->
-		res.set({'Content-Type': 'text/plain'});
-		res.sendfile(__dirname+'/views/tmpls/tag.html');
-
-Posts =
-	get: (req, res) ->
-		# Get all posts.
-		if req.query.tags
-			seltags = req.query.tags.split(',')
-		else
-			seltags = req.user.tags
-		getPostsWithTags seltags, (err, tposts) ->
-			res.end(JSON.stringify(tposts))
-
-	template: (req, res) ->
-		res.set({'Content-Type': 'text/plain'});
-		res.sendfile(__dirname+'/views/tmpls/post.html');
-
-`
-function requireLogged (req, res, next) {
-	if (!req.user)
-		return res.redirect('/')
-	next()
-}
-`
-
-Pages = {
-	index:
-		get: (req, res) ->
-			if req.user
-				# console.log('logged:', req.user.name, req.user.tags)
-				req.user.lastUpdate = new Date()
-				req.user.save()
-				console.log(tposts, JSON.stringify(tposts))
-				getPostsWithTags req.user.tags, (err, tposts) ->
-					res.render 'pages/home',
-						user: req.user
-						tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
-						posts: tposts
-						blog_url: blog_url
-						# token: req.session._csrf
-						messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
-			else
-				User.find()
-					.sort({'_id': 'descending'})
-					.limit(10)
-					.find((err, data) ->
-						res.render 'pages/frontpage',
-							latestSignIns: data
-							messages: [JSON.stringify(req.session)]
-						)
-
-		post: (req, res) ->
-			# Redirect from frame inside Facebook?
-			res.end('<html><head></head><body><script type="text/javascript">'+
-					'window.top.location="http://meavisa.herokuapp.com";</script>'+
-					'</body></html>')
-
-
-}
+Posts = {}
+Pages = {}
 
 module.exports =
 	Pages: Pages

@@ -2,8 +2,14 @@
 # routes.js
 # for meavisa.org, by @f03lipe
 
-passport = require('passport');
-pages = require('./pages.js');
+passport = require('passport')
+pages = require('./pages.js')
+
+
+User = require './models/user.js'
+Post = require './models/post.js'
+Tag  = require './models/tag.js'
+
 
 requireLogged = (req, res, next) ->
 	unless req.user
@@ -31,7 +37,35 @@ staticPage = (template, name) ->
 module.exports = {
 	'/': {
 		name: 'index',
-		methods: pages.Pages.index
+		methods: {
+			get: (req, res) ->
+				if req.user
+					# console.log('logged:', req.user.name, req.user.tags)
+					req.user.lastUpdate = new Date()
+					req.user.save()
+					Tag.getAll (err, tags) ->
+						res.render 'pages/home',
+								user: req.user
+								tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
+								# token: req.session._csrf
+								messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
+				else
+					User.find()
+						.sort({'_id': 'descending'})
+						.limit(10)
+						.find((err, data) ->
+							res.render 'pages/frontpage',
+								latestSignIns: data
+								messages: [JSON.stringify(req.session)]
+							)
+
+			post: (req, res) ->
+				# Redirect from frame inside Facebook?
+				res.end('<html><head></head><body><script type="text/javascript">'+
+						'window.top.location="http://meavisa.herokuapp.com"</script>'+
+						'</body></html>')
+
+		}
 	},
 	'/logout': {
 		name: 'logout',
@@ -92,12 +126,14 @@ module.exports = {
 								return res.redirect '/'
 							User.find {}, (err, users) ->
 								Post.find {}, (err, posts) ->
-									obj =
-										ip: req.ip
-										session: req.session
-										users: users
-										posts: posts
-									res.end(JSON.stringify(obj))
+									Tag.getAll (err, tags) ->
+										obj =
+											ip: req.ip
+											session: req.session
+											users: users
+											tags: tags
+											posts: posts
+										res.end(JSON.stringify(obj))
 						]
 				}
 			},
@@ -115,27 +151,43 @@ module.exports = {
 							put: [requireLogged, pages.Tags.put],
 						}
 					},
-					'template': {
-						methods: {
-							# Serve the template.
-							get: [requireLogged, pages.Tags.template],
-						}
-					}
+					# 'template': {
+					# 	methods: {
+					# 		# Serve the template.
+					# 		get: [requireLogged,
+					# 			(req, res) ->
+					# 				res.set({'Content-Type': 'text/plain'})
+					# 				res.sendfile(__dirname+'/views/tmpls/post.html')
+					# 		],
+					# 	}
+					# }
 				}
 			},
 			'posts': {
 				methods: {
 					# Get all posts.
-					get: [requireLogged, pages.Posts.get],
-				
+					get: [requireLogged,
+						(req, res) ->
+							# Get all posts.
+							if req.query.tags
+								seltags = req.query.tags.split(',')
+							else
+								seltags = req.user.tags
+							Post.getWithTags seltags, (err, tposts) ->
+								res.end(JSON.stringify(tposts))
+					],
 				},
 				children: {
-					'template': {
-						methods: {
-							# Serve the template.
-							get: [requireLogged, pages.Posts.template],
-						}
-					}
+					# 'template': {
+					# 	methods: {
+					# 		# Serve the template.
+					# 		get: [requireLogged,
+					# 			(req, res) ->
+					# 				res.set({'Content-Type': 'text/plain'})
+					# 				res.sendfile(__dirname+'/views/tmpls/tag.html')
+					# 		],
+					# 	}
+					# }
 				}
 			}
 		}

@@ -1,8 +1,14 @@
-var pages, passport, requireLogged, requireMe, staticPage;
+var Post, Tag, User, pages, passport, requireLogged, requireMe, staticPage;
 
 passport = require('passport');
 
 pages = require('./pages.js');
+
+User = require('./models/user.js');
+
+Post = require('./models/post.js');
+
+Tag = require('./models/tag.js');
 
 requireLogged = function(req, res, next) {
   if (!req.user) {
@@ -35,7 +41,33 @@ staticPage = function(template, name) {
 module.exports = {
   '/': {
     name: 'index',
-    methods: pages.Pages.index
+    methods: {
+      get: function(req, res) {
+        if (req.user) {
+          req.user.lastUpdate = new Date();
+          req.user.save();
+          return Tag.getAll(function(err, tags) {
+            return res.render('pages/home', {
+              user: req.user,
+              tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags)),
+              messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
+            });
+          });
+        } else {
+          return User.find().sort({
+            '_id': 'descending'
+          }).limit(10).find(function(err, data) {
+            return res.render('pages/frontpage', {
+              latestSignIns: data,
+              messages: [JSON.stringify(req.session)]
+            });
+          });
+        }
+      },
+      post: function(req, res) {
+        return res.end('<html><head></head><body><script type="text/javascript">' + 'window.top.location="http://meavisa.herokuapp.com"</script>' + '</body></html>');
+      }
+    }
   },
   '/logout': {
     name: 'logout',
@@ -118,14 +150,17 @@ module.exports = {
               }
               return User.find({}, function(err, users) {
                 return Post.find({}, function(err, posts) {
-                  var obj;
-                  obj = {
-                    ip: req.ip,
-                    session: req.session,
-                    users: users,
-                    posts: posts
-                  };
-                  return res.end(JSON.stringify(obj));
+                  return Tag.getAll(function(err, tags) {
+                    var obj;
+                    obj = {
+                      ip: req.ip,
+                      session: req.session,
+                      users: users,
+                      tags: tags,
+                      posts: posts
+                    };
+                    return res.end(JSON.stringify(obj));
+                  });
                 });
               });
             }
@@ -142,25 +177,26 @@ module.exports = {
             methods: {
               put: [requireLogged, pages.Tags.put]
             }
-          },
-          'template': {
-            methods: {
-              get: [requireLogged, pages.Tags.template]
-            }
           }
         }
       },
       'posts': {
         methods: {
-          get: [requireLogged, pages.Posts.get]
-        },
-        children: {
-          'template': {
-            methods: {
-              get: [requireLogged, pages.Posts.template]
+          get: [
+            requireLogged, function(req, res) {
+              var seltags;
+              if (req.query.tags) {
+                seltags = req.query.tags.split(',');
+              } else {
+                seltags = req.user.tags;
+              }
+              return Post.getWithTags(seltags, function(err, tposts) {
+                return res.end(JSON.stringify(tposts));
+              });
             }
-          }
-        }
+          ]
+        },
+        children: {}
       }
     }
   },

@@ -5,18 +5,20 @@
 # Tag model.
 */
 
-var TagSchema, authTypes, checkFollowed, crypto, descTable, findOrCreate, getDescription, getLabel, memjs, mongoose, recursify, transTable, _,
+var TagSchema, api, authTypes, blog, blog_url, checkFollowed, crypto, descTable, findOrCreate, getDescription, getLabel, memjs, mongoose, recursify, transTable, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
 
 crypto = require('crypto');
 
-_ = require('underscore');
-
 memjs = require('memjs');
 
+_ = require('underscore');
+
 findOrCreate = require('./lib/findOrCreate');
+
+api = require('./../api');
 
 authTypes = [];
 
@@ -112,35 +114,56 @@ getLabel = function(hashtag) {
   return transTable[hashtag.toLowerCase()] || hashtag.toCamel();
 };
 
+blog_url = 'http://meavisa.tumblr.com';
+
+blog = api.getBlog('meavisa.tumblr.com');
+
+TagSchema.statics.getAll = function(cb) {
+  var _this = this;
+  return this.getCached(function(err, results) {
+    if (err || !results.length) {
+      return api.pushBlogTags(blog, function(err, _tags) {
+        var tags;
+        if (err) {
+          cb(err);
+        }
+        tags = _this.recursify(_tags);
+        return cb(null, tags);
+      });
+    } else {
+      return cb(null, results);
+    }
+  });
+};
+
 TagSchema.statics.getCached = function(cb) {
   var mc;
   mc = memjs.Client.create();
   return mc.get('tags', function(err, val, key) {
+    var ret;
     if (err) {
       console.warn('Cache error:', err);
-      this.find({
-        start_time: {
-          $gte: new Date(new Date().setHours(0, 0, 0, 0))
-        }
-      }, cb);
-    }
-    if (val === null) {
+      ret = [];
+    } else if (val === null) {
       console.warn('Cache query for tags returned null.');
+      ret = [];
+    } else {
+      ret = JSON.parse(val.toString());
     }
-    return cb(null, JSON.parse(val.toString()));
+    return cb(null, ret);
   });
 };
 
-TagSchema.statics.flushCache = function(cb) {
-  var mc;
+TagSchema.statics.fetchAndCache = function(cb) {
+  var mc,
+    _this = this;
   mc = memjs.Client.create();
   console.log('Flushing cached tags.');
-  return this.find({
-    start_time: {
-      $gte: new Date(new Date().setHours(0, 0, 0, 0))
+  return api.pushBlogTags(blog, function(err, tags) {
+    if (err) {
+      throw err;
     }
-  }, function(err, tags) {
-    return mc.set('tags', JSON.stringify(tags), cb);
+    return mc.set('tags', JSON.stringify(_this.recursify(tags)), cb);
   });
 };
 

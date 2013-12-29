@@ -1,4 +1,4 @@
-var Post, Tag, User, getBlog, getPostsWithTags, notifyNewPosts, pushBlogTags, pushNewPosts, request, sendNotification, tumblr, _;
+var User, exports, getBlog, getPostsWithTags, notifyNewPosts, pushBlogTags, request, sendNotification, tumblr, _;
 
 tumblr = require('tumblr');
 
@@ -7,10 +7,6 @@ request = require('request');
 _ = require('underscore');
 
 User = require('./models/user.js');
-
-Post = require('./models/post.js');
-
-Tag = require('./models/tag.js');
 
 sendNotification = function(user_id, template, callback) {
   var access_token, url;
@@ -35,7 +31,7 @@ pushBlogTags = function(blog, callback) {
     tags = _.chain(data.posts).pluck('tags').reduceRight((function(a, b) {
       return a.concat(b);
     }), []).value();
-    return typeof callback === "function" ? callback(null, Tag.recursify(tags)) : void 0;
+    return typeof callback === "function" ? callback(null, tags) : void 0;
   });
 };
 
@@ -113,75 +109,10 @@ notifyNewPosts = function(callback) {
   });
 };
 
-pushNewPosts = function(callback) {
-  var blog, onGetTPosts;
-  blog = getBlog('meavisa.tumblr.com');
-  onGetTPosts = (function(posts) {
-    var onGetDBPosts;
-    return onGetDBPosts = (function(dbposts) {
-      var newposts, post, postsNotSaved, _i, _len;
-      postsNotSaved = 0;
-      newposts = [];
-      for (_i = 0, _len = posts.length; _i < _len; _i++) {
-        post = posts[_i];
-        if (!(!_.findWhere(dbposts, {
-          tumblrId: post.id
-        }))) {
-          continue;
-        }
-        ++postsNotSaved;
-        newposts.push(post);
-        console.log("pushing new post \"" + post.title + "\"");
-        Post.create({
-          tumblrId: post.id,
-          tags: post.tags,
-          tumblrUrl: post.post_url,
-          tumblrPostType: post.type,
-          date: post.date
-        }, (function(err, data) {
-          if (err) {
-            if (typeof callback === "function") {
-              callback(err);
-            }
-          }
-          if (--postsNotSaved === 0) {
-            return typeof callback === "function" ? callback(null, newposts) : void 0;
-          }
-        }));
-      }
-      if (newposts.length === 0) {
-        console.log('No new posts to push. Quitting.');
-        return callback(null, []);
-      }
-    }, Post.find({}, function(err, dbposts) {
-      if (err) {
-        if (typeof callback === "function") {
-          callback(err);
-        }
-      }
-      return onGetDBPosts(dbposts);
-    }));
-  });
-  return blog.posts({
-    limit: -1
-  }, function(err, data) {
-    if (err) {
-      if (typeof callback === "function") {
-        callback(err);
-      }
-    }
-    return onGetTPosts(data.posts);
-  });
+module.exports = exports = {
+  sendNotification: sendNotification,
+  getBlog: getBlog,
+  pushBlogTags: pushBlogTags,
+  getPostsWithTags: getPostsWithTags,
+  notifyNewPosts: notifyNewPosts
 };
-
-exports.sendNotification = sendNotification;
-
-exports.getBlog = getBlog;
-
-exports.pushBlogTags = pushBlogTags;
-
-exports.getPostsWithTags = getPostsWithTags;
-
-exports.notifyNewPosts = notifyNewPosts;
-
-exports.pushNewPosts = pushNewPosts;

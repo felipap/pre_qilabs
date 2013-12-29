@@ -1,4 +1,4 @@
-var Pages, Post, Posts, Tag, Tags, User, api, blog, blog_url, getPostsWithTags, posts, tags, tposts, _,
+var Pages, Post, Posts, Tag, Tags, User, api, blog, blog_url, posts, tags, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 _ = require('underscore');
@@ -19,28 +19,7 @@ tags = [];
 
 posts = [];
 
-tposts = [];
-
-api.pushBlogTags(blog, function(err, _tags) {
-  var meta, tag, _results;
-  if (err) {
-    throw err;
-  }
-  tags = _tags;
-  _results = [];
-  for (tag in _tags) {
-    meta = _tags[tag];
-    _results.push(console.log('pushing found tag: #' + tag, _.keys(meta.children)));
-  }
-  return _results;
-});
-
-getPostsWithTags = function(tags, callback) {
-  return api.getPostsWithTags(blog, tags, function(err, _posts) {
-    posts = _posts;
-    return typeof callback === "function" ? callback(err, _posts) : void 0;
-  });
-};
+Tag.fetchAndCache();
 
 Tags = {
   get: function(req, res) {
@@ -64,75 +43,12 @@ Tags = {
     }
     req.user.save();
     return res.end();
-  },
-  template: function(req, res) {
-    res.set({
-      'Content-Type': 'text/plain'
-    });
-    return res.sendfile(__dirname + '/views/tmpls/tag.html');
   }
 };
 
-Posts = {
-  get: function(req, res) {
-    var seltags;
-    if (req.query.tags) {
-      seltags = req.query.tags.split(',');
-    } else {
-      seltags = req.user.tags;
-    }
-    return getPostsWithTags(seltags, function(err, tposts) {
-      return res.end(JSON.stringify(tposts));
-    });
-  },
-  template: function(req, res) {
-    res.set({
-      'Content-Type': 'text/plain'
-    });
-    return res.sendfile(__dirname + '/views/tmpls/post.html');
-  }
-};
+Posts = {};
 
-
-function requireLogged (req, res, next) {
-	if (!req.user)
-		return res.redirect('/')
-	next()
-}
-;
-
-Pages = {
-  index: {
-    get: function(req, res) {
-      if (req.user) {
-        req.user.lastUpdate = new Date();
-        req.user.save();
-        console.log(tposts, JSON.stringify(tposts));
-        return getPostsWithTags(req.user.tags, function(err, tposts) {
-          return res.render('pages/home', {
-            user: req.user,
-            tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags)),
-            posts: tposts,
-            blog_url: blog_url,
-            messages: [JSON.stringify(req.user), JSON.stringify(req.session)]
-          });
-        });
-      } else {
-        return User.find().sort({
-          '_id': 'descending'
-        }).limit(10).find(function(err, data) {
-          return res.render('pages/frontpage', {
-            latestSignIns: data,
-            messages: [JSON.stringify(req.session)]
-          });
-        });
-      }
-    },
-    post: function(req, res) {
-      return res.end('<html><head></head><body><script type="text/javascript">' + 'window.top.location="http://meavisa.herokuapp.com";</script>' + '</body></html>');
-    }
-  }
-};
+Pages = {};
 
 module.exports = {
   Pages: Pages,

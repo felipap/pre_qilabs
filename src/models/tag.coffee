@@ -8,10 +8,11 @@
 
 mongoose = require 'mongoose'
 crypto = require 'crypto'
-_ = require 'underscore'
 memjs = require 'memjs'
+_ = require 'underscore'
 
 findOrCreate = require('./lib/findOrCreate')
+api = require('./../api')
 
 authTypes = []
 
@@ -93,6 +94,21 @@ getLabel = (hashtag) ->
 	# Try to match lower(hashtag) or return a "beautified" version of hashtag.
 	return transTable[hashtag.toLowerCase()] or hashtag.toCamel()
 
+blog_url = 'http://meavisa.tumblr.com'
+blog = api.getBlog 'meavisa.tumblr.com'
+
+TagSchema.statics.getAll = (cb) ->
+	@getCached (err, results) =>
+		if err or not results.length
+			api.pushBlogTags(blog,
+				(err, _tags) =>
+					cb(err) if err
+					tags = @recursify(_tags)
+					cb(null, tags)
+			)
+		else
+			cb(null, results)
+
 ####################################################################################################
 ####################################################################################################
 
@@ -101,17 +117,22 @@ TagSchema.statics.getCached = (cb) ->
 	mc.get 'tags', (err, val, key) ->
 		if err # if cache error, query db
 			console.warn('Cache error:', err)
-			@find({start_time: {$gte: new Date(new Date().setHours(0,0,0,0))}}, cb)
-		if val is null
+			ret = []
+		else if val is null
 			console.warn('Cache query for tags returned null.')
-		cb(null, JSON.parse(val.toString()))
+			ret = []
+		else
+			ret = JSON.parse(val.toString())
+		cb(null, ret)
 
-TagSchema.statics.flushCache = (cb) ->
+TagSchema.statics.fetchAndCache = (cb) ->
 	mc = memjs.Client.create()
 	console.log('Flushing cached tags.')
-	@find {start_time: {$gte: new Date(new Date().setHours(0,0,0,0))}},
-		(err, tags) ->
-			mc.set('tags', JSON.stringify(tags), cb)
+	api.pushBlogTags(blog,
+		(err, tags) =>
+			throw err if err
+			mc.set('tags', JSON.stringify(@recursify(tags)), cb)
+	)
 
 ####################################################################################################
 ####################################################################################################

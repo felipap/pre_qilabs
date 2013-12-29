@@ -7,6 +7,7 @@
 - /tag/:tag pages
 - feedback system
 - cache
+- scroolbars for #sidebar
 - páginas automatizadas para cada tag, com estatísticas
 
 ### Versão 2.0
