@@ -16,7 +16,9 @@ blog = api.getBlog 'meavisa.tumblr.com'
 tags = []
 posts = []
 
+
 Tag.fetchAndCache() 		# Fetch from Tumblr server and cache
+Post.fetchAndCache()
 # Post.getWithTags() 		# 
 
 requireLogged = (req, res, next) ->
@@ -41,10 +43,6 @@ staticPage = (template, name) ->
 				})
 		}
 	}
-
-Post.fetchNew (err, r) ->
-	console.log(r)
-
 
 module.exports = {
 	'/': {

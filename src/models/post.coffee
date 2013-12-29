@@ -91,6 +91,11 @@ PostSchema.statics.flushCache = (cb) ->
 		throw err if err
 		mc.set('posts', JSON.stringify(docs), cb)
 
+PostSchema.statics.fetchAndCache = (cb) ->
+	@fetchNew (err, docs) =>
+		@flushCache (err2, num) =>
+			cb?(err2 or err, num)
+
 PostSchema.statics.fetchNew = (callback) ->
 	blog = api.getBlog('meavisa.tumblr.com')
 	onGetTPosts = (posts) =>

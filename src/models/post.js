@@ -138,6 +138,15 @@ PostSchema.statics.flushCache = function(cb) {
   });
 };
 
+PostSchema.statics.fetchAndCache = function(cb) {
+  var _this = this;
+  return this.fetchNew(function(err, docs) {
+    return _this.flushCache(function(err2, num) {
+      return typeof cb === "function" ? cb(err2 || err, num) : void 0;
+    });
+  });
+};
+
 PostSchema.statics.fetchNew = function(callback) {
   var onGetTPosts,
     _this = this;

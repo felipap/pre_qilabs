@@ -23,6 +23,8 @@ posts = [];
 
 Tag.fetchAndCache();
 
+Post.fetchAndCache();
+
 requireLogged = function(req, res, next) {
   if (!req.user) {
     return res.redirect('/');
@@ -50,10 +52,6 @@ staticPage = function(template, name) {
     }
   };
 };
-
-Post.fetchNew(function(err, r) {
-  return console.log(r);
-});
 
 module.exports = {
   '/': {
