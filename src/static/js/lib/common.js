@@ -1,8 +1,6 @@
 
 // Present in all built javascript.
 
-
-
 require(['jquery','bootstrap'], function ($) {
 	$("[data-role='logout']").click(function () {
 		$.post('/logout', function () {

@@ -72,6 +72,19 @@ app.locals({
 	version_str: "alpha"
 });
 
+app.locals.urls = {
+	'twitter': '#',
+	'facebook': '#',
+}
+
+
+app.locals.getPageUrl = function (name) {
+	// if (typeof app.locals.urls[name] === 'undefined')
+		// throw "Page named "+name+" was referenced but doesn't exist."
+	return app.locals.urls[name];
+}
+
+
 var path = require('path');
 app.locals.mediaUrl = function () {
 	return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
@@ -80,12 +93,21 @@ app.locals.staticUrl = function () {
 	return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
 }
 
-app.locals.isLogged = function () {
-	console.log(this)
-	console.log
-}
+// Pass routes through router.js
+require('./lib/router.js')(app)(require('./routes.js'));
 
-require('./routes.js')(app);
+/* Handle 404 */
+app.get('*', function (req, res) {
+	res.status(404);
+	
+	if (req.accepts('html')) { // respond with html page
+		res.render('pages/404', { url: req.url, user: req.user });
+	} else if (req.accepts('json')) { // respond with json
+		res.send({ error: 'Not found' });
+		return;
+	}
+});
+
 
 if (app.get('env') === 'development') {
 	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -93,7 +115,7 @@ if (app.get('env') === 'development') {
 }
 
 var server = require('http')
-				.createServer(app)
-				.listen(process.env.PORT || 3000, function () {
+		.createServer(app)
+		.listen(process.env.PORT || 3000, function () {
 	console.log('Server on port %d in %s mode', server.address().port, app.settings.env);
 });
