@@ -235,8 +235,8 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		});
 
 		var TagListView = Backbone.View.extend({
-			tagName: "ul",	// 'o
-			_views: [], 	// a list of children views
+			tagName: "ul",
+			_views: [], // a list of children views
 
 			initialize: function () {
 				this.collection.on('render', this.render, this);
@@ -301,7 +301,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		});
 
 		var PostListView = Backbone.View.extend({
-			el: "#posts > ul",
+			el: "#posts",
 			_views: [],
 			template: _.template(['<@ if (!length) { @>',
 				'<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>',
@@ -402,7 +402,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 			this.tagList = new Tag.list();
 			this.tagListView = new Tag.listView({collection: this.tagList});
-			$("#tags").prepend(this.tagListView.$el);
+			$("#tags-wrapper").prepend(this.tagListView.$el);
 			this.tagList.parseAndReset(window._tags);
 
 			// initiate the "change => preview" mechanism.
@@ -437,7 +437,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 	}));
 
 	$(function () {
-		$("#tags [type=submit]").click(function (event) {
+		$("#tags-wrapper [type=submit]").click(function (event) {
 			event.stopPropagation();
 			event.preventDefault();
 			window.app.confirmTags(function () {

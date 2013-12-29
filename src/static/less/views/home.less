@@ -8,7 +8,7 @@
 @import "../mixins.less";
 @import "../common.less";
 
-#posts-wrapper {
+#posts-column {
 	position: relative;
 	top: 60px;
 }
@@ -33,13 +33,13 @@
 	[data-role=confirm] {
 		&:extend(.btn);
 		.btn0;
-		.btn-primary;
+		.inverted-btn(white, #3498db);
 	}
 
 	[data-role=cancel] {
 		&:extend(.btn);
 		.btn0;
-		.btn-danger;
+		.inverted-btn(white, #e74c3c);
 	}
 
 	#tags-form .children {
@@ -49,17 +49,23 @@
 		}
 	}
 
-	#tags {
+	form {
 		ul {
 			padding-left: 10px;
+			padding-right: 30px;
 			margin-bottom: 10px;
 			list-style: none;
 		
 			i { margin-right: 5px; }
 			
 			li {
+				position: relative;
+				display: block;
+				margin: 5px 0;		
+				text-align: left;
+
 				.tag {
-					width: 85%;
+					width: 100%;
 					text-align: left;
 				
 					.tg-btn {
@@ -72,18 +78,22 @@
 							margin-right: 5px;
 						}
 
-						.icon-collapse {
-							float: right;
-							margin-top: 3px;
-						}
 					}
-
+					
+					[data-role=inform] {
+						.reset-button;
+						float: right;
+						padding: 0;
+					}
 				}
-				display: block;
 
-				text-align: left;
-				margin: 5px 0;
-		
+				[data-role=expand] {
+					.reset-button;
+					position: absolute;
+					top: 7px;
+					right: -25px;
+				}
+
 				& .tag[data-checked=true] {
 					border: 1px solid green;
 					background: green;
@@ -114,7 +124,7 @@
 	z-index: 10;
 }
 
-#posts > ul {
+#posts {
 
 	list-style: none;
 	padding: 0;
