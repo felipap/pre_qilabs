@@ -119,48 +119,6 @@ Pages = {
 					'</body></html>')
 
 
-	# hm... logout?
-	logout: [requireLogged, (req, res) ->
-		if not req.user then return res.redirect '/'
-		req.logout()
-		res.redirect('/')]
-
-	# Deletes then user account.
-	leave_get: (req, res) ->
-			req.user.remove (err, data) ->
-				if err then throw err
-				req.logout()
-				res.redirect('/')
-
-	# This is a bomb.
-	dropall:
-		get: (req, res) ->
-			# Require user to be me
-			waiting = 3
-			User.remove {id:'a'}, (err) ->
-				res.write "users removed"
-				if not --waiting then res.end(err)
-			Post.remove {id:'a'}, (err) ->
-				res.write "\nposts removed"
-				if not --waiting then res.end(err)
-			Tag.remove {id:'a'}, (err) ->
-				res.write "\nposts removed"
-				if not --waiting then res.end(err)
-
-	# This is also a bomb. 
-	# Returns session and db information.
-	session:
-		get: (req, res) ->
-			if not req.user or req.user.facebookId isnt process.env.facebook_me
-				return res.redirect '/'
-			User.find {}, (err, users) ->
-				Post.find {}, (err, posts) ->
-					obj =
-						ip: req.ip
-						session: req.session
-						users: users
-						posts: posts
-					res.end(JSON.stringify(obj))
 }
 
 module.exports =

@@ -5,7 +5,9 @@
   "homepage": "http://meavisa.org",
   "readmeFilename": "README.md",
   "author": "Felipe Aragão Pires",
-  "licenses": ["BSD"],
+  "licenses": [
+    "BSD"
+  ],
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -45,6 +47,7 @@
     "connect-mongo": "~0.3.3",
     "connect": "~2.8.5",
     "ejs-locals": "~1.0.2",
-    "connect-flash": "~0.1.1"
+    "connect-flash": "~0.1.1",
+    "memjs": "~0.8.1"
   }
 }

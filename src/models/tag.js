@@ -1,4 +1,11 @@
-var TagSchema, authTypes, checkFollowed, crypto, descTable, findOrCreate, getDescription, getLabel, mongoose, recursify, transTable, _,
+/*
+# models/tag.coffee
+# for meavisa.org, by @f03lipe
+#
+# Tag model.
+*/
+
+var TagSchema, authTypes, checkFollowed, crypto, descTable, findOrCreate, getDescription, getLabel, memjs, mongoose, recursify, transTable, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -6,6 +13,10 @@ mongoose = require('mongoose');
 crypto = require('crypto');
 
 _ = require('underscore');
+
+memjs = require('memjs');
+
+findOrCreate = require('./lib/findOrCreate');
 
 authTypes = [];
 
@@ -22,41 +33,6 @@ TagSchema = new mongoose.Schema({
 });
 
 TagSchema.methods = {};
-
-findOrCreate = function(conditions, doc, options, callback) {
-  var self;
-  if (arguments.length < 4) {
-    if (typeof options === 'function') {
-      callback = options;
-      options = {};
-    } else if (typeof doc === 'function') {
-      callback = doc;
-      doc = {};
-      options = {};
-    }
-  }
-  self = this;
-  return this.findOne(conditions, function(err, result) {
-    var obj;
-    if (err || result) {
-      if (options && options.upsert && !err) {
-        return self.update(conditions, doc, function(err, count) {
-          return self.findOne(conditions, function(err, result) {
-            return callback(err, result, false);
-          });
-        });
-      } else {
-        return callback(err, result, false);
-      }
-    } else {
-      conditions = _.extend(conditions, doc);
-      obj = new self(conditions);
-      return obj.save(function(err) {
-        return callback(err, obj, true);
-      });
-    }
-  });
-};
 
 String.prototype.toCamel = function(){
 	return this.replace(/([a-z]+)/g, function(a){return a[0].toUpperCase()+a.slice(1);});
@@ -77,6 +53,13 @@ descTable = {
   'intercambio': 'Já pensou em estudar no exterior? É possível! Siga a tag para saber sobre bolsas de estudo, palestras e outros eventos relacionados a intercâmbio.',
   'mun': 'O Modelo das Nações unidas (Model United Nations) é um modelo de organizações internacionais realizado por estudantes para simular o funcionamento da ONU e, assim, desenvolverem suas habilidades de falar em público.'
 };
+
+/*
+# Turn a horizontal list of tags into a recursive structure with label and children.
+# TODO! this implementation looks expensive
+# TODO! Rename this to buildTag, or smthing.
+*/
+
 
 recursify = function(tags) {
   var chashtag, hashtag, parent, tagList, tagsObj, _base, _i, _len;
@@ -103,6 +86,14 @@ recursify = function(tags) {
   return tagsObj.children;
 };
 
+/*
+# Takes as input
+@param rtags 	{Array} 	A recursive tags object
+@param followed {Array} 	A plain list of tags the user follows.
+@return rtags 	{Object}	Recursive tags object with attrs checked in each tag
+*/
+
+
 checkFollowed = function(rtags, followed) {
   var check;
   _.each(rtags, check = function(e, i) {
@@ -119,6 +110,38 @@ getDescription = function(hashtag) {
 
 getLabel = function(hashtag) {
   return transTable[hashtag.toLowerCase()] || hashtag.toCamel();
+};
+
+TagSchema.statics.getCached = function(cb) {
+  var mc;
+  mc = memjs.Client.create();
+  return mc.get('tags', function(err, val, key) {
+    if (err) {
+      console.warn('Cache error:', err);
+      this.find({
+        start_time: {
+          $gte: new Date(new Date().setHours(0, 0, 0, 0))
+        }
+      }, cb);
+    }
+    if (val === null) {
+      console.warn('Cache query for tags returned null.');
+    }
+    return cb(null, JSON.parse(val.toString()));
+  });
+};
+
+TagSchema.statics.flushCache = function(cb) {
+  var mc;
+  mc = memjs.Client.create();
+  console.log('Flushing cached tags.');
+  return this.find({
+    start_time: {
+      $gte: new Date(new Date().setHours(0, 0, 0, 0))
+    }
+  }, function(err, tags) {
+    return mc.set('tags', JSON.stringify(tags), cb);
+  });
 };
 
 TagSchema.statics.findOrCreate = findOrCreate;

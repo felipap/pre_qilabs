@@ -1,114 +1,180 @@
+var pages, passport, requireLogged, requireMe, staticPage;
 
-// routes.js
-// for meavisa.org, by @f03lipe
+passport = require('passport');
 
-var passport = require('passport');
-var pages = require('./pages.js');
+pages = require('./pages.js');
 
-function requireLogged (req, res, next) {
-	if (!req.user)
-		return res.redirect('/')
-	next()
-}
+requireLogged = function(req, res, next) {
+  if (!req.user) {
+    return res.redirect('/');
+  }
+  return next();
+};
 
-function requireMe (req, res, next) {
-	// Require user to be me. :D
-	if (!req.user || req.user.facebookId != process.env.facebook_me) {
-		res.locals.message = ['what do you think you\'re doing?']
-		return res.redirect('/');
-	}
-	next();
-}
+requireMe = function(req, res, next) {
+  if (!req.user || req.user.facebookId !== process.env.facebook_me) {
+    res.locals.message = ['what do you think you\'re doing?'];
+    return res.redirect('/');
+  }
+  return next();
+};
 
-function staticPage (template, name) {
-	return {
-		name: name,
-		methods: {
-			get: function (req, res) {
-				res.render(template, {
-					user: req.user,
-				})
-			}
-		}
-	}
-}
+staticPage = function(template, name) {
+  return {
+    name: name,
+    methods: {
+      get: function(req, res) {
+        return res.render(template, {
+          user: req.user
+        });
+      }
+    }
+  };
+};
 
 module.exports = {
-	'/': {
-		name: 'index',
-		methods: pages.Pages.index
-	},
-	'/logout': {
-		name: 'logout',
-		methods: {
-			post: pages.Pages.logout
-		}
-	},
-	'/leave': {
-		name: 'leave',
-		methods: {
-			get: pages.Pages.leave_get
-		}
-	},
-	'/painel': 	staticPage('pages/panel', 'panel'),
-	'/sobre': 	staticPage('pages/about', 'about'),
-	'/equipe': 	staticPage('pages/team', 'team'),
-
-	'/api': {
-		children: {
-			'dropall': {
-				methods: { get: [requireMe, pages.Pages.dropall.get]}
-			},
-			'session': {
-				methods: { get: [requireMe, pages.Pages.session.get]}
-			},
-			'tags': {
-				methods: {
-					// Get all tags.
-					get: [requireLogged, pages.Tags.get],
-					// Update tags with ?checked=[tags,]
-					post: [requireLogged, pages.Tags.post],
-				},
-				children: {
-					':tag': {
-						methods: {
-							// Update tags with {checked:true|false}.
-							put: [requireLogged, pages.Tags.put],
-						}
-					},
-					'template': {
-						methods: {
-							// Serve the template.
-							get: [requireLogged, pages.Tags.template],
-						}
-					}
-				}
-			},
-			'posts': {
-				methods: {
-					// Get all posts.
-					get: [requireLogged, pages.Posts.get],
-				
-				},
-				children: {
-					'template': {
-						methods: {
-							// Serve the template.
-							get: [requireLogged, pages.Posts.template],
-						}
-					}
-				}
-			}
-		}
-	},
-
-	'/auth/facebook/callback': {
-		methods: {
-			get: passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }),
-		}
-	},
-
-	'/auth/facebook': {
-		methods: { get: passport.authenticate('facebook') }
-	}
-}
+  '/': {
+    name: 'index',
+    methods: pages.Pages.index
+  },
+  '/logout': {
+    name: 'logout',
+    methods: {
+      post: [
+        requireLogged, function(req, res) {
+          if (!req.user) {
+            return res.redirect('/');
+          }
+          req.logout();
+          return res.redirect('/');
+        }
+      ]
+    }
+  },
+  '/leave': {
+    name: 'leave',
+    methods: {
+      get: function(req, res) {
+        return req.user.remove(function(err, data) {
+          if (err) {
+            throw err;
+          }
+          req.logout();
+          return res.redirect('/');
+        });
+      }
+    }
+  },
+  '/painel': staticPage('pages/panel', 'panel'),
+  '/sobre': staticPage('pages/about', 'about'),
+  '/equipe': staticPage('pages/team', 'team'),
+  '/tags/:tag': {
+    methods: {
+      get: function(req, res) {}
+    }
+  },
+  '/api': {
+    children: {
+      'dropall': {
+        methods: {
+          get: [
+            requireMe, function(req, res) {
+              var waiting;
+              waiting = 3;
+              User.remove({
+                id: 'a'
+              }, function(err) {
+                res.write("users removed");
+                if (!--waiting) {
+                  return res.end(err);
+                }
+              });
+              Post.remove({
+                id: 'a'
+              }, function(err) {
+                res.write("\nposts removed");
+                if (!--waiting) {
+                  return res.end(err);
+                }
+              });
+              return Tag.remove({
+                id: 'a'
+              }, function(err) {
+                res.write("\nposts removed");
+                if (!--waiting) {
+                  return res.end(err);
+                }
+              });
+            }
+          ]
+        }
+      },
+      'session': {
+        methods: {
+          get: [
+            requireMe, function(req, res) {
+              if (!req.user || req.user.facebookId !== process.env.facebook_me) {
+                return res.redirect('/');
+              }
+              return User.find({}, function(err, users) {
+                return Post.find({}, function(err, posts) {
+                  var obj;
+                  obj = {
+                    ip: req.ip,
+                    session: req.session,
+                    users: users,
+                    posts: posts
+                  };
+                  return res.end(JSON.stringify(obj));
+                });
+              });
+            }
+          ]
+        }
+      },
+      'tags': {
+        methods: {
+          get: [requireLogged, pages.Tags.get],
+          post: [requireLogged, pages.Tags.post]
+        },
+        children: {
+          ':tag': {
+            methods: {
+              put: [requireLogged, pages.Tags.put]
+            }
+          },
+          'template': {
+            methods: {
+              get: [requireLogged, pages.Tags.template]
+            }
+          }
+        }
+      },
+      'posts': {
+        methods: {
+          get: [requireLogged, pages.Posts.get]
+        },
+        children: {
+          'template': {
+            methods: {
+              get: [requireLogged, pages.Posts.template]
+            }
+          }
+        }
+      }
+    }
+  },
+  '/auth/facebook/callback': {
+    methods: {
+      get: passport.authenticate('facebook', {
+        successRedirect: '/',
+        failureRedirect: '/login'
+      })
+    }
+  },
+  '/auth/facebook': {
+    methods: {
+      get: passport.authenticate('facebook')
+    }
+  }
+};
