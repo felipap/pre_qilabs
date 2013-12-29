@@ -37,6 +37,8 @@ require(['jquery','bootstrap'], function ($) {
 	})();
 
 	(function showFlashMessages (msgs) {
+		if (document.body.dataset.page === 'front')
+			return;
 		if (!$(".flash-msgs")[0])
 			$("<div class='flash-msgs'>").prependTo($('body > section')[0]);
 		for (var i=0; msgs.warn && i<msgs.warn.length; i++)
