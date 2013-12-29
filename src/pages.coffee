@@ -34,7 +34,6 @@ getPostsWithTags = (tags, callback) ->
 Tags =
 	get: (req, res) ->
 		# Get all tags.
-		console.log('getting', JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
 		res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
 
 	post: (req, res) ->
@@ -68,13 +67,11 @@ Tags =
 Posts =
 	get: (req, res) ->
 		# Get all posts.
-		console.log(req.query.tags)
 		if req.query.tags
 			seltags = req.query.tags.split(',')
 		else
 			seltags = req.user.tags
 		getPostsWithTags seltags, (err, tposts) ->
-			console.log('returning', tposts)
 			res.end(JSON.stringify(tposts))
 
 	template: (req, res) ->

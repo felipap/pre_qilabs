@@ -44,7 +44,6 @@ getPostsWithTags = function(tags, callback) {
 
 Tags = {
   get: function(req, res) {
-    console.log('getting', JSON.stringify(Tag.checkFollowed(tags, req.user.tags)));
     return res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)));
   },
   post: function(req, res) {
@@ -77,14 +76,12 @@ Tags = {
 Posts = {
   get: function(req, res) {
     var seltags;
-    console.log(req.query.tags);
     if (req.query.tags) {
       seltags = req.query.tags.split(',');
     } else {
       seltags = req.user.tags;
     }
     return getPostsWithTags(seltags, function(err, tposts) {
-      console.log('returning', tposts);
       return res.end(JSON.stringify(tposts));
     });
   },

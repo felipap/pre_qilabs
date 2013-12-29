@@ -4,6 +4,12 @@
 
 require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone, _) {
 
+	_.templateSettings = {
+		interpolate: /\<\@\=(.+?)\@\>/gim,
+		evaluate: /\<\@([\s\S]+?)\@\>/gim,
+		escape: /\<\@\-(.+?)\@\>/gim
+	};
+
 	var Tag = (function () {
 		'use strict';
 		// Model for each tag
@@ -94,7 +100,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 			tagName: 'li',
 
-			// template: _.template($("#template-tagview").html()),
+			template: _.template($("#template-tagview").html()),
 			
 			initialize: function () {
 				this.model.collection.on('reset', this.destroy, this);
@@ -128,34 +134,32 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			// ?
 			render: function () {
 				// console.log('rendering tagView', this.model.toJSON());
-				TemplateManager.get('/api/tags/template', function (err, tmpl) {
-					// http://tbranyen.com/post/missing-jquery-events-while-rendering
-					this.childrenView.$el.detach();
-					// Render our html.
-					this.$el.html(_.template(tmpl, {
-						tag: _.extend(this.model.toJSON(), {hasCheckedChild: this.model.hasCheckedChild()})
-					}));
-					// Hide children if necessary.
-					if (this.hideChildren) {
-						this.childrenView.$el.hide();
-					}
-					// Render our childrenViews.
-					this.$el.append(this.childrenView.el);
+				// http://tbranyen.com/post/missing-jquery-events-while-rendering
+				this.childrenView.$el.detach();
+				// Render our html.
+				this.$el.html(this.template({
+					tag: _.extend(this.model.toJSON(), {hasCheckedChild: this.model.hasCheckedChild()})
+				}));
+				// Hide children if necessary.
+				if (this.hideChildren) {
+					this.childrenView.$el.hide();
+				}
+				// Render our childrenViews.
+				this.$el.append(this.childrenView.el);
 
-					// Code our info popover. Do it here (not in the html) in order
-					// to diminish change of XSS attacks.
-					this.$("> .tag .info").popover({
-						content: this.model.get("description"),
-						placement: 'bottom',
-						trigger: 'hover',
-						container: 'body',
-						delay: { show: 100, hide: 300 },
-						title: "<i class='icon-tag'></i> "+this.model.get("hashtag"),
-						html: true,
-					});
-					// Prevent popover from persisting on click. (better solution?)
-					this.$("> .tag .info").click(function(e){e.stopPropagation();});
-				}, this);
+				// Code our info popover. Do it here (not in the html) in order
+				// to diminish change of XSS attacks.
+				this.$("> .tag .info").popover({
+					content: this.model.get("description"),
+					placement: 'bottom',
+					trigger: 'hover',
+					container: 'body',
+					delay: { show: 100, hide: 300 },
+					title: "<i class='icon-tag'></i> "+this.model.get("hashtag"),
+					html: true,
+				});
+				// Prevent popover from persisting on click. (better solution?)
+				this.$("> .tag .info").click(function(e){e.stopPropagation();});
 				return this;
 			},
 
@@ -278,7 +282,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		var PostView = Backbone.View.extend({
 			tagName: 'li',
-			// template: _.template($("#template-tagview").html()),
+			template: _.template($("#template-postview").html()),
 			initialize: function () {
 				this.model.collection.on('reset', this.destroy, this);
 			},
@@ -286,9 +290,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				this.remove();
 			},
 			render: function () {
-				TemplateManager.get('/api/posts/template', function (err, tmpl) {
-					this.$el.html(_.template(tmpl, {post: this.model.toJSON()}));
-				}, this);
+				this.$el.html(this.template({post: this.model.toJSON()}));
 				return this;
 			},
 		});
@@ -301,9 +303,9 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		var PostListView = Backbone.View.extend({
 			el: "#posts > ul",
 			_views: [],
-			template: _.template(['<% if (!length) { %>',
+			template: _.template(['<@ if (!length) { @>',
 				'<h3 style="color: #888">Ops! Você não está seguindo tag nenhuma. :/</h3>',
-				'<% } %>',
+				'<@ } @>',
 				'<hr>'].join('\n')),
 			
 			initialize: function () {
