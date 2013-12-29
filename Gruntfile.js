@@ -39,7 +39,7 @@ module.exports = function(grunt) {
 		
 		less: {
 			misc: {
-				files: { 'src/static/css/panel.min.css':'src/static/less/views/panel.less' },
+				files: { 'src/static/css/default.min.css':'src/static/less/views/default.less' },
 				options: { cleancss: true },
 			},
 			home: {

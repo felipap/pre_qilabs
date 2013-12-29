@@ -1,8 +1,27 @@
 <% layout('../stdbody') -%>
 
-<% stylesheet(mediaUrl('css','panel.min.css')) -%>
+<% stylesheet(staticUrl('css','default.min.css')) -%>
 
-<body class="config">
+<body class="" data-page="panel">
+
+	<% include ../layouts/navbar.html %>
+
+	<section>
+		<section>
+			<div class="" "col-md-8 col-md-offset-2">
+				<h3>Oi, <%= user.name %>!</h3>
+				<h4>Esse é o seu painel de controle.</h4>
+
+				<button data-role="save">Salvar</button>
+				<button data-role="cancel">Cancelar</button>
+				<hr>
+				
+				<a href="#delete" data-role="delete-account" data-toggle="modal" data-target="#leave">
+					Excluir minha conta permanentemente.
+				</a>
+			</div>
+		</section>
+	</section>
 
 	<!-- modal#leave -->
 	<div class="modal fade" id="leave">
@@ -23,26 +42,6 @@
 			</div>
 		</div>
 	</div>
-
-	<% include ../layouts/navbar.html %>
-
-	<section>
-		<div class="row">
-			<!-- tags configuration -->
-			<div class="col-md-8 col-md-offset-2">
-					<h3>Oi, <%= user.name %>!</h3>
-					<h4>Esse é o seu painel de controle.</h4>
-
-					<button data-role="save">Salvar</button>
-					<button data-role="cancel">Cancelar</button>
-					<hr>
-					
-					<a href="#delete" data-role="delete-account" data-toggle="modal" data-target="#leave">
-						Excluir minha conta permanentemente.
-					</a>
-			</div>
-		</div>
-	</section>
 
 	<% include ../layouts/footer.html %>
 

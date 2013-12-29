@@ -28,75 +28,8 @@ module.exports = function (app) {
 		return app.locals.urls[name];
 	}
 
-	/*
-	** Route ONE path.
-	** Usage: routePage('get', '/', funcs, ...)
-	*/
-	routePage = function (method, path) {
-		app[method].apply(app, [].splice.call(arguments,1))
-	}
-
-	/*
-	** Route an object with many pages.
-	** Usage: routePages('/', {
-	**     get: [requireSmthg, function (req, res) { ... }],
-	**     post: function (req, res) { ... }
-	** })
-	*/
-	routePages = function (path, object) {
-		for (var method in object) if (object.hasOwnProperty(method)) {
-			// If object[<method>] is a list of functions, call using apply.
-			if (object[method] instanceof Array) {
-				app[method].apply(app, [path].concat(object[method]));
-			} else {
-				app[method](path, object[method]);
-			}
-		}
-	}
-	
 	app.locals.urls = {};
-	routePages2 = function (object) {
 
-		function routePath (path, name, mToFunc) {
-			// TODO: prevent overriding urls with different paths.
-			app.locals.urls[name] = path;
-			
-			// Use app[get/post/put/...] to route methods in mToFunc.
-			for (var method in mToFunc)
-			if (mToFunc.hasOwnProperty(method)) {
-				var func = mToFunc[method];
-				// If obj[method] is a list of functions to call, use apply.
-				if (func instanceof Array) {
-					app[method].apply(app, [path].concat(func));
-				} else {
-					app[method](path, func);
-				}
-			}
-		}
-
-		var joinPath = require('path').join.bind(require('path'));
-
-		function routeChildren(parentPath, childs) {
-			if (!childs) return {};
-
-			console.log('oooi', childs)
-
-			for (var relpath in childs)
-			if (childs.hasOwnProperty(relpath)) {
-				var abspath = joinPath(parentPath, relpath);
-				var name = childs[relpath].name || abspath.replace('/','_');
-				routePath(abspath, name, childs[relpath].methods);
-				routeChildren(abspath, childs[relpath].children);
-			}
-		}
-
-		for (var path in object) if (object.hasOwnProperty(path)) {
-			if (object[path].methods)
-				routePath(path, object[path].name, object[path].methods);
-			routeChildren(path, object[path].children);
-		}
-
-	}
 
 	function staticPage (template, name) {
 		return {
@@ -110,8 +43,10 @@ module.exports = function (app) {
 			}
 		}
 	}
-		
-	routePages2({
+
+	var router = require('./lib/router.js')(app);
+
+	router({
 		'/': {
 			name: 'index',
 			methods: pages.Pages.index
@@ -178,11 +113,20 @@ module.exports = function (app) {
 					}
 				}
 			}
+		},
+
+		'/auth/facebook/callback': {
+			methods: {
+				get: passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }),
+			}
+		},
+
+		'/auth/facebook': {
+			methods: { get: passport.authenticate('facebook') }
 		}
 	});
 
-	app.get('/auth/facebook', passport.authenticate('facebook'));
-	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));
+	/* Handle 404 */
 
 	app.get('*', function (req, res) {
 		res.status(404);

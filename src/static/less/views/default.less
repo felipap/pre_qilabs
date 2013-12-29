@@ -1,5 +1,5 @@
 
-/* panel.less
+/* default.less
 ** for meavisa.org, by @f03lipe
 **
 ** Styles of all panel pages (sobre, panel, us etc).
@@ -14,11 +14,12 @@ body.panel {
 
 body > section {
 	.container-fixed;
-
 	&:extend(.container);
 	
-	.row {
+
+	& > section {
 		.make-row;
+
 		margin-top: 20px;
 
 		// background: white;

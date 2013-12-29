@@ -1,12 +1,13 @@
 <% layout('../stdbody') -%>
 
-<% stylesheet(mediaUrl('css','panel.min.css')) -%>
+<% stylesheet(staticUrl('css','default.min.css')) -%>
 
-<body class="about">
+<body class="" data-page="about">
+
 	<% include ../layouts/navbar.html %>
 
 	<section>
-		<div class="row">
+		<section>
 			<div class="col-md-7">
 				<h1><strong>Me Avisa</strong> <small>(meavisa.org)</small></h1>
 				<h3>versão 0.2 alpha</h3>
@@ -18,7 +19,7 @@
 			<div class="col-md-4 col-md-offset-1">
 				<i class="fa fa-bullhorn" style="padding: 20px; font-size: 250px"></i>
 			</div>
-		</div>
+		</section>
 	</section>
 
 	<% include ../layouts/footer.html %>
