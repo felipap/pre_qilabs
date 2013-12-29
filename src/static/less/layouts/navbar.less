@@ -11,8 +11,8 @@
 	margin-bottom: 0;
 	background: white;
 
-	body:not(.front) & {
-		border-bottom: 1px solid #CCC;
+	body:not([data-page=front]) & {
+		border-bottom: 2px solid #DDD;
 	}
 
 	.tooltip {
@@ -72,6 +72,15 @@
 			.inverted-btn;
 			padding-left: 30px;
 			padding-right: 30px;
+			font-weight: 700;
+			.box-shadow(none);
+		}
+
+		[data-role=feedback] {
+			.btn0;
+			.inverted-btn2(#e67e22);
+			padding-left: 10px;
+			padding-right: 10px;
 			font-weight: 700;
 			.box-shadow(none);
 		}

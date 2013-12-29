@@ -140,7 +140,6 @@ Pages = {
 		get: (req, res) ->
 			# Require user to be me
 			waiting = 3
-			console.log('you there')
 			User.remove {id:'a'}, (err) ->
 				res.write "users removed"
 				if not --waiting then res.end(err)

@@ -31,7 +31,7 @@
 	}
 }
 
-.inverted-btn (@color: white, @bg: #00b5ca) {
+.inverted-btn (@color: white, @bg: @COLOR1) {
 	border: 2px solid transparent;
 	.color-btn(@color, @bg, @bg);
 	.color-btn-hover(@color, @color, @bg);
@@ -39,7 +39,7 @@
 }
 
 /* Don't change a thing. */
-.inverted-btn (@color: white, @bg: #00b5ca, @chover: @bg) {
+.inverted-btn (@color: white, @bg: @COLOR1, @chover: @bg) {
 	.color-btn-focus(@color, @bg, transparent);
 	border: 2px solid transparent;
 	.color-btn(@color, @bg, transparent);
@@ -48,7 +48,7 @@
 }
 
 // Second flavor
-.inverted-btn2 (@color: #00b5ca) {
+.inverted-btn2 (@color: @COLOR1) {
 	.color-btn-focus(@color, transparent, @color);
 	border: 2px solid transparent;
 	.color-btn(@color, transparent, @color);

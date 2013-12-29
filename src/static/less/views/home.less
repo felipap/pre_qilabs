@@ -19,7 +19,6 @@
 	z-index: 1;
 }
 
-
 #sidebar {
 	position: fixed;
 	top: (@navbar-height+10px);
@@ -28,6 +27,13 @@
 	background: white;
 
 	padding: 10px 20px;
+
+	[data-role=confirm] {
+		.btn;
+		.btn-block;
+		.btn-primary;
+		.btn-lg;
+	}
 }
 
 .post {
@@ -73,9 +79,28 @@
 			.tag {
 				width: 85%;
 				text-align: left;
+			
+				.tg-btn {
+					width: 300px;
+					text-align: left;
+					margin-bottom: 5px;
+
+					.tg {
+						display: table;
+						display: inline-block;
+						margin-right: 5px;
+					}
+
+					.icon-collapse {
+						float: right;
+						margin-top: 3px;
+					}
+				}
+
 			}
 			display: block;
-			.btn-default();
+			.btn-default;
+
 			text-align: left;
 			margin: 5px 0;
 	
@@ -99,31 +124,9 @@
 }
 
 #posts > ul {
+
 	list-style: none;
 	padding: 0;
-}
-
-footer {
-	padding: 15px 0;
-	font-size: 14px;
-}
-
-
-.tg-btn {
-	width: 300px;
-	text-align: left;
-	margin-bottom: 5px;
-
-	.tg {
-		display: table;
-		display: inline-block;
-		margin-right: 5px;
-	}
-
-	.icon-collapse {
-		float: right;
-		margin-top: 3px;
-	}
 }
 
 #tags-form .children {

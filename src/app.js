@@ -22,10 +22,10 @@ require('./config/passport.js')();
 app.set('view engine', 'html'); // make '.html' the default
 app.set('views', __dirname + '/views'); // set views for error and 404 pages
 app.set('view options', {layout: false}); // disable layout
-// Swig will cache templates for you, but you can disable
-// that and use Express's caching instead, if you like.
 app.set('view cache', true);
 app.engine('html', require('ejs-locals'))
+
+app.use(connect.compress());
 
 app.use(express.static(__dirname + '/static/robots.txt'))
 app.use(express.static(__dirname + '/static/people.txt'))
@@ -34,7 +34,6 @@ app.use(express.favicon(__dirname + '/static/favicon.ico'))
 if (app.get('env') === 'production') {
 	app.use(express.logger());
 }
-app.use(connect.compress());
 
 app.use(express.methodOverride()); // support _method (PUT in forms etc)
 app.use(express.bodyParser()); // parse request bodies (req.body)

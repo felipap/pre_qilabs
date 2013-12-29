@@ -1,0 +1,39 @@
+<% layout('../stdbody') -%>
+
+<% stylesheet(staticUrl('css','default.min.css')) -%>
+
+<body class="" data-page="panel">
+
+	<% include ../layouts/navbar.html %>
+
+	<section>
+		<section>
+			<h2>Team</h2>
+			<p></p>
+		</section>
+	</section>
+
+	<!-- modal#leave -->
+	<div class="modal fade" id="leave">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Excluir sua conta?</h4>
+				</div>
+				<div class="modal-body">
+					<h3>Você tem <strong>certeza</strong> que deseja <strong>excluir a sua conta</strong>?</h3>
+					<img src="http://free-mobile-wallpapers.mobilclubs.com/sites/default/files/img-wallpapers/sad_cat.jpg" width=200>
+				</div>
+				<div class="modal-footer">
+					<a href="/leave" class="btn btn-default btn-danger">Sim :(</a>
+					<button type="button" class="btn btn-default btn-success" data-dismiss="modal">Cancelar :)</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<% include ../layouts/footer.html %>
+
+	<script data-main="<%= staticUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+</body>

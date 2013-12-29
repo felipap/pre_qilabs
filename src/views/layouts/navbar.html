@@ -5,6 +5,12 @@
 		</a>
 		<% if (typeof user !== "undefined") { %>
 
+			<ul class="nav navbar-nav">
+				<button data-role="feedback">
+					Feedback
+				</button>
+			</ul>
+
 			<ul class="nav navbar-nav pull-right">
 				<button class="iconed" onClick="$(this).find('i').toggleClass('fa-bell-o').toggleClass('fa-bell');"
 					title="Receber atualizações por Facebook" data-toggle="tooltip" data-placement="bottom">

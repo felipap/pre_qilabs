@@ -157,7 +157,6 @@ Pages = {
     get: function(req, res) {
       var waiting;
       waiting = 3;
-      console.log('you there');
       User.remove({
         id: 'a'
       }, function(err) {

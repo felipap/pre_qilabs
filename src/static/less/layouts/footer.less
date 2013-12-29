@@ -7,6 +7,7 @@ body {
 }
 
 footer {
+
 	position: absolute;
 	left: 0;
 	bottom: 0;
@@ -15,9 +16,10 @@ footer {
 	background: white;
 	.border-radius(0);
 	padding: 30px;
-	border-top: 1px solid #BBB;
+	border-top: 1px solid #CCC;
 
 	.links {
+		color: @COLOR1;
 		text-align: center;
 		width: 400px;
 		padding: 12px;
@@ -51,19 +53,15 @@ footer {
 #sidebar footer {
 
 	height: auto;
-	padding: 10px;
-	border-top: 1px solid #AA;
+	padding: 0;
+	border-top: 1px solid #AAA;
 
 	.links {
 		width: 100%;
-		padding: 0;
+		padding: auto 10px;
 
-		font: 500 14px "Open Sans";
+		font: 14px "Open Sans";
 		text-transform: none;
-
-		.social {
-			display: none;
-		}
 	}
 
 	.reg {
