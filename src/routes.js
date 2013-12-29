@@ -179,8 +179,19 @@ module.exports = function (app) {
 				}
 			}
 		}
-	})
+	});
 
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }));
+
+	app.get('*', function (req, res) {
+		res.status(404);
+		
+		if (req.accepts('html')) { // respond with html page
+			res.render('pages/404', { url: req.url, user: req.user });
+		} else if (req.accepts('json')) { // respond with json
+			res.send({ error: 'Not found' });
+			return;
+		}
+	});
 }
