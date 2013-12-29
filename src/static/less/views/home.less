@@ -7,7 +7,7 @@
 
 @import "../mixins.less";
 @import "../common.less";
-
+@import "../plugins/perfect-scrollbar.less";
 
 .navbar {
 	position: fixed;
@@ -30,23 +30,20 @@
 	[data-role=confirm] {
 		&:extend(.btn);
 		.btn0;
-		.inverted-btn(white, #3498db);
+		.inverted-btn2(#3498db);
 	}
 
 	[data-role=cancel] {
 		&:extend(.btn);
 		.btn0;
-		.inverted-btn(white, #e74c3c);
+		.inverted-btn2(#e74c3c);
 	}
 
-	#tags-form .children {
-		i {
-			font-size: 70%;
-			margin-right: 5px;
-		}
-	}
+	#tags-wrapper {
+		height: 100%;
+		padding-bottom: 44px;
+		overflow: hidden;
 
-	form {
 		ul {
 			padding-left: 10px;
 			padding-right: 30px;
@@ -111,6 +108,18 @@
 
 		& > ul {
 			padding-left: 0;
+
+			position: absolute;
+			top: 85px;
+			bottom: 87px;
+			right: 0;
+			left: 20px;
+			overflow: hidden;
+		}
+
+		.btns {
+			position: absolute;
+			bottom: 44px;
 		}
 	}
 }

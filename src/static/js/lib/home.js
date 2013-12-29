@@ -346,26 +346,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		};
 	})();
 
-	// Quick first-attempt at a TemplateManager for the views.
-	// Not sure if this is production-quality solution, but for now it'll save
-	// me the pain of having to wait for the app to reload everytime the html is
-	// changed.
-	var TemplateManager = {
-		get: function (url, callback, context) {
-			var template = this.templates[url];
-			if (template)
-				callback.call(context, null, template);
-			else {
-				var that = this;
-				$.get(url, function (tmpl) {
-					that.templates[url] = tmpl;
-					callback.call(context, null, tmpl);
-				})
-			}
-		},
-		templates: {},
-	}
-
 	// Extend PATCH:true option of Backbone.
 	// When model.save([attrs], {patch:true}) is called:
 	// - the method is changed to PUT;
@@ -437,7 +417,12 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		index: function () { },
 	}));
 
+
 	$(function () {
+		_.delay(function() {
+			$("#sidebar #tags-wrapper > ul").perfectScrollbar({suppressScrollX:true});
+		}, 400);
+
 		$("#tags-wrapper [type=submit]").click(function (event) {
 			event.stopPropagation();
 			event.preventDefault();

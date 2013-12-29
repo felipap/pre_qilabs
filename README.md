@@ -8,6 +8,7 @@
 - feedback system
 - cache
 - scroolbars for #sidebar
+- pagination for posts
 - páginas automatizadas para cada tag, com estatísticas
 
 ### Versão 2.0
