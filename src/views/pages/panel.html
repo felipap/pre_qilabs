@@ -2,7 +2,7 @@
 
 <% stylesheet(mediaUrl('css','panel.min.css')) -%>
 
-<body class="panel">
+<body class="config">
 
 	<!-- modal#leave -->
 	<div class="modal fade" id="leave">
@@ -26,13 +26,12 @@
 
 	<% include ../layouts/navbar.html %>
 
-	<div id="panel">
+	<section>
 		<div class="row">
 			<!-- tags configuration -->
 			<div class="col-md-8 col-md-offset-2">
 					<h3>Oi, <%= user.name %>!</h3>
 					<h4>Esse é o seu painel de controle.</h4>
-
 
 					<button data-role="save">Salvar</button>
 					<button data-role="cancel">Cancelar</button>
@@ -43,7 +42,7 @@
 					</a>
 			</div>
 		</div>
-	</div>
+	</section>
 
 	<% include ../layouts/footer.html %>
 
