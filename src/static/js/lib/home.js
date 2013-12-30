@@ -403,7 +403,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		routes: {
 			'posts/:post': 'singlePost',
-			'': 'index',
+			'*a':  'index'
 		},
 		
 		initialize: function () {

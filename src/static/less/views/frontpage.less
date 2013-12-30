@@ -57,15 +57,16 @@ body > section {
 		&:extend(.container);
 
 		& > section {
-			.text-shadow(0, 0, 3px, 1);
 
 			h1 {
+				.text-shadow(0, 0, 3px, 1);
 				font-weight: 800;
 				font-family: Lato;
 				font-size: 70px;
 			}
 
 			p {
+				.text-shadow(0, 0, 3px, 1);
 				font-size: 22px;
 				font-weight: 500;
 			}
@@ -74,10 +75,17 @@ body > section {
 			width: 600px;
 			margin: auto;
 
-			[data-role=join] {
+			a, button {
 				.btn0;
-				.inverted-btn(white, #00b5ca, white);
 				font-size: 14px;
+			}
+
+			[data-role=join] {
+				.inverted-btn(white, @CBLUE, white);
+			}
+
+			[data-role=join-team] {
+				.inverted-btn(white, @CGREEN, white);	
 			}
 		}
 	}

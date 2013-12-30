@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 					'src/static/js/lib/plugins.js',
 					'src/static/js/lib/home.js',
 				],
-				dest: 'src/static/js/home.js',
+				dest: 'src/static/js/concated_home.js',
 			},
 			all: {
 				src: [
@@ -30,17 +30,17 @@ module.exports = function(grunt) {
 					'src/static/js/lib/common.js',
 					'src/static/js/lib/plugins.js',
 				],
-				dest: 'src/static/js/all.js',
+				dest: 'src/static/js/concated_all.js',
 			}
 		},
  
 		uglify: {
 			home: {
-				src: 'src/static/js/home.js',
+				src: 'src/static/js/concated_home.js',
 				dest: 'src/static/js/home.min.js'
 			},
 			all: {
-				src: 'src/static/js/all.js',
+				src: 'src/static/js/concated_all.js',
 				dest: 'src/static/js/all.min.js'
 			}
 		},

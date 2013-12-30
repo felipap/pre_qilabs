@@ -97,6 +97,7 @@ module.exports = {
 	'/painel': 	staticPage('pages/panel', 'panel'),
 	'/sobre': 	staticPage('pages/about', 'about'),
 	'/equipe': 	staticPage('pages/team', 'team'),
+	'/participe': 	staticPage('pages/join-team', 'join-team'),
 
 	'/tags/:tag': {
 		methods: {

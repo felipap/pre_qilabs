@@ -50,3 +50,21 @@ body > section {
 		text-decoration: none;
 	}
 }
+
+body > .paper {
+
+	.container-fixed;
+	&:extend(.container);
+	margin-top: 10px;
+
+	& > section {
+		.make-row;
+		.make-md-column(10);
+		.make-md-column-offset(1);
+
+		background: white;
+		border: 1px solid #CCC;
+		padding: 50px;
+	}
+
+}
