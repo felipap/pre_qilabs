@@ -79,8 +79,8 @@ app.locals({
 	},
 	urls: {
 		'twitter': '#',
-		'facebook': '#',
-	}
+		'facebook': '#'
+	},
 });
 
 // Pass pages through router.js

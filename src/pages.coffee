@@ -4,33 +4,51 @@
 
 _	= require 'underscore'
 passport = require('passport')
+validator = require('validator')
 
 api = require './api.js'
 
 User = require './models/user.js'
 Post = require './models/post.js'
 Tag  = require './models/tag.js'
+Subscriber  = require './models/subscriber.js'
 
 blog_url = 'http://meavisa.tumblr.com'
 blog = api.getBlog 'meavisa.tumblr.com'
 tags = []
 posts = []
 
-
 Tag.fetchAndCache() 		# Fetch from Tumblr server and cache
 Post.fetchAndCache()
 
-requireLogged = (req, res, next) ->
-	unless req.user
-		return res.redirect('/')
-	next()
+require = 
+	isNotLogged: (req, res, next) ->
+		if req.user
+			if req.accepts 'json'
+				res.status(403).end()
+			else
+				res.redirect '/'
+		else
+			next()
 
-requireMe = (req, res, next) ->
-	# Require user to be me. :D
-	if not req.user or req.user.facebookId isnt process.env.facebook_me
-		req.flash('warn', 'what do you think you\'re doing?')
-		return res.redirect('/')
-	next()
+	isLogged: (req, res, next) ->
+		unless req.user
+			if req.accepts 'json'
+				res.status(403).end()
+			else
+				res.redirect('/')
+		else
+			next()
+
+	isMe: (req, res, next) ->
+		# Require user to be me. :D
+		unless req.user or req.user.facebookId isnt process.env.facebook_me
+			if req.accepts 'json' 
+				res.status(403).end()
+			else
+				res.redirect('/')
+		else
+			next()
 
 staticPage = (template, name) ->
 	return {
@@ -76,7 +94,7 @@ module.exports = {
 	'/logout': {
 		name: 'logout',
 		methods: {
-			post: [requireLogged,
+			post: [require.isLogged,
 				(req, res) ->
 					if not req.user then return res.redirect '/'
 					req.logout()
@@ -87,11 +105,13 @@ module.exports = {
 	'/leave': {
 		name: 'leave',
 		methods: {
-			get: (req, res) -> # Deletes user account.
-				req.user.remove (err, data) ->
-					if err then throw err
-					req.logout()
-					res.redirect('/')
+			get: [require.isLogged,
+				(req, res) -> # Deletes user account.
+					req.user.remove (err, data) ->
+						if err then throw err
+						req.logout()
+						res.redirect('/')
+			]
 		}
 	},
 	'/painel': 	staticPage('pages/panel', 'panel'),
@@ -109,7 +129,7 @@ module.exports = {
 		children: {
 			'dropall': {
 				methods: {
-					get: [requireMe,
+					get: [require.isMe,
 						(req, res) ->
 							# Require user to be me
 							waiting = 3
@@ -127,7 +147,7 @@ module.exports = {
 			},
 			'session': {
 				methods: {
-					get: [requireMe, 
+					get: [require.isMe, 
 						(req, res) ->
 							if not req.user or req.user.facebookId isnt process.env.facebook_me
 								return res.redirect '/'
@@ -144,14 +164,23 @@ module.exports = {
 						]
 				}
 			},
+			'newtester': {
+				methods: {
+					put: [require.isNotLogged,
+						(req, res) ->
+
+							Subscriber.findOrCreate({email:req.user.email})
+					]
+				}
+			},
 			'tags': {
 				methods: {
-					get: [requireLogged, (req, res) ->
+					get: [require.isLogged, (req, res) ->
 						# Get all tags.
 						res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)))
 					],
 					# Update tags with ?checked=[tags,]
-					post: [requireLogged, 
+					post: [require.isLogged, 
 						(req, res) ->
 							# Update checked tags.
 							# Checks for a ?checked=[tags,] parameter.
@@ -168,8 +197,8 @@ module.exports = {
 				children: {
 					':tag': {
 						methods: {
-							# Update tags with {checked:true|false}.
-							put: [requireLogged,
+							# Update tag with {checked:true|false}.
+							put: [require.isLogged,
 								(req, res) ->
 									# Update tag.
 									# All this does is accept a {checked:...} object and update the user
@@ -188,7 +217,7 @@ module.exports = {
 					# 'template': {
 					# 	methods: {
 					# 		# Serve the template.
-					# 		get: [requireLogged,
+					# 		get: [require.isLogged,
 					# 			(req, res) ->
 					# 				res.set({'Content-Type': 'text/plain'})
 					# 				res.sendfile(__dirname+'/views/tmpls/post.html')
@@ -200,7 +229,7 @@ module.exports = {
 			'posts': {
 				methods: {
 					# Get all posts.
-					get: [requireLogged,
+					get: [require.isLogged,
 						(req, res) ->
 							# Get all posts.
 							if req.query.tags
@@ -214,7 +243,7 @@ module.exports = {
 				children: {
 					':id': {
 						methods: {
-							get: [requireLogged,
+							get: [require.isLogged,
 								(req, res) ->
 									Post.findOne {tumblrId: req.params.id},
 										(err, doc) ->
@@ -225,7 +254,7 @@ module.exports = {
 					# 'template': {
 					# 	methods: {
 					# 		# Serve the template.
-					# 		get: [requireLogged,
+					# 		get: [require.isLogged,
 					# 			(req, res) ->
 					# 				res.set({'Content-Type': 'text/plain'})
 					# 				res.sendfile(__dirname+'/views/tmpls/tag.html')

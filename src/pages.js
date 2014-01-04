@@ -1,9 +1,11 @@
-var Post, Tag, User, api, blog, blog_url, passport, posts, requireLogged, requireMe, staticPage, tags, _,
+var Post, Subscriber, Tag, User, api, blog, blog_url, passport, posts, require, staticPage, tags, validator, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 _ = require('underscore');
 
 passport = require('passport');
+
+validator = require('validator');
 
 api = require('./api.js');
 
@@ -12,6 +14,8 @@ User = require('./models/user.js');
 Post = require('./models/post.js');
 
 Tag = require('./models/tag.js');
+
+Subscriber = require('./models/subscriber.js');
 
 blog_url = 'http://meavisa.tumblr.com';
 
@@ -25,19 +29,40 @@ Tag.fetchAndCache();
 
 Post.fetchAndCache();
 
-requireLogged = function(req, res, next) {
-  if (!req.user) {
-    return res.redirect('/');
+require = {
+  isNotLogged: function(req, res, next) {
+    if (req.user) {
+      if (req.accepts('json')) {
+        return res.status(403).end();
+      } else {
+        return res.redirect('/');
+      }
+    } else {
+      return next();
+    }
+  },
+  isLogged: function(req, res, next) {
+    if (!req.user) {
+      if (req.accepts('json')) {
+        return res.status(403).end();
+      } else {
+        return res.redirect('/');
+      }
+    } else {
+      return next();
+    }
+  },
+  isMe: function(req, res, next) {
+    if (!(req.user || req.user.facebookId !== process.env.facebook_me)) {
+      if (req.accepts('json')) {
+        return res.status(403).end();
+      } else {
+        return res.redirect('/');
+      }
+    } else {
+      return next();
+    }
   }
-  return next();
-};
-
-requireMe = function(req, res, next) {
-  if (!req.user || req.user.facebookId !== process.env.facebook_me) {
-    req.flash('warn', 'what do you think you\'re doing?');
-    return res.redirect('/');
-  }
-  return next();
 };
 
 staticPage = function(template, name) {
@@ -86,7 +111,7 @@ module.exports = {
     name: 'logout',
     methods: {
       post: [
-        requireLogged, function(req, res) {
+        require.isLogged, function(req, res) {
           if (!req.user) {
             return res.redirect('/');
           }
@@ -99,15 +124,17 @@ module.exports = {
   '/leave': {
     name: 'leave',
     methods: {
-      get: function(req, res) {
-        return req.user.remove(function(err, data) {
-          if (err) {
-            throw err;
-          }
-          req.logout();
-          return res.redirect('/');
-        });
-      }
+      get: [
+        require.isLogged, function(req, res) {
+          return req.user.remove(function(err, data) {
+            if (err) {
+              throw err;
+            }
+            req.logout();
+            return res.redirect('/');
+          });
+        }
+      ]
     }
   },
   '/painel': staticPage('pages/panel', 'panel'),
@@ -124,7 +151,7 @@ module.exports = {
       'dropall': {
         methods: {
           get: [
-            requireMe, function(req, res) {
+            require.isMe, function(req, res) {
               var waiting;
               waiting = 3;
               User.remove({
@@ -158,7 +185,7 @@ module.exports = {
       'session': {
         methods: {
           get: [
-            requireMe, function(req, res) {
+            require.isMe, function(req, res) {
               if (!req.user || req.user.facebookId !== process.env.facebook_me) {
                 return res.redirect('/');
               }
@@ -181,15 +208,26 @@ module.exports = {
           ]
         }
       },
+      'newtester': {
+        methods: {
+          put: [
+            require.isNotLogged, function(req, res) {
+              return Subscriber.findOrCreate({
+                email: req.user.email
+              });
+            }
+          ]
+        }
+      },
       'tags': {
         methods: {
           get: [
-            requireLogged, function(req, res) {
+            require.isLogged, function(req, res) {
               return res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)));
             }
           ],
           post: [
-            requireLogged, function(req, res) {
+            require.isLogged, function(req, res) {
               var checked;
               checked = req.body.checked;
               req.user.tags = checked;
@@ -203,7 +241,7 @@ module.exports = {
           ':tag': {
             methods: {
               put: [
-                requireLogged, function(req, res) {
+                require.isLogged, function(req, res) {
                   var _ref;
                   console.log('did follow');
                   console.log('didn\'t follow');
@@ -223,7 +261,7 @@ module.exports = {
       'posts': {
         methods: {
           get: [
-            requireLogged, function(req, res) {
+            require.isLogged, function(req, res) {
               var seltags;
               if (req.query.tags) {
                 seltags = req.query.tags.split(',');
@@ -240,7 +278,7 @@ module.exports = {
           ':id': {
             methods: {
               get: [
-                requireLogged, function(req, res) {
+                require.isLogged, function(req, res) {
                   return Post.findOne({
                     tumblrId: req.params.id
                   }, function(err, doc) {

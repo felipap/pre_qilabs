@@ -1,7 +1,7 @@
 <nav class="bar" role="navigation">
 		
 	<a class="brand" href="/" tabindex="-1">
-		MeAvisa.org <sup class="version"><%= version_label %></sup>
+		MeAvisa.org <sup class="version">α</sup>
 	</a>
 		
 		<% if (typeof user !== "undefined") { %>
@@ -38,8 +38,8 @@
 			
 		<% } else { %>
 			<ul class="nav navbar-nav pull-right">
-				<a data-role="signin" href="/auth/facebook">
-					<strong>Solicitar Convite</strong>
+				<a data-role="show-signin" href="#signin">
+					<strong>Seja um Early-Tester</strong>
 				</a>
 				<a data-role="login" href="/auth/facebook">
 					Entrar

@@ -1,4 +1,4 @@
-var UserSchema, authTypes, crypto, findOrCreate, mongoose, _;
+var UserSchema, authTypes, crypto, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -36,41 +36,6 @@ UserSchema.virtual('avatarUrl').get(function() {
 
 UserSchema.methods = {};
 
-findOrCreate = function(conditions, doc, options, callback) {
-  var self;
-  if (arguments.length < 4) {
-    if (typeof options === 'function') {
-      callback = options;
-      options = {};
-    } else if (typeof doc === 'function') {
-      callback = doc;
-      doc = {};
-      options = {};
-    }
-  }
-  self = this;
-  return this.findOne(conditions, function(err, result) {
-    var obj;
-    if (err || result) {
-      if (options && options.upsert && !err) {
-        return self.update(conditions, doc, function(err, count) {
-          return self.findOne(conditions, function(err, result) {
-            return callback(err, result, false);
-          });
-        });
-      } else {
-        return callback(err, result, false);
-      }
-    } else {
-      conditions = _.extend(conditions, doc);
-      obj = new self(conditions);
-      return obj.save(function(err) {
-        return callback(err, obj, true);
-      });
-    }
-  });
-};
-
-UserSchema.statics.findOrCreate = findOrCreate;
+UserSchema.statics.findOrCreate = require('./lib/findOrCreate');
 
 module.exports = mongoose.model("User", UserSchema);

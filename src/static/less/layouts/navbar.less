@@ -102,7 +102,7 @@ nav.bar {
 			}
 		}
 
-		[data-role=signin],
+		[data-role=show-signin],
 		[data-role=sobre] {
 			.btn0;
 			.inverted-btn;
@@ -130,7 +130,7 @@ nav.bar {
 			.box-shadow(none);
 		}
 
-		[data-role=signin] {
+		[data-role=show-signin] {
 			text-transform: uppercase;
 		}
 
@@ -147,9 +147,8 @@ nav.bar {
 			}
 		}
 		
-		a, button {
+		a[data-role], button[data-role] {
 			font-size: 13px;
-
 			box-shadow: none !important;
 		}
 	}

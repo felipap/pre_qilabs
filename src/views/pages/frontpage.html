@@ -24,9 +24,9 @@
 				<p>
 					O <strong>Me Avisa</strong> é um serviço online gratuito que avisa estudantes sobre oportunidades acadêmicas e profissionais na área de interesse deles.
 				</p>
-				<button data-role="join">
+				<a data-role="show-signin" href="#signin">
 					Seja um Early-Tester
-				</button>
+				</a>
 				<a href="<%= getPageUrl('join-team') %>" data-role="join-team">
 					Faça Parte do Time
 				</a>
@@ -74,6 +74,22 @@
 		</section>
 	</section>
 
+	<div class="dialog" id="signin">
+		<div class="box">
+				<button type="button" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
+			<div class="content">
+				<h1>Quer ajudar a testar? \o/</h1>
+				<h3>Passa pra gente o seu email</h3>
+				<small>(Fica tranquilo, a gente odeia spam!)</small>
+				<div>
+					<input type="text" value="" placeholder="seu email aqui..." />
+					<a href="/leave" class="btn1">Enviar</a>
+				</div>
+			</div>
+		</div>
+		<div class="box-blackout" onClick="location.href='#'"></div>
+	</div>
+	
 	<!--
 	<section id="parcerias">
 		<section>

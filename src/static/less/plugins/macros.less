@@ -178,6 +178,13 @@ blur stuff */
 ********************************************************************************
 shadow stuff */
 
+
+.box-shadow (@blur: 5px, @alpha: .5) when (isnumber(@alpha)) {
+  -webkit-box-shadow: 0 0 @blur rgba(0, 0, 0, @alpha);
+  -moz-box-shadow: 0 0 @blur rgba(0, 0, 0, @alpha);
+  box-shadow: 0 0 @blur rgba(0, 0, 0, @alpha);
+}
+
 .box-shadow (@x: 0px, @y: 3px, @blur: 5px, @alpha: .5) when not (iscolor(@alpha)) {
   -webkit-box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
   -moz-box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
