@@ -13,6 +13,6 @@ SubscriberSchema = new mongoose.Schema {
 # Methods
 SubscriberSchema.methods = {}
 
-SubscriberSchema.statics.findOrCreate = findOrCreate
+SubscriberSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
 module.exports = mongoose.model "Subscriber", SubscriberSchema

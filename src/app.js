@@ -37,6 +37,7 @@ if (app.get('env') === 'production') {
 
 app.use(express.methodOverride()); // support _method (PUT in forms etc)
 app.use(express.bodyParser()); // parse request bodies (req.body)
+app.use(require('express-validator')());
 app.use('/static', express.static(__dirname + '/static')); // serve static files
 app.use(express.cookieParser()); // support cookies
 app.use(express.session({
@@ -62,11 +63,12 @@ if (app.get('env') === 'development') {
 
 app.use(app.router);
 
-app.locals.errors = {};
-app.locals.tags = {};
+////////////////////////////////////////////////////////////////////////
 
 var path = require('path');
 app.locals({
+	tags: {},
+	errors: {},
 	version_label: "alpha",
 	version_str: 'versão 0.5, alpha',
 	getPageUrl: function (name) {
@@ -91,9 +93,9 @@ app.get('*', function (req, res) {
 	res.status(404);
 	
 	if (req.accepts('html')) { // respond with html page
-		res.render('pages/404', { url: req.url, user: req.user });
+		res.status(404).render('pages/404', { url: req.url, user: req.user });
 	} else if (req.accepts('json')) { // respond with json
-		res.send({ error: 'Not found' });
+		res.status(404).send({ error: 'Not found' });
 		return;
 	}
 });

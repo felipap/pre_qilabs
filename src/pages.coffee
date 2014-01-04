@@ -4,7 +4,6 @@
 
 _	= require 'underscore'
 passport = require('passport')
-validator = require('validator')
 
 api = require './api.js'
 
@@ -153,6 +152,7 @@ module.exports = {
 								return res.redirect '/'
 							User.find {}, (err, users) ->
 								Post.find {}, (err, posts) ->
+									Subscriber.find {}, (err, subscribers) ->
 									Tag.getAll (err, tags) ->
 										obj =
 											ip: req.ip
@@ -160,16 +160,30 @@ module.exports = {
 											users: users
 											tags: tags
 											posts: posts
+											subscribers: subscribers
 										res.end(JSON.stringify(obj))
 						]
 				}
 			},
-			'newtester': {
+			'testers': {
 				methods: {
-					put: [require.isNotLogged,
+					post: [require.isNotLogged,
 						(req, res) ->
+							req.assert('email', 'Email inválido.').notEmpty().isEmail();
 
-							Subscriber.findOrCreate({email:req.user.email})
+							if errors = req.validationErrors()
+								console.log('invalid', errors)
+								req.flash('warn', 'Parece que esse email que você digitou é inválido. :O &nbsp;')
+								res.redirect('/')
+							else
+								Subscriber.findOrCreate {email:req.body.email}, (err, doc, isNew) ->
+									if err
+										req.flash('warn', 'Tivemos problemas para processar o seu email. :O &nbsp;')
+									else unless isNew
+										req.flash('info', 'Ops. Seu email já estava aqui! Adicionamos ele à lista de prioridades. :) &nbsp;')
+									else
+										req.flash('info', 'Sucesso! Entraremos em contato. \o/ &nbsp;')
+									res.redirect('/')
 					]
 				}
 			},
@@ -214,16 +228,6 @@ module.exports = {
 							],
 						}
 					},
-					# 'template': {
-					# 	methods: {
-					# 		# Serve the template.
-					# 		get: [require.isLogged,
-					# 			(req, res) ->
-					# 				res.set({'Content-Type': 'text/plain'})
-					# 				res.sendfile(__dirname+'/views/tmpls/post.html')
-					# 		],
-					# 	}
-					# }
 				}
 			},
 			'posts': {
@@ -251,16 +255,6 @@ module.exports = {
 							]
 						}
 					},
-					# 'template': {
-					# 	methods: {
-					# 		# Serve the template.
-					# 		get: [require.isLogged,
-					# 			(req, res) ->
-					# 				res.set({'Content-Type': 'text/plain'})
-					# 				res.sendfile(__dirname+'/views/tmpls/tag.html')
-					# 		],
-					# 	}
-					# }
 				}
 			}
 		}

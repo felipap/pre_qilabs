@@ -1,11 +1,9 @@
-var Post, Subscriber, Tag, User, api, blog, blog_url, passport, posts, require, staticPage, tags, validator, _,
+var Post, Subscriber, Tag, User, api, blog, blog_url, passport, posts, require, staticPage, tags, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 _ = require('underscore');
 
 passport = require('passport');
-
-validator = require('validator');
 
 api = require('./api.js');
 
@@ -191,6 +189,7 @@ module.exports = {
               }
               return User.find({}, function(err, users) {
                 return Post.find({}, function(err, posts) {
+                  Subscriber.find({}, function(err, subscribers) {});
                   return Tag.getAll(function(err, tags) {
                     var obj;
                     obj = {
@@ -198,7 +197,8 @@ module.exports = {
                       session: req.session,
                       users: users,
                       tags: tags,
-                      posts: posts
+                      posts: posts,
+                      subscribers: subscribers
                     };
                     return res.end(JSON.stringify(obj));
                   });
@@ -208,13 +208,30 @@ module.exports = {
           ]
         }
       },
-      'newtester': {
+      'testers': {
         methods: {
-          put: [
+          post: [
             require.isNotLogged, function(req, res) {
-              return Subscriber.findOrCreate({
-                email: req.user.email
-              });
+              var errors;
+              req.assert('email', 'Email inválido.').notEmpty().isEmail();
+              if (errors = req.validationErrors()) {
+                console.log('invalid', errors);
+                req.flash('warn', 'Parece que esse email que você digitou é inválido. :O &nbsp;');
+                return res.redirect('/');
+              } else {
+                return Subscriber.findOrCreate({
+                  email: req.body.email
+                }, function(err, doc, isNew) {
+                  if (err) {
+                    req.flash('warn', 'Tivemos problemas para processar o seu email. :O &nbsp;');
+                  } else if (!isNew) {
+                    req.flash('info', 'Ops. Seu email já estava aqui! Adicionamos ele à lista de prioridades. :) &nbsp;');
+                  } else {
+                    req.flash('info', 'Sucesso! Entraremos em contato. \o/ &nbsp;');
+                  }
+                  return res.redirect('/');
+                });
+              }
             }
           ]
         }

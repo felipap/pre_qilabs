@@ -19,6 +19,9 @@
 	<section id="jumbo" style="background-image: url(<%= staticUrl('img/'+sel_bg.source) %>);">
 		<div class="box-blackout"></div>
 		<div class="content">
+			<div style="position: absolute; margin: auto">
+				<div class="flash-msgs"></div>
+			</div>
 			<section>
 				<h1>Quer chegar lá?<br>A gente te ajuda!</h1>
 				<p>
@@ -79,11 +82,14 @@
 				<button type="button" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
 			<div class="content">
 				<h1>Quer ajudar a testar? \o/</h1>
-				<h3>Passa pra gente o seu email</h3>
-				<small>(Fica tranquilo, a gente odeia spam!)</small>
+				<h3>Coloca aqui o seu email</h3>
+				<small>(Pode ficar tranquilo, a gente odeia spam!)</small>
 				<div>
-					<input type="text" value="" placeholder="seu email aqui..." />
-					<a href="/leave" class="btn1">Enviar</a>
+					<form method="post" action="/api/testers">
+						<input type="text" name="email" placeholder="seu email aqui..." />
+						<input type="hidden" name="_csrf" value="<%= token %>" />
+						<button class="btn1">Enviar</button>
+					</form>
 				</div>
 			</div>
 		</div>
