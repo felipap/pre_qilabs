@@ -41,10 +41,10 @@ require =
 
 	isMe: (req, res, next) ->
 		# Require user to be me. :D
-		unless req.user or req.user.facebookId isnt process.env.facebook_me
-			if req.accepts 'json' 
-				res.status(403).end()
-			else
+		if not req.user or req.user.facebookId isnt process.env.facebook_me
+			# if req.accepts 'html' 
+			# 	# res.status(403).end()
+			# else
 				res.redirect('/')
 		else
 			next()
@@ -153,15 +153,15 @@ module.exports = {
 							User.find {}, (err, users) ->
 								Post.find {}, (err, posts) ->
 									Subscriber.find {}, (err, subscribers) ->
-									Tag.getAll (err, tags) ->
-										obj =
-											ip: req.ip
-											session: req.session
-											users: users
-											tags: tags
-											posts: posts
-											subscribers: subscribers
-										res.end(JSON.stringify(obj))
+										Tag.getAll (err, tags) ->
+											obj =
+												ip: req.ip
+												session: req.session
+												users: users
+												tags: tags
+												posts: posts
+												subscribers: subscribers
+											res.end(JSON.stringify(obj))
 						]
 				}
 			},

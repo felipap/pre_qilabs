@@ -9,14 +9,15 @@
 
 	<%
 	var bgs = [
-		{ label:'Harvard University, Boston', source:'u/hav.jpg'},
-		{ label:'Massachusetts Institute of Technology, Boston', source:'u/mit.jpg'},
-		{ label:'Stanford University, Santa Clara', source:'u/sta.jpg'},
+		{ label:'Harvard University, Boston, USA', source:'u/hav.jpg'},
+		{ label:'Columbia University, New York, USA', source:'u/col.jpg'},
+		{ label:'Massachusetts Institute of Technology, Boston, USA', source:'u/mit.jpg'},
+		{ label:'Stanford University, Santa Clara, USA', source:'u/sta.jpg'},
 	];
 	var sel_bg = bgs[Math.floor(bgs.length*Math.random())];
 	%>
 
-	<section id="jumbo" style="background-image: url(<%= staticUrl('img/'+sel_bg.source) %>);">
+	<section id="jumbo" style="background-image: url(<%= staticUrl('images/'+sel_bg.source) %>);">
 		<div class="box-blackout"></div>
 		<div class="content">
 			<div style="position: absolute; margin: auto">
@@ -104,17 +105,17 @@
 				</li>
 			<li>
 				<a href="http://www.estudar.org.br/‎" title="Fundação Estudar">
-					<img width=230 src="<%=staticUrl('img/fe.png')%>"></img>
+					<img width=230 src="<%=staticUrl('images/fe.png')%>"></img>
 				</a>
 			</li>
 			<li>
 				<a href="https://www.facebook.com/duxrio" title="Dux Institute">
-					<img width=200 src="<%=staticUrl('img/di.jpg')%>"></img>
+					<img width=200 src="<%=staticUrl('images/di.jpg')%>"></img>
 				</a>
 			</li>
  			<li>
  				<a href="http://turmacidada.org" title="Turma Cidadã Brasil">
-					<img width=150 src="<%=staticUrl('img/tc.png')%>"></img>
+					<img width=150 src="<%=staticUrl('images/tc.png')%>"></img>
 				</a>
 			</li>
 		</section>

@@ -3,7 +3,11 @@ var SubscriberSchema, mongoose;
 mongoose = require('mongoose');
 
 SubscriberSchema = new mongoose.Schema({
-  email: String
+  email: String,
+  authorized: {
+    type: Boolean,
+    "default": false
+  }
 }, {
   id: true
 });

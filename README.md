@@ -14,19 +14,19 @@
 - [ ] formulário google para inscrição
 
 Improve:
-
 - [ ] more bgs and solve licensing problem
-- [ ] flash messages
+- [ ] flash messages design
 
 IDEIAS para trabalhar na v 1.0
 - [ ] páginas automatizadas para cada tag, com estatísticas de uso
 
 ### Versão 2.0
-- [ ] perfis pessoais
-- [ ] calendario pessoal
+- [ ] admin panel e editor panel https://drywall.nodejitsu.com
+- [ ] perfis pessoais para usuários
 - [ ] support RSS
 
 ### Versão 3.0?
+- [ ] calendario pessoal para usuários saberem as datas <<< SAPORRA TÁ VIRANDO APPLYKIT
 - [ ] estatísticas na página de cada tag
 
 ## Business-side
@@ -35,8 +35,7 @@ IDEIAS para trabalhar na v 1.0
 
 contas individuais para cada sessão? "Meavisa Concursos, Meavisa Olimpíadas"
 
-- newsletter
-
+- newsletter e blog
 
 IDEIAS:
 - quiz inicial, para determinar tags interessantes para a pessoa (que são ativadas - colocar mensagem avisando)

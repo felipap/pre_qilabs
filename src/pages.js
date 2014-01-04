@@ -51,12 +51,8 @@ require = {
     }
   },
   isMe: function(req, res, next) {
-    if (!(req.user || req.user.facebookId !== process.env.facebook_me)) {
-      if (req.accepts('json')) {
-        return res.status(403).end();
-      } else {
-        return res.redirect('/');
-      }
+    if (!req.user || req.user.facebookId !== process.env.facebook_me) {
+      return res.redirect('/');
     } else {
       return next();
     }
@@ -189,18 +185,19 @@ module.exports = {
               }
               return User.find({}, function(err, users) {
                 return Post.find({}, function(err, posts) {
-                  Subscriber.find({}, function(err, subscribers) {});
-                  return Tag.getAll(function(err, tags) {
-                    var obj;
-                    obj = {
-                      ip: req.ip,
-                      session: req.session,
-                      users: users,
-                      tags: tags,
-                      posts: posts,
-                      subscribers: subscribers
-                    };
-                    return res.end(JSON.stringify(obj));
+                  return Subscriber.find({}, function(err, subscribers) {
+                    return Tag.getAll(function(err, tags) {
+                      var obj;
+                      obj = {
+                        ip: req.ip,
+                        session: req.session,
+                        users: users,
+                        tags: tags,
+                        posts: posts,
+                        subscribers: subscribers
+                      };
+                      return res.end(JSON.stringify(obj));
+                    });
                   });
                 });
               });

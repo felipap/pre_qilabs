@@ -7,6 +7,7 @@ mongoose = require 'mongoose'
 # Schema
 SubscriberSchema = new mongoose.Schema {
 		email: String
+		authorized: { type: Boolean, default: false }
 	}, { id: true } # default
 
 
