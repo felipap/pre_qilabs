@@ -3,7 +3,8 @@
 @import "../common.less";
 
 nav.bar {
-
+	
+	.navbar;
 	&:extend(.navbar);
 	
 	border-radius: 0 !important;
@@ -46,6 +47,9 @@ nav.bar {
 	}
 
 	& > ul {
+		&:extend(.nav);
+		&:extend(.navbar-nav);
+
 		margin: 0 !important;
 		height: @navbar-height;
 
