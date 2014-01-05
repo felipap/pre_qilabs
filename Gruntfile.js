@@ -153,6 +153,6 @@ module.exports = function(grunt) {
 	grunt.registerTask('dist-static-js', ['concat', 'uglify']);
 
 	// 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
-	grunt.registerTask('default', ['watch']);
-	grunt.registerTask('start', ['nodemon']);
+	// grunt.registerTask('watch', ['watch']);
+	grunt.registerTask('default', ['nodemon']);
 };

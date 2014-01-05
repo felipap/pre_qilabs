@@ -209,6 +209,12 @@ shadow stuff */
   box-shadow: @x @y @d @blur @alpha;
 }
 
+.text-shadow (@blur: 5px, @alpha: 1) when (isnumber(@alpha)) {
+  -webkit-text-shadow: 0 0 @blur rgba(0, 0, 0, @alpha);
+  -moz-text-shadow: 0 0 @blur rgba(0, 0, 0, @alpha);
+  text-shadow: 0 0 @blur rgba(0, 0, 0, @alpha);
+}
+
 .text-shadow (@x: 0px, @y: 3px, @blur: 5px, @alpha: black) when (iscolor(@alpha)) {
   -webkit-text-shadow: @x @y @blur @alpha;
   -moz-text-shadow: @x @y @blur @alpha;

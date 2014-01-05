@@ -1,7 +1,7 @@
 <nav class="bar" role="navigation">
 		
 	<a class="brand" href="/" tabindex="-1">
-		MeAvisa.org <sup class="version">α</sup>
+		MeAvisa.org <sup class="version"><%= app.semantic_version %></sup>
 	</a>
 		
 		<% if (typeof user !== "undefined") { %>
@@ -9,6 +9,9 @@
 			<ul class="nav navbar-nav">
 				<button data-role="feedback">
 					Feedback
+				</button>
+				<button data-role="nos-avisa">
+					Nos Avisa!
 				</button>
 			</ul>
 

@@ -7,15 +7,6 @@
 
 @import "../common.less";
 
-body[data-page=panel] {
-	// background: #1b1b24;
-	
-	input[type=checkbox] {
-		vertical-align: top;
-		margin: 5px;
-	}
-}
-
 body > section {
 	.container-fixed;
 	&:extend(.container);
@@ -65,6 +56,38 @@ body > .paper {
 		background: white;
 		border: 1px solid #CCC;
 		padding: 50px;
+	}
+
+}
+
+body[data-page=panel] {
+	// background: #1b1b24;
+	
+	input[type=checkbox] {
+		vertical-align: top;
+		margin: 5px;
+	}
+}
+
+body[data-page=team] {
+
+	.team {
+		li {
+			list-style: none;
+			display: inline-block;
+			.make-md-column(3);
+			text-align: center;
+
+			border: 1px solid #DDD;
+
+			.avatar {
+				display: inline-block;
+				width: 100px;
+				height: 100px; 
+				border-radius: 50px;
+				overflow: hidden;
+			}
+		}
 	}
 
 }

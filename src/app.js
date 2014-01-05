@@ -83,6 +83,17 @@ app.locals({
 		'twitter': '#',
 		'facebook': '#'
 	},
+	app: {
+		semantic_version: 'α1'
+	}
+});
+
+// Error-handling middleware [...] must be defined with an arity of 4
+app.use(function(err, req, res, next){
+	console.error(err.stack);
+	res.render('pages/500', {
+		user: req.user
+	})
 });
 
 // Pass pages through router.js

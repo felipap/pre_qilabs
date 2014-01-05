@@ -11,13 +11,15 @@
 	var bgs = [
 		{ label:'Harvard University, Boston, USA', source:'u/hav.jpg'},
 		{ label:'Columbia University, New York, USA', source:'u/col.jpg'},
-		{ label:'Massachusetts Institute of Technology, Boston, USA', source:'u/mit.jpg'},
+	//	{ label:'Duke University, Durham, USA', source:'u/duk.jpg'},
+		{ label:'Biblioteca da Universidade de Yale, Durham, USA', source:'u/yal.jpg'},
+		{ label:'Domo do Massachusetts Institute of Technology, Boston, USA', source:'u/mit.jpg'},
 		{ label:'Stanford University, Santa Clara, USA', source:'u/sta.jpg'},
 	];
 	var sel_bg = bgs[Math.floor(bgs.length*Math.random())];
 	%>
-
 	<section id="jumbo" style="background-image: url(<%= staticUrl('images/'+sel_bg.source) %>);">
+
 		<div class="box-blackout"></div>
 		<div class="content">
 			<div style="position: absolute; margin: auto">
@@ -37,7 +39,7 @@
 			</section>
 		</div>
 		<dfn>
-			foto: <%= sel_bg.label %>
+			<%= sel_bg.label %>
 		</dfn>
 	</section>
 
