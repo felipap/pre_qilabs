@@ -7,23 +7,23 @@
 		<% if (typeof user !== "undefined") { %>
 
 			<ul class="nav navbar-nav">
-				<button data-role="feedback">
+				<button data-action="feedback">
 					Feedback
 				</button>
-				<button data-role="nos-avisa">
+				<button data-action="nos-avisa">
 					Nos Avisa!
 				</button>
 			</ul>
 
 			<ul class="nav navbar-nav pull-right">
-				<button class="iconed" onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
+				<button onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
 					title="Temos 0 updates para você" data-toggle="tooltip" data-placement="bottom">
 					<i class="icon-bell"></i>
 				</button>
 				<a href="<%= getPageUrl('panel') %>" title="Configurações" data-toggle="tooltip" data-placement="bottom">
 					<i class="icon-cog"></i>
 				</a>
-				<button data-role="logout">
+				<button data-action="logout">
 					Sair
 				</button>
 				<button class="hidden">
@@ -40,10 +40,10 @@
 			
 		<% } else { %>
 			<ul class="nav navbar-nav pull-right">
-				<a data-role="show-signin" href="#signin">
-					<strong>Seja um Early-Tester</strong>
+				<a data-action="show-signin" href="#signin">
+					<strong>SEJA UM EARLY-TESTER</strong>
 				</a>
-				<a data-role="login" href="/auth/facebook">
+				<a data-action="login" href="/auth/facebook">
 					Entrar
 				</a>
 				<a href="<%= getPageUrl('about') %>">

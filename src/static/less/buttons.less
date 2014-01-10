@@ -24,7 +24,6 @@
 	} 
 }
 
-
 .btn1 {
 	.btn0;
 	.inverted-btn(white, @COLOR1);
@@ -55,10 +54,11 @@
 	.color-btn-focus(@color, @bg, transparent);
 	// border: 2px solid transparent;
 	.inner-shadow(0, -2px, rgba(0,0,0,.4));
-	// .text-shadow(0, 1px, 1px, rgba(0,0,0,.2));
+	.text-shadow(0, 1px, 1px, rgba(0,0,0,.2));
 	.color-btn(@color, @bg, transparent);
 	.color-btn-hover(@color, lighten(@bg, 2%), @bg);
 	.color-btn-active(#444, #DDD, #AAA);
+	padding-bottom: 10px;
 
 	&:active {
 		.inner-shadow(0, -2px, rgba(0,0,0,.4));
@@ -71,8 +71,6 @@
 .xbtn (@color: white, @bg: @COLOR1, @chover: @bg) {
 	.color-btn-focus(@color, @bg, transparent);
 	border: 2px solid transparent;
-	.inner-shadow(0, -2px, blue);
-	// .text-shadow(0, 1px, 1px, rgba(0,0,0,.2));
 	.color-btn(@color, @bg, transparent);
 	.color-btn-hover(@chover, transparent, @bg);
 	.color-btn-active(#444, #DDD, #AAA);

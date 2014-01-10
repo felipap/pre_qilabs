@@ -54,7 +54,7 @@ nav.bar {
 		& > a,
 		& > button {
 			.btn0;
-			color: #888;
+			color: #666;
 			font-weight: 700;
 			&:hover, &:focus {
 				background: none;
@@ -64,33 +64,20 @@ nav.bar {
 			box-shadow: none;
 		}
 
-		.iconed {
-			padding-right: 15px;
-			padding-left: 15px;
-			background: none;
-			
-		}
 		i[class*="icon-"] {
 			font-size: 18px;
 		}
 
-		li {
-			display: inline-block;
-			float: none;
-		}
-
-		li.dd {
-			.reset-button;
-			
-			cursor: pointer;
-			height: 50px;
-			margin: 0;
-			padding: 0;
-
-			ul {
-				right: 0;
-				left: auto;
-			}
+		[data-action=show-signin] 	{ .high-xbtn(white, @COLOR1); }
+		[data-action=sobre] 		{ .xbtn(white, #39B3D7); }
+		[data-action=feedback] 		{ .xbtn(white, #FF8300); }
+		[data-action=logout] 		{ .high-xbtn(white, #E74C3C); }
+		[data-action=nos-avisa] 	{ .xbtn(white, @CGREEN); }
+		[data-action=login] 		{ }
+		
+		[data-action],
+		[data-action] {
+			font-size: 13px;
 		}
 
 		.avatar-btn {
@@ -104,63 +91,6 @@ nav.bar {
 				margin-right: 5px;
 				box-shadow: 0 0 1px black;
 			}
-		}
-
-		[data-role=show-signin],
-		[data-role=sobre] {
-			.btn0;
-			.xbtn;
-
-			padding-left: 30px;
-			padding-right: 30px;
-			font-weight: 700;
-			.box-shadow(none);
-		}
-
-		[data-role=feedback] {
-			.btn0;
-			.xbtn(white, #FF8300);
-			
-			padding-left: 10px;
-			padding-right: 10px;
-			font-weight: 700;
-			.box-shadow(none);
-		}
-
-		[data-role=logout] {
-			.btn0;
-			.inverted-btn(white, #E74C3C);
-			padding-left: 15px;
-			padding-right: 15px;
-			font-weight: 700;
-			.box-shadow(none);
-		}
-
-		[data-role=nos-avisa] {
-			.btn0;
-			.inverted-btn(white, @CGREEN);
-		}
-
-		[data-role=show-signin] {
-			text-transform: uppercase;
-		}
-
-		[data-role=sobre] {
-			background: #39B3D7;
-		}
-
-		[data-role=login] {
-			.btn0;
-			color: #666;
-			font-weight: 700;
-			&:hover, &:focus {
-				background: none;
-			}
-		}
-		
-		a[data-role], button[data-role] {
-			font-size: 13px;
-			box-shadow: none !important;
 		}
 	}
 }
