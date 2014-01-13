@@ -44,23 +44,6 @@
 		</dfn>
 	</section>
 
-	<% if (false && latestSignIns) { %>
-	<section id="last-signins">
-		<div class="avatars">
-			<% for (var i2=0; i2++<200;) { %>
-			<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
-			<li>
-					<img src="<%=user.avatarUrl%>"></img>
-			</li>
-			<% } %>
-			<% } %>
-		</div>
-		<div class="box-blackout">
-		</div>
-		<h1>Últimos usuários cadastrados</h1>
-	</section>
-	<% } %>
-
 	<section id="howto">
 		<h2>Funciona assim:</h2>
 		<section>
@@ -80,6 +63,23 @@
 			</div>
 		</section>
 	</section>
+
+	<% if (latestSignIns) { %>
+	<section id="last-signins">
+		<div class="avatars">
+			<% for (var i2=0; i2++<10;) { %>
+			<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
+			<li>
+					<img src="<%=user.avatarUrl%>"></img>
+			</li>
+			<% } %>
+			<% } %>
+		</div>
+		<div class="box-blackout">
+		</div>
+<!-- 		<h1>Últimos usuários cadastrados</h1>
+ -->	</section>
+	<% } %>
 
 	<div class="dialog" id="signin">
 		<div class="box">

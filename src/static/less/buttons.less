@@ -9,7 +9,7 @@
 	border: 2px solid transparent;
 	.color-btn(white, transparent, @color);
 	.color-btn-hover(white, @color, @color);
-	.color-btn-active(#444, #DDD, #AAA);
+	.color-btn-active(white, lighten(@color, 5%), darken(@color, 12%));
 }
 
 .transparent-ibtn (@color) {
@@ -19,7 +19,7 @@
 	border: 2px solid transparent;
 	.color-btn(@color, transparent, @color);
 	.color-btn-hover(white, @color, @color);
-	.color-btn-active(#444, #DDD, #AAA);
+	.color-btn-active(white, lighten(@color, 5%), darken(@color, 12%));
 }
 
 /* Don't change a thing. */
@@ -29,7 +29,7 @@
 	.color-btn-focus(@color, @bg, transparent);
 	border: 2px solid transparent;
 	.color-btn(@color, @bg, @bg);
-	.color-btn-hover(white, darken(@bg, 10%), darken(@bg, 10%));
+	.color-btn-hover(white, darken(@bg, 8%), darken(@bg, 12%));
 	// .color-btn-active(#444, #DDD, #AAA);
 }
 
