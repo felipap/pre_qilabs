@@ -16,11 +16,13 @@
 			</ul>
 
 			<ul class="nav navbar-nav pull-right">
-				<button onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
+				<button class="plain-btn"
+					onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
 					title="Temos 0 updates para você" data-toggle="tooltip" data-placement="bottom">
 					<i class="icon-bell"></i>
 				</button>
-				<a href="<%= getPageUrl('panel') %>" title="Configurações" data-toggle="tooltip" data-placement="bottom">
+				<a href="<%= getPageUrl('panel') %>" class="plain-btn"
+					title="Configurações" data-toggle="tooltip" data-placement="bottom">
 					<i class="icon-cog"></i>
 				</a>
 				<button data-action="logout">
@@ -29,10 +31,12 @@
 				<button class="hidden">
 					<i class="icon-search"></i>
 				</button>
-				<a href="<%= getPageUrl('about') %>" title="Sobre" data-toggle="tooltip" data-placement="bottom">
+				<a href="<%= getPageUrl('about') %>" class="plain-btn"
+					title="Sobre" data-toggle="tooltip" data-placement="bottom">
 					<i class="icon-question"></i>
 				</a>
-				<a href="<%= getPageUrl('panel') %>" class="avatar-btn" title="Seu Perfil" data-toggle="tooltip" data-placement="bottom">
+				<a href="<%= getPageUrl('panel') %>" class="avatar-btn"
+					title="Seu Perfil" data-toggle="tooltip" data-placement="bottom">
 					<img id="avatarDd" alt="seu avatar" width=45 class="" src="<%= user.avatarUrl %>" />
 					<i></i>
 				</a>
@@ -43,10 +47,10 @@
 				<a data-action="show-signin" href="#signin">
 					<strong>SEJA UM EARLY-TESTER</strong>
 				</a>
-				<a data-action="login" href="/auth/facebook">
+				<a href="/auth/facebook" class="plain-btn" data-action="login">
 					Entrar
 				</a>
-				<a href="<%= getPageUrl('about') %>">
+				<a href="<%= getPageUrl('about') %>" class="plain-btn">
 					<i class="icon-question"></i>
 				</a>
 			</ul>

@@ -50,13 +50,12 @@ nav.bar {
 
 		margin: 0 !important;
 		height: @navbar-height;
-
-		& > a,
-		& > button {
+		
+		.plain-btn {
 			.btn0;
 			color: #666;
 			font-weight: 700;
-			&:hover, &:focus {
+			&:hover, &:focus, &:active {
 				background: none;
 				box-shadow: none;
 			}
@@ -75,7 +74,6 @@ nav.bar {
 		[data-action=nos-avisa] 	{ .xbtn(white, @CGREEN); }
 		[data-action=login] 		{ }
 		
-		[data-action],
 		[data-action] {
 			font-size: 13px;
 		}

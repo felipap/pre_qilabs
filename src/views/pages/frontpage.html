@@ -31,10 +31,10 @@
 				<p>
 					O <strong>Me Avisa</strong> é um serviço online gratuito que avisa estudantes sobre oportunidades acadêmicas e profissionais na área de interesse deles.
 				</p>
-				<a data-role="show-signin" href="#signin">
+				<a href="#signin" data-action="show-signin">
 					Seja um Early-Tester
 				</a>
-				<a href="<%= getPageUrl('join-team') %>" data-role="join-team">
+				<a href="<%= getPageUrl('join-team') %>" data-action="join-team">
 					Faça Parte do Time
 				</a>
 			</section>
@@ -92,15 +92,14 @@
 					<form method="post" action="/api/testers">
 						<input type="text" name="email" placeholder="seu email aqui..." />
 						<input type="hidden" name="_csrf" value="<%= token %>" />
-						<button class="btn1">Enviar</button>
+						<button data-action="send-tester-email">Enviar</button>
 					</form>
 				</div>
 			</div>
 		</div>
 		<div class="box-blackout" onClick="location.href='#'"></div>
 	</div>
-	
-	<!--
+	<!-- 
 	<section id="parcerias">
 		<section>
 			<li>
@@ -123,7 +122,7 @@
 			</li>
 		</section>
 	</section>
-	-->
+	 -->
 	<% include ../layouts/footer.html %>
 
 	<script data-main="<%= staticUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>

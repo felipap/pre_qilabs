@@ -71,19 +71,9 @@ body > section {
 			width: 600px;
 			margin: auto;
 
-			[data-role=show-signin] {
-				.btn0;
-				padding: 10px 20px;
-				font-size: 14px;
-				.high-xbtn(white, @CBLUE, white);
-			}
-
-			[data-role=join-team] {
-				.btn0;
-				padding: 8px 20px;
-				font-size: 14px;
-				.inverted-btn(@CGREEN);	
-			}
+			[data-action] { font-size: 14px; }
+			[data-action=show-signin] 	{ .xbtn(white, @CBLUE, white); }
+			[data-action=join-team] 	{ .ibtn(@CGREEN); }
 		}
 	}
 
@@ -210,6 +200,10 @@ body > section {
 			vertical-align: middle;
 			border-radius: 0;
 		}
+	}
+
+	[data-action=send-tester-email] {
+		.high-xbtn;
 	}
 
 	.box-blackout {

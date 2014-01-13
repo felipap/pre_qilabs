@@ -46,16 +46,16 @@ module.exports = function(grunt) {
 		},
 		
 		less: {
+			frontpage: {
+				files: { 'src/static/css/frontpage.min.css':'src/static/less/views/frontpage.less' },
+				options: { cleancss: true },
+			},
 			pages: {
 				files: { 'src/static/css/pages.min.css':'src/static/less/views/pages.less' },
 				options: { cleancss: true },
 			},
 			home: {
 				files: { 'src/static/css/home.min.css':'src/static/less/views/home.less' },
-				options: { cleancss: true },
-			},
-			frontpage: {
-				files: { 'src/static/css/frontpage.min.css':'src/static/less/views/frontpage.less' },
 				options: { cleancss: true },
 			},
 		},
