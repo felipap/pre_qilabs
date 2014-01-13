@@ -37,16 +37,8 @@
 	.btn0;
 
 	.color-btn-focus(@color, @bg, transparent);
-	// &:focus {
-	// 	outline: 1px solid #DDD;
-	// }
-	// &:focus:active {
-	// 	outline: 1px solid #DDD;
-	// }
-	
-	outline: none;
 	.inner-shadow(0, -2px, rgba(0,0,0,.2));
-	.text-shadow(0, 1px, 1px, rgba(0,0,0,.2));
+	.text-shadow(0, 1px, 1px, rgba(0,0,0,.1));
 	.color-btn(@color, @bg, transparent);
 	padding-bottom: 10px;
 
@@ -60,7 +52,6 @@
 		margin-top: 10px;
 		padding-bottom: 9px;
 		margin-bottom: 7px; // -2+1 (from padding-bottom)
-		// padding-top: 10px;
 	}
 }
 
