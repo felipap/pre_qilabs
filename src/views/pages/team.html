@@ -1,6 +1,6 @@
 <% layout('../stdbody') -%>
 
-<% stylesheet(staticUrl('css','default.min.css')) -%>
+<% stylesheet(staticUrl('css','pages.min.css')) -%>
 
 <body class="" data-page="team">
 
@@ -28,7 +28,7 @@
 				</div>
 				<h3><%= person.name %></h3>
 				<% if (person.twitter) { %>
-					<a href="<%= person.twitter %>"><i class="fa fa-twitter"></i></a>
+					<a href="<%= person.twitter %>"><i class="icon-twitter"></i></a>
 				<% } %>
 			</li>
 			<% } %>

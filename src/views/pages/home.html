@@ -38,26 +38,26 @@
 	<script id="template-tagview" type="text/template">
 		<@ if (tag.checked && tag.checked !== 'false') { @>
 			<button class="btn btn-default tag tag-btn" data-checked=true >
-				<i class="fa fa-check-square"></i>
+				<i class="icon-check-square"></i>
 				<@= tag.label @>
 		<@ } else if (tag.hasCheckedChild) { @>
 			<button class="btn btn-default tag tag-btn" data-checked=false >
-				<i class="fa fa-minus-square"></i>
+				<i class="icon-minus-square"></i>
 				<@= tag.label @>
 		<@ } else { @>
 			<button class="btn btn-default tag tag-btn" data-checked=false>
-				<i class="fa fa-square-o"></i>
+				<i class="icon-square-o"></i>
 				<@= tag.label @>
 		<@ } @>
 				<@ if (tag.description) { @>
 					<div data-role="inform">
-						<i class="fa fa-info"></i>
+						<i class="icon-info"></i>
 					</div>
 				<@ } @>
 			</button>
 		<@ if (!_.isEmpty(tag.children)) { @>
 			<button class="expand" data-role="expand">
-				<i class="fa fa-angle-down"></i>
+				<i class="icon-angle-down"></i>
 			</button>
 		<@ } @>
 	</script>

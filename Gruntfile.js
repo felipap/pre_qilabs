@@ -46,8 +46,8 @@ module.exports = function(grunt) {
 		},
 		
 		less: {
-			misc: {
-				files: { 'src/static/css/default.min.css':'src/static/less/views/default.less' },
+			pages: {
+				files: { 'src/static/css/pages.min.css':'src/static/less/views/pages.less' },
 				options: { cleancss: true },
 			},
 			home: {

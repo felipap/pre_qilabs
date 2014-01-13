@@ -1,0 +1,51 @@
+
+# TODO:
+
+Programming:
+
+Versão 0.5:
+  ✔ cache @done (14-01-05 04:40)
+  ✔ scroolbars for #sidebar @done (14-01-05 04:40)
+  ✔ flash messages @done (14-01-05 04:40)
+    ☐ Improve look & stop bootstrap depedency
+  ✔ subscribe dialog for testers @done (14-01-05 04:58)
+  ✔ /#post/:post pages @done (14-01-05 04:47
+    ☐ Fix Disqus (or remove it!)
+  ☐ pagination for home page (posts)
+  ☐ /#tag/:tag pages
+  ☐ feedback system (uservoice?)
+  ☐ formulário google para inscrição
+
+Versão 1.0:
+  ☐ páginas automatizadas para cada tag, com estatísticas de uso
+  ☐ Botão de "Nos Avise!"
+  ☐ 'source:' para posts <= vai precisar de algo a mais pro tumblr
+
+Versão 2.0:
+ ☐ perfis pessoais para usuários
+ ☐ support RSS
+ ☐ página para editores <= incentivo. "essa pessoa é reponsável por essas tags"
+
+Futuro Muito Distante:
+ ☐ admin panel e editor panel https://drywall.nodejitsu.com
+ ☐ calendario pessoal para usuários saberem as datas <<< SAPORRA TÁ VIRANDO APPLYKIT
+ ☐ estatísticas na página de cada tag
+ ☐ separação por região <= linkar com quiz inicial ?
+
+Improve (ignore this): 
+ ☐ more bgs and solve licensing problem
+ ☐ (improve) flash messages design
+ ☐ (improve) 400 and 500 pages
+
+---- ✄ -----------------------
+Business:
+- Contas Twitter e Facebook
+- personal support ("você pode falar com essa pessoa sobre preparação para OBM")
+contas individuais para cada sessão? "Meavisa Concursos, Meavisa Olimpíadas"
+
+- newsletter e blog
+
+IDEIAS:
+- quiz inicial, para determinar tags interessantes para a pessoa (que são ativadas - colocar mensagem avisando)
+- em cada tag, explicar o que significa (principalmente em caso de olimpíadas) <= "esses usuários já participaram, pode pedir ajuda a eles"
+- botão de "Mande conteúdo pra gente!", com um formulário pre-definido ("que tipo de conteúdo?" - olimpiadas, oportunidade etc)

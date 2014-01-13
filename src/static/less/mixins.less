@@ -1,80 +1,14 @@
 
 /* mixins.less
 ** for meavisa.org, by @f03lipe
-**
 ** Project-specific mixins that all .less files should share.
 */
 
-@import "plugins/macros.less";
+@import "plugins/my-less-mixins/main.less";
 
-.color-btn (@color, @bg, @border) {
-	color: @color;
-	background: @bg;
-	border-color: @border;
-}
-
-.color-btn-hover (@color, @bg, @border) {
-	&:hover {
-		.color-btn(@color, @bg, @border);
-	}
-}
-
-.color-btn-active (@color, @bg, @border) {
-	&:active {
-		.color-btn(@color, @bg, @border);
-	}
-}
-
-.color-btn-focus (@color, @bg, @border) {
-	&:focus {
-		.color-btn(@color, @bg, @border);
-	} 
-}
-
-.inverted-btn (@color: white, @bg: @COLOR1) {
-	border: 2px solid transparent;
-	.color-btn(@color, @bg, @bg);
-	.color-btn-hover(@color, @color, @bg);
-	.color-btn-active(#444, #DDD, #AAA);
-}
-
-/* Don't change a thing. */
-.inverted-btn (@color: white, @bg: @COLOR1, @chover: @bg) {
-	.color-btn-focus(@color, @bg, transparent);
-	border: 2px solid transparent;
-	.color-btn(@color, @bg, transparent);
-	.color-btn-hover(@chover, transparent, @bg);
-	.color-btn-active(#444, #DDD, #AAA);
-	border-color: rgba(0,0,0,.1);
-}
-
-// Second flavor
-.inverted-btn2 (@color: @COLOR1) {
-	.color-btn-focus(@color, transparent, @color);
-	border: 2px solid transparent;
-	.color-btn(@color, transparent, @color);
-	.color-btn-hover(white, @color, @color);
-	.color-btn-active(#444, #DDD, #AAA);
-}
-
-.btn0 {
-	.btn;
-	.btn-default;
-	.navbar-btn;
-
-	// font-size: 13px;
-	font-weight: bold;
-	padding: 8px 20px;
-	&:focus {
-		outline: none;
-	}
-	border: none;
-	margin-top: 7px;
-	.rounded(3px);
-	.rounded(2px);
-}
-
-/******************************************************************************/
+/***************************
+** Social
+*/
 
 .btn-facebook {
 	background: #2b4b90 !important;
@@ -91,7 +25,9 @@
 	border-color: darken(#dd4b39,5%) !important;
 }
 
-/******************************************************************************/
+/***************************
+** Font-awesome mixins
+*/
 
 .fa-mixin() {
 	display: inline-block;
@@ -102,11 +38,13 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+
 .fa-mixin-lg() {
 	font-size: (4em / 3);
 	line-height: (3em / 4);
 	vertical-align: -15%;
 }
+
 .fa-mixin-icon(@icon){
 	@var: "fa-var-@{icon}";
 	&:before { content: @@var; }

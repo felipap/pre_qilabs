@@ -1,19 +1,16 @@
 
 /* frontpage.less
 ** for meavisa.org, by @f03lipe
-**
 ** Styles of the default page of unlogged users.
 */
 
 @import "../mixins.less";
 @import "../common.less";
 
-
 h1,h2,h3 {
 	font-family: "Open Sans";
 	font-weight: bold;
 }
-
 
 .blackout (@opacity:0.5) {
 	position: absolute;
@@ -57,7 +54,6 @@ body > section {
 		&:extend(.container);
 
 		& > section {
-
 			h1 {
 				.text-shadow(0, 0, 3px, 1);
 				font-weight: 800;
@@ -75,17 +71,18 @@ body > section {
 			width: 600px;
 			margin: auto;
 
-			a, button {
-				.btn0;
-				font-size: 14px;
-			}
-
 			[data-role=show-signin] {
-				.inverted-btn(white, @CBLUE, white);
+				.btn0;
+				padding: 10px 20px;
+				font-size: 14px;
+				.high-xbtn(white, @CBLUE, white);
 			}
 
 			[data-role=join-team] {
-				.inverted-btn(white, @CGREEN, white);	
+				.btn0;
+				padding: 8px 20px;
+				font-size: 14px;
+				.inverted-btn(@CGREEN);	
 			}
 		}
 	}

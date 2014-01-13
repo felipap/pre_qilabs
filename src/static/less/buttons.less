@@ -1,0 +1,179 @@
+
+
+.color-btn (@color, @bg, @border) {
+	color: @color;
+	background: @bg;
+	border-color: @border;
+}
+
+.color-btn-hover (@color, @bg, @border) {
+	&:hover {
+		.color-btn(@color, @bg, @border);
+	}
+}
+
+.color-btn-active (@color, @bg, @border) {
+	&:active {
+		.color-btn(@color, @bg, @border);
+	}
+}
+
+.color-btn-focus (@color, @bg, @border) {
+	&:focus {
+		.color-btn(@color, @bg, @border);
+	} 
+}
+
+
+.btn1 {
+	.btn0;
+	.inverted-btn(white, @COLOR1);
+}
+
+.btn2 {
+	.btn0;
+	.inverted-btn(white, @COLOR2);
+}
+
+// Second flavor
+.inverted-btn (@color: @COLOR1, @bg: @COLOR2) {
+	.color-btn-focus(@color, transparent, @color);
+	border: 2px solid transparent;
+	.color-btn(@color, transparent, @color);
+	.color-btn-hover(white, @color, @color);
+	.color-btn-active(#444, #DDD, #AAA);
+}
+
+.xbtn (@color: white, @bg: @COLOR1) {
+	border: 2px solid transparent;
+	.color-btn(@color, @bg, transparent);
+	// .color-btn-hover(@color, darken(@bg,10%), @bg);
+	.color-btn-active(#444, #DDD, #AAA);
+}
+
+.high-xbtn (@color: white, @bg: @COLOR1, @chover: @bg) {
+	.color-btn-focus(@color, @bg, transparent);
+	// border: 2px solid transparent;
+	.inner-shadow(0, -2px, rgba(0,0,0,.4));
+	// .text-shadow(0, 1px, 1px, rgba(0,0,0,.2));
+	.color-btn(@color, @bg, transparent);
+	.color-btn-hover(@color, lighten(@bg, 2%), @bg);
+	.color-btn-active(#444, #DDD, #AAA);
+
+	&:active {
+		.inner-shadow(0, -2px, rgba(0,0,0,.4));
+		margin-top: 2px;
+	// .text-shadow(0, 1px, 1px, rgba(0,0,0,.2));	
+	}
+}
+
+/* Don't change a thing. */
+.xbtn (@color: white, @bg: @COLOR1, @chover: @bg) {
+	.color-btn-focus(@color, @bg, transparent);
+	border: 2px solid transparent;
+	.inner-shadow(0, -2px, blue);
+	// .text-shadow(0, 1px, 1px, rgba(0,0,0,.2));
+	.color-btn(@color, @bg, transparent);
+	.color-btn-hover(@chover, transparent, @bg);
+	.color-btn-active(#444, #DDD, #AAA);
+}
+
+
+// Button variants
+// -------------------------
+// Easily pump out default styles, as well as :hover, :focus, :active,
+// and disabled options for all buttons
+.button-variant(@color; @background; @border) {
+  color: @color;
+  background-color: @background;
+  border-color: @border;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active,
+  .open .dropdown-toggle& {
+    color: @color;
+    background-color: darken(@background, 8%);
+        border-color: darken(@border, 12%);
+  }
+  &:active,
+  &.active,
+  .open .dropdown-toggle& {
+    background-image: none;
+  }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &,
+    &:hover,
+    &:focus,
+    &:active,
+    &.active {
+      background-color: @background;
+          border-color: @border;
+    }
+  }
+
+  .badge {
+    color: @background;
+    background-color: @color;
+  }
+}
+
+.btn {
+	display: inline-block;
+	margin-bottom: 0; // For input.btn
+	font-weight: @btn-font-weight;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+	border: 1px solid transparent;
+	white-space: nowrap;
+	.button-size(@padding-base-vertical; @padding-base-horizontal; @font-size-base; @line-height-base; @border-radius-base);
+	.user-select(none);
+
+	&:focus {
+		.tab-focus();
+	}
+
+	&:hover,
+	&:focus {
+		color: @btn-default-color;
+		text-decoration: none;
+	}
+
+	&:active,
+	&.active {
+		outline: 0;
+		background-image: none;
+		.box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
+	}
+
+	&.disabled,
+	&[disabled],
+	fieldset[disabled] & {
+		cursor: not-allowed;
+		pointer-events: none; // Future-proof disabling of clicks
+		.opacity(.65);
+		.box-shadow(none);
+	}
+}
+
+.btn0 {
+	.btn;
+	.button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
+	.navbar-btn;
+
+	// font-size: 13px;
+	font-weight: bold;
+	padding: 8px 20px;
+	&:focus {
+		outline: none;
+	}
+	border: none;
+	margin-top: 7px;
+	.rounded(3px);
+	.rounded(2px);
+}

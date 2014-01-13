@@ -1,9 +1,7 @@
 
-@import "../font-awesome/font-awesome.less";
 @import "../common.less";
 
 nav.bar {
-	
 	.navbar;
 	&:extend(.navbar);
 	
@@ -53,7 +51,8 @@ nav.bar {
 		margin: 0 !important;
 		height: @navbar-height;
 
-		& > a, & > button {
+		& > a,
+		& > button {
 			.btn0;
 			color: #888;
 			font-weight: 700;
@@ -69,9 +68,10 @@ nav.bar {
 			padding-right: 15px;
 			padding-left: 15px;
 			background: none;
-			i.fa {
-				font-size: 18px;
-			}
+			
+		}
+		i[class*="icon-"] {
+			font-size: 18px;
 		}
 
 		li {
@@ -109,7 +109,8 @@ nav.bar {
 		[data-role=show-signin],
 		[data-role=sobre] {
 			.btn0;
-			.inverted-btn;
+			.xbtn;
+
 			padding-left: 30px;
 			padding-right: 30px;
 			font-weight: 700;
@@ -118,7 +119,8 @@ nav.bar {
 
 		[data-role=feedback] {
 			.btn0;
-			.inverted-btn(white, #FF8300);
+			.xbtn(white, #FF8300);
+			
 			padding-left: 10px;
 			padding-right: 10px;
 			font-weight: 700;

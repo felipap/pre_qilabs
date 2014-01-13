@@ -1,7 +1,6 @@
 
 /* main.less
 ** for meavisa.org, by @f03lipe
-**
 ** Project-specific designs. All project .less files should import this. 
 */
 
@@ -13,6 +12,8 @@
 @import "plugins/snshare.less";
 @import "layouts/navbar.less";
 @import "layouts/footer.less";
+
+@import "buttons.less";
 
 @COLOR1: #00b5ca;
 @COLOR2: #2ecc71;
@@ -39,16 +40,6 @@ body {
 	color: #444;
 }
 
-.btn1 {
-	.btn0;
-	.inverted-btn(white, @COLOR1);
-}
-
-.btn2 {
-	.btn0;
-	.inverted-btn(white, @COLOR2);
-}
-
 .flash-msgs {
 	// border: 1px solid black;
 	// z-index: 3;
@@ -72,3 +63,22 @@ body {
 		// background: #54B8Fb;
 	}
 }
+
+i[class*=icon] {
+	.fa-mixin;
+	.fa-mixin-lg;
+}
+
+i.icon-cog { .fa-mixin-icon(cog); }
+i.icon-bell { .fa-mixin-icon(bell); }
+i.icon-bell-o { .fa-mixin-icon(bell-o); }
+i.icon-search { .fa-mixin-icon(search); }
+i.icon-question { .fa-mixin-icon(question); }
+i.icon-bullhorn { .fa-mixin-icon(bullhorn); }
+i.icon-angle-down { .fa-mixin-icon(angle-down); }
+i.icon-check-square { .fa-mixin-icon(check-square); }
+i.icon-minus-square { .fa-mixin-icon(minus-square); }
+i.icon-square-o { .fa-mixin-icon(square-o); }
+i.icon-info { .fa-mixin-icon(info); }
+i.icon-twitter { .fa-mixin-icon(twitter); }
+i.icon-facebook { .fa-mixin-icon(facebook); }

@@ -16,27 +16,26 @@
 			</ul>
 
 			<ul class="nav navbar-nav pull-right">
-				<button class="iconed" onClick="$(this).find('i').toggleClass('fa-bell-o').toggleClass('fa-bell');"
+				<button class="iconed" onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
 					title="Temos 0 updates para você" data-toggle="tooltip" data-placement="bottom">
-					<i class="fa fa-bell fa-lg"></i>
+					<i class="icon-bell"></i>
 				</button>
 				<a href="<%= getPageUrl('panel') %>" title="Configurações" data-toggle="tooltip" data-placement="bottom">
-					<i class="fa fa-cog fa-lg"></i>
+					<i class="icon-cog"></i>
 				</a>
 				<button data-role="logout">
 					Sair
 				</button>
 				<button class="hidden">
-					<i class="fa fa-search fa-lg"></i>
+					<i class="icon-search"></i>
 				</button>
 				<a href="<%= getPageUrl('about') %>" title="Sobre" data-toggle="tooltip" data-placement="bottom">
-					<i class="fa fa-question fa-lg"></i>
+					<i class="icon-question"></i>
 				</a>
 				<a href="<%= getPageUrl('panel') %>" class="avatar-btn" title="Seu Perfil" data-toggle="tooltip" data-placement="bottom">
 					<img id="avatarDd" alt="seu avatar" width=45 class="" src="<%= user.avatarUrl %>" />
 					<i></i>
 				</a>
-
 			</ul>
 			
 		<% } else { %>
@@ -48,7 +47,7 @@
 					Entrar
 				</a>
 				<a href="<%= getPageUrl('about') %>">
-					<i class="fa fa-question fa-lg"></i>
+					<i class="icon-question"></i>
 				</a>
 			</ul>
 		<% } %>
