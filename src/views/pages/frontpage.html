@@ -80,25 +80,6 @@
 <!-- 		<h1>Últimos usuários cadastrados</h1>
  -->	</section>
 	<% } %>
-
-	<div class="dialog" id="signin">
-		<div class="box">
-				<button type="button" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
-			<div class="content">
-				<h1>Quer ajudar a testar? \o/</h1>
-				<h3>Coloca aqui o seu email</h3>
-				<small>(Pode ficar tranquilo, a gente odeia spam!)</small>
-				<div>
-					<form method="post" action="/api/testers">
-						<input type="text" name="email" placeholder="seu email aqui..." />
-						<input type="hidden" name="_csrf" value="<%= token %>" />
-						<button data-action="send-tester-email">Enviar</button>
-					</form>
-				</div>
-			</div>
-		</div>
-		<div class="box-blackout" onClick="location.href='#'"></div>
-	</div>
 	
 	<section id="parcerias">
 		<section>
@@ -122,6 +103,25 @@
 			</li>
 		</section>
 	</section>
+
+	<div class="dialog" id="signin">
+		<div class="box">
+				<button type="button" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
+			<div class="content">
+				<h1>Quer ajudar a testar? \o/</h1>
+				<h3>Coloca aqui o seu email</h3>
+				<small>(Pode ficar tranquilo, a gente odeia spam!)</small>
+				<div>
+					<form method="post" action="/api/testers">
+						<input type="text" name="email" placeholder="seu email aqui..." />
+						<input type="hidden" name="_csrf" value="<%= token %>" />
+						<button data-action="send-tester-email">Enviar</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="box-blackout" onClick="location.href='#'"></div>
+	</div>
 	
 	<% include ../layouts/footer.html %>
 
