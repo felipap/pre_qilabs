@@ -23,15 +23,13 @@
 					<button data-action="save">Salvar</button>
 				<hr>
 				
-				<a href="#delete" data-action="delete-account" data-toggle="modal" data-target="#leave">
+				<a href="#delete-account" data-action="delete-account" data-toggle="dialog">
 					Excluir minha conta permanentemente.
 				</a>
 			</div>
 		</section>
 	</section>
-
-	<!-- modal#leave -->
-	<div class="modal fade" id="leave">
+<!-- 	<div class="modal fade" id="leave">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -40,7 +38,6 @@
 				</div>
 				<div class="modal-body">
 					<h3>Você tem <strong>certeza</strong> que deseja <strong>excluir a sua conta</strong>?</h3>
-					<img src="http://free-mobile-wallpapers.mobilclubs.com/sites/default/files/img-wallpapers/sad_cat.jpg" width=200>
 				</div>
 				<div class="modal-footer">
 					<a href="/leave" class="btn btn-default btn-danger">Sim :(</a>
@@ -48,6 +45,28 @@
 				</div>
 			</div>
 		</div>
+	</div>
+
+ -->
+ 	<div class="dialog" id="delete-account">
+		<div class="box">
+			<button type="button" data-action="close-dialog" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
+			<div class="content">
+				<h1>Tem certeza que deseja excluir a sua conta?</h1>
+				<img src="http://free-mobile-wallpapers.mobilclubs.com/sites/default/files/img-wallpapers/sad_cat.jpg" width=200>
+				<div>
+					<a href="/leave" class="btn btn-default btn-danger">Sim :(</a>
+					<button type="button" class="btn btn-default btn-success" data-dismiss="modal">Cancelar :)</button>
+<!-- 
+					<form method="post" action="/api/testers">
+						<input type="text" name="email" placeholder="seu email aqui..." />
+						<input type="hidden" name="_csrf" value="<%= token %>" />
+						<button data-action="send-tester-email">Enviar</button>
+					</form>
+ -->				</div>
+			</div>
+		</div>
+		<div class="box-blackout" data-action="close-dialog"></div>
 	</div>
 
 	<% include ../layouts/footer.html %>

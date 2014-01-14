@@ -31,7 +31,7 @@
 				<p>
 					O <strong>Me Avisa</strong> é um serviço online gratuito que avisa estudantes sobre oportunidades acadêmicas e profissionais na área de interesse deles.
 				</p>
-				<a href="#signin" data-action="show-signin">
+				<a href="#signin" data-action="show-signin" data-toggle="dialog">
 					Seja um Early-Tester
 				</a>
 				<a href="<%= getPageUrl('join-team') %>" data-action="join-team">
@@ -68,7 +68,7 @@
 		<section>
 			<li>
 				<h3>Instituições Parceiras:</h3>
-				</li>
+			</li>
 <!-- 			<li>
 				<a href="http://www.estudar.org.br/‎" title="Fundação Estudar">
 					<img width=230 src="<%=staticUrl('images/fe.png')%>"></img>
@@ -98,16 +98,14 @@
 			<% } %>
 			<% } %>
 		</div>
-		<div class="box-blackout">
-		</div>
+		<div class="box-blackout"></div>
 <!-- 		<h1>Últimos usuários cadastrados</h1>
  -->	</section>
 	<% } %>
-	
 
-	<div class="dialog" id="signin">
+ 	<div class="dialog" id="signin">
 		<div class="box">
-				<button type="button" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
+			<button type="button" data-action="close-dialog" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
 			<div class="content">
 				<h1>Quer ajudar a testar? \o/</h1>
 				<h3>Coloca aqui o seu email</h3>
@@ -121,7 +119,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="box-blackout" onClick="location.href='#'"></div>
+		<div class="box-blackout" data-action="close-dialog"></div>
 	</div>
 	
 	<% include ../layouts/footer.html %>

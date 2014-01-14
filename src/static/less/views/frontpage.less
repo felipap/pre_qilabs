@@ -163,50 +163,7 @@ body > section {
 }
 
 .dialog {
-	position: absolute;
-	display: none;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	z-index: 3;
-
-	&:target {
-		display: block;
-	}
-
-	text-align: center;
-
-	.box {
-		position: relative;
-		display: table;
-		z-index: 5;
-		.box-shadow(5px, .5);
-		top: 200px;
-		margin: 0 auto;
-		background: white;
-		border: 1px solid white;
-		padding: 20px 24px;
-
-		input[type=text] {
-			width: 300px;
-			border: 1px solid #DDD;
-			padding: 9px;
-			vertical-align: middle;
-			outline-color: #CCC;
-		}
-
-		button, a[class*=btn] {
-			vertical-align: middle;
-			border-radius: 0;
-		}
-	}
-
 	[data-action=send-tester-email] {
 		.high-xbtn;
-	}
-
-	.box-blackout {
-		.blackout;
 	}
 }

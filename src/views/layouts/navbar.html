@@ -1,17 +1,13 @@
 <nav class="bar" role="navigation">
-		
 	<a class="brand" href="/" tabindex="-1">
 		MeAvisa.org <sup class="version"><%= app.semantic_version %></sup>
 	</a>
-		
 		<% if (typeof user !== "undefined") { %>
-
 			<ul class="nav navbar-nav">
 				<button data-action="nos-avisa">
 					Avisa Pra Gente!
 				</button>
 			</ul>
-
 			<ul class="nav navbar-nav pull-right">
 				<button class="plain-btn"
 					onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
@@ -38,10 +34,9 @@
 					<i></i>
 				</a>
 			</ul>
-			
 		<% } else { %>
 			<ul class="nav navbar-nav pull-right">
-				<a data-action="show-signin" href="#signin">
+				<a data-action="show-signin" href="#signin" data-toggle="dialog">
 					<strong>SEJA UM EARLY-TESTER</strong>
 				</a>
 				<a href="/auth/facebook" class="plain-btn" data-action="login">

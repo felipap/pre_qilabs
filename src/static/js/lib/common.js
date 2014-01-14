@@ -11,7 +11,9 @@ require(['jquery','bootstrap'], function ($) {
 	$(function () {
 		$("[data-toggle=popover]").popover();
 		$("[data-toggle=tooltip]").tooltip();
+		$("[data-toggle=dialog]").xdialog();
 	});
+
 	(function setCSRFToken () {
 		$.ajaxPrefilter(function(options, _, xhr) {
 			if (!options.crossDomain) {

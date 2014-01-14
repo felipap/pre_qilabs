@@ -26,7 +26,9 @@ require(['jquery','bootstrap'], function ($) {
 	$(function () {
 		$("[data-toggle=popover]").popover();
 		$("[data-toggle=tooltip]").tooltip();
+		$("[data-toggle=dialog]").xdialog();
 	});
+
 	(function setCSRFToken () {
 		$.ajaxPrefilter(function(options, _, xhr) {
 			if (!options.crossDomain) {
@@ -73,6 +75,8 @@ require(['jquery','bootstrap'], function ($) {
 
 // Place any jQuery/helper plugins in here.
 require(['jquery'], function ($) {
+
+	'strict use';
 
 	$.fn.sshare = function (options) {
 
@@ -136,6 +140,24 @@ require(['jquery'], function ($) {
 		}
 		this.on('mouseleave', function (e) {
 			html.fadeOut(options.duration);
+		});
+	};
+
+	$.fn.xdialog = function (options) {
+
+		if (!this[0]) return;
+
+		var dialogEl = $(this[0].hash);
+
+		this.click(function (evt) {
+			evt.preventDefault();
+			dialogEl.addClass('active');
+			history.pushState({}, '', "#signin")
+		});
+
+		dialogEl.find('[data-action=close-dialog]').click(function (evt) {
+			dialogEl.removeClass('active');
+			location.hash = '';
 		});
 	};
 

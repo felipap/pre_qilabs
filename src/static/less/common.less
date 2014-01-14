@@ -5,7 +5,7 @@
 */
 
 @import "font-awesome/font-awesome.less";
-@import "mixins.less";
+@import (reference) "mixins.less";
 @import "bstp.less";
 
 @import "plugins/scrollbars.less";
@@ -14,6 +14,7 @@
 @import "layouts/footer.less";
 
 @import "buttons.less";
+@import "dialog.less";
 
 @COLOR1: #00b5ca;
 @COLOR2: #2ecc71;
@@ -60,7 +61,6 @@ body {
 	.info {
 		&:extend(.alert);
 		&:extend(.alert-info);
-		// background: #54B8Fb;
 	}
 }
 
