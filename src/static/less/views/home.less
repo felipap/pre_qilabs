@@ -115,7 +115,7 @@
 			} 
 
 			&::-webkit-scrollbar-thumb {
-				background-color: rgba(0,0,0,.3);
+				background-color: rgba(0,0,0,.2);
 				.rounded(5px);
 				.transition(all, .2s, linear);
 				&:hover {
@@ -147,12 +147,34 @@
 
 
 #posts-col {
-	position: relative;
+	position: absolute;
 	top: 60px;
 
 	.container-fixed;
 	width: 100%;
 	padding-left: 330px;
+	overflow-y: scroll;
+	bottom: 0;
+
+	&::-webkit-scrollbar {
+		width: 8px;
+	} 
+
+	&::-webkit-scrollbar-track {
+		background-clip: padding-box;
+		border: solid transparent;
+		border-width: 0 0 0 4px;
+		margin-right: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: rgba(0,0,0,.1);
+		.rounded(5px);
+		.transition(all, .2s, linear);
+		&:hover {
+			background-color: rgba(0,0,0,.3);
+		}
+	}
 
 	#posts > li,
 	#post > li {

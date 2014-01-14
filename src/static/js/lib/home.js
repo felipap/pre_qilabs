@@ -441,13 +441,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			this.postListView = new Post.listView({collection: this.postList});
 			this.postList.fetch({reset:true});
 			this.postListView.$el.appendTo('#posts-col > .placement');
-
-			var self = this;
-			$(window).scroll(function() {
-				if ($(document).height() - ($(window).scrollTop()+$(window).height()) < 200) {
-					self.postList.fetchMore();
-				}
-			});
 		},
 
 		confirmTags: function (callback) {
@@ -466,6 +459,14 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			window.app.confirmTags(function () {
 				location.href = '/';
 			})
+		});
+
+		$('#posts-col').scroll(function() {
+			var ds = $('#posts-col .placement').height()-($(window).height()+$('#posts-col').scrollTop());
+			console.log(ds)
+			if (ds < 200) {
+				app.postList.fetchMore();
+			}
 		});
 	});
 });
