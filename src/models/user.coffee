@@ -20,7 +20,8 @@ UserSchema = new mongoose.Schema {
 		tags:				{ type: Array,	default: [] }
 		facebookId:			{ type: String, }
 		accessToken:		{ type: String, }
-		lastUpdate:			{ type: Date, 	default: Date(0) }
+		lastUpdate:			{ type: Date, 	default: Date(0) },
+		notifiable:			{ type: String, default: true }
 	}, { id: true } # default
 
 # Virtuals

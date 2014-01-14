@@ -18,7 +18,7 @@ requirejs.config({
 
 require(['jquery','bootstrap'], function ($) {
 	$("[data-action='logout']").click(function () {
-		$.post('/logout', function () {
+		$.post('/api/user/logout', function () {
 			window.location.href = "/";
 		});
 	});
@@ -71,7 +71,7 @@ require(['jquery','bootstrap'], function ($) {
 			console[method] = noop;
 		}
 	}
-}());
+}()) ;
 
 // Place any jQuery/helper plugins in here.
 require(['jquery'], function ($) {
@@ -147,17 +147,22 @@ require(['jquery'], function ($) {
 
 		if (!this[0]) return;
 
-		var dialogEl = $(this[0].hash);
+		var anchor = this[0].hash,
+			dialogEl = $(anchor),
+			hideUrl = !!this.data('hide-url');
 
 		this.click(function (evt) {
 			evt.preventDefault();
 			dialogEl.addClass('active');
-			history.pushState({}, '', "#signin")
+			if (!hideUrl)
+				history.pushState({}, '', anchor)
 		});
 
 		dialogEl.find('[data-action=close-dialog]').click(function (evt) {
+			evt.preventDefault();
 			dialogEl.removeClass('active');
-			location.hash = '';
+			if (!hideUrl)
+				location.hash = '';
 		});
 	};
 });

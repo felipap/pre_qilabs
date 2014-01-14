@@ -90,29 +90,6 @@ module.exports = {
 
 		}
 	},
-	'/logout': {
-		name: 'logout',
-		methods: {
-			post: [require.isLogged,
-				(req, res) ->
-					if not req.user then return res.redirect '/'
-					req.logout()
-					res.redirect('/')
-			]
-		}
-	},
-	'/leave': {
-		name: 'leave',
-		methods: {
-			get: [require.isLogged,
-				(req, res) -> # Deletes user account.
-					req.user.remove (err, data) ->
-						if err then throw err
-						req.logout()
-						res.redirect('/')
-			]
-		}
-	},
 	'/painel': 	staticPage('pages/panel', 'panel'),
 	'/sobre': 	staticPage('pages/about', 'about'),
 	'/equipe': 	staticPage('pages/team', 'team'),
@@ -255,6 +232,40 @@ module.exports = {
 							]
 						}
 					},
+				}
+			},
+			'user': {
+				methods: {
+					post: [require.isLogged,
+						(req, res) ->
+							if req.body.notifiable in [true, false]
+								req.user.notifiable = req.body.notifiable
+							res.end()
+						]
+				},
+				children: {
+					'leave': {
+						methods: {
+							post: [require.isLogged,
+								(req, res) -> # Deletes user account.
+									req.user.remove (err, data) ->
+										if err then throw err
+										req.logout()
+										res.redirect('/')
+								]
+						}
+					},
+					'logout': {
+						name: 'logout',
+						methods: {
+							post: [require.isLogged,
+								(req, res) ->
+									if not req.user then return res.redirect '/'
+									req.logout()
+									res.redirect('/')
+							]
+						}
+					}
 				}
 			}
 		}

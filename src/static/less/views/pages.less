@@ -54,11 +54,23 @@ body > .paper {
 }
 
 body[data-page=panel] {
-	// background: #1b1b24;
 	
 	input[type=checkbox] {
 		vertical-align: top;
 		margin: 5px;
+	}
+
+	.dialog {
+		form {
+
+			[data-action=leave] {
+				.high-xbtn(white, red);
+			}
+			[data-action=close-dialog] {
+				.high-xbtn(#fff, #AAA);
+			}
+
+		}
 	}
 }
 

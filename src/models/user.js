@@ -25,6 +25,10 @@ UserSchema = new mongoose.Schema({
   lastUpdate: {
     type: Date,
     "default": Date(0)
+  },
+  notifiable: {
+    type: String,
+    "default": true
   }
 }, {
   id: true

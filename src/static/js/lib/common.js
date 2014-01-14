@@ -3,7 +3,7 @@
 
 require(['jquery','bootstrap'], function ($) {
 	$("[data-action='logout']").click(function () {
-		$.post('/logout', function () {
+		$.post('/api/user/logout', function () {
 			window.location.href = "/";
 		});
 	});

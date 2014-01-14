@@ -34,18 +34,13 @@
 		<div class="box">
 			<button type="button" data-action="close-dialog" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
 			<div class="content">
-				<h1>Tem certeza que deseja excluir a sua conta?</h1>
+				<h3>Certeza que quer excluir a sua conta?</h3>
 				<img src="http://free-mobile-wallpapers.mobilclubs.com/sites/default/files/img-wallpapers/sad_cat.jpg" width=200>
-				<div>
-					<a href="/leave" class="btn btn-default btn-danger">Sim :(</a>
-					<button type="button" class="btn btn-default btn-success" data-dismiss="modal">Cancelar :)</button>
-<!-- 
-					<form method="post" action="/api/testers">
-						<input type="text" name="email" placeholder="seu email aqui..." />
-						<input type="hidden" name="_csrf" value="<%= token %>" />
-						<button data-action="send-tester-email">Enviar</button>
-					</form>
- -->				</div>
+				<form method="post" action="/api/user/leave">
+					<input type="hidden" name="_csrf" value="<%= token %>" />
+					<button data-action="leave">Sim :(</button>
+					<button data-action="close-dialog">Cancelar :)</button>
+				</form>
 			</div>
 		</div>
 		<div class="box-blackout" data-action="close-dialog"></div>
