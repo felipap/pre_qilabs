@@ -5,7 +5,6 @@
 */
 
 @import "../common.less";
-@import "../plugins/perfect-scrollbar.less";
 
 .navbar {
 	position: fixed;
@@ -42,7 +41,6 @@
 	#tags-wrapper {
 		height: 100%;
 		padding-bottom: 44px;
-		overflow: hidden;
 
 		ul {
 			padding-left: 10px;
@@ -110,14 +108,28 @@
 		}
 
 		& > ul {
+			overflow-y: auto;
+
+			&::-webkit-scrollbar {
+				width: 8px;
+			} 
+
+			&::-webkit-scrollbar-thumb {
+				background-color: rgba(0,0,0,.3);
+				.rounded(5px);
+				.transition(all, .2s, linear);
+				&:hover {
+					background-color: rgba(0,0,0,.5);
+				}
+			}
+
 			padding-left: 0;
 
 			position: absolute;
 			top: 85px;
 			bottom: 87px;
-			right: 0;
+			right: 4px;
 			left: 20px;
-			overflow: hidden;
 		}
 
 		.btns {

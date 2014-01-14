@@ -9,10 +9,11 @@
 	<% include ../layouts/navbar.html %>
 
 	<div id="sidebar">
-		<h4>Oi, <%= user.name %>!</h4>
-		<h5>Selecione aqui os assuntos de seu interesse.</h5>
+		<div>
+			<h4>Oi, <%= user.name %>!</h4>
+			<h5>Selecione aqui os assuntos de seu interesse.</h5>
+		</div>
 		<form id="tags-wrapper" onsubmit="return false;">
-			<!--<button id="btn-preview" class="btn btn-large btn-block btn-info btn-lg"><strong>Prever</strong> Mudanças</button>-->
 			<div class="btns">
 				<button data-role="confirm" type="submit">
 					Confirmar Mudanças
