@@ -18,17 +18,20 @@
 
 	<section class="team">
 		<section>
-			<h2>Equipe</h2>
+			<h1><strong>Equipe</strong></h1>
+
 			<% for (var i=0; i<team.length; i++) {
 				var person = team[i];
 			%>
+			
 			<li>
 				<div class="avatar">
 					<img width=100 src="<%= person.avatar %>" />
 				</div>
+				<div class="">
 				<h3><%= person.name %></h3>
 				<% if (person.twitter) { %>
-					<a href="<%= person.twitter %>"><i class="icon-twitter"></i></a>
+					<a href="<%= person.twitter %>"><i class="icon-twitter icon-large"></i></a>
 				<% } %>
 			</li>
 			<% } %>

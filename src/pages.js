@@ -261,7 +261,7 @@ module.exports = {
               }
               page = parseInt(req.query.page) || 0;
               return Post.getWithTags(seltags, function(err, docs) {
-                docs = docs.slice(page * 5, page * 5 + 5);
+                docs = docs.slice(page * 5, (page + 1) + 5);
                 console.log(docs.length);
                 return res.end(JSON.stringify({
                   data: docs,

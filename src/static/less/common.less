@@ -21,6 +21,9 @@
 @CBLUE: #00b5ca;
 @CGREEN: #2ecc71;
 
+@BrandColor: @COLOR1; // #3498db;
+@BrandFontFamily: "Londrina Solid", Helvetica, Arial;
+
 html {
 	// font-size: 16px;
 	position: relative;
@@ -66,6 +69,9 @@ body {
 
 i[class*=icon] {
 	.fa-mixin;
+	&.icon-large {
+		.fa-mixin-lg;
+	}
 }
 
 i.icon-cog { .fa-mixin-icon(cog); }

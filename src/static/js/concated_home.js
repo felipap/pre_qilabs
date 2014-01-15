@@ -39,6 +39,20 @@ require(['jquery','bootstrap'], function ($) {
 		$("[data-toggle=popover]").popover();
 		$("[data-toggle=tooltip]").tooltip();
 		$("[data-toggle=dialog]").xdialog();
+
+		if (document.body.dataset.page === 'front') {
+			var navbar = $("nav.bar");
+			var jumboHeight = $('#jumbo').height();
+			var navbarHeight = navbar.outerHeight();
+			$(window).scroll(function () {
+				// if ($(window).scrollTop()+navbarHeight > jumboHeight) {
+				if ($(window).scrollTop() > navbarHeight) {
+					navbar.addClass('opaque');
+				} else {
+					navbar.removeClass('opaque');
+				}
+			});
+		}
 	});
 
 	(function setCSRFToken () {

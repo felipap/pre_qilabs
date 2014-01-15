@@ -11,7 +11,9 @@ nav.bar {
 	padding-bottom: 5px;
 	margin-bottom: 0;
 	background: white;
-	// overflow-y: hidden;
+	z-index: 5;
+	width: 100%;
+	top: 0;
 
 	body:not([data-page=front]) & {
 		border-bottom: 2px solid #DDD;
@@ -25,21 +27,22 @@ nav.bar {
 			padding: 5px 5px;
 		}
 	}
+	@compColor: #777;
 
 	.brand {
 		.navbar-brand;
 		.unselectable;
-		color: #3498db;
+		color: @BrandColor;
 		cursor: pointer;
 		overflow: hidden;
-		font-family: "Londrina Solid";
+		font-family: @BrandFontFamily;
 		font-size: 30px;
 		outline: none !important;
 
 		.version {
 			font-size: 20px;
 			font-weight: normal;
-			color: #888;
+			color: @compColor;
 			cursor: default;
 		}
 	}
@@ -53,7 +56,7 @@ nav.bar {
 		
 		.plain-btn {
 			.btn0;
-			color: #666;
+			color: @compColor;
 			font-weight: 700;
 			&:hover, &:focus, &:active {
 				background: none;
@@ -61,6 +64,7 @@ nav.bar {
 			}
 			vertical-align: top;
 			box-shadow: none;
+			background: none;
 		}
 
 		i[class*="icon-"] {

@@ -229,7 +229,7 @@ module.exports = {
 							page = parseInt(req.query.page) || 0
 							Post.getWithTags seltags, (err, docs) ->
 								# Fake pagination
-								docs = docs.slice(page*5, page*5+5)
+								docs = docs.slice(page*5, (page+1)+5)
 								console.log(docs.length)
 								res.end(JSON.stringify({
 									data: docs,
