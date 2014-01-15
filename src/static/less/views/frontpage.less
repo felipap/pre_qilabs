@@ -30,6 +30,15 @@ body > section {
 
 	width: 100%;
 	text-align: center;
+
+	background: white;
+	&:nth-child(2n) {
+		background: #f8f9fa;
+	}
+
+	& > section {
+		.make-row;
+	}
 }
 
 nav.bar {
@@ -47,6 +56,11 @@ nav.bar {
 		.brand sup.version,
 		.plain-btn { color: white !important; }
 	}
+}
+
+.padded {
+	padding-top: 40px;
+	padding-bottom: 40px;
 }
 
 #jumbo {
@@ -101,50 +115,47 @@ nav.bar {
 		font-family: "Open Sans";
 		font-size: 13px;
 		font-style: normal;
-		font-weight: normal;
-		color: #DDD;
+		font-weight: 500;
+		color: white;
 		right: 15px;
 		bottom: 15px;
-		.text-shadow(2px, 1);
+		.text-shadow(2px, .6);
 	}
-
 }
 
 #howto {
 	.container-fixed;
+	.padded;
 	
-	& > section {
-		text-align: center;
-		max-width: 1000px;
-		margin-left: auto;
-		margin-right: auto;
+	.column {
+		.make-xs-column(4);
+		.make-md-column(4);
+		.make-lg-column(3);
+		.make-lg-column-offset(1);
+	}
+	
+	[class*=icon] {
+		font-size: 90px;
+	}
+
+	.instructions {
+		margin-top: 40px;
 	}
 }
 
 
 #parcerias {
 	.container-fixed;
-
-	background: white;
-	border-top: 1px solid #DDD;
-
-	padding-top: 20px;
-	padding-bottom: 20px;
-	overflow: hidden;
+	.padded;
 	
 	.label {
 		color: #444;
 	}
 
-	& > section {
-		.make-row;
-	}
-
 	li {
 		display: inline-block;
 		list-style: none;
-		padding: 50px;
-		// border: 1px solid #DDD;
+		padding: 0 50px;
 	}
 }
 
@@ -156,7 +167,7 @@ nav.bar {
 	height: 50px;
 
 	.box-blackout {
-		.blackout(.5);
+		.blackout(.2);
 	}
 
 	h1 {
