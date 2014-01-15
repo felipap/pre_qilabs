@@ -29,7 +29,7 @@ require(['jquery','bootstrap'], function ($) {
 			var navbar = $("nav.bar");
 			var jumboHeight = $('#jumbo').height();
 			var navbarHeight = navbar.outerHeight();
-			$(window).scroll(function () {
+			$(window).on('scroll ready', function () {
 				// if ($(window).scrollTop()+navbarHeight > jumboHeight) {
 				if ($(window).scrollTop() > navbarHeight) {
 					navbar.addClass('opaque');

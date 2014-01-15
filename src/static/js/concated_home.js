@@ -44,7 +44,7 @@ require(['jquery','bootstrap'], function ($) {
 			var navbar = $("nav.bar");
 			var jumboHeight = $('#jumbo').height();
 			var navbarHeight = navbar.outerHeight();
-			$(window).scroll(function () {
+			$(window).on('scroll ready', function () {
 				// if ($(window).scrollTop()+navbarHeight > jumboHeight) {
 				if ($(window).scrollTop() > navbarHeight) {
 					navbar.addClass('opaque');
@@ -657,9 +657,8 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		});
 
 		$('#posts-col').scroll(function() {
-			var ds = $('#posts-col .placement').height()-($(window).height()+$('#posts-col').scrollTop());
-			console.log(ds)
-			if (ds < 200) {
+			if ($('#posts-col .placement').height()-
+				($(window).height()+$('#posts-col').scrollTop())< 200) {
 				app.postList.fetchMore();
 			}
 		});
