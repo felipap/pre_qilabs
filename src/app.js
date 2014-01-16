@@ -76,7 +76,7 @@ app.locals({
 			// throw "Page named "+name+" was referenced but doesn't exist."
 		return app.locals.urls[name] || "#";
 	},
-	staticUrl: function () {
+	getMediaUrl: function () {
 		return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
 	},
 	urls: {

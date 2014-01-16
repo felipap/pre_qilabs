@@ -17,10 +17,19 @@ Versão 0.5:
   ☐ /#tag/:tag pages
   ☐ feedback system (uservoice?)
   ☐ formulário google para inscrição
+  Profile page:
+    # Be like LinkedIn for students:
+    ☐ "Pode te ajudar com"
+      ☐ Contato por ...
+    ☐ Usuário desde ... 
+    ☐ Participou
+    ☐ Editor?
+    ☐ Badges
 
 Versão 1.0:
   ☐ páginas automatizadas para cada tag, com estatísticas de uso
-  ☐ Botão de "Nos Avise!"
+  ✔ Botão de "Nos Avise!" @done (14-01-16 11:19)
+    ☐ Formulário insite
   ☐ 'source:' para posts <= vai precisar de algo a mais pro tumblr
 
 Versão 2.0:

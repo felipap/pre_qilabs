@@ -1,6 +1,6 @@
 <% layout('../stdbody') -%>
 
-<% stylesheet(staticUrl('css','pages.min.css')) -%>
+<% stylesheet(getMediaUrl('css','default_pages.min.css')) -%>
 
 <body class="" data-page="about">
 
@@ -24,5 +24,5 @@
 
 	<% include ../layouts/footer.html %>
 
-	<script data-main="<%= staticUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	<script data-main="<%= getMediaUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>

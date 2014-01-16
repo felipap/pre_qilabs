@@ -4,7 +4,7 @@
 	</a>
 		<% if (typeof user !== "undefined") { %>
 			<ul class="nav navbar-nav">
-				<button data-action="nos-avisa">
+				<button data-hash="nos-avisa" data-action="nos-avisa" data-toggle="dialog">
 					Avisa Pra Gente!
 				</button>
 			</ul>
@@ -49,3 +49,14 @@
 		<% } %>
 	</div>
 </nav>
+
+<div class="dialog" id="nos-avisa">
+	<div class="box">
+		<button type="button" data-action="close-dialog" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
+		<div class="content">
+			<h1>Tem notícia pra gente?</h1>
+			<small>Manda um email para <strong>piresafelipe[arroba]gmail[ponto]com</strong> o assunto 'Me Avisa'.</small>
+		</div>
+	</div>
+	<div class="box-blackout" data-action="close-dialog"></div>
+</div>

@@ -27,7 +27,7 @@ PostSchema = new mongoose.Schema {
 		body:	 			String
 		title:	 			String
 		isHosted: 			Boolean
-	}, {
+		}, {
 		id: false,
 		toObject: { virtuals: true }
 		toJSON: { virtuals: true }

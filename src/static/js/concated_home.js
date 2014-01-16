@@ -173,7 +173,7 @@ require(['jquery'], function ($) {
 
 		if (!this[0]) return;
 
-		var anchor = this[0].hash,
+		var anchor = this[0].hash || '#'+this[0].dataset.hash,
 			dialogEl = $(anchor),
 			hideUrl = !!this.data('hide-url');
 

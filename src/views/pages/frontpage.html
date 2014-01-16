@@ -1,6 +1,6 @@
 <% layout('../stdbody') -%>
 
-<% stylesheet(staticUrl('css','frontpage.min.css')) -%>
+<% stylesheet(getMediaUrl('css','frontpage.min.css')) -%>
 
 <body class="" data-page="front">
 	<!-- <script>if(window!=window.top){top.location="http://meavisa.herokuapp.com";}</script> -->
@@ -16,10 +16,13 @@
 		{ label:'Stanford University, Santa Clara, USA', source:'u/sta.jpg'},
 	//	{ label:'Duke University, Durham, USA', source:'u/duk.jpg'},
 	//	{ label:'Universidade de São Paulo', source: 'u/usp.jpg'},
+	// UNICAMP
+	// UFRJ
+	// UFMG
 	];
 	var sel_bg = bgs[Math.floor(bgs.length*Math.random())];
 	%>
-	<section id="jumbo" style="background-image: url(<%= staticUrl('images/'+sel_bg.source) %>);">
+	<section id="jumbo" style="background-image: url(<%= getMediaUrl('images/'+sel_bg.source) %>);">
 
 		<div class="box-blackout"></div>
 		<div class="content">
@@ -78,17 +81,17 @@
 			</li>
 <!-- 			<li>
 				<a href="http://www.estudar.org.br/‎" title="Fundação Estudar">
-					<img width=230 src="<%=staticUrl('images/fe.png')%>"></img>
+					<img width=230 src="<%=getMediaUrl('images/fe.png')%>"></img>
 				</a>
 			</li>
 			<li>
 				<a href="https://www.facebook.com/duxrio" title="Dux Institute">
-					<img width=200 src="<%=staticUrl('images/di.jpg')%>"></img>
+					<img width=200 src="<%=getMediaUrl('images/di.jpg')%>"></img>
 				</a>
 			</li>
  --> 			<li>
  				<a href="http://turmacidada.org" title="Turma Cidadã Brasil">
-					<img width=150 src="<%=staticUrl('images/tc.png')%>"></img>
+					<img width=150 src="<%=getMediaUrl('images/tc.png')%>"></img>
 				</a>
 			</li>
 		</section>
@@ -106,8 +109,7 @@
 			<% } %>
 		</div>
 		<div class="box-blackout"></div>
-<!-- 		<h1>Últimos usuários cadastrados</h1>
- -->	</section>
+	</section>
 	<% } %>
 
  	<div class="dialog" id="signin">
@@ -131,5 +133,5 @@
 	
 	<% include ../layouts/footer.html %>
 
-	<script data-main="<%= staticUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	<script data-main="<%= getMediaUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>

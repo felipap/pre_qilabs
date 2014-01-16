@@ -1,6 +1,6 @@
 <% layout('../stdbody') -%>
 
-<% stylesheet(staticUrl('css','home.min.css')) -%>
+<% stylesheet(getMediaUrl('css','home.min.css')) -%>
 
 <script>window._tags=<%- tags -%></script>
 
@@ -165,5 +165,5 @@
 	}());
 	</script>
 
-	<script data-main="<%= staticUrl('js','home.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	<script data-main="<%= getMediaUrl('js','home.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>
