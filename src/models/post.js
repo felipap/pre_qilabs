@@ -1,6 +1,6 @@
 /*
 # models/post.coffee
-# for meavisa.org, by @f03lipe
+# for meavisa.org, by Felipe Aragão
 #
 # Post model.
 */
@@ -24,10 +24,6 @@ findOrCreate = require('./lib/findOrCreate');
 PostSchema = new mongoose.Schema({
   tumblrId: Number,
   tags: Array,
-  urlTemplate: {
-    type: String,
-    "default": '/#posts/{id}'
-  },
   tumblrUrl: String,
   tumblrPostType: String,
   date: Date,
@@ -45,7 +41,7 @@ PostSchema = new mongoose.Schema({
 });
 
 PostSchema.virtual('path').get(function() {
-  return this.urlTemplate.replace(/{id}/, this.tumblrId);
+  return "/#posts/{id}".replace(/{id}/, this.tumblrId);
 });
 
 getPostsWithTags = function(tags, callback) {

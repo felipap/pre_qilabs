@@ -28,7 +28,7 @@
 					title="Sobre" data-toggle="tooltip" data-placement="bottom">
 					<i class="icon-question"></i>
 				</a><!-- 
-			 --><a href="<%= getPageUrl('panel') %>" class="avatar-btn"
+			 --><a href="<%= getPageUrl('profile', user.id) %>" class="avatar-btn"
 					title="Seu Perfil" data-toggle="tooltip" data-placement="bottom">
 					<img id="avatarDd" alt="seu avatar" width=45 class="" src="<%= user.avatarUrl %>" />
 					<i></i>
@@ -49,6 +49,27 @@
 		<% } %>
 	</div>
 </nav>
+
+
+<div class="dialog" id="signin">
+	<div class="box">
+		<button type="button" data-action="close-dialog" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
+		<div class="content">
+			<h1>Quer ajudar a testar? \o/</h1>
+			<h3>Coloca aqui o seu email</h3>
+			<small>(Pode ficar tranquilo, a gente odeia spam!)</small>
+			<div>
+				<form method="post" action="/api/testers">
+					<input type="text" name="email" placeholder="seu email aqui..." />
+					<input type="hidden" name="_csrf" value="<%= token %>" />
+					<button data-action="send-tester-email">Enviar</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="box-blackout" data-action="close-dialog"></div>
+</div>
+
 
 <div class="dialog" id="nos-avisa">
 	<div class="box">

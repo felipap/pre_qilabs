@@ -71,10 +71,23 @@ app.locals({
 	errors: {},
 	version_label: "alpha",
 	version_str: 'versão 0.5, alpha',
-	getPageUrl: function (name) {
-		// if (typeof app.locals.urls[name] === 'undefined')
-			// throw "Page named "+name+" was referenced but doesn't exist."
-		return app.locals.urls[name] || "#";
+	getPageUrl: function (name) { // (name, args... to fill pageurl if known)
+		if (typeof app.locals.urls[name] !== 'undefined') {
+			/* Fill in arguments to url passed in arguments. */
+			var args = Array.prototype.slice.call(arguments, 1),
+				url = app.locals.urls[name],
+				regex = /:[\w_]+/g;
+			// This doesn't account for optional arguments! TODO
+			if ((url.match(regex) || []).length !== args.length)
+				throw "Wrong number of arguments to getPageUrl.";
+			return url.replace(regex, function (occ) {
+				return args.pop();
+			});
+		} else {
+			// if (typeof app.locals.urls[name] === 'undefined')
+			// 	throw "Page named "+name+" was referenced but doesn't exist."
+			return "#";
+		}
 	},
 	getMediaUrl: function () {
 		return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));

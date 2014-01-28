@@ -1,6 +1,6 @@
 
 # api.coffee
-# for meavisa.org, by @f03lipe
+# for meavisa.org, by Felipe Aragão
 
 tumblr	= require 'tumblr'
 request = require 'request'
@@ -13,6 +13,7 @@ User = require './models/user.js'
 sendNotification = (user_id, template, callback) ->
 	access_token = process.env.facebook_access_token
 	url =  "https://graph.facebook.com/#{user_id}/notifications?access_token=#{access_token}&template=#{encodeURIComponent(template)}"
+	console.log('aqui')
 	request.post url,
 		(error, response, body) ->
 			console.log "Notification request to #{url} response:", body, error
@@ -46,9 +47,14 @@ getPostsWithTags = (blog, tags, callback) ->
 notifyNewPosts = (callback) ->
 	blog = getBlog('meavisa.tumblr.com')
 	onGetTPosts = ((posts) ->
-		onGetUsers = ((users) ->
+		onGetUsers = ((_users) ->
+			users = _.filter _users, (u) ->
+				u.notifiable and u.facebookId is process.env.facebook_me
+
+			console.log('me')
 			numUsersNotSaved = users.length
-			for user in users when user.notifiable # when user.facebookId is process.env.facebook_me
+
+			for user in users
 				tags = _.union.apply(null,
 							_.pluck \
 								_.filter(posts, (post) ->
@@ -57,15 +63,20 @@ notifyNewPosts = (callback) ->
 
 				if tags.length
 					msg = "We have updates on some of the tags you are following: "+tags.slice(0,2).join(', ')+' and more!'
-					sendNotification user.facebookId, msg
 					console.log("To #{user.name}: #{msg}")
+					sendNotification user.facebookId, msg, ->
+						# user.lastUpdate = new Date()
+						user.save (e) ->
+							numUsersNotSaved -= 1
+							if numUsersNotSaved == 0
+								callback?()
 				else
 					console.log "No updates for #{user.name}."
-				user.lastUpdate = new Date()
-				user.save (e) ->
-					numUsersNotSaved -= 1
-					if numUsersNotSaved == 0
-						callback?()
+					# user.lastUpdate = new Date()
+					user.save (e) ->
+						numUsersNotSaved -= 1
+						if numUsersNotSaved == 0
+							callback?()
 			if users.length is 0
 				console.log('No users to notify. Quitting.')
 				callback(null, [])

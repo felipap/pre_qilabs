@@ -1,13 +1,13 @@
 
 ###
 # models/post.coffee
-# for meavisa.org, by @f03lipe
+# for meavisa.org, by Felipe Aragão
 #
 # Post model.
 ###
 
 mongoose = require 'mongoose'
-crypto = require 'crypto'
+crypto = require 'crypto' 
 memjs = require 'memjs'
 _ = require 'underscore'
 
@@ -20,7 +20,6 @@ findOrCreate = require('./lib/findOrCreate')
 PostSchema = new mongoose.Schema {
 		tumblrId:			Number
 		tags:				Array
-		urlTemplate:		{ type: String,	default: '/#posts/{id}' }
 		tumblrUrl:			String
 		tumblrPostType:		String
 		date:				Date
@@ -35,7 +34,7 @@ PostSchema = new mongoose.Schema {
 
 # Virtuals
 PostSchema.virtual('path').get ->
-	@urlTemplate.replace(/{id}/, @tumblrId)
+	"/#posts/{id}".replace(/{id}/, @tumblrId)
 
 getPostsWithTags = (tags, callback) ->
 

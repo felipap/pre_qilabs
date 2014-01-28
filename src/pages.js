@@ -74,14 +74,7 @@ module.exports = {
     methods: {
       get: function(req, res) {
         if (req.user) {
-          req.user.lastUpdate = new Date();
-          req.user.save();
-          return Tag.getAll(function(err, tags) {
-            return res.render('pages/home', {
-              user: req.user,
-              tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
-            });
-          });
+          return res.redirect('/feed');
         } else {
           return User.find().sort({
             '_id': 'descending'
@@ -97,6 +90,39 @@ module.exports = {
       }
     }
   },
+  '/feed': {
+    name: 'index',
+    methods: {
+      get: [
+        require.isLogged, function(req, res) {
+          if (req.user) {
+            req.user.lastUpdate = new Date();
+            req.user.save();
+            return Tag.getAll(function(err, tags) {
+              return res.render('pages/home', {
+                user: req.user,
+                tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
+              });
+            });
+          } else {
+            return User.find().sort({
+              '_id': 'descending'
+            }).limit(10).find(function(err, data) {
+              return res.render('pages/frontpage', {
+                latestSignIns: data
+              });
+            });
+          }
+        }
+      ],
+      post: function(req, res) {
+        return res.end('<html><head></head><body><script type="text/javascript">' + 'window.top.location="http://meavisa.herokuapp.com"</script>' + '</body></html>');
+      }
+    }
+  },
+  '/sobre': staticPage('pages/about', 'about'),
+  '/equipe': staticPage('pages/team', 'team'),
+  '/participe': staticPage('pages/join-team', 'join-team'),
   '/painel': {
     name: 'panel',
     methods: {
@@ -109,13 +135,23 @@ module.exports = {
       ]
     }
   },
-  '/sobre': staticPage('pages/about', 'about'),
-  '/equipe': staticPage('pages/team', 'team'),
-  '/participe': staticPage('pages/join-team', 'join-team'),
   '/tags/:tag': {
     methods: {
       get: function(req, res) {}
     }
+  },
+  '/p/:user': {
+    methods: {
+      get: function(req, res) {
+        return res.render('pages/profile', {
+          user: req.user,
+          profile: {
+            user: req.user
+          }
+        });
+      }
+    },
+    name: 'profile'
   },
   '/api': {
     children: {
@@ -294,11 +330,11 @@ module.exports = {
               if ('off' === req.query.notifiable) {
                 req.user.notifiable = false;
                 req.user.save();
-              } else if (typeof req.query.notifiable === 'array' && __indexOf.call(req.query.notifiable, 'on') >= 0) {
+              } else if (__indexOf.call(req.query.notifiable, 'on') >= 0) {
                 req.user.notifiable = true;
                 req.user.save();
               }
-              console.log(req.user.notifiable, req.query.notifiable);
+              console.log(req.user.notifiable, req.query.notifiable, typeof req.query.notifiable);
               return res.end();
             }
           ]

@@ -2,18 +2,7 @@
 # pushPosts.coffee
 # This is a job. It pushes new posts to the database.
 
-if module is require.main
-	# If being executed directly...
-	# > load keys
-	try require('../src/env.js') catch e
-	# > open database
-	mongoose = require 'mongoose'
-	mongoUri = process.env.MONGOLAB_URI or process.env.MONGOHQ_URL or 'mongodb://localhost/madb'
-	mongoose.connect(mongoUri)
-	# ready to go
-	require('../src/api.js').pushNewPosts ->
-		# Close database at the end.
-		# Otherwise, the script won't close.
-		mongoose.connection.close()
-else
-	throw "This module is supposed to be executed as a job."
+jobber = require('./jobber.js')((e) ->
+	require('../src/models/post.js').fetchNew ->
+		e.quit(true)
+).start()

@@ -66,13 +66,7 @@ module.exports = {
 		methods: {
 			get: (req, res) ->
 				if req.user
-					# console.log('logged:', req.user.name, req.user.tags)
-					req.user.lastUpdate = new Date()
-					req.user.save()
-					Tag.getAll (err, tags) ->
-						res.render 'pages/home',
-								user: req.user
-								tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
+					res.redirect('/feed')
 				else
 					User.find()
 						.sort({'_id': 'descending'})
@@ -90,6 +84,40 @@ module.exports = {
 
 		}
 	},
+
+	'/feed': {
+		name: 'index',
+		methods: {
+			get: [require.isLogged, (req, res) ->
+				if req.user
+					# console.log('logged:', req.user.name, req.user.tags)
+					req.user.lastUpdate = new Date()
+					req.user.save()
+					Tag.getAll (err, tags) ->
+						res.render 'pages/home',
+								user: req.user
+								tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
+				else
+					User.find()
+						.sort({'_id': 'descending'})
+						.limit(10)
+						.find((err, data) ->
+							res.render 'pages/frontpage',
+								latestSignIns: data
+							)
+			],
+			post: (req, res) ->
+				# Redirect from frame inside Facebook?
+				res.end('<html><head></head><body><script type="text/javascript">'+
+						'window.top.location="http://meavisa.herokuapp.com"</script>'+
+						'</body></html>')
+		}
+	},
+
+	'/sobre': 		staticPage('pages/about', 'about'),
+	'/equipe': 		staticPage('pages/team', 'team'),
+	'/participe': 	staticPage('pages/join-team', 'join-team'),
+
 	'/painel': {
 		name: 'panel',
 		methods: {
@@ -100,14 +128,24 @@ module.exports = {
 			]
 		}
 	},
-	'/sobre': 	staticPage('pages/about', 'about'),
-	'/equipe': 	staticPage('pages/team', 'team'),
-	'/participe': 	staticPage('pages/join-team', 'join-team'),
 
 	'/tags/:tag': {
 		methods: {
 			get: (req, res) ->
 		}
+	},
+
+	'/p/:user': {
+		methods: {
+			get: (req, res) ->
+				res.render('pages/profile', {
+					user: req.user,
+					profile: {
+						user: req.user # req.params.user
+					},
+				})
+		},
+		name: 'profile'
 	},
 
 	'/api': {
@@ -258,12 +296,11 @@ module.exports = {
 							if 'off' is req.query.notifiable
 								req.user.notifiable = off
 								req.user.save()
-							else if typeof req.query.notifiable is 'array' and
-							'on' in req.query.notifiable
+							else if 'on' in req.query.notifiable
 								req.user.notifiable = on
 								req.user.save()
 
-							console.log(req.user.notifiable, req.query.notifiable)
+							console.log(req.user.notifiable, req.query.notifiable, typeof req.query.notifiable)
 							res.end()
 						]
 				},

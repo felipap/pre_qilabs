@@ -1,18 +1,22 @@
 
-# TODO:
+
+Potencial para AI
+- detectar tags preferidas
+-
+https://careervillage.org/about/
 
 Programming:
 
 YOMAN
 
 Versão 0.5:
-  ✔ cache @done (14-01-05 04:40)
+  ✔ cache memory @done (14-01-05 04:40)
+    ☐ study append prepend memcache
   ✔ scroolbars for #sidebar @done (14-01-05 04:40)
   ✔ flash messages @done (14-01-05 04:40)
-    ☐ Improve look & stop bootstrap depedency
   ✔ subscribe dialog for testers @done (14-01-05 04:58)
   ✔ /#post/:post pages @done (14-01-05 04:47
-    ☐ Fix Disqus (or remove it!)
+    ☐ Fix Disqus
   ✔ pagination for home page (posts) @done (14-01-14 05:58)
   ☐ /#tag/:tag pages
   ☐ feedback system (uservoice?)
@@ -24,7 +28,12 @@ Versão 0.5:
     ☐ Usuário desde ... 
     ☐ Participou
     ☐ Editor?
-    ☐ Badges
+    ☐ Badges!! <<<< 
+    ☐ Participou de "Olimpíada X de M"
+    ☐ Blog: "Como estudar"
+
+ Design:
+   ☐ Improve flash messages look & stop bootstrap depedency
 
 Versão 1.0:
   ☐ páginas automatizadas para cada tag, com estatísticas de uso

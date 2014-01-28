@@ -46,16 +46,12 @@ module.exports = function(grunt) {
 		},
 		
 		less: {
-			frontpage: {
-				files: { 'src/static/css/frontpage.min.css':'src/static/less/views/frontpage.less' },
-				options: { cleancss: true },
-			},
-			home: {
-				files: { 'src/static/css/home.min.css':'src/static/less/views/home.less' },
-				options: { cleancss: true },
-			},
-			default_pages: {
-				files: { 'src/static/css/default_pages.min.css':'src/static/less/views/default_pages.less' },
+			dist: {
+				files: {
+					'src/static/css/default_pages.min.css':'src/static/less/views/default_pages.less',
+					'src/static/css/frontpage.min.css':'src/static/less/views/frontpage.less',
+					'src/static/css/home.min.css':'src/static/less/views/home.less',
+				},
 				options: { cleancss: true },
 			},
 		},

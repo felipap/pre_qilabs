@@ -12,6 +12,7 @@ sendNotification = function(user_id, template, callback) {
   var access_token, url;
   access_token = process.env.facebook_access_token;
   url = "https://graph.facebook.com/" + user_id + "/notifications?access_token=" + access_token + "&template=" + (encodeURIComponent(template));
+  console.log('aqui');
   return request.post(url, function(error, response, body) {
     console.log("Notification request to " + url + " response:", body, error);
     return typeof callback === "function" ? callback(error, response, body) : void 0;
@@ -60,31 +61,38 @@ notifyNewPosts = function(callback) {
   blog = getBlog('meavisa.tumblr.com');
   onGetTPosts = (function(posts) {
     var onGetUsers;
-    onGetUsers = (function(users) {
-      var msg, numUsersNotSaved, tags, user, _i, _len;
+    onGetUsers = (function(_users) {
+      var msg, numUsersNotSaved, tags, user, users, _i, _len;
+      users = _.filter(_users, function(u) {
+        return u.notifiable && u.facebookId === process.env.facebook_me;
+      });
+      console.log('me');
       numUsersNotSaved = users.length;
       for (_i = 0, _len = users.length; _i < _len; _i++) {
         user = users[_i];
-        if (!user.notifiable) {
-          continue;
-        }
         tags = _.union.apply(null, _.pluck(_.filter(posts, function(post) {
           return new Date(post.date) > new Date(user.lastUpdate);
         }), 'tags'));
         if (tags.length) {
           msg = "We have updates on some of the tags you are following: " + tags.slice(0, 2).join(', ') + ' and more!';
-          sendNotification(user.facebookId, msg);
           console.log("To " + user.name + ": " + msg);
+          sendNotification(user.facebookId, msg, function() {
+            return user.save(function(e) {
+              numUsersNotSaved -= 1;
+              if (numUsersNotSaved === 0) {
+                return typeof callback === "function" ? callback() : void 0;
+              }
+            });
+          });
         } else {
           console.log("No updates for " + user.name + ".");
+          user.save(function(e) {
+            numUsersNotSaved -= 1;
+            if (numUsersNotSaved === 0) {
+              return typeof callback === "function" ? callback() : void 0;
+            }
+          });
         }
-        user.lastUpdate = new Date();
-        user.save(function(e) {
-          numUsersNotSaved -= 1;
-          if (numUsersNotSaved === 0) {
-            return typeof callback === "function" ? callback() : void 0;
-          }
-        });
       }
       if (users.length === 0) {
         console.log('No users to notify. Quitting.');

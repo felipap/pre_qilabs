@@ -2,18 +2,7 @@
 # notify.coffee
 # This is a job. It notifies users of new posts with the tags they follow.
 
-if module is require.main
-	# If being executed directly...
-	# > load keys
-	try require('../src/env.js') catch e
-	# > open database
-	mongoose = require 'mongoose'
-	mongoUri = process.env.MONGOLAB_URI or process.env.MONGOHQ_URL or 'mongodb://localhost/madb'
-	mongoose.connect(mongoUri)
-	# ready to go
+jobber = require('./jobber.js')((e) ->
 	require('../src/api.js').notifyNewPosts ->
-		# Close database at the end.
-		# Otherwise, the script won't close.
-		mongoose.connection.close()
-else
-	throw "This module is supposed to be executed as a job."
+		e.quit(true)
+).start()

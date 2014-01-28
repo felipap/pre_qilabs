@@ -16,7 +16,7 @@ nav.bar {
 	top: 0;
 
 	body:not([data-page=front]) & {
-		border-bottom: 2px solid #DDD;
+		border-bottom: 1px solid #DDD;
 	}
 
 	.tooltip {
@@ -95,5 +95,11 @@ nav.bar {
 				box-shadow: 0 0 1px black;
 			}
 		}
+	}
+}
+
+.dialog {
+	[data-action=send-tester-email] {
+		.high-xbtn;
 	}
 }
