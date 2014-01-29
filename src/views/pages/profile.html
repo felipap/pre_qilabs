@@ -7,22 +7,20 @@
 	<% include ../layouts/navbar.html %>
 
 	<section>
-		<section>
-			<div class="col-md-10 col-md-offset-1">
-				<div class="col-md-3">
-				<span class="thumbnail" style="display: table">
-					<img alt="seu avatar" class="" src="http://t0.gstatic.com/images?q=tbn:ANd9GcQGKV8i0TkKjZJkotlQ4vOhas9Lfi6Sw4dG9ZnIk2pQnwLh7kbWOQ">
+		<section class="side">
+			<div>
+				<span class="thumbnail" style="display: inline-block; vertical-align: top; margin-right: 30px;">
+					<img alt="seu avatar" width="210" src="http://www.msnbc.com/sites/msnbc/files/x_30_lw_obamaharvard2_120822.jpg">
 				</span>
-				</div>
-				<div class="col-md-7">
+				<div class="" style="display: inline-block">
 					<table>
 						<tr>
 							<td>nome:</td>
-							<td><h3><%= profile.user.name %></h3></td>
+							<td><h3>Barack Obama</h3></td>
 						</tr>
 						<tr>
-							<td>local:</td>
-							<td><h4>Rio de Janeiro, Brasil</h4></td>
+							<td>de:</td>
+							<td><h4>Honolulu, Havaí</h4></td>
 						</tr>
 						<tr>
 							<td>idade:</td>
@@ -30,15 +28,38 @@
 						</tr>
 						<tr>
 							<td>atualmente:</td>
-							<td><h4>Centro Federal de Educação Tecnológica Celso Suckow da Fonseca</h4>
+							<td><h4>Salão Oval da Casa Branca</h4></td>
 						</tr>
 					</table>
 				</div>
 			</div>
 		</section>
+
+		<section class="piece">		
+			<div class="alert alert-warning">
+				<i class="icon-trophy"></i>
+				Venceu Eleição de Presidente dos Estados Unidos em 2008
+			</div>
+			<div class="alert alert-warning">
+				<i class="icon-trophy"></i>
+				Re-eleito Presidente dos Estados Unidos em 2012
+			</div>
+			<h3>Pode te ajudar com:</h3>
+			<ul>
+				<li>Diplomacia Internacional</li>
+				<li>Espionagem de Líderes Mundiais</li>
+			</ul>
+			<h3>Segue:</h3>
+			<span class="label label-success">Diplomacia</span>
+			<span class="label label-success">Simulações ONU</span>
+			<span class="label label-success">Presidentes</span>
+			<span class="label label-success"></span>
+			<span class="label label-success"></span>
+			<span class="label label-success"></span>
+		</section>
 	</section>
 
 	<% include ../layouts/footer.html %>
-
-	<script data-main="<%= getMediaUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	
+<script data-main="<%= getMediaUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>

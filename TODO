@@ -5,9 +5,17 @@ Potencial para AI
 -
 https://careervillage.org/about/
 
+- sat ranking => stupid idea
+
+pages for teachers
+video teach people how to do something
+
+ser um portfólio para estudantes
+
 Programming:
 
 YOMAN
+    # Be like LinkedIn for students:
 
 Versão 0.5:
   ✔ cache memory @done (14-01-05 04:40)
@@ -21,8 +29,10 @@ Versão 0.5:
   ☐ /#tag/:tag pages
   ☐ feedback system (uservoice?)
   ☐ formulário google para inscrição
+  Front page:
+    ☐ Backgrounds do Brazil e Europa
+    ☐ Adicionar ainda mais: "um portfólio para estudantes" 
   Profile page:
-    # Be like LinkedIn for students:
     ☐ "Pode te ajudar com"
       ☐ Contato por ...
     ☐ Usuário desde ... 

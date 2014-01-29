@@ -14,23 +14,9 @@ body > section {
 		.make-row;
 		margin-top: 20px;
 	}
-
-	[data-action=save] {
-		.transparent-ibtn(#2ecc71);
-		padding: 5px 10px;
-	}
-	
-	[data-action=cancel] {
-		.transparent-ibtn(#e74c3c);
-	}
-
-	[data-action=delete-account] {
-		color: #e74c3c;
-		text-decoration: none;
-	}
 }
 
-body > .paper {
+.paper () {
 
 	.container-fixed;
 	&:extend(.container);
@@ -66,9 +52,45 @@ body[data-page=panel] {
 
 		}
 	}
+
+	[data-action=save] {
+		.transparent-ibtn(#2ecc71);
+		padding: 5px 10px;
+	}
+	
+	[data-action=cancel] {
+		.transparent-ibtn(#e74c3c);
+	}
+
+	[data-action=delete-account] {
+		color: #e74c3c;
+		text-decoration: none;
+	}
 }
 
 body[data-page=profile] {
+
+	& > section {
+		margin-top: 20px;
+		.container-fixed;
+		&:extend(.container);
+
+		& > section.side {
+			.make-lg-column(5);
+		}
+
+		& > section.piece {
+
+		}
+
+		& > section {
+			background: white;
+			margin-bottom: 40px;
+			padding: 30px;
+			border: 1px solid #DDD;
+			border-bottom: 2px solid #AAA;
+		}
+	}
 	
 	tr {
 		padding-bottom: 20px;
@@ -94,7 +116,6 @@ body[data-page=profile] {
 		}
 	}
 
-
 }
 
 body[data-page=team] {
@@ -117,8 +138,4 @@ body[data-page=team] {
 			}
 		}
 	}
-}
-
-body[data-page=profile] {
-	
 }
