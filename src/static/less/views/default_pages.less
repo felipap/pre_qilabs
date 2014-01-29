@@ -71,48 +71,50 @@ body[data-page=panel] {
 body[data-page=profile] {
 
 	& > section {
-		margin-top: 20px;
 		.container-fixed;
-		&:extend(.container);
-
-		& > section.side {
-			.make-lg-column(5);
-		}
-
-		& > section.piece {
-
-		}
+		width: 960px;
 
 		& > section {
-			background: white;
-			margin-bottom: 40px;
-			padding: 30px;
-			border: 1px solid #DDD;
-			border-bottom: 2px solid #AAA;
 		}
-	}
-	
-	tr {
-		padding-bottom: 20px;
 
-		td {
-			vertical-align: top;
-			
-			h1,h2,h3,h4,h5,h6 {
-				margin: 0;
-				margin-bottom: 10px;
+		& > section.side {
+			width: 250px;
+			float: left;
+
+			.thumbnail {
+				display: table;
+				
+				img {
+					.box-shadow(0,1px,5px, 0, .5);
+				}
 			}
+
+			.info-group {
+				h1,h2,h3,h4,h5,h6 {
+					display: inline-block;
+				}
+
+				.leg {
+					font-size: 90%;
+					color: #AAA;
+				}
+			}
+
 		}
 
-		td:first-child {
-			width: 60px;
-			margin-right: 5px;
-			text-align: right;
-			color: #AAA;
-		}
+		& > section.main {
+			width: 680px;
+			float: left;
+			margin-left: 30px;
 
-		td:nth-child(2) {
-			margin-bottom: 10px;
+			& > section {
+				padding: 20px;
+				background: white;
+				margin-bottom: 20px;
+				border: 1px solid #DDD;
+				border-bottom: 2px solid #AAA;
+			}
+
 		}
 	}
 
