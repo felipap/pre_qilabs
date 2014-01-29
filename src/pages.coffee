@@ -139,10 +139,10 @@ module.exports = {
 		methods: {
 			get: (req, res) ->
 				res.render('pages/profile', {
-					user: req.user,
-					profile: {
-						user: req.user # req.params.user
-					},
+					# user: req.user,
+					# profile: {
+					# 	user: req.user # req.params.user
+					# },
 				})
 		},
 		name: 'profile'

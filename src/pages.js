@@ -143,12 +143,7 @@ module.exports = {
   '/p/:user': {
     methods: {
       get: function(req, res) {
-        return res.render('pages/profile', {
-          user: req.user,
-          profile: {
-            user: req.user
-          }
-        });
+        return res.render('pages/profile', {});
       }
     },
     name: 'profile'
