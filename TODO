@@ -17,6 +17,27 @@ Programming:
 YOMAN
     # Be like LinkedIn for students:
 
+
+ IMPRIMIR PORTFOLIO!!!!S
+
+nível de escolaridade
+formulário para colocar escolas > notas e GPA?
+
+Portfólio:
+
+  cursos:
+    tipo de curso (mestrado etc etc)
+    nome da faculdade
+    ano de início, termino
+
+idiomas
+-> testes de proficiencia
+
+habilidades especiais
+> Cartas de recomendação?
+
+conexões: amigos
+
 Versão 0.5:
   ✔ cache memory @done (14-01-05 04:40)
     ☐ study append prepend memcache

@@ -1,3 +1,4 @@
+
 <nav class="bar" role="navigation">
 	<a class="brand" href="/" tabindex="-1">
 		MeAvisa.org <sup class="version"><%= app.semantic_version %></sup>
@@ -18,7 +19,7 @@
 					title="Configurações" data-toggle="tooltip" data-placement="bottom">
 					<i class="icon-cog"></i>
 				</a><!-- 
-			 --><button data-ajax-post-href="/api/user/logout" data-action="logout">
+			 --><button data-ajax-post-href="/api/user/logout" data-redirect-href="/" data-action="logout">
 					Sair
 				</button><!-- 
 			 --><button class="hidden">

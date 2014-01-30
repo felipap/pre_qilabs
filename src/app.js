@@ -61,9 +61,15 @@ if (app.get('env') === 'development') {
 	app.use(express.logger());
 }
 
+app.use(function(req, res, next) {
+	res.locals.user = req.user;
+	next();
+});
+
 app.use(app.router);
 
 ////////////////////////////////////////////////////////////////////////
+
 
 var path = require('path');
 app.locals({

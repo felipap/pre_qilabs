@@ -60,9 +60,7 @@ staticPage = function(template, name) {
     name: name,
     methods: {
       get: function(req, res) {
-        return res.render(template, {
-          user: req.user
-        });
+        return res.render(template);
       }
     }
   };
@@ -100,7 +98,6 @@ module.exports = {
             req.user.save();
             return Tag.getAll(function(err, tags) {
               return res.render('pages/home', {
-                user: req.user,
                 tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
               });
             });
@@ -128,9 +125,7 @@ module.exports = {
     methods: {
       get: [
         require.isLogged, function(req, res) {
-          return res.render('pages/panel', {
-            user: req.user
-          });
+          return res.render('pages/panel', {});
         }
       ]
     }

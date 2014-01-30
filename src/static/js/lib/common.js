@@ -4,10 +4,14 @@
 require(['jquery','bootstrap'], function ($) {
 
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
-		var href = this.dataset['ajaxPostHref'];
+		var href = this.dataset['ajaxPostHref'],
+			redirect = this.dataset['redirectHref'];
 		console.log(this.dataset, href);
 		$.post(href, function () {
-			window.location.reload();
+			if (redirect)
+				window.location.href = redirect;
+			else
+				window.location.reload();
 		});
 	});
 

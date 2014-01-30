@@ -54,9 +54,7 @@ staticPage = (template, name) ->
 		name: name
 		methods: {
 			get: (req, res) -> 
-				res.render(template, {
-					user: req.user
-				})
+				res.render(template)
 		}
 	}
 
@@ -95,7 +93,6 @@ module.exports = {
 					req.user.save()
 					Tag.getAll (err, tags) ->
 						res.render 'pages/home',
-								user: req.user
 								tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
 				else
 					User.find()
@@ -122,9 +119,7 @@ module.exports = {
 		name: 'panel',
 		methods: {
 			get: [require.isLogged, (req, res) ->
-				res.render('pages/panel', {
-					user: req.user
-				})
+				res.render('pages/panel', {})
 			]
 		}
 	},
