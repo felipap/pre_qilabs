@@ -15,7 +15,7 @@
 		{ label:'Massachusetts Institute of Technology, Boston, USA', source:'u/mit.jpg'},
 		{ label:'Stanford University, Santa Clara, USA', source:'u/sta.jpg'},
 	//	{ label:'Duke University, Durham, USA', source:'u/duk.jpg'},
-	//	{ label:'Universidade de São Paulo', source: 'u/usp.jpg'},
+		{ label:'Universidade de São Paulo, São Paulo', source: 'u/usp.jpg'},
 		{ label:'Universidade Estadual de Campinas, São Paulo', source: 'u/unc.jpg'},
 	// UNICAMP
 	// UFRJ
@@ -85,14 +85,14 @@
 					<img width=230 src="<%=getMediaUrl('images/fe.png')%>"></img>
 				</a>
 			</li>
-			<li>
+ -->			<li>
 				<a href="https://www.facebook.com/duxrio" title="Dux Institute">
-					<img width=200 src="<%=getMediaUrl('images/di.jpg')%>"></img>
+					<img width=200 src="<%= getMediaUrl('images/di.jpg') %>"></img>
 				</a>
 			</li>
- --> 			<li>
+ 			<li>
  				<a href="http://turmacidada.org" title="Turma Cidadã Brasil">
-					<img width=150 src="<%=getMediaUrl('images/tc.png')%>"></img>
+					<img width=150 src="<%= getMediaUrl('images/tc.png') %>"></img>
 				</a>
 			</li>
 		</section>
@@ -104,7 +104,7 @@
 			<% for (var i2=0; i2++<10;) { %>
 			<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
 			<li>
-					<img src="<%=user.avatarUrl%>"></img>
+					<img src="<%= user.avatarUrl %>"></img>
 			</li>
 			<% } %>
 			<% } %>
