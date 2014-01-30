@@ -110,16 +110,23 @@ nav.bar {
 		}
 	}
 
-	dfn {
-		position: absolute;
+	dfn, .credits {
 		font-family: "Open Sans";
 		font-size: 13px;
 		font-style: normal;
 		font-weight: 500;
 		color: white;
+		position: absolute;
+	}
+	.credits {
+		left: 15px;
+		color: #AAA;
+		bottom: 15px;
+	}
+	dfn {
+		.text-shadow(2px, .6);
 		right: 15px;
 		bottom: 15px;
-		.text-shadow(2px, .6);
 	}
 }
 

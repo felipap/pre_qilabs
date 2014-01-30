@@ -9,18 +9,50 @@
 
 	<%
 	var bgs = [
-		{ label:'Harvard University, Boston, USA', source:'u/hav.jpg'},
-		{ label:'Columbia University, New York, USA', source:'u/col.jpg'},
-		{ label:'Yale University Library, Durham, USA', source:'u/yal.jpg'},
-		{ label:'Massachusetts Institute of Technology, Boston, USA', source:'u/mit.jpg'},
-		{ label:'Stanford University, Santa Clara, USA', source:'u/sta.jpg'},
-	//	{ label:'Duke University, Durham, USA', source:'u/duk.jpg'},
-		{ label:'Universidade de São Paulo, São Paulo', source: 'u/usp.jpg'},
-		{ label:'Universidade Estadual de Campinas, São Paulo', source: 'u/unc.jpg'},
+		{ 
+			label:'Harvard University, Boston, USA',
+			source:'u/hav.jpg',
+			credits: '',
+		},
+		{ 
+			label:'Columbia University, New York, USA',
+			source:'u/col.jpg',
+			credits: '',
+		},
+		{ 
+			label:'Yale University Library, Durham, USA',
+			source:'u/yal.jpg',
+			credits: '',
+		},
+		{ 
+			label:'Massachusetts Institute of Technology, Boston, USA',
+			source:'u/mit.jpg',
+			credits: '',
+		},
+		{ 
+			label:'Stanford University, Santa Clara, USA',
+			source:'u/sta.jpg',
+			credits: '',
+		},
+		{
+			label:'Duke University, Durham, USA',
+			source:'u/duk.jpg',
+			credits: '',
+		},
+		{ 
+			label:'Escola de Engenharia da Universidade de São Paulo, São Paulo',
+			source: 'u/usp.jpg',
+			credits: 'Marcos Santos / USP Imagens',
+		},
+		{ 
+			label:'Universidade Estadual de Campinas (UNICAMP), São Paulo',
+			source: 'u/unc.jpg',
+			credits: '',
+		},
+	];
 	// UNICAMP
 	// UFRJ
 	// UFMG
-	];
 	var sel_bg = bgs[Math.floor(bgs.length*Math.random())];
 	%>
 	<section id="jumbo" style="background-image: url(<%= getMediaUrl('images/'+sel_bg.source) %>);">
@@ -42,6 +74,9 @@
 					Faça Parte do Time
 				</a>
 			</section>
+		</div>
+		<div class="credits">
+			<%= sel_bg.credits %>
 		</div>
 		<dfn>
 			<%= sel_bg.label %>
