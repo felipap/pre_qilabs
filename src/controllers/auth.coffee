@@ -2,14 +2,12 @@
 passport = require 'passport'
 
 # Starts at /auth
-module.exports = {
-	'facebook/callback': {
-		methods: {
-			get: passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }),
-		}
-	},
+module.exports =
+	children: 
+		'facebook/callback':
+			methods: {
+				get: passport.authenticate('facebook', { successRedirect: '/', failureRedirect: '/login' }),
+			}
 
-	'facebook': {
-		methods: { get: passport.authenticate('facebook') }
-	}
-}
+		'/facebook':
+			methods: { get: passport.authenticate('facebook') }

@@ -5,9 +5,6 @@
 	</a>
 		<% if (typeof user !== "undefined") { %>
 			<ul class="nav navbar-nav">
-				<button data-hash="nos-avisa" data-action="nos-avisa" data-toggle="dialog">
-					Avisa Pra Gente!
-				</button>
 			</ul>
 			<ul class="nav navbar-nav pull-right">
 				<button class="plain-btn"
@@ -18,9 +15,9 @@
 			 --><a href="<%= getPageUrl('panel') %>" class="plain-btn"
 					title="Configurações" data-toggle="tooltip" data-placement="bottom">
 					<i class="icon-cog"></i>
-				</a><!-- 
-			 --><button data-ajax-post-href="/api/user/logout" data-redirect-href="/" data-action="logout">
-					Sair
+				</a><!--
+			 --><button data-hash="nos-avisa" data-action="nos-avisa" data-toggle="dialog">
+					Avisa Pra Gente!
 				</button><!-- 
 			 --><button class="hidden">
 					<i class="icon-search"></i>
@@ -29,11 +26,35 @@
 					title="Ajuda" data-toggle="tooltip" data-placement="bottom">
 					<i class="icon-question"></i>
 				</a><!-- 
-			 --><a href="<%= getPageUrl('profile', user.id) %>" class="avatar-btn"
-					title="Seu Perfil" data-toggle="tooltip" data-placement="bottom">
-					<img id="avatarDd" alt="seu avatar" width=45 class="" src="<%= user.avatarUrl %>" />
-					<i></i>
-				</a>
+			 --><li class="menu-dd" class="dropdown">
+				 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle"
+						>
+						<img id="avatarDd" alt="seu avatar" width=45 class="" src="<%= user.avatarUrl %>" />
+						<i></i>
+						<b class="caret"></b>
+					</div>
+					<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+						<li role="presentation">
+							<a role="menuitem" tabindex="-1" href="<%= getPageUrl('profile', user.id) %>">
+								Meu Perfil
+							</a>
+						</li>
+						<li role="presentation">
+							<a role="menuitem"  tabindex="-1" href="<%= getPageUrl('panel') %>">
+								Configurações
+							</a>
+						</li>
+						<li role="presentation" class="divider"></li>
+						<li role="presentation">
+							<a role="menuitem" tabindex="-1" href="<%= getPageUrl('help') %>">
+								Ajuda e FAQ
+							</a>
+						</li>
+						<li role="presentation">
+							<a role="menuitem" tabindex="-1" data-ajax-post-href="/api/user/logout" data-redirect-href="/">Log Out</a>
+						</li>
+					</ul>
+				</li>
 			</ul>
 		<% } else { %>
 			<ul class="nav navbar-nav pull-right">

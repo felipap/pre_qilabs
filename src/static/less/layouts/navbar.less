@@ -1,14 +1,16 @@
 
 @import "../common.less";
 
+@-navbar-padding: 3px;
+@real-navbar-height: @navbar-height+2*@-navbar-padding;
+
 nav.bar {
 	.navbar;
 	&:extend(.navbar);
 	
 	border-radius: 0 !important;
-	padding-top: 5px;
 	margin-top: -1px;
-	padding-bottom: 5px;
+	padding: @-navbar-padding 10px;
 	margin-bottom: 0;
 	background: white;
 	z-index: 5;
@@ -30,14 +32,21 @@ nav.bar {
 	@compColor: #777;
 
 	.brand {
-		.navbar-brand;
 		.unselectable;
+
 		color: @BrandColor;
 		cursor: pointer;
-		overflow: hidden;
 		font-family: @BrandFontFamily;
 		font-size: 30px;
 		outline: none !important;
+
+		padding: 0;
+		line-height: @navbar-height;
+		vertical-align: middle;
+
+		&:focus, &:hover {
+			text-decoration: none;
+		}
 
 		.version {
 			font-size: 20px;
@@ -82,18 +91,35 @@ nav.bar {
 			font-size: 13px;
 		}
 
-		.avatar-btn {
-			.reset-button;
-			margin-top: 2px;
-			margin-right: 10px;
-			position: relative;
+		.menu-dd {
 			display: inline-block;
-			
-			& > img {
-				border-radius: 30px;
-				margin-right: 5px;
-				box-shadow: 0 0 1px black;
+			.avatar-btn {
+				.reset-button;
+				cursor: pointer;
+				margin-top: 0px;
+				position: relative;
+				display: inline-block;
+				
+				& > img {
+					border-radius: 30px;
+					box-shadow: 0 0 1px black;
+				}
 			}
+
+			.dropdown-menu {
+				left: auto;
+				right: 0;
+				li a {
+					cursor: pointer;
+					font-size: 12px;
+					margin: 0 3px;
+					&:hover {
+						background: @COLOR1;
+						color: white;
+					}
+				}
+			}
+		
 		}
 	}
 }
