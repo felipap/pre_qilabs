@@ -3,73 +3,71 @@
 	<a class="brand" href="/" tabindex="-1">
 		MeAvisa.org <sup class="version"><%= app.semantic_version %></sup>
 	</a>
-		<% if (typeof user !== "undefined") { %>
-			<ul class="nav navbar-nav">
-			</ul>
-			<ul class="nav navbar-nav pull-right">
-				<button class="plain-btn"
-					onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
-					title="Temos 0 updates para você" data-toggle="tooltip" data-placement="bottom">
-					<i class="icon-bell"></i>
-				</button><!-- 
-			 --><a href="<%= getPageUrl('panel') %>" class="plain-btn"
-					title="Configurações" data-toggle="tooltip" data-placement="bottom">
-					<i class="icon-cog"></i>
-				</a><!--
-			 --><button data-hash="nos-avisa" data-action="nos-avisa" data-toggle="dialog">
-					Avisa Pra Gente!
-				</button><!-- 
-			 --><button class="hidden">
-					<i class="icon-search"></i>
-				</button><!-- 
-			 --><a href="<%= getPageUrl('about') %>" class="plain-btn"
-					title="Ajuda" data-toggle="tooltip" data-placement="bottom">
-					<i class="icon-question"></i>
-				</a><!-- 
-			 --><li class="menu-dd" class="dropdown">
-				 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle"
-						>
-						<img id="avatarDd" alt="seu avatar" width=45 class="" src="<%= user.avatarUrl %>" />
-						<i></i>
-						<b class="caret"></b>
-					</div>
-					<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
-						<li role="presentation">
-							<a role="menuitem" tabindex="-1" href="<%= getPageUrl('profile', user.id) %>">
-								Meu Perfil
-							</a>
-						</li>
-						<li role="presentation">
-							<a role="menuitem"  tabindex="-1" href="<%= getPageUrl('panel') %>">
-								Configurações
-							</a>
-						</li>
-						<li role="presentation" class="divider"></li>
-						<li role="presentation">
-							<a role="menuitem" tabindex="-1" href="<%= getPageUrl('help') %>">
-								Ajuda e FAQ
-							</a>
-						</li>
-						<li role="presentation">
-							<a role="menuitem" tabindex="-1" data-ajax-post-href="/api/user/logout" data-redirect-href="/">Log Out</a>
-						</li>
-					</ul>
-				</li>
-			</ul>
-		<% } else { %>
-			<ul class="nav navbar-nav pull-right">
-				<a data-action="show-signin" href="#signin" data-toggle="dialog">
-					<strong>SEJA UM EARLY-TESTER</strong>
-				</a>
-				<a href="/auth/facebook" class="plain-btn" data-action="login">
-					Entrar
-				</a>
-				<a href="<%= getPageUrl('about') %>" class="plain-btn">
-					<i class="icon-question"></i>
-				</a>
-			</ul>
-		<% } %>
-	</div>
+
+	<% if (typeof user !== "undefined") { %>
+		<ul class="nav navbar-nav"><!-- 
+		 --><button data-hash="nos-avisa" data-action="nos-avisa" data-toggle="dialog">
+				Avisa Pra Gente!
+			</button><!-- 
+		 --></ul>
+		<ul class="nav navbar-nav pull-right">
+			<button class="plain-btn bell-btn"
+				onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
+				title="Temos 0 updates para você" data-toggle="tooltip" data-placement="bottom">
+				<i class="icon-bell"></i><sup id="count" class="badge">2</sup>
+			</button><!-- 
+		 --><a href="<%= getPageUrl('panel') %>" class="plain-btn"
+				title="Configurações de conta" data-toggle="tooltip" data-placement="bottom">
+				<i class="icon-cog"></i>
+			</a><!--
+		 --><button class="hidden">
+				<i class="icon-search"></i>
+			</button><!-- 
+		 --><li class="menu-dd" class="dropdown">
+			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle"
+					>
+					<img id="avatarDd" alt="seu avatar" width=45 class="" src="<%= user.avatarUrl %>" />
+					<i></i>
+					<b class="caret"></b>
+				</div>
+				<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" href="<%= getPageUrl('profile', user.id) %>">
+							<i class="icon-user"></i> Meu Perfil
+						</a>
+					</li>
+					<li role="presentation">
+						<a role="menuitem"  tabindex="-1" href="<%= getPageUrl('panel') %>">
+							<i class="icon-cog"></i> Configurações
+						</a>
+					</li>
+					<li role="presentation" class="divider"></li>
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" href="<%= getPageUrl('about') %>">
+							<i class="icon-question"></i> Ajuda e FAQ
+						</a>
+					</li>
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" data-ajax-post-href="/api/user/logout" data-redirect-href="/">
+							<i class="icon-sign-out"></i> Log Out
+						</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	<% } else { %>
+		<ul class="nav navbar-nav pull-right">
+			<a data-action="show-signin" href="#signin" data-toggle="dialog">
+				<strong>SEJA UM EARLY-TESTER</strong>
+			</a>
+			<a href="/auth/facebook" class="plain-btn" data-action="login">
+				Entrar
+			</a>
+			<a href="<%= getPageUrl('about') %>" class="plain-btn">
+				<i class="icon-question"></i>
+			</a>
+		</ul>
+	<% } %>
 </nav>
 
 

@@ -33,16 +33,16 @@ nav.bar {
 
 	.brand {
 		.unselectable;
-
+		float: left;
+		font-size: 30px;
+		line-height: @navbar-height;
+		margin-right: 15px;
+		vertical-align: middle;
+		
 		color: @BrandColor;
 		cursor: pointer;
 		font-family: @BrandFontFamily;
-		font-size: 30px;
 		outline: none !important;
-
-		padding: 0;
-		line-height: @navbar-height;
-		vertical-align: middle;
 
 		&:focus, &:hover {
 			text-decoration: none;
@@ -62,6 +62,19 @@ nav.bar {
 
 		margin: 0 !important;
 		height: @navbar-height;
+	
+		.bell-btn {
+			position: relative;
+			#count {
+				background: @COLOR2;
+				font-size: 10px;
+				float: right;
+				position: absolute;
+				top: 2px;
+				right: 6px;
+				.box-shadow(0,0,2px,1);
+			}
+		}
 		
 		.plain-btn {
 			.btn0;
@@ -93,10 +106,12 @@ nav.bar {
 
 		.menu-dd {
 			display: inline-block;
+			margin-left: 5px;
+
 			.avatar-btn {
 				.reset-button;
 				cursor: pointer;
-				margin-top: 0px;
+				margin-top: 3px;
 				position: relative;
 				display: inline-block;
 				
@@ -109,13 +124,19 @@ nav.bar {
 			.dropdown-menu {
 				left: auto;
 				right: 0;
+				padding: 3px;
+				.rounded(3px);
 				li a {
 					cursor: pointer;
+					.rounded(1px);
 					font-size: 12px;
-					margin: 0 3px;
 					&:hover {
 						background: @COLOR1;
 						color: white;
+					}
+					i {
+						font-size: 13px;
+						margin-right: 3px;
 					}
 				}
 			}
