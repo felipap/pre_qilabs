@@ -1,44 +1,52 @@
 
+Brainstorming:
 
-Potencial para AI
-- detectar tags preferidas
--
-https://careervillage.org/about/
+Be like LinkedIn for students
 
-- sat ranking => stupid idea
+COISAS para implementar: Jonny e ninja:
+  ☐ Detecção de tags ideias para usuário (questionário na hora de cadastro)
+  ☐ Compartilhar das redes sociais nos posts
+  ☐ dal em mysql
 
 pages for teachers
 video teach people how to do something
 
-ser um portfólio para estudantes
-
-Programming:
-
-YOMAN
-    # Be like LinkedIn for students:
-
-
- IMPRIMIR PORTFOLIO!!!!S
-
-nível de escolaridade
-formulário para colocar escolas > notas e GPA?
-
 Portfólio:
+Objetivo: ser um portfólio para estudantes
+
+conexões: amigos, follow, unfollow, followers
+DEIXAR IMPRIMIR PORTFOLIO!!!!S
+nível de escolaridade
+formulário para colocar escolas > notas e GPA e SAT?
+'essays?' > peça uma essay para essa pessoa
+essays padrão
+
+equivalent of karma for students = ?
+- sat ranking => stupid idea
 
   cursos:
-    tipo de curso (mestrado etc etc)
-    nome da faculdade
-    ano de início, termino
+    ☐ tipo de curso (mestrado etc etc)
+    ☐ nome da faculdade
+    ☐ ano de início, termino
 
+  ☐ "Pode te ajudar com"
+    ☐ Contato por ...
+  ☐ Usuário desde ... 
+  ☐ Participou
+  ☐ Editor?
+  ☐ Badges
+    atrair os bons lol
+    ☐ verificação para importantes: internacionais, nacionais talvez
+  ☐ Participou de "Olimpíada X de M"
+  ☐ Blog: "Como estudar"
 idiomas
 -> testes de proficiencia
 
 habilidades especiais
 > Cartas de recomendação?
 
-conexões: amigos
 
-Versão 0.5:
+Programação:
   ✔ cache memory @done (14-01-05 04:40)
     ☐ study append prepend memcache
   ✔ scroolbars for #sidebar @done (14-01-05 04:40)
@@ -53,50 +61,37 @@ Versão 0.5:
   Front page:
     ☐ Backgrounds do Brazil e Europa
     ☐ Adicionar ainda mais: "um portfólio para estudantes" 
-  Profile page:
-    ☐ "Pode te ajudar com"
-      ☐ Contato por ...
-    ☐ Usuário desde ... 
-    ☐ Participou
-    ☐ Editor?
-    ☐ Badges!! <<<< 
-    ☐ Participou de "Olimpíada X de M"
-    ☐ Blog: "Como estudar"
+   About pages:
+     https://careervillage.org/about/
 
- Design:
-   ☐ Improve flash messages look & stop bootstrap depedency
-
-Versão 1.0:
   ☐ páginas automatizadas para cada tag, com estatísticas de uso
   ✔ Botão de "Nos Avise!" @done (14-01-16 11:19)
     ☐ Formulário insite
   ☐ 'source:' para posts <= vai precisar de algo a mais pro tumblr
 
-Versão 2.0:
- ☐ perfis pessoais para usuários
- ☐ support RSS
- ☐ página para editores <= incentivo. "essa pessoa é reponsável por essas tags"
+ Design:
+   ☐ Improve flash messages look & stop bootstrap depedency
 
 Futuro Muito Distante:
+ ☐ página para editores <= incentivo. "essa pessoa é reponsável por essas tags"
+ ☐ suportar RSS
  ☐ admin panel e editor panel https://drywall.nodejitsu.com
  ☐ calendario pessoal para usuários saberem as datas <<< SAPORRA TÁ VIRANDO APPLYKIT
  ☐ estatísticas na página de cada tag
  ☐ separação por região <= linkar com quiz inicial ?
 
 Improve (ignore this): 
- ☐ more bgs and solve licensing problem
  ☐ (improve) flash messages design
  ☐ (improve) 400 and 500 pages
 
----- ✄ -----------------------
-Business:
-- Contas Twitter e Facebook
-- personal support ("você pode falar com essa pessoa sobre preparação para OBM")
-- contas individuais para cada sessão? "Meavisa Concursos, Meavisa Olimpíadas"
-- newsletter e blog
-
 IDEIAS:
-- quiz inicial, para determinar tags interessantes para a pessoa (que são ativadas - colocar mensagem avisando)
 - em cada tag, explicar o que significa (principalmente em caso de olimpíadas) <= "esses usuários já participaram, pode pedir ajuda a eles"
-- botão de "Mande conteúdo pra gente!", com um formulário pre-definido ("que tipo de conteúdo?" - olimpiadas, oportunidade etc)
-- na página de participe "sou instituição" "sou pessoa física <- 'geralmente é esse aqui
+- botão de "Mande conteúdo pra gente!", com um formulário pre-definido ("que tipo de conteúdo?" olimpiadas, oportunidade etc) : mande conteúdo com essa tag
+- na página de participe "sou instituição" "sou pessoa física" "sou professor"
+
+---- ✄ -----------------------
+- personal support ("você pode falar com essa pessoa sobre preparação para OBM")
+Business:
+ ☐ Contas Twitter e Facebook
+     contas individuais para cada sessão?: "Meavisa Concursos, Meavisa Olimpíadas"
+ ☐ newsletter (usar algum sistema já existente - caro?) e blog

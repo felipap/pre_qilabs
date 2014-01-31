@@ -1,0 +1,233 @@
+var Post, Subscriber, Tag, User, required,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+User = require('../models/user.js');
+
+Post = require('../models/post.js');
+
+Tag = require('../models/tag.js');
+
+Subscriber = require('../models/subscriber.js');
+
+required = require('../lib/required.js');
+
+module.exports = {
+  children: {
+    'dropall': {
+      methods: {
+        get: [
+          required.isMe, function(req, res) {
+            var waiting;
+            waiting = 3;
+            User.remove({
+              id: 'a'
+            }, function(err) {
+              res.write("users removed");
+              if (!--waiting) {
+                return res.end(err);
+              }
+            });
+            Post.remove({
+              id: 'a'
+            }, function(err) {
+              res.write("\nposts removed");
+              if (!--waiting) {
+                return res.end(err);
+              }
+            });
+            return Tag.remove({
+              id: 'a'
+            }, function(err) {
+              res.write("\nposts removed");
+              if (!--waiting) {
+                return res.end(err);
+              }
+            });
+          }
+        ]
+      }
+    },
+    'session': {
+      methods: {
+        get: [
+          required.isMe, function(req, res) {
+            if (!req.user || req.user.facebookId !== process.env.facebook_me) {
+              return res.redirect('/');
+            }
+            return User.find({}, function(err, users) {
+              return Post.find({}, function(err, posts) {
+                return Subscriber.find({}, function(err, subscribers) {
+                  return Tag.getAll(function(err, tags) {
+                    var obj;
+                    obj = {
+                      ip: req.ip,
+                      session: req.session,
+                      users: users,
+                      tags: tags,
+                      posts: posts,
+                      subscribers: subscribers
+                    };
+                    return res.end(JSON.stringify(obj));
+                  });
+                });
+              });
+            });
+          }
+        ]
+      }
+    },
+    'testers': {
+      methods: {
+        post: [
+          required.logout, function(req, res) {
+            var errors;
+            req.assert('email', 'Email inválido.').notEmpty().isEmail();
+            if (errors = req.validationErrors()) {
+              console.log('invalid', errors);
+              req.flash('warn', 'Parece que esse email que você digitou é inválido. :O &nbsp;');
+              return res.redirect('/');
+            } else {
+              return Subscriber.findOrCreate({
+                email: req.body.email
+              }, function(err, doc, isNew) {
+                if (err) {
+                  req.flash('warn', 'Tivemos problemas para processar o seu email. :O &nbsp;');
+                } else if (!isNew) {
+                  req.flash('info', 'Ops. Seu email já estava aqui! Adicionamos ele à lista de prioridades. :) &nbsp;');
+                } else {
+                  req.flash('info', 'Sucesso! Entraremos em contato. \o/ &nbsp;');
+                }
+                return res.redirect('/');
+              });
+            }
+          }
+        ]
+      }
+    },
+    'tags': {
+      methods: {
+        get: [
+          required.login, function(req, res) {
+            return res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)));
+          }
+        ],
+        post: [
+          required.login, function(req, res) {
+            var checked;
+            checked = req.body.checked;
+            req.user.tags = checked;
+            req.user.save();
+            req.flash('info', 'Tags atualizadas com sucesso!');
+            return res.end();
+          }
+        ]
+      },
+      children: {
+        ':tag': {
+          methods: {
+            put: [
+              required.login, function(req, res) {
+                var _ref;
+                console.log('did follow');
+                console.log('didn\'t follow');
+                if (_ref = req.params.tag, __indexOf.call(req.user.tags, _ref) >= 0) {
+                  req.user.tags.splice(req.user.tags.indexOf(req.params.tag), 1);
+                } else {
+                  req.user.tags.push(req.params.tag);
+                }
+                req.user.save();
+                return res.end();
+              }
+            ]
+          }
+        }
+      }
+    },
+    'posts': {
+      methods: {
+        get: [
+          required.login, function(req, res) {
+            var page, seltags;
+            if (req.query.tags) {
+              seltags = req.query.tags.split(',');
+            } else {
+              seltags = req.user.tags;
+            }
+            page = parseInt(req.query.page) || 0;
+            return Post.getWithTags(seltags, function(err, docs) {
+              docs = docs.slice(page * 5, (page + 1) + 5);
+              console.log(docs.length);
+              return res.end(JSON.stringify({
+                data: docs,
+                page: page
+              }));
+            });
+          }
+        ]
+      },
+      children: {
+        ':id': {
+          methods: {
+            get: [
+              required.login, function(req, res) {
+                return Post.findOne({
+                  tumblrId: req.params.id
+                }, function(err, doc) {
+                  return res.end(JSON.stringify(doc));
+                });
+              }
+            ]
+          }
+        }
+      }
+    },
+    'user': {
+      methods: {
+        post: [
+          required.login, function(req, res) {
+            if ('off' === req.query.notifiable) {
+              req.user.notifiable = false;
+              req.user.save();
+            } else if (__indexOf.call(req.query.notifiable, 'on') >= 0) {
+              req.user.notifiable = true;
+              req.user.save();
+            }
+            console.log(req.user.notifiable, req.query.notifiable, typeof req.query.notifiable);
+            return res.end();
+          }
+        ]
+      },
+      children: {
+        'leave': {
+          methods: {
+            post: [
+              required.login, function(req, res) {
+                return req.user.remove(function(err, data) {
+                  if (err) {
+                    throw err;
+                  }
+                  req.logout();
+                  return res.redirect('/');
+                });
+              }
+            ]
+          }
+        },
+        'logout': {
+          name: 'logout',
+          methods: {
+            post: [
+              required.login, function(req, res) {
+                if (!req.user) {
+                  return res.redirect('/');
+                }
+                req.logout();
+                return res.redirect('/');
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+};

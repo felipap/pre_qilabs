@@ -70,6 +70,8 @@ body[data-page=panel] {
 
 body[data-page=profile] {
 
+	background: url('/static/images/pinstripe.png');
+
 	& > section {
 		.container-fixed;
 		width: 960px;
@@ -78,7 +80,7 @@ body[data-page=profile] {
 		}
 
 		& > section.side {
-			width: 250px;
+			width: 240px;
 			float: left;
 
 			.thumbnail {
@@ -91,27 +93,43 @@ body[data-page=profile] {
 
 			.info-groups {
 				padding: 10px;
-				border-bottom: 1px solid #DDD;
 
 				.info-group {
 					h1,h2,h3,h4,h5,h6 {
 						margin: 0;
 						margin-bottom: 10px;
 					}
-					.leg {
-						display: block;
-						font-size: 90%;
-						color: #AAA;
-					}
 				}
 			}
 
+			.social, .badges {
+				border-top: 1px dashed #888;
+				padding: 15px 0;
+
+				a {	text-decoration: none; }
+				[class*=icon] {
+					font-size: 25px;
+					padding: 5px 8px;
+					color: #444;
+					.text-shadow(0, 1px, 3px, .3);
+				}
+			}
+
+			.badges {
+				.gold { color: #FFDF00; }
+				.silver { color: #E3E4E5; }
+				.copper { color: #CB6D51; }
+				[class*=icon] {
+					font-size: 35px;
+					padding: 5px 6px;
+				}
+			}
 		}
 
 		& > section.main {
 			width: 680px;
 			float: left;
-			margin-left: 30px;
+			margin-left: 40px;
 
 			& > section {
 				padding: 20px;
