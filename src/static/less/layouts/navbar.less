@@ -99,6 +99,14 @@ nav.bar {
 		[data-action=logout] 		{ .high-xbtn(white, #E74C3C); }
 		[data-action=nos-avisa] 	{ .high-xbtn(white, #FF8300); }
 		[data-action=login] 		{ }
+
+		.btn-link {
+			&:nth-child(1) { .xbtn(white, @COLOR3); }
+			&:nth-child(2) { .xbtn(white, @COLOR2); }
+			&:nth-child(3) { .xbtn(white, @COLOR1); }
+			
+			padding: 6px 10px !important;
+		}
 		
 		[data-action] {
 			font-size: 13px;

@@ -5,11 +5,17 @@
 	</a>
 
 	<% if (typeof user !== "undefined") { %>
-		<ul class="nav navbar-nav"><!-- 
-		 --><button data-hash="nos-avisa" data-action="nos-avisa" data-toggle="dialog">
-				Avisa Pra Gente!
-			</button><!-- 
-		 --></ul>
+		<ul class="nav navbar-nav">
+			<a href="#" class="btn-link">
+				<i class="icon-archive"></i> Oportunidades
+			</a>
+			<a href="#" class="btn-link">
+				<i class="icon-users"></i> Currículos
+			</a>
+			<a href="#" class="btn-link">
+				<i class="icon-calendar"></i> Calendário
+			</a>
+		</ul>
 		<ul class="nav navbar-nav pull-right">
 			<button class="plain-btn bell-btn"
 				onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
@@ -20,9 +26,6 @@
 				title="Configurações de conta" data-toggle="tooltip" data-placement="bottom">
 				<i class="icon-cog"></i>
 			</a><!--
-		 --><button class="hidden">
-				<i class="icon-search"></i>
-			</button><!-- 
 		 --><li class="menu-dd" class="dropdown">
 			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle"
 					>
