@@ -12,38 +12,15 @@ h1,h2,h3 {
 	font-weight: bold;
 }
 
-.blackout (@opacity:0.5) {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: black;
-	opacity: @opacity;
-}
-
 /////////////////////////////////
 
-body > section {
-	position: relative;
-	cursor: default;
-
-	width: 100%;
-	text-align: center;
-
-	background: white;
-	&:nth-child(2n) {
-		background: #f8f9fa;
-	}
-
-	& > section {
-		.make-row;
-	}
+body {
+	overflow: hidden;
 }
 
 nav.bar {
 	position: fixed;
-	padding: 7px;
+	padding: 10px 15px;
 	.transition(all, .2s, linear);
 
 	&:not(.opaque) {
@@ -59,14 +36,10 @@ nav.bar {
 	}
 }
 
-.padded {
-	padding-top: 40px;
-	padding-bottom: 40px;
-}
-
 #jumbo {
-	height: 650px;
-	// margin-top: -60px;
+	position: absolute;
+	height: 100%;
+	width: 100%;
 
 	background: url(../img/asm.jpg) no-repeat center bottom;
 	background-clip: content-box;
@@ -76,18 +49,27 @@ nav.bar {
 	background-size: cover;
 
 	.box-blackout {
-		.blackout(.5);
+		.blackout(.4);
 	}
 
 	.content {
-		padding-top: @real-navbar-height;
 		color: white;
-		position: relative;
+		position: absolute;
 		text-align: center;
-
-		&:extend(.container);
+		
+		width: 600px;
+		height: 340px;
+		top: 50%; margin-top: -180px;
+		left: 50%; margin-left: -300px;
 
 		& > section {
+
+			position: relative;
+			cursor: default;
+
+			width: 100%;
+			text-align: center;
+
 			h1 {
 				.text-shadow(0, 0, 3px, 1);
 				font-weight: 800;
@@ -101,13 +83,11 @@ nav.bar {
 				font-weight: 500;
 			}
 
-			padding: 80px 0;
-			width: 600px;
 			margin: auto;
 
 			[data-action] { font-size: 14px; }
-			[data-action=show-signin] 	{ .xbtn(white, @CBLUE, white); }
-			[data-action=join-team] 	{ .xbtn(white, @CGREEN, white); }
+			[data-action=show-signin] 	{ .high-xbtn(white, @CBLUE); }
+			[data-action=join-team] 	{ .high-xbtn(white, @CGREEN); }
 		}
 	}
 
@@ -128,42 +108,6 @@ nav.bar {
 		.text-shadow(2px, .6);
 		right: 15px;
 		bottom: 15px;
-	}
-}
-
-#howto {
-	.container-fixed;
-	.padded;
-	
-	.column {
-		.make-xs-column(4);
-		.make-md-column(4);
-		.make-lg-column(3);
-		.make-lg-column-offset(1);
-	}
-	
-	[class*=icon] {
-		font-size: 90px;
-	}
-
-	.instructions {
-		margin-top: 40px;
-	}
-}
-
-
-#parcerias {
-	.container-fixed;
-	.padded;
-	
-	.label {
-		color: #444;
-	}
-
-	li {
-		display: inline-block;
-		list-style: none;
-		padding: 0 50px;
 	}
 }
 
@@ -199,3 +143,48 @@ nav.bar {
 		}
 	}
 }
+
+footer {
+	border: none;
+
+	.reg {
+		display: none;
+		// padding: 10px;
+		width: 400px;
+		margin: auto;
+		text-align: center;
+		font: 14px "Open Sans";
+		color: #AAA;
+	}
+	
+	padding: 10px;
+	height: auto;
+
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	background: transparent;
+
+	.links {
+		text-align: center;
+		width: 400px;
+		padding: 12px;
+		margin: auto;
+		font: 700 14px "Open Sans";
+		text-transform: uppercase;
+
+		& > a, & > li {
+		
+			color: white;
+			margin: 5px;
+
+			&:hover {
+				text-decoration: none;
+			}
+			&:active {
+			}
+		}
+	}
+
+}
+

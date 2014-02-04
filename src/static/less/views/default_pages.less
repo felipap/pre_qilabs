@@ -16,6 +16,49 @@ body > section {
 	}
 }
 
+
+.padded {
+	padding-top: 40px;
+	padding-bottom: 40px;
+}
+
+#howto {
+	.container-fixed;
+	.padded;
+	
+	.column {
+		.make-xs-column(4);
+		.make-md-column(4);
+		.make-lg-column(3);
+		.make-lg-column-offset(1);
+	}
+	
+	[class*=icon] {
+		font-size: 90px;
+	}
+
+	.instructions {
+		margin-top: 40px;
+	}
+}
+
+
+#parcerias {
+	.container-fixed;
+	.padded;
+	
+	.label {
+		color: #444;
+	}
+
+	li {
+		display: inline-block;
+		list-style: none;
+		padding: 0 50px;
+	}
+}
+
+
 .paper () {
 
 	.container-fixed;
@@ -116,7 +159,7 @@ body[data-page=profile] {
 			}
 
 			.badges {
-				.gold { color: #FFDF00; }
+				.gold { color: #FDE910; }
 				.silver { color: #E3E4E5; }
 				.copper { color: #CB6D51; }
 				[class*=icon] {

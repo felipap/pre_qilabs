@@ -45,6 +45,16 @@ body {
 	color: #444;
 }
 
+.blackout (@opacity:0.5) {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	opacity: @opacity;
+}
+
 .flash-msgs {
 	// border: 1px solid black;
 	// z-index: 3;
@@ -106,4 +116,7 @@ i.icon-trophy { .fa-mixin-icon(trophy); }
 i.icon-user { .fa-mixin-icon(user); }
 i.icon-users { .fa-mixin-icon(users); }
 i.icon-sign-out { .fa-mixin-icon(sign-out); }
+i.icon-rss { .fa-mixin-icon(rss); }
+i.icon-power-off { .fa-mixin-icon(power-off); }
+i.icon-print { .fa-mixin-icon(print); }
 i.icon-calendar { .fa-mixin-icon(calendar); }

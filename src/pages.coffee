@@ -40,7 +40,7 @@ module.exports = {
 	},
 
 	'/feed': {
-		name: 'index',
+		name: 'feed',
 		methods: {
 			get: [required.login, (req, res) ->
 				if req.user
@@ -48,16 +48,10 @@ module.exports = {
 					req.user.lastUpdate = new Date()
 					req.user.save()
 					Tag.getAll (err, tags) ->
-						res.render 'pages/home',
+						res.render 'pages/feed',
 								tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
 				else
-					User.find()
-						.sort({'_id': 'descending'})
-						.limit(10)
-						.find((err, data) ->
-							res.render 'pages/frontpage',
-								latestSignIns: data
-							)
+					res.redirect('/')
 			],
 			post: (req, res) ->
 				# Redirect from frame inside Facebook?

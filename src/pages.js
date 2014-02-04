@@ -41,7 +41,7 @@ module.exports = {
     }
   },
   '/feed': {
-    name: 'index',
+    name: 'feed',
     methods: {
       get: [
         required.login, function(req, res) {
@@ -49,18 +49,12 @@ module.exports = {
             req.user.lastUpdate = new Date();
             req.user.save();
             return Tag.getAll(function(err, tags) {
-              return res.render('pages/home', {
+              return res.render('pages/feed', {
                 tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
               });
             });
           } else {
-            return User.find().sort({
-              '_id': 'descending'
-            }).limit(10).find(function(err, data) {
-              return res.render('pages/frontpage', {
-                latestSignIns: data
-              });
-            });
+            return res.redirect('/');
           }
         }
       ],

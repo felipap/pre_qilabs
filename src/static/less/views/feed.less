@@ -7,15 +7,15 @@
 @import "../common.less";
 
 .navbar {
-	position: fixed;
+	// position: fixed;
 	width: 100%;
-	z-index: 1;
+	z-index: 3;
 	top: 0;
 }
 
 #sidebar {
-	position: fixed;
-	top: (@navbar-height+10px);
+	position: absolute;
+	top: (@navbar-height+@-navbar-padding);
 	bottom: 0;
 	border: 1px solid #CCC;
 	background: white;
@@ -60,6 +60,7 @@
 					width: 100%;
 					text-align: left;
 					background: #EEE;
+					.rounded(3px);
 					border: 1px solid #DDD;
 				
 					.tg-btn {
@@ -93,6 +94,7 @@
 					border: 1px solid green;
 					background: green;
 				}
+
 				& .tag[data-checked=true] {
 					color: #fff;
 					background-color: #5cb85c;

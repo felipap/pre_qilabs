@@ -15,14 +15,14 @@ module.exports = function(grunt) {
 		},
 
 		concat: {
-			home: {
+			feed: {
 				src: [
 					'src/static/js/lib/require.js',
 					'src/static/js/lib/common.js',
 					'src/static/js/lib/plugins.js',
-					'src/static/js/lib/home.js',
+					'src/static/js/lib/feed.js',
 				],
-				dest: 'src/static/js/concated_home.js',
+				dest: 'src/static/js/concated_feed.js',
 			},
 			all: {
 				src: [
@@ -35,9 +35,9 @@ module.exports = function(grunt) {
 		},
  
 		uglify: {
-			home: {
-				src: 'src/static/js/concated_home.js',
-				dest: 'src/static/js/home.min.js'
+			feed: {
+				src: 'src/static/js/concated_feed.js',
+				dest: 'src/static/js/feed.min.js'
 			},
 			all: {
 				src: 'src/static/js/concated_all.js',
@@ -48,9 +48,9 @@ module.exports = function(grunt) {
 		less: {
 			dist: {
 				files: {
-					'src/static/css/default_pages.min.css':'src/static/less/views/default_pages.less',
 					'src/static/css/frontpage.min.css':'src/static/less/views/frontpage.less',
-					'src/static/css/home.min.css':'src/static/less/views/home.less',
+					'src/static/css/feed.min.css':'src/static/less/views/feed.less',
+					'src/static/css/default_pages.min.css':'src/static/less/views/default_pages.less',
 				},
 				options: { cleancss: true },
 			},

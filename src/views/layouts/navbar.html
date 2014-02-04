@@ -1,18 +1,18 @@
 
 <nav class="bar" role="navigation">
 	<a class="brand" href="/" tabindex="-1">
-		MeAvisa.org <sup class="version"><%= app.semantic_version %></sup>
+		QI Labs.org <sup class="version"><%= app.semantic_version %></sup>
 	</a>
 
 	<% if (typeof user !== "undefined") { %>
-		<ul class="nav navbar-nav">
-			<a href="#" class="btn-link">
-				<i class="icon-archive"></i> Oportunidades
-			</a>
-			<a href="#" class="btn-link">
+		<ul class=""><!-- 
+			--><a href="#" class="model-link" data-toggle="tooltip" title="Oportunidades" data-placement="bottom">
+				<i class="icon-rss"></i> Oportunidades
+			</a><!-- 
+			 --><a href="#" class="model-link" data-toggle="tooltip" title="Currículos" data-placement="bottom">
 				<i class="icon-users"></i> Currículos
-			</a>
-			<a href="#" class="btn-link">
+			</a><!-- 
+			 --><a href="#" class="model-link" data-toggle="tooltip" title="Calendário" data-placement="bottom">
 				<i class="icon-calendar"></i> Calendário
 			</a>
 		</ul>
