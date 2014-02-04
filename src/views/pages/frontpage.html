@@ -44,9 +44,12 @@
 			source: 'u/unc.jpg',
 			credits: '',
 		},
+		{
+			label: 'Universidade Federal do Rio de Janeiro, Campus Praia Vermelha',
+			source: 'u/ufrj.jpg',
+			credits: 'FOTO: Gabriela d’Araujo / Imagem UFRJ',
+		},
 	];
-	// UFRJ
-	// UFMG
 	var sel_bg = bgs[Math.floor(bgs.length*Math.random())];
 	%>
 
@@ -75,10 +78,10 @@
 			</section>
 		</div>
 		<div class="credits">
-			<%= sel_bg.credits %>
 		</div>
 		<dfn>
 			<%= sel_bg.label %>
+			<br><%= sel_bg.credits %>
 		</dfn>
 	</section>
 
