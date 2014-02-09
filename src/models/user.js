@@ -1,10 +1,8 @@
-var UserSchema, authTypes, crypto, mongoose, _;
+var UserSchema, authTypes, crypto, mongoose;
 
 mongoose = require('mongoose');
 
 crypto = require('crypto');
-
-_ = require('underscore');
 
 authTypes = [];
 
@@ -22,14 +20,24 @@ UserSchema = new mongoose.Schema({
   accessToken: {
     type: String
   },
+  notifiable: {
+    type: Boolean,
+    "default": true
+  },
   lastUpdate: {
     type: Date,
     "default": Date(0)
   },
-  notifiable: {
-    type: Boolean,
-    "default": true
-  }
+  firstAccess: Date,
+  profile: {
+    fullName: '',
+    birthday: Date,
+    city: '',
+    avatarUrl: ''
+  },
+  badges: [],
+  groups: [],
+  followingTags: []
 }, {
   id: true
 });

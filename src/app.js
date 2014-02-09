@@ -70,8 +70,15 @@ app.use(app.router);
 
 ////////////////////////////////////////////////////////////////////////
 
+var pathLib = require('path'),
+	fsLib = require('fs');
 
-var path = require('path');
+STATIC_URL = '/static/'
+STATIC_ROOT = pathLib.join(__dirname, 'static')
+
+// MEDIA_URL = '/static/'
+// MEDIA_ROOT = pathLib.join(__dirname, 'media')
+
 app.locals({
 	tags: {},
 	errors: {},
@@ -95,8 +102,19 @@ app.locals({
 			return "#";
 		}
 	},
-	getMediaUrl: function () {
-		return path.join.apply(null, ['/static/'].concat([].splice.call(arguments,0)));
+	getMediaUrl: function (mediaType) {
+		var relPath = pathLib.join.apply(null, arguments);
+		// Check file existence for these.
+		switch (mediaType) {
+			case "css":
+			case "js": {
+				var absPath = pathLib.join(STATIC_ROOT, relPath);
+				if (!fsLib.existsSync(absPath)) {
+					throw "Required css/js file "+absPath+" not found.";
+				}
+			}
+		}
+		return pathLib.join(STATIC_URL, relPath);
 	},
 	urls: {
 		'twitter': '#',
@@ -109,10 +127,10 @@ app.locals({
 
 // Error-handling middleware [...] must be defined with an arity of 4
 app.use(function(err, req, res, next){
-	console.error(err.stack);
+	console.error('Error stack:', err);
 	res.render('pages/500', {
-		user: req.user
-	})
+		user: req.user,
+	});
 });
 
 // Pass pages through router.js
@@ -129,7 +147,6 @@ app.get('*', function (req, res) {
 		return;
 	}
 });
-
 
 if (app.get('env') === 'development') {
 	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));

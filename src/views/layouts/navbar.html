@@ -1,22 +1,33 @@
 
 <nav class="bar" role="navigation">
 	<a class="brand" href="/" tabindex="-1">
-		QI Labs.org <sup class="version"><%= app.semantic_version %></sup>
+		Q.I. Laboratories<!--  <sup class="version"><%= app.semantic_version %></sup> -->
 	</a>
 
 	<% if (typeof user !== "undefined") { %>
-		<ul class=""><!-- 
-			--><a href="#" class="model-link" data-toggle="tooltip" title="Oportunidades" data-placement="bottom">
-				<i class="icon-rss"></i> Oportunidades
-			</a><!-- 
-			 --><a href="#" class="model-link" data-toggle="tooltip" title="Currículos" data-placement="bottom">
-				<i class="icon-users"></i> Currículos
-			</a><!-- 
-			 --><a href="#" class="model-link" data-toggle="tooltip" title="Calendário" data-placement="bottom">
-				<i class="icon-calendar"></i> Calendário
-			</a>
+		<ul >
+			<li>
+				<a href="#" class="model-link home" data-toggle="tooltip" title="Seu Mural" data-placement="bottom">
+					<i class="icon-user"></i>
+				</a>
+			</li>
+			<li>
+				<a href="#" class="model-link groups" data-toggle="tooltip" title="Grupos" data-placement="bottom">
+					<i class="icon-users"></i>
+				</a>
+			</li>
+			<li>
+				<a href="#" class="model-link board" data-toggle="tooltip" title="Quadro de Avisos" data-placement="bottom">
+					<i class="icon-board"></i>
+				</a>
+			</li>
+			<li>
+				<a href="#" class="model-link agenda" data-toggle="tooltip" title="Agenda" data-placement="bottom">
+					<i class="icon-agenda"></i>
+				</a>
+			</li>
 		</ul>
-		<ul class="nav navbar-nav pull-right">
+		<ul class="pull-right">
 			<button class="plain-btn bell-btn"
 				onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
 				title="Temos 0 updates para você" data-toggle="tooltip" data-placement="bottom">

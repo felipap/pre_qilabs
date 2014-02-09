@@ -9,30 +9,10 @@ required = require '../lib/required.js'
 # Starts at '/api'
 module.exports = {
 	children: {
-		'dropall': {
-			methods: {
-				get: [required.isMe,
-					(req, res) ->
-						# Require user to be me
-						waiting = 3
-						User.remove {id:'a'}, (err) ->
-							res.write "users removed"
-							if not --waiting then res.end(err)
-						Post.remove {id:'a'}, (err) ->
-							res.write "\nposts removed"
-							if not --waiting then res.end(err)
-						Tag.remove {id:'a'}, (err) ->
-							res.write "\nposts removed"
-							if not --waiting then res.end(err)
-					]
-			}
-		},
 		'session': {
 			methods: {
 				get: [required.isMe, 
 					(req, res) ->
-						if not req.user or req.user.facebookId isnt process.env.facebook_me
-							return res.redirect '/'
 						User.find {}, (err, users) ->
 							Post.find {}, (err, posts) ->
 								Subscriber.find {}, (err, subscribers) ->

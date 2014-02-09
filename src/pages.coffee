@@ -21,7 +21,7 @@ module.exports = {
 		methods: {
 			get: (req, res) ->
 				if req.user
-					res.redirect('/feed')
+					res.render 'pages/timeline', {}
 				else
 					User.find()
 						.sort({'_id': 'descending'})

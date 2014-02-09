@@ -57,13 +57,17 @@ nav.bar {
 	}
 
 
-
 	& > ul {
 		&:extend(.nav);
 		&:extend(.navbar-nav);
 
 		margin: 0 !important;
 		height: @navbar-height;
+
+		& > li {
+			display: inline-block;
+			list-style: none;
+		}
 	
 		.bell-btn {
 			position: relative;
@@ -101,12 +105,12 @@ nav.bar {
 		[data-action=logout] 		{ .high-xbtn(white, #E74C3C); }
 		[data-action=nos-avisa] 	{ .high-xbtn(white, #FF8300); }
 		[data-action=login] 		{ }
-
+		
 		.model-link {
-			&:nth-child(1) { .xbtn(white, @COLOR3); }
-			&:nth-child(2) { .xbtn(white, @COLOR2); }
-			&:nth-child(3) { .xbtn(white, @COLOR1); }
-			
+			&.home { .high-xbtn(white, @COLOR3); }
+			&.groups { .high-xbtn(white, @COLOR1); }
+			&.board { .high-xbtn(white, @COLOR2); }
+			&.agenda { .high-xbtn(white, #345); }
 			padding: 6px 7px !important;
 		}
 		

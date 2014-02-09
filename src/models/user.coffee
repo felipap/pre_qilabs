@@ -2,26 +2,32 @@
 # models/user.coffee
 # for meavisa.org, by @f03lipe
 
-# User model.
-# Reference: https://github.com/madhums/node-express-mongoose-demo
-# Removed from example:
-# - validation of removed fields,
-# - virtual password
-
 mongoose = require 'mongoose'
 crypto = require 'crypto'
-_ = require 'underscore'
 
 authTypes = []
 
 # Schema
 UserSchema = new mongoose.Schema {
-		name:				{ type: String, }
-		tags:				{ type: Array,	default: [] }
-		facebookId:			{ type: String, }
-		accessToken:		{ type: String, }
-		lastUpdate:			{ type: Date, 	default: Date(0) },
-		notifiable:			{ type: Boolean, default: true }
+		name:		{ type: String, }
+		tags:			{ type: Array, default: [] }
+		facebookId:		{ type: String, }
+		accessToken:	{ type: String, }
+		notifiable:		{ type: Boolean, default: true }
+		lastUpdate:		{ type: Date, default: Date(0) }
+		
+		firstAccess: 	Date
+		
+		profile: {
+			fullName: 	''
+			birthday: 	Date
+			city: 		''
+			avatarUrl: 	''
+		},
+
+		badges: []
+		groups: []
+		followingTags: []
 	}, { id: true } # default
 
 # Virtuals

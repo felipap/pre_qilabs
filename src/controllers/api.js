@@ -13,47 +13,10 @@ required = require('../lib/required.js');
 
 module.exports = {
   children: {
-    'dropall': {
-      methods: {
-        get: [
-          required.isMe, function(req, res) {
-            var waiting;
-            waiting = 3;
-            User.remove({
-              id: 'a'
-            }, function(err) {
-              res.write("users removed");
-              if (!--waiting) {
-                return res.end(err);
-              }
-            });
-            Post.remove({
-              id: 'a'
-            }, function(err) {
-              res.write("\nposts removed");
-              if (!--waiting) {
-                return res.end(err);
-              }
-            });
-            return Tag.remove({
-              id: 'a'
-            }, function(err) {
-              res.write("\nposts removed");
-              if (!--waiting) {
-                return res.end(err);
-              }
-            });
-          }
-        ]
-      }
-    },
     'session': {
       methods: {
         get: [
           required.isMe, function(req, res) {
-            if (!req.user || req.user.facebookId !== process.env.facebook_me) {
-              return res.redirect('/');
-            }
             return User.find({}, function(err, users) {
               return Post.find({}, function(err, posts) {
                 return Subscriber.find({}, function(err, subscribers) {

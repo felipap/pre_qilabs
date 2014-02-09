@@ -3,9 +3,22 @@
 # for meavisa.org, by @f03lipe
 #
 # Tag model.
+# Application
+## 
+# Vestibular
+## Cursos
+## Material
+## Inscrição
+# Cursos e Bolsas
+##
+# Voluntariado
+##
+# Estágio
+##
+# Simulações ONU
 */
 
-var TagSchema, api, authTypes, blog, blog_url, checkFollowed, crypto, descTable, findOrCreate, getDescription, getLabel, memjs, mongoose, recursify, transTable, _,
+var TagSchema, api, authTypes, blog, blog_url, checkFollowed, crypto, descTable, findOrCreate, getDescription, getLabel, memjs, mongoose, recursify, toCamel, transTable, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -35,10 +48,6 @@ TagSchema = new mongoose.Schema({
 });
 
 TagSchema.methods = {};
-
-String.prototype.toCamel = function(){
-	return this.replace(/([a-z]+)/g, function(a){return a[0].toUpperCase()+a.slice(1);});
-};;
 
 transTable = {
   'estagio': 'Estágio',
@@ -110,8 +119,14 @@ getDescription = function(hashtag) {
   return descTable[hashtag.toLowerCase()] || '';
 };
 
+toCamel = function(str) {
+  return str.replace(/([a-z]+)/g, function(a) {
+    return a[0].toUpperCase() + a.slice(1);
+  });
+};
+
 getLabel = function(hashtag) {
-  return transTable[hashtag.toLowerCase()] || hashtag.toCamel();
+  return transTable[hashtag.toLowerCase()] || toCamel(hashtag);
 };
 
 blog_url = 'http://meavisa.tumblr.com';

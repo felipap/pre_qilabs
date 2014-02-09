@@ -4,6 +4,19 @@
 # for meavisa.org, by @f03lipe
 #
 # Tag model.
+# Application
+## 
+# Vestibular
+## Cursos
+## Material
+## Inscrição
+# Cursos e Bolsas
+##
+# Voluntariado
+##
+# Estágio
+##
+# Simulações ONU
 ###
 
 mongoose = require 'mongoose'
@@ -28,9 +41,6 @@ TagSchema = new mongoose.Schema {
 # Methods
 TagSchema.methods = {}
 
-`String.prototype.toCamel = function(){
-	return this.replace(/([a-z]+)/g, function(a){return a[0].toUpperCase()+a.slice(1);});
-};`
 
 transTable = {
 	'estagio': 'Estágio',
@@ -90,9 +100,13 @@ checkFollowed = (rtags, followed) ->
 getDescription = (hashtag) ->
 	return descTable[hashtag.toLowerCase()] || ''
 
+toCamel = (str) ->
+	return str.replace(/([a-z]+)/g, (a) -> a[0].toUpperCase()+a.slice(1))
+
 getLabel = (hashtag) ->
+
 	# Try to match lower(hashtag) or return a "beautified" version of hashtag.
-	return transTable[hashtag.toLowerCase()] or hashtag.toCamel()
+	return transTable[hashtag.toLowerCase()] or toCamel(hashtag)
 
 blog_url = 'http://meavisa.tumblr.com'
 blog = api.getBlog 'meavisa.tumblr.com'

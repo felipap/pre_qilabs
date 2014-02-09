@@ -10,8 +10,26 @@
 		{
 			name: 'Felipe Aragão',
 			twitter: 'http://twitter.com/f03lipe',
-			desc: '',
+			desc: 'Fundador',
 			avatar: getMediaUrl('images','t','felipe.jpg'),
+		},
+		{
+			name: 'Viviane Lobo',
+			// twitter: 'http://twitter.com/f03lipe',
+			desc: '',
+			avatar: getMediaUrl('images','t','michelle.jpg'),
+		},
+		{
+			name: 'Michelle Malher',
+			// twitter: 'http://twitter.com/f03lipe',
+			desc: '',
+			avatar: getMediaUrl('images','t','viviane.jpg'),
+		},
+		{
+			name: 'João Guio',
+			// twitter: 'http://twitter.com/f03lipe',
+			desc: '',
+			avatar: getMediaUrl('images','t','viviane.jpg'),
 		},
 	]
 	%>
@@ -30,6 +48,7 @@
 				</div>
 				<div class="">
 				<h3><%= person.name %></h3>
+				<h3><%= person.desc %></h3>
 				<% if (person.twitter) { %>
 					<a href="<%= person.twitter %>"><i class="icon-twitter icon-large"></i></a>
 				<% } %>
@@ -40,5 +59,5 @@
 
 	<% include ../layouts/footer.html %>
 
-	<script data-main="<%= getMediaUrl('js','all.min') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	<script data-main="<%= getMediaUrl('js','all.min.js') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>

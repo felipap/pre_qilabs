@@ -6,6 +6,7 @@
 # Post model.
 ###
 
+
 mongoose = require 'mongoose'
 crypto = require 'crypto' 
 memjs = require 'memjs'
@@ -16,6 +17,7 @@ authTypes = []
 api = require('./../api')
 findOrCreate = require('./lib/findOrCreate')
 
+# Remember to use indexes ...
 # Schema
 PostSchema = new mongoose.Schema {
 		tumblrId:			Number
