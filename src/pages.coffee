@@ -21,7 +21,13 @@ module.exports = {
 		methods: {
 			get: (req, res) ->
 				if req.user
-					res.render 'pages/timeline', {}
+					# console.log('logged:', req.user.name, req.user.tags)
+					req.user.lastUpdate = new Date()
+					req.user.save()
+					Tag.getAll (err, tags) ->
+						res.render 'pages/timeline',
+							tags: Tag.checkFollowed(tags, req.user.tags)
+
 				else
 					User.find()
 						.sort({'_id': 'descending'})
@@ -43,15 +49,12 @@ module.exports = {
 		name: 'feed',
 		methods: {
 			get: [required.login, (req, res) ->
-				if req.user
-					# console.log('logged:', req.user.name, req.user.tags)
-					req.user.lastUpdate = new Date()
-					req.user.save()
-					Tag.getAll (err, tags) ->
-						res.render 'pages/feed',
-								tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
-				else
-					res.redirect('/')
+				# console.log('logged:', req.user.name, req.user.tags)
+				req.user.lastUpdate = new Date()
+				req.user.save()
+				Tag.getAll (err, tags) ->
+					res.render 'pages/feed',
+							tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
 			],
 			post: (req, res) ->
 				# Redirect from frame inside Facebook?

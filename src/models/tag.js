@@ -44,7 +44,8 @@ TagSchema = new mongoose.Schema({
   },
   description: {
     type: String
-  }
+  },
+  color: ''
 });
 
 TagSchema.methods = {};

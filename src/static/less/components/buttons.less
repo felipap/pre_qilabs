@@ -1,0 +1,140 @@
+
+// Second flavor
+
+.ibtn (@color) {
+	.btn0;
+
+	.color-btn-focus(white, transparent, @color);
+	border: 2px solid transparent;
+	.color-btn(white, transparent, @color);
+	.color-btn-hover(white, @color, @color);
+	.color-btn-active(white, lighten(@color, 5%), darken(@color, 12%));
+}
+
+.transparent-ibtn (@color) {
+	.btn0;
+
+	.color-btn-focus(@color, transparent, @color);
+	border: 2px solid transparent;
+	.color-btn(@color, transparent, @color);
+	.color-btn-hover(white, @color, @color);
+	.color-btn-active(white, lighten(@color, 5%), darken(@color, 12%));
+}
+
+/* Don't change a thing. */
+.xbtn (@color, @bg, @chover: @bg) {
+	.btn0;
+
+	.color-btn-focus(@color, @bg, transparent);
+	border: 2px solid transparent;
+	.color-btn(@color, @bg, @bg);
+	.color-btn-hover(white, darken(@bg, 8%), darken(@bg, 12%));
+	// .color-btn-active(#444, #DDD, #AAA);
+}
+
+.high-xbtn (@color: white, @bg: @COLOR1) {
+	.btn0;
+
+	.color-btn-focus(@color, @bg, transparent);
+	.inner-shadow(0, -2px, rgba(0,0,0,.2));
+	.text-shadow(2px, 2px, 0, rgba(0,0,0,.1));
+	.color-btn(@color, @bg, transparent);
+	padding-bottom: 10px;
+
+	&:hover {
+		.color-btn(@color, lighten(@bg, 2%), transparent);
+		.inner-shadow(0, -2px, rgba(0,0,0,.4));
+	}
+	&:active {
+		.no-text-shadow;
+		.no-box-shadow;
+		margin-top: 10px;
+		padding-bottom: 9px;
+		margin-bottom: 7px; // -2+1 (from padding-bottom)
+	}
+}
+
+
+.btn {
+	display: inline-block;
+	margin-bottom: 0; // For input.btn
+	font-weight: @btn-font-weight;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	background-image: none;
+	// Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+	border: 1px solid transparent;
+	white-space: nowrap;
+	.button-size(@padding-base-vertical; @padding-base-horizontal; @font-size-base; @line-height-base; @border-radius-base);
+	.user-select(none);
+
+	&:focus {
+		.tab-focus();
+	}
+
+	&:hover,
+	&:focus {
+		color: @btn-default-color;
+		text-decoration: none;
+	}
+
+	&:active,
+	&.active {
+		outline: 0;
+		background-image: none;
+		.box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
+	}
+
+	&.disabled,
+	&[disabled],
+	fieldset[disabled] & {
+		cursor: not-allowed;
+		pointer-events: none; // Future-proof disabling of clicks
+		.opacity(.65);
+		.box-shadow(none);
+	}
+}
+
+.btn0 {
+	.btn;
+	.button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
+	.navbar-btn;
+
+	// font-size: 13px;
+	font-weight: bold;
+	padding: 8px 20px;
+	&:focus {
+		outline: none;
+	}
+	border: none;
+	.rounded(2px);
+}
+
+
+/* Mixins for building button states.
+**/
+
+.color-btn (@color, @bg, @border) {
+	color: @color;
+	background: @bg;
+	border-color: @border;
+}
+
+.color-btn-hover (@color, @bg, @border) {
+	&:hover {
+		.color-btn(@color, @bg, @border);
+	}
+}
+
+.color-btn-active (@color, @bg, @border) {
+	&:active {
+		.color-btn(@color, @bg, @border);
+	}
+}
+
+.color-btn-focus (@color, @bg, @border) {
+	&:focus {
+		.color-btn(@color, @bg, @border);
+	} 
+}

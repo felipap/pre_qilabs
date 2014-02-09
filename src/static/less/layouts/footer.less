@@ -1,33 +1,20 @@
 
 @import "../common.less";
 
-body {
+body:not([data-page=timeline]) {
 	margin: 0 0 120px;
 }
 
 footer {
-
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	height: 120px;
-	width: 100%;
-	background: white;
-	.border-radius(0);
-	padding: 30px;
-	border-top: 1px solid #CCC;
-
+	font-family: "Open Sans";
+	
 	.links {
 		color: @COLOR1;
 		text-align: center;
-		width: 400px;
-		padding: 12px;
 		margin: auto;
-		font: 600 15px "Open Sans";
-		text-transform: uppercase;
+		font-size: 15px;
 
 		& > a, & > li {
-		
 			margin: 5px;
 
 			&:hover {
@@ -39,12 +26,45 @@ footer {
 	}
 
 	.reg {
-		// padding: 10px;
-		width: 400px;
 		margin: auto;
 		text-align: center;
-		font: 14px "Open Sans";
 		color: #AAA;
+		font-size: 14px;
 	}
 }
 
+#sidebar > footer {
+	text-align: center;
+	padding: 0 10px;
+	
+	.links {
+		display: inline;
+		font-size: 14px;
+	}
+	.reg {
+		display: inline;
+		font-size: 13px;
+	}
+}
+
+.absoluteFooter () {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	height: 120px;
+	width: 100%;
+	background: white;	
+	padding: 30px;
+	border-top: 1px solid #CCC;
+
+	.links {
+		width: 400px;
+		font-weight: 600;
+		padding: 12px;
+		text-transform: uppercase;
+	}
+
+	.reg {
+		width: 400px;
+	}
+}

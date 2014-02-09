@@ -436,6 +436,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		var TagListView = Backbone.View.extend({
 			tagName: "ul",
+			className: "body",
 			_views: [], // a list of children views
 
 			initialize: function () {

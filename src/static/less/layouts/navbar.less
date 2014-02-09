@@ -4,6 +4,15 @@
 @-navbar-padding: 3px;
 @real-navbar-height: @navbar-height+2*@-navbar-padding;
 
+.hasFixedNavbar () {
+	nav.bar {
+		position: fixed;
+		width: 100%;
+		z-index: 3;
+		top: 0;
+	}
+}
+
 nav.bar {
 	.navbar;
 	&:extend(.navbar);

@@ -24,7 +24,13 @@ module.exports = {
     methods: {
       get: function(req, res) {
         if (req.user) {
-          return res.render('pages/timeline', {});
+          req.user.lastUpdate = new Date();
+          req.user.save();
+          return Tag.getAll(function(err, tags) {
+            return res.render('pages/timeline', {
+              tags: Tag.checkFollowed(tags, req.user.tags)
+            });
+          });
         } else {
           return User.find().sort({
             '_id': 'descending'
@@ -45,17 +51,13 @@ module.exports = {
     methods: {
       get: [
         required.login, function(req, res) {
-          if (req.user) {
-            req.user.lastUpdate = new Date();
-            req.user.save();
-            return Tag.getAll(function(err, tags) {
-              return res.render('pages/feed', {
-                tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
-              });
+          req.user.lastUpdate = new Date();
+          req.user.save();
+          return Tag.getAll(function(err, tags) {
+            return res.render('pages/feed', {
+              tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
             });
-          } else {
-            return res.redirect('/');
-          }
+          });
         }
       ],
       post: function(req, res) {

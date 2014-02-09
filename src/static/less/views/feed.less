@@ -6,13 +6,6 @@
 
 @import "../common.less";
 
-.navbar {
-	// position: fixed;
-	width: 100%;
-	z-index: 3;
-	top: 0;
-}
-
 #sidebar {
 	position: absolute;
 	top: (@navbar-height+@-navbar-padding);
@@ -179,25 +172,6 @@
 	overflow-y: scroll;
 	bottom: 0;
 
-	&::-webkit-scrollbar {
-		width: 8px;
-	} 
-
-	&::-webkit-scrollbar-track {
-		background-clip: padding-box;
-		border: solid transparent;
-		border-width: 0 0 0 4px;
-		margin-right: 4px;
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background-color: rgba(0,0,0,.1);
-		.rounded(5px);
-		.transition(all, .2s, linear);
-		&:hover {
-			background-color: rgba(0,0,0,.3);
-		}
-	}
 
 	#posts > li,
 	#post > li {

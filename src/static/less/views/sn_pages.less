@@ -1,0 +1,203 @@
+
+/* sn_pages.less
+** Copyright qilabs.org
+** Styles of social network pages (sidebars included).
+*/
+
+@import "../common.less";
+
+@sidebar-width: 330px;
+@results-container-width: 630px;
+@sidebar-gap: 15px;
+
+.scrollbared () {
+
+	&::-webkit-scrollbar {
+		width: 8px;
+	} 
+
+	&::-webkit-scrollbar-track {
+		background-clip: padding-box;
+		border: solid transparent;
+		border-width: 0 4px 0 4px;
+		// margin-right: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background-color: rgba(0,0,0,.1);
+		.rounded(5px);
+		.transition(all, .4s, linear);
+		&:hover {
+			background-color: rgba(0,0,0,.3);
+		}
+	}
+}
+
+.sidebar () {
+	width: @sidebar-width;
+	position: fixed;
+	float: left;
+
+	.box {
+		background: white;
+		margin-bottom: 15px;
+
+		.head {
+			padding: 10px;
+			background: #DDD;
+			color: #444;
+
+			[data-info=name] {
+				font-size: 20px;
+				vertical-align: middle;
+			}
+			img {
+				margin-right: 10px;
+				.rounded(5px);
+			}
+		}
+		
+		.body:not(ul) {
+			padding: 10px;
+		}
+
+		ul.body {
+			padding: 0;
+
+			& > li {
+				list-style: none;
+				display: block;
+				padding: 10px;
+				border-bottom: 1px solid #AAA;
+			}
+		}
+	}
+
+	.box:first-child {
+		.head {
+			background: #444;
+			color: white;
+		}
+	}
+}
+
+.resultsContainer () {
+	width: @results-container-width;
+	min-height: 600px;
+	margin-left: @sidebar-width+@sidebar-gap;
+
+	.box,
+	.post {
+		list-style: none;
+
+		background: white;
+		margin-bottom: 10px;
+		padding: 20px;
+	}
+}
+
+body {
+
+	background: url(/static/images/noisy_grid.png);
+
+	#globalContainer {
+		.scrollbared;
+
+		overflow: scroll;
+		position: absolute;
+		top: @real-navbar-height;
+		bottom: 0;
+		width: 100%;
+
+		#content {
+			margin: 0 auto;
+			width: @results-container-width+@sidebar-width+@sidebar-gap;
+			
+			padding-top: 10px;
+
+			#sidebar {
+				.sidebar;
+			}
+
+			#resultsContainer {
+				.resultsContainer;
+			}
+		}
+	}
+}
+
+[data-page=timeline] {
+
+	.box.tags body {
+
+		li {
+
+			padding-left: 10px;
+			padding-right: 30px;
+			margin-bottom: 10px;
+			list-style: none;
+		
+			i { margin-right: 5px; }
+			display: block;
+
+			padding: 10px;
+			.ultra-reset-button;
+
+			position: relative;
+			display: block;
+			margin: 5px 0;		
+			text-align: left;
+
+			.tag {
+				width: 100%;
+				text-align: left;
+				background: #EEE;
+				.rounded(3px);
+				border: 1px solid #DDD;
+			
+				.tg-btn {
+					text-align: left;
+					margin-bottom: 5px;
+
+					.tg {
+						display: table;
+						display: inline-block;
+						margin-right: 5px;
+					}
+
+				}
+				
+				[data-role=inform] {
+					.reset-button;
+					float: right;
+					padding: 0;
+				}
+			}
+
+			[data-role=expand] {
+				.reset-button;
+				position: absolute;
+				top: 7px;
+				right: -25px;
+			}
+			
+
+			& .tag[data-checked=true] {
+				border: 1px solid green;
+				background: green;
+			}
+
+			& .tag[data-checked=true] {
+				color: #fff;
+				background-color: #5cb85c;
+				border-color: #4cae4c;
+
+				&:hover, &:focus, &:active, &.active {
+					color: #ffffff;
+					background-color: #47a447;
+					border-color: #398439;
+				}
+			}
+		}
+	}
+}
