@@ -1,4 +1,4 @@
-var UserSchema, authTypes, crypto, mongoose;
+var FollowSchema, UserSchema, authTypes, crypto, mongoose;
 
 mongoose = require('mongoose');
 
@@ -40,6 +40,12 @@ UserSchema = new mongoose.Schema({
   followingTags: []
 }, {
   id: true
+});
+
+FollowSchema = new mongoose.Schema({
+  start: Date,
+  follower: 'ObjectId',
+  followee: 'ObjectId'
 });
 
 UserSchema.virtual('avatarUrl').get(function() {

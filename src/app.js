@@ -116,6 +116,7 @@ app.locals({
 		}
 		return pathLib.join(STATIC_URL, relPath);
 	},
+	_: require('underscore'),
 	urls: {
 		'twitter': '#',
 		'facebook': '#'

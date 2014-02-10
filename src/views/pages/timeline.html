@@ -19,15 +19,9 @@
 					<div class="body">
 						<div class="following">
 							seguindo:
-							<for (var i=0; i<user.followers.length; i++) { %>
-								<img src="">
-							<% } %>
 						</div>
 						<div class="followers">
 							seguidores:
-							<for (var i=0; i<user.followers.length; i++) { %>
-								<img src="">
-							<% } %>
 						</div>
 					</div>
 				</div>
@@ -37,9 +31,7 @@
 						Seguindo Assuntos: (5)
 					</div>
 					<ul class="body">
-						<% for (var key in tags) { var tag = tags[key]; %>
-							<li><%= tag.label %></li>
-						<% } %>
+						
 					</ul>
 				</div>
 

@@ -9,7 +9,7 @@ authTypes = []
 
 # Schema
 UserSchema = new mongoose.Schema {
-		name:		{ type: String, }
+		name:			{ type: String, }
 		tags:			{ type: Array, default: [] }
 		facebookId:		{ type: String, }
 		accessToken:	{ type: String, }
@@ -29,6 +29,12 @@ UserSchema = new mongoose.Schema {
 		groups: []
 		followingTags: []
 	}, { id: true } # default
+
+FollowSchema = new mongoose.Schema {
+	start: Date,
+	follower: 'ObjectId',
+	followee: 'ObjectId',
+}
 
 # Virtuals
 
