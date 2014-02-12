@@ -11,8 +11,11 @@ InboxSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     index: true
   },
-  author: mongoose.Schema.ObjectId,
-  post: String
+  author: {
+    type: mongoose.Schema.ObjectId,
+    index: true
+  },
+  post: mongoose.Schema.ObjectId
 });
 
 InboxSchema.statics.getUserBoard = function(user, opts, cb) {

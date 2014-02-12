@@ -21,7 +21,6 @@ Topics:
 ###
 
 mongoose = require 'mongoose'
-crypto = require 'crypto'
 memjs = require 'memjs'
 _ = require 'underscore'
 

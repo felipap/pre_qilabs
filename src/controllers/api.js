@@ -1,15 +1,17 @@
-var Post, Subscriber, Tag, User, required,
+var Post, Subscriber, Tag, User, mongoose, required,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-User = require('../models/user.js');
-
-Post = require('../models/post.js');
-
-Tag = require('../models/tag.js');
-
-Subscriber = require('../models/subscriber.js');
+mongoose = require('mongoose');
 
 required = require('../lib/required.js');
+
+User = mongoose.model('User');
+
+Post = mongoose.model('Post');
+
+Tag = mongoose.model('Tag');
+
+Subscriber = mongoose.model('Subscriber');
 
 module.exports = {
   children: {
@@ -67,119 +69,25 @@ module.exports = {
         ]
       }
     },
-    'tags': {
-      methods: {
-        get: [
-          required.login, function(req, res) {
-            return res.end(JSON.stringify(Tag.checkFollowed(tags, req.user.tags)));
-          }
-        ],
-        post: [
-          required.login, function(req, res) {
-            var checked;
-            checked = req.body.checked;
-            req.user.tags = checked;
-            req.user.save();
-            req.flash('info', 'Tags atualizadas com sucesso!');
-            return res.end();
-          }
-        ]
-      },
+    'users': {
       children: {
-        ':tag': {
-          methods: {
-            put: [
-              required.login, function(req, res) {
-                var _ref;
-                console.log('did follow');
-                console.log('didn\'t follow');
-                if (_ref = req.params.tag, __indexOf.call(req.user.tags, _ref) >= 0) {
-                  req.user.tags.splice(req.user.tags.indexOf(req.params.tag), 1);
-                } else {
-                  req.user.tags.push(req.params.tag);
-                }
-                req.user.save();
-                return res.end();
-              }
-            ]
-          }
-        }
-      }
-    },
-    'board/posts': {
-      methods: {
-        get: [
-          required.login, function(req, res) {
-            return req.user.getBoard({
-              limit: 10
-            }, function(err, docs) {
-              console.log('returning docs:', docs);
-              return res.end(JSON.stringify({
-                data: docs,
-                page: 0
-              }));
-            });
-          }
-        ]
-      }
-    },
-    'timeline/posts': {
-      methods: {
-        get: [
-          required.login, function(req, res) {
-            return req.user.getInbox({
-              limit: 10
-            }, function(err, docs) {
-              console.log('returning docs:', docs);
-              return res.end(JSON.stringify({
-                data: docs,
-                page: 0
-              }));
-            });
-          }
-        ]
-      }
-    },
-    'posts': {
-      methods: {
-        get: [
-          required.login, function(req, res) {
-            var page, seltags;
-            if (req.query.tags) {
-              seltags = req.query.tags.split(',');
-            } else {
-              seltags = req.user.tags;
-            }
-            page = parseInt(req.query.page) || 0;
-            return Post.getWithTags(seltags, function(err, docs) {
-              docs = docs.slice(page * 5, (page + 1) + 5);
-              console.log('length of posts:', docs.length);
-              return res.end(JSON.stringify({
-                data: docs,
-                page: page
-              }));
-            });
-          }
-        ]
-      },
-      children: {
-        ':id': {
+        ':userId/board': {
           methods: {
             get: [
               required.login, function(req, res) {
-                return Post.findOne({
-                  tumblrId: req.params.id
-                }, function(err, doc) {
-                  return res.end(JSON.stringify(doc));
+                return User.getBoard(req.params.userId, {
+                  limit: 10
+                }, function(err, docs) {
+                  console.log('Fetched board:', docs);
+                  return res.end(JSON.stringify({
+                    data: docs,
+                    page: 0
+                  }));
                 });
               }
             ]
           }
-        }
-      }
-    },
-    'users': {
-      children: {
+        },
         ':userId/follow': {
           methods: {
             post: [
@@ -224,6 +132,23 @@ module.exports = {
         ]
       },
       children: {
+        'timeline/posts': {
+          methods: {
+            get: [
+              required.login, function(req, res) {
+                return req.user.getTimeline({
+                  limit: 10
+                }, function(err, docs) {
+                  console.log('Fetched timeline:', docs);
+                  return res.end(JSON.stringify({
+                    data: docs,
+                    page: 0
+                  }));
+                });
+              }
+            ]
+          }
+        },
         'leave': {
           name: 'user_quit',
           methods: {
@@ -255,7 +180,12 @@ module.exports = {
           methods: {
             post: [
               required.login, function(req, res) {
-                return req.user.post(req.body.content);
+                return req.user.createPost({
+                  content: {
+                    title: 'My conquest!' + Math.floor(Math.random() * 100),
+                    body: req.body.content
+                  }
+                });
               }
             ]
           }

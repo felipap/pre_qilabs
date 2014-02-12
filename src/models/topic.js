@@ -19,12 +19,10 @@ Topics:
 - Estágio
 - Simulações ONU
  */
-var TopicSchema, api, authTypes, blog, blog_url, checkFollowed, crypto, descTable, findOrCreate, getDescription, getLabel, memjs, mongoose, recursify, toCamel, transTable, _,
+var TopicSchema, api, authTypes, blog, blog_url, checkFollowed, descTable, findOrCreate, getDescription, getLabel, memjs, mongoose, recursify, toCamel, transTable, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
-
-crypto = require('crypto');
 
 memjs = require('memjs');
 

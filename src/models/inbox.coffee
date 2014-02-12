@@ -7,8 +7,8 @@ mongoose = require 'mongoose'
 InboxSchema = new mongoose.Schema {
 	dateSent:		{ type:Date, index:true }
 	recipient:	 	{ type:mongoose.Schema.ObjectId, index:true } # Might as well be a group
-	author:			mongoose.Schema.ObjectId
-	post: 			String
+	author:			{ type:mongoose.Schema.ObjectId, index:true }
+	post: 			mongoose.Schema.ObjectId
 }
 
 InboxSchema.statics.getUserBoard = (user, opts, cb) ->

@@ -4,4 +4,8 @@ mongoose.connect(process.env.MONGOLAB_URI
 	|| process.env.MONGOHQ_URL
 	|| 'mongodb://localhost/madb');
 
+var models = ['follow', 'inbox', 'post', 'subscriber', 'tag', 'topic', 'user', 'group'];
+for (var i=0; i<models.length; i++)
+	require('../models/'+models[i]);
+
 module.exports = mongoose;

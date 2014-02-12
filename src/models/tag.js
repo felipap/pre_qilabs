@@ -1,7 +1,7 @@
 
 /*
  * models/tag.coffee
- * for meavisa.org, by @f03lipe
+ * for qilabs.org, by @f03lipe
  *
  * Tag model.
  * Application

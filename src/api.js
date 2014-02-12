@@ -1,12 +1,10 @@
-var User, exports, getBlog, getPostsWithTags, notifyNewPosts, pushBlogTags, request, sendNotification, tumblr, _;
+var exports, getBlog, getPostsWithTags, notifyNewPosts, pushBlogTags, request, sendNotification, tumblr, _;
 
 tumblr = require('tumblr');
 
 request = require('request');
 
 _ = require('underscore');
-
-User = require('./models/user.js');
 
 sendNotification = function(user_id, template, callback) {
   var access_token, url;

@@ -1,10 +1,6 @@
-var FollowSchema, GroupSchema, authTypes, crypto, mongoose;
+var GroupSchema, MembershipSchema, mongoose;
 
 mongoose = require('mongoose');
-
-crypto = require('crypto');
-
-authTypes = [];
 
 GroupSchema = new mongoose.Schema({
   name: {
@@ -16,26 +12,19 @@ GroupSchema = new mongoose.Schema({
   },
   firstAccess: Date,
   affiliation: '',
-  type: '',
-  badges: [],
-  groups: [],
-  followingTags: []
+  type: ''
 }, {
   id: true
 });
 
-FollowSchema = new mongoose.Schema({
-  start: Date,
-  follower: '',
-  followee: ''
+MembershipSchema = new mongoose.Schema({
+  joinDate: Date,
+  member: mongoose.Schema.ObjectId,
+  group: mongoose.Schema.ObjectId
 });
 
-UserSchema.virtual('avatarUrl').get(function() {
-  return 'https://graph.facebook.com/' + this.facebookId + '/picture';
-});
+GroupSchema.methods = {};
 
-UserSchema.methods = {};
+GroupSchema.statics.findOrCreate = require('./lib/findOrCreate');
 
-UserSchema.statics.findOrCreate = require('./lib/findOrCreate');
-
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("Group", GroupSchema);

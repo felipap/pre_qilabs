@@ -2,17 +2,15 @@
 # pages.coffee
 # for meavisa.org
 
-User = require './models/user.js'
-Post = require './models/post.js'
-Tag  = require './models/tag.js'
-Subscriber  = require './models/subscriber.js'
-Inbox = require './models/inbox.js'
+mongoose = require 'mongoose'
 
-tags = []
+Post = mongoose.model('Post')
+Inbox = mongoose.model('Inbox')
+Tag  = mongoose.model('Tag')
+User = mongoose.model('User')
+Subscriber  = mongoose.model('Subscriber')
+
 posts = []
-
-Tag.fetchAndCache()	# Fetch from Tumblr server and cache
-Post.fetchAndCache()
 
 required = require './lib/required.js'
 
@@ -24,12 +22,7 @@ module.exports = {
 				if req.user
 					req.user.lastUpdate = new Date()
 					req.user.save()
-					# req.user.getInbox (err, docs) ->
-					Inbox.find {}, (err, docs) ->
-						console.log('oo', arguments)
-						res.render 'pages/timeline',
-							tags: Tag.checkFollowed(tags, req.user.tags)
-							posts: ''+err+docs
+					res.render 'pages/timeline'
 
 				else
 					User.find()
@@ -73,12 +66,6 @@ module.exports = {
 			get: [required.login, (req, res) ->
 				res.render('pages/panel', {})
 			]
-		}
-	},
-
-	'/tags/:tag': {
-		methods: {
-			get: (req, res) ->
 		}
 	},
 

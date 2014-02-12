@@ -6,7 +6,6 @@ tumblr	= require 'tumblr'
 request = require 'request'
 _ = require 'underscore'
 
-User = require './models/user.js'
 
 # Assumes app.js was run (and possibly updated process.env).
 	

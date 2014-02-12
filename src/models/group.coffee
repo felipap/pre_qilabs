@@ -3,9 +3,6 @@
 # for qilabs.org, by @f03lipe
 
 mongoose = require 'mongoose'
-crypto = require 'crypto'
-
-authTypes = []
 
 # Schema
 GroupSchema = new mongoose.Schema {
@@ -14,26 +11,19 @@ GroupSchema = new mongoose.Schema {
 	firstAccess: Date
 	affiliation: '' 				# institution, project, NGOs etc
 	type: ''
-	
-	badges: []
-	groups: []
-	followingTags: []
 }, { id: true } # default
 
-FollowSchema = new mongoose.Schema {
-	start: Date,
-	follower: '',
-	followee: '',
+MembershipSchema = new mongoose.Schema {
+	joinDate: 	Date,
+	member:		mongoose.Schema.ObjectId,
+	group: 		mongoose.Schema.ObjectId,
 }
 
 # Virtuals
 
-UserSchema.virtual('avatarUrl').get ->
-	'https://graph.facebook.com/'+@facebookId+'/picture'
-
 # Methods
-UserSchema.methods = {}
+GroupSchema.methods = {}
 
-UserSchema.statics.findOrCreate = require('./lib/findOrCreate')
+GroupSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
-module.exports = mongoose.model "User", UserSchema
+module.exports = mongoose.model "Group", GroupSchema

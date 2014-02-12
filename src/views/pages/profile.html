@@ -1,7 +1,7 @@
 <% layout('../timeline') -%>
 <% stylesheet(getMediaUrl('css','sn_pages.min.css')) -%>
 
-<script>window.postsRoot='/api/board/posts';</script>
+<script>window.postsRoot='/api/users/<%= profile.id %>/board';</script>
 
 <body data-page="profile">
 

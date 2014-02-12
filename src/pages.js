@@ -1,22 +1,18 @@
-var Inbox, Post, Subscriber, Tag, User, posts, required, tags;
+var Inbox, Post, Subscriber, Tag, User, mongoose, posts, required;
 
-User = require('./models/user.js');
+mongoose = require('mongoose');
 
-Post = require('./models/post.js');
+Post = mongoose.model('Post');
 
-Tag = require('./models/tag.js');
+Inbox = mongoose.model('Inbox');
 
-Subscriber = require('./models/subscriber.js');
+Tag = mongoose.model('Tag');
 
-Inbox = require('./models/inbox.js');
+User = mongoose.model('User');
 
-tags = [];
+Subscriber = mongoose.model('Subscriber');
 
 posts = [];
-
-Tag.fetchAndCache();
-
-Post.fetchAndCache();
 
 required = require('./lib/required.js');
 
@@ -28,13 +24,7 @@ module.exports = {
         if (req.user) {
           req.user.lastUpdate = new Date();
           req.user.save();
-          return Inbox.find({}, function(err, docs) {
-            console.log('oo', arguments);
-            return res.render('pages/timeline', {
-              tags: Tag.checkFollowed(tags, req.user.tags),
-              posts: '' + err + docs
-            });
-          });
+          return res.render('pages/timeline');
         } else {
           return User.find().sort({
             '_id': 'descending'
@@ -77,11 +67,6 @@ module.exports = {
           return res.render('pages/panel', {});
         }
       ]
-    }
-  },
-  '/tags/:tag': {
-    methods: {
-      get: function(req, res) {}
     }
   },
   '/p/:user': {

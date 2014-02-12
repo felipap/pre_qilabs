@@ -4,15 +4,15 @@
 
 var passport = require('passport');
 
-var User = require('../models/user.js');
-
 function setUpPassport() {
+
 	passport.use(new (require('passport-facebook').Strategy)({
 			clientID: process.env.facebook_app_id,
 			clientSecret: process.env.facebook_secret,
 			callbackURL: "/auth/facebook/callback"
 		},
 		function (accessToken, refreshToken, profile, done) {
+			var User = require('mongoose').model('User');
 			// console.log('Connected to profile', profile)
 			User.findOne({ facebookId: profile.id }, function (err, user) {
 				if (err)
@@ -45,6 +45,7 @@ function setUpPassport() {
 	});
 
 	passport.deserializeUser(function (id, done) {
+		var User = require('mongoose').model('User');
 		User.findOne({_id: id}, function (err, user) {
 			return done(err, user);
 		});

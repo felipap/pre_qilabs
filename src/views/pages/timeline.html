@@ -1,7 +1,7 @@
 <% layout('../timeline') -%>
 <% stylesheet(getMediaUrl('css','sn_pages.min.css')) -%>
 
-<script>window.postsRoot='/api/timeline/posts';</script>
+<script>window.postsRoot='/api/me/timeline/posts';</script>
 
 <body data-page="timeline">
 
@@ -15,6 +15,7 @@
 					<div class="head">
 						<img src="<%= user.avatarUrl %>" />
 						<a href="<%= user.profileUrl %> "><span data-info="name"><%= user.name %></span></a>
+						<%= user.id %>
 					</div>
 					<div class="body">
 						<div class="following">

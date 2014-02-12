@@ -2,9 +2,9 @@
 mongoose = require 'mongoose'
 _ = require 'underscore'
 
-Inbox = require './inbox.js'
-Follow = require './follow.js'
-Post = require './post.js'
+Inbox = mongoose.model('Inbox')
+Follow = mongoose.model('Follow')
+Post = mongoose.model('Post')
 
 # Schema
 UserSchema = new mongoose.Schema {
@@ -33,7 +33,6 @@ UserSchema = new mongoose.Schema {
 	followingTags: 	[]
 }, { id: true } # default
 
-
 # Virtuals
 UserSchema.virtual('avatarUrl').get ->
 	'https://graph.facebook.com/'+@facebookId+'/picture'
@@ -41,16 +40,8 @@ UserSchema.virtual('avatarUrl').get ->
 UserSchema.virtual('profileUrl').get ->
 	'/p/'+@username
 
-# Methods
-UserSchema.methods.getInbox = (opts, cb) ->
-	Inbox.getUserInbox(@, opts, cb)
-
-UserSchema.methods.getBoard = (opts, cb) ->
-	Inbox.getUserBoard(@, opts, cb)
-
-# UserSchema.methods.countFollowers = (cb) ->
-# 	Follow.findOne {followee: @id}, (err, doc) ->
-# 		cb(err, doc)
+################################################################################
+## related to Following
 
 UserSchema.methods.getFollowers = (cb) ->
 	Follow.find {followee: @id}, (err, docs) ->
@@ -59,18 +50,15 @@ UserSchema.methods.getFollowers = (cb) ->
 			console.log('found:', err, docs)
 			cb(err, docs)
 
-UserSchema.methods.post = (opts, cb) ->
-	# Post.create({m})
-	@getFollowers (err, docs) =>
-		for follower in docs
-			# Inbox.createFromPost
-			Inbox.create {
-				author: @id,
-				recipient: follower.id,
-				post: "Fala, #{follower.id}. Como vai? Seguinte: #{opts}",
-			}, (err, doc) ->
-				console.log('saved, really')
-		console.log err, docs
+UserSchema.methods.getFollowing = (cb) ->
+	Follow.find {follower: @id}, (err, docs) ->
+		User.find {_id: {$in: _.pluck(docs, 'followee')}}, (err, docs) ->
+			console.log('found:', err, docs)
+			cb(err, docs)
+
+UserSchema.methods.countFollowers = (cb) ->
+	Follow.count {followee: @id}, (err, count) ->
+		cb(err, count)
 
 UserSchema.methods.doesFollowId = (userId, cb) ->
 	if not userId
@@ -79,13 +67,7 @@ UserSchema.methods.doesFollowId = (userId, cb) ->
 		(err, doc) ->
 			cb(err, !!doc)
 
-UserSchema.statics.genProfileFromUsername = (username, cb) ->
-	User.findOne {username: username}, (err, doc) ->
-		if err then return cb(err)
-		unless doc then return cb(null, doc)
-		doc.getFollowers (err, followers) ->
-			if err then return cb(err)
-			cb(null, _.extend(doc, {followers:followers}))
+#### Actions
 
 UserSchema.methods.followId = (userId, cb) ->
 	if not userId
@@ -102,6 +84,60 @@ UserSchema.methods.unfollowId = (userId, cb) ->
 		(err, doc) ->
 			console.log("Now unfollowing:", err, doc)
 			cb(err, !!doc)
+
+################################################################################
+## related to the Timeline and Inboxes
+
+UserSchema.methods.getTimeline = (opts, cb) ->
+	Inbox.getUserInbox @, opts, (err, docs) ->
+		Post.find {id: {$in: _.pluck(docs, 'post')}}, (err, posts) ->
+			# console.log('timeline posts', posts)
+			cb(err, posts)
+
+UserSchema.statics.getBoard = (userId, opts, cb) ->
+	Post
+		.find {author: userId}
+		.sort ('-dateCreated')
+		.exec (err, posts) ->
+			console.log('posts', posts)
+			cb(err, posts)
+
+###
+Generate stuffed profile for the controller.
+###
+UserSchema.statics.genProfileFromUsername = (username, cb) ->
+	User.findOne {username: username}, (err, doc) ->
+		if err then return cb(err)
+		unless doc then return cb(null, doc)
+		doc.getFollowers (err, followers) ->
+			if err then return cb(err)
+			doc.getFollowing (err, following) ->
+				if err then return cb(err)
+				cb(null, _.extend(doc, {followers:followers, following:following}))
+
+
+###
+Create a post object and fan out through inboxes.
+###
+UserSchema.methods.createPost = (opts, cb) ->
+	Post.create {
+			author: @id
+			group: null
+			data: {
+				title: opts.content.title
+				body: opts.content.body
+			}
+		}, (err, post) =>
+		@getFollowers (err, docs) =>
+			for follower in docs
+				# Inbox.createFromPost
+				Inbox.create {
+					author: @id,
+					recipient: follower.id,
+					post: post,
+				}, (err, doc) ->
+					console.log('saved, really')
+			console.log err, docs
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
