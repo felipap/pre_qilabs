@@ -9,12 +9,15 @@ module.exports = function(grunt) {
 		banner: '/*! <%= pkg.title || pkg.name %> - v<%= version %>\n' +
 			'<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
 			'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-			' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
+			' Licensed <%= _.pluck(pkg.licenses, "type").join(", ")||pkg.license %> */\n',
 		clean: {
 			files: ['min']
 		},
 
 		concat: {
+			options: {
+				banner: "<%= banner %>"
+			}, 
 			feed: {
 				src: [
 					'src/static/js/lib/require.js',
@@ -23,6 +26,15 @@ module.exports = function(grunt) {
 					'src/static/js/lib/feed.js',
 				],
 				dest: 'src/static/js/concated_feed.js',
+			},
+			timeline: {
+				src: [
+					'src/static/js/lib/require.js',
+					'src/static/js/lib/common.js',
+					'src/static/js/lib/plugins.js',
+					'src/static/js/lib/timeline.js',
+				],
+				dest: 'src/static/js/concated_timeline.js',
 			},
 			all: {
 				src: [
@@ -35,9 +47,16 @@ module.exports = function(grunt) {
 		},
  
 		uglify: {
+			options: {
+				banner: '<%= banner %>'
+			},
 			feed: {
 				src: 'src/static/js/concated_feed.js',
 				dest: 'src/static/js/feed.min.js'
+			},
+			timeline: {
+				src: 'src/static/js/concated_timeline.js',
+				dest: 'src/static/js/timeline.min.js'
 			},
 			all: {
 				src: 'src/static/js/concated_all.js',
@@ -67,18 +86,6 @@ module.exports = function(grunt) {
 				ext: '.js',
 			}
 		},
-		// htmlmin: {
-		// 	dist: {
-		// 		options: {
-		// 			removeComments: true,
-		// 			collapseWhitespace: true
-		// 		},
-		// 		files: {
-		// 			'dist/index.html': 'src/index.html',
-		// 			'dist/contact.html': 'src/contact.html'
-		// 		}
-		// 	},
-		// },
 
 		// Higher-lever configuration
 		watch: {
@@ -103,26 +110,21 @@ module.exports = function(grunt) {
 				tasks: ['dist-coffee'],
 				options: { spawn: false },
 			},
-			// html: {
-			// 	files: {
-			// 		'src/views/dist/*.html': 'src/views/pages/*.html',
-			// 	},
-			// 	tasks: ['htmlmin']
-			// }
 		},
 
 		nodemon: {
 			dev: {
+				script: 'src/app.js',
 				options: {
-					file: 'src/app.js',
 					args: ['dev'],
 					nodeArgs: ['--debug'],
-					ignoredFiles: ['node_modules/**','src/static/**'],
-					// watchedExtensions: ['js','css'],
-					watchedFolders: ['src'],
+					// watch: ['src'],
+					ignore: ['node_modules/**','src/static/**'],
+					ext: 'js,html',
 					delayTime: 1,
+
 					legacyWatch: true,
-					cwd: __dirname
+					cwd: __dirname,
 				}
 			},
 		},
@@ -143,13 +145,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-contrib-coffee');
 	grunt.loadNpmTasks('grunt-concurrent');
-	grunt.loadNpmTasks('grunt-nodemon');
-	grunt.loadNpmTasks('grunt-contrib-htmlmin');
+	grunt.loadNpmTasks('grunt-nodemon');	
 
 	grunt.registerTask('dist-coffee', ['coffee']);
 	grunt.registerTask('dist-static-js', ['concat', 'uglify']);
 
 	// 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
-	grunt.registerTask('server', ['nodemon']);
-	grunt.registerTask('serve', ['server']);
+	grunt.registerTask('serve', ['nodemon']);
 };

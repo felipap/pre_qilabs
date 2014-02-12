@@ -14,7 +14,9 @@ module.exports = {
     },
     '/facebook': {
       methods: {
-        get: passport.authenticate('facebook')
+        get: passport.authenticate('facebook', {
+          scope: ['email', 'user_likes']
+        })
       }
     }
   }

@@ -1,25 +1,15 @@
-var FollowSchema, UserSchema, authTypes, crypto, mongoose;
+var FollowSchema, Inbox, UserSchema, mongoose;
 
 mongoose = require('mongoose');
 
-crypto = require('crypto');
-
-authTypes = [];
+Inbox = require('./inbox.js');
 
 UserSchema = new mongoose.Schema({
-  name: {
-    type: String
-  },
-  tags: {
-    type: Array,
-    "default": []
-  },
-  facebookId: {
-    type: String
-  },
-  accessToken: {
-    type: String
-  },
+  name: String,
+  username: String,
+  tags: Array,
+  facebookId: String,
+  accessToken: String,
   notifiable: {
     type: Boolean,
     "default": true
@@ -29,14 +19,16 @@ UserSchema = new mongoose.Schema({
     "default": Date(0)
   },
   firstAccess: Date,
-  profile: {
+  contact: {
+    email: String
+  },
+  portfolio: {
     fullName: '',
     birthday: Date,
     city: '',
     avatarUrl: ''
   },
   badges: [],
-  groups: [],
   followingTags: []
 }, {
   id: true
@@ -44,15 +36,21 @@ UserSchema = new mongoose.Schema({
 
 FollowSchema = new mongoose.Schema({
   start: Date,
-  follower: 'ObjectId',
-  followee: 'ObjectId'
+  follower: mongoose.Schema.ObjectId,
+  followee: mongoose.Schema.ObjectId
 });
 
 UserSchema.virtual('avatarUrl').get(function() {
   return 'https://graph.facebook.com/' + this.facebookId + '/picture';
 });
 
-UserSchema.methods = {};
+UserSchema.virtual('url').get(function() {
+  return '/p/' + this.username;
+});
+
+UserSchema.methods.getInbox = function(opts, cb) {
+  return Inbox.getUserInbox(this, opts, cb);
+};
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate');
 

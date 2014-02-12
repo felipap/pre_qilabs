@@ -6,6 +6,7 @@ User = require './models/user.js'
 Post = require './models/post.js'
 Tag  = require './models/tag.js'
 Subscriber  = require './models/subscriber.js'
+Inbox = require './models/inbox.js'
 
 tags = []
 posts = []
@@ -15,18 +16,22 @@ Post.fetchAndCache()
 
 required = require './lib/required.js'
 
+
 module.exports = {
 	'/': {
 		name: 'index',
 		methods: {
 			get: (req, res) ->
 				if req.user
-					# console.log('logged:', req.user.name, req.user.tags)
 					req.user.lastUpdate = new Date()
 					req.user.save()
 					Tag.getAll (err, tags) ->
-						res.render 'pages/timeline',
-							tags: Tag.checkFollowed(tags, req.user.tags)
+						# req.user.getInbox (err, docs) ->
+						Inbox.find {}, (err, docs) ->
+							console.log('oo', arguments)
+							res.render 'pages/timeline',
+								tags: Tag.checkFollowed(tags, req.user.tags)
+								posts: ''+err+docs
 
 				else
 					User.find()
@@ -54,7 +59,7 @@ module.exports = {
 				req.user.save()
 				Tag.getAll (err, tags) ->
 					res.render 'pages/feed',
-							tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
+						tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
 			],
 			post: (req, res) ->
 				# Redirect from frame inside Facebook?
@@ -82,12 +87,14 @@ module.exports = {
 	'/p/:user': {
 		methods: {
 			get: (req, res) ->
-				res.render('pages/profile', {
-					# user: req.user,
-					# profile: {
-					# 	user: req.user # req.params.user
-					# },
-				})
+				# User.getBoardFromUsername {}
+				User.findOne {username: req.params.user}, (err, profile) ->
+					console.log('profile', err, profile)
+					if err or not profile
+						res.redirect('/404')
+					else
+						res.render 'pages/profile', 
+							profile: profile
 		},
 		name: 'profile'
 	},

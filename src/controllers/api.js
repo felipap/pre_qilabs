@@ -106,6 +106,23 @@ module.exports = {
         }
       }
     },
+    'timeline/posts': {
+      methods: {
+        get: [
+          required.login, function(req, res) {
+            return req.user.getInbox({
+              limit: 10
+            }, function(err, docs) {
+              console.log('returning docs:', docs);
+              return res.end(JSON.stringify({
+                data: docs,
+                page: 0
+              }));
+            });
+          }
+        ]
+      }
+    },
     'posts': {
       methods: {
         get: [
@@ -119,7 +136,7 @@ module.exports = {
             page = parseInt(req.query.page) || 0;
             return Post.getWithTags(seltags, function(err, docs) {
               docs = docs.slice(page * 5, (page + 1) + 5);
-              console.log(docs.length);
+              console.log('length of posts:', docs.length);
               return res.end(JSON.stringify({
                 data: docs,
                 page: page

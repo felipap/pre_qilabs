@@ -8,12 +8,17 @@
 		<ul >
 			<li>
 				<a href="#" class="model-link home" data-toggle="tooltip" title="Seu Mural" data-placement="bottom">
-					<i class="icon-user"></i>
+					<i class="icon-home"></i>
 				</a>
 			</li>
 			<li>
 				<a href="#" class="model-link groups" data-toggle="tooltip" title="Grupos" data-placement="bottom">
-					<i class="icon-users"></i>
+					<i class="icon-group"></i>
+				</a>
+			</li>
+			<li>
+				<a href="#" class="model-link guia" data-toggle="tooltip" title="Guias" data-placement="bottom">
+					<i class="icon-guia"></i>
 				</a>
 			</li>
 			<li>
@@ -21,23 +26,32 @@
 					<i class="icon-board"></i>
 				</a>
 			</li>
-			<li>
+<!-- 			<li>
 				<a href="#" class="model-link agenda" data-toggle="tooltip" title="Agenda" data-placement="bottom">
 					<i class="icon-agenda"></i>
 				</a>
-			</li>
+			</li> -->
 		</ul>
 		<ul class="pull-right">
-			<button class="plain-btn bell-btn"
-				onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
-				title="Temos 0 updates para você" data-toggle="tooltip" data-placement="bottom">
-				<i class="icon-bell"></i><sup id="count" class="badge">2</sup>
-			</button><!-- 
-		 --><a href="<%= getPageUrl('panel') %>" class="plain-btn"
-				title="Configurações de conta" data-toggle="tooltip" data-placement="bottom">
-				<i class="icon-cog"></i>
-			</a><!--
-		 --><li class="menu-dd" class="dropdown">
+			<li>
+				<button class="plain-btn" data-toggle="tooltip" title="Agenda" data-placement="bottom">
+					<i class="icon-agenda"></i>
+				</button>
+			</li>
+			<li>
+				<button class="plain-btn bell-btn"
+					onClick="$(this).find('i').toggleClass('icon-bell-o').toggleClass('icon-bell');"
+					title="Temos 0 updates para você" data-toggle="tooltip" data-placement="bottom">
+					<i class="icon-bell"></i><sup id="count" class="badge">2</sup>
+				</button>
+			</li>
+			<li>
+			 	<a href="<%= getPageUrl('panel') %>" class="plain-btn"
+					title="Configurações de conta" data-toggle="tooltip" data-placement="bottom">
+					<i class="icon-cog"></i>
+				</a>
+			</li>
+		 	<li class="menu-dd" class="dropdown">
 			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle"
 					>
 					<img id="avatarDd" alt="seu avatar" width=45 class="" src="<%= user.avatarUrl %>" />
@@ -46,7 +60,7 @@
 				</div>
 				<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
 					<li role="presentation">
-						<a role="menuitem" tabindex="-1" href="<%= getPageUrl('profile', user.id) %>">
+						<a role="menuitem" tabindex="-1" href="<%= user.url %>">
 							<i class="icon-user"></i> Meu Perfil
 						</a>
 					</li>

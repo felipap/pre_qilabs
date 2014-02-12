@@ -93,6 +93,19 @@ module.exports = {
 				},
 			}
 		},
+		'timeline/posts': {
+			methods: {
+				get: [required.login,
+					(req, res) ->
+						req.user.getInbox {limit:10}, (err, docs) ->
+							console.log('returning docs:', docs)
+							res.end(JSON.stringify({
+								data: docs, 
+								page: 0,
+							}))
+				],
+			}
+		},
 		'posts': {
 			methods: {
 				# Get all posts.
@@ -107,7 +120,7 @@ module.exports = {
 						Post.getWithTags seltags, (err, docs) ->
 							# Fake pagination
 							docs = docs.slice(page*5, (page+1)+5)
-							console.log(docs.length)
+							console.log('length of posts:', docs.length)
 							res.end(JSON.stringify({
 								data: docs,
 								page: page,

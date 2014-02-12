@@ -35,12 +35,12 @@ getPostsWithTags = (blog, tags, callback) ->
 	# Get tumblr posts.
 	blog.posts({ limit: -1 }, (err, data) ->
 		if err then return callback?(err)
-		_posts = []
+		dposts = []
 		data.posts.forEach (post) ->
 			int = _.intersection(post.tags, tags)
 			if int[0]
-				_posts.push(post)
-		callback?(null, _posts)
+				dposts.push(post)
+		callback?(null, dposts)
 	)
 
 # Notifies users of new posts with the tags that they follow.

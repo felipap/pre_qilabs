@@ -17,9 +17,11 @@ function setUpPassport() {
 			User.findOne({ facebookId: profile.id }, function (err, user) {
 				if (err)
 				 	return done(err);
+				console.log('user:', profile)
 				if (user) { // old user
 					user.accessToken = accessToken;
 					user.name = profile.displayName;
+					user.username = user.username || profile.username;
 					user.save();
 					done(null, user);
 				} else { // new user
@@ -28,6 +30,7 @@ function setUpPassport() {
 							facebookId: profile.id,
 							name: profile.displayName,
 							tags: [],
+							username: profile.username,
 						}, function (err, user) {
 							if (err) done(err);
 							done(null, user);

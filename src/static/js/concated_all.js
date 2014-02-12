@@ -1,3 +1,6 @@
+/*! meavisa - v0.0.2
+* http://meavisa.org
+* Copyright (c) 2014 ; Licensed  */
 requirejs.config({
 	appDir: ".",
 	baseUrl: "static/js",
@@ -68,7 +71,7 @@ require(['jquery','bootstrap'], function ($) {
 		});
 	})();
 
-	(function showFlashMessages (msgs) {
+	(function showFlashPosts (msgs) {
 		if (!$(".flash-msgs")[0])
 			$("<div class='flash-msgs'>").prependTo($('body > section')[0]);
 		for (var i=0; msgs.warn && i<msgs.warn.length; i++)

@@ -40,19 +40,19 @@ getPostsWithTags = function(blog, tags, callback) {
   return blog.posts({
     limit: -1
   }, function(err, data) {
-    var _posts;
+    var dposts;
     if (err) {
       return typeof callback === "function" ? callback(err) : void 0;
     }
-    _posts = [];
+    dposts = [];
     data.posts.forEach(function(post) {
       var int;
       int = _.intersection(post.tags, tags);
       if (int[0]) {
-        return _posts.push(post);
+        return dposts.push(post);
       }
     });
-    return typeof callback === "function" ? callback(null, _posts) : void 0;
+    return typeof callback === "function" ? callback(null, dposts) : void 0;
   });
 };
 

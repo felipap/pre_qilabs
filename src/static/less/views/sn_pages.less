@@ -33,8 +33,8 @@
 	}
 }
 
-.sidebar () {
-	width: @sidebar-width;
+.sidebar (@width: @sidebar-width) {
+	width: @width;
 	// position: absolute;
 	float: left;
 
@@ -81,8 +81,8 @@
 	}
 }
 
-.resultsContainer () {
-	width: @results-container-width;
+.resultsContainer (@width: results-container-width) {
+	width: @width;
 	min-height: 600px;
 	margin-left: @sidebar-width+@sidebar-gap;
 
@@ -200,4 +200,63 @@ body {
 			}
 		}
 	}
+}
+
+
+body[data-page=profile] {
+
+	background: url('/static/images/pinstripe.png');
+	@sidebar-width: 20px;
+	@results-container-width: 630px;
+
+
+	#sidebar {
+
+		.thumbnail {
+			display: table;
+			
+			img {
+				.box-shadow(0,1px,5px, 0, .5);
+			}
+		}
+
+		.info-groups {
+			padding: 10px 0;
+
+			.info-group {
+				h1,h2,h3,h4,h5,h6 {
+					margin: 0;
+					margin-bottom: 10px;
+				}
+			}
+		}
+
+		.social, .badges {
+			border-top: 1px dashed #888;
+			padding: 15px 0;
+
+			a {	text-decoration: none; }
+			[class*=icon] {
+				font-size: 25px;
+				padding: 5px 8px;
+				color: #444;
+				.text-shadow(0, 1px, 3px, .3);
+			}
+		}
+
+		.badges {
+			.gold { color: #FDE910; }
+			.silver { color: #E3E4E5; }
+			.copper { color: #CB6D51; }
+			[class*=icon] {
+				font-size: 35px;
+				padding: 5px 6px;
+			}
+		}
+	}
+
+	#resultsContainer {
+
+	}
+
 }

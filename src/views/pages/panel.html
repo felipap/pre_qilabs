@@ -8,7 +8,7 @@
 
 	<section>
 		<section>
-			<div class="" "col-md-8 col-md-offset-2">
+			<div class="col-md-8 col-md-offset-2">
 				<h3>Oi, <%= user.name %>!</h3>
 				<!-- <span class="thumbnail" style="display: table">
 					<img alt="seu avatar" class="" src="<%= user.avatarUrl %>">
@@ -20,7 +20,7 @@
 					<form onSubmit='return false;' data-ajax-post-href='/api/user'>
 						Receber notificações pelo Facebook
 						<input type="hidden" name="notifiable" value="off" >
-						<input type="checkbox" name="notifiable" autocomplete="off" <%= user.notifiable?'checked':'' %>>
+						<input type="checkbox" name="notifiable" autocomplete="off" <%= user.notifiable?"checked":"" %> >
 						<input type="hidden" name="_csrf" value="<%= token %>" />
 						<button data-action="save">Salvar</button>
 					</form>

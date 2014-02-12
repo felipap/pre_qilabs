@@ -26,8 +26,10 @@ PostSchema = new mongoose.Schema {
 		tumblrPostType:		String
 		date:				Date
 		body:	 			String
-		title:	 			String
 		isHosted: 			Boolean
+		data: {
+			title:	 			String
+		}
 		}, {
 		id: false,
 		toObject: { virtuals: true }

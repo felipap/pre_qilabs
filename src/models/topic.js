@@ -1,24 +1,25 @@
 
 /*
- * models/tag.coffee
- * for meavisa.org, by @f03lipe
- *
- * Tag model.
- * Application
- *# 
- * Vestibular
- *# Cursos
- *# Material
- *# Inscrição
- * Cursos e Bolsas
- *#
- * Voluntariado
- *#
- * Estágio
- *#
- * Simulações ONU
+ * models/topic.coffee
+ * for iqlabs.org, by @f03lipe
  */
-var TagSchema, api, authTypes, blog, blog_url, checkFollowed, crypto, descTable, findOrCreate, getDescription, getLabel, memjs, mongoose, recursify, toCamel, transTable, _,
+
+/*
+Topics:
+- Application 
+-- Universidades
+-- Essays
+-- Entrevista
+- Vestibular
+-- Cursos
+-- Material
+-- Inscrição
+- Cursos e Bolsas
+- Voluntariado
+- Estágio
+- Simulações ONU
+ */
+var TopicSchema, api, authTypes, blog, blog_url, checkFollowed, crypto, descTable, findOrCreate, getDescription, getLabel, memjs, mongoose, recursify, toCamel, transTable, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -35,20 +36,15 @@ api = require('./../api');
 
 authTypes = [];
 
-TagSchema = new mongoose.Schema({
-  name: {
-    type: String
-  },
-  children: {
-    type: Array
-  },
-  description: {
-    type: String
-  },
-  color: ''
+TopicSchema = new mongoose.Schema({
+  name: '',
+  slug: '',
+  children: [],
+  description: '',
+  tagColor: ''
 });
 
-TagSchema.methods = {};
+TopicSchema.methods = {};
 
 transTable = {
   'estagio': 'Estágio',
@@ -70,7 +66,7 @@ descTable = {
 /*
  * Turn a horizontal list of tags into a recursive structure with label and children.
  * TODO! this implementation looks expensive
- * TODO! Rename this to buildTag, or smthing.
+ * TODO! Rename this to buildTopic, or smthing.
  */
 
 recursify = function(tags) {
@@ -134,11 +130,11 @@ blog_url = 'http://meavisa.tumblr.com';
 
 blog = api.getBlog('meavisa.tumblr.com');
 
-TagSchema.statics.getAll = function(cb) {
+TopicSchema.statics.getAll = function(cb) {
   return this.getCached((function(_this) {
     return function(err, results) {
       if (err || !results.length) {
-        return api.pushBlogTags(blog, function(err, _tags) {
+        return api.pushBlogTopics(blog, function(err, _tags) {
           var tags;
           if (err) {
             cb(err);
@@ -153,7 +149,7 @@ TagSchema.statics.getAll = function(cb) {
   })(this));
 };
 
-TagSchema.statics.getCached = function(cb) {
+TopicSchema.statics.getCached = function(cb) {
   var mc;
   mc = memjs.Client.create();
   return mc.get('tags', function(err, val, key) {
@@ -171,11 +167,11 @@ TagSchema.statics.getCached = function(cb) {
   });
 };
 
-TagSchema.statics.fetchAndCache = function(cb) {
+TopicSchema.statics.fetchAndCache = function(cb) {
   var mc;
   mc = memjs.Client.create();
   console.log('Flushing cached tags.');
-  return api.pushBlogTags(blog, (function(_this) {
+  return api.pushBlogTopics(blog, (function(_this) {
     return function(err, tags) {
       if (err) {
         throw err;
@@ -185,14 +181,14 @@ TagSchema.statics.fetchAndCache = function(cb) {
   })(this));
 };
 
-TagSchema.statics.findOrCreate = findOrCreate;
+TopicSchema.statics.findOrCreate = findOrCreate;
 
-TagSchema.statics.getLabel = getLabel;
+TopicSchema.statics.getLabel = getLabel;
 
-TagSchema.statics.getDescription = getDescription;
+TopicSchema.statics.getDescription = getDescription;
 
-TagSchema.statics.recursify = recursify;
+TopicSchema.statics.recursify = recursify;
 
-TagSchema.statics.checkFollowed = checkFollowed;
+TopicSchema.statics.checkFollowed = checkFollowed;
 
-module.exports = mongoose.model("Tag", TagSchema);
+module.exports = mongoose.model("Topic", TopicSchema);

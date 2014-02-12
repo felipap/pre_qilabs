@@ -1,4 +1,4 @@
-var Post, Subscriber, Tag, User, posts, required, tags;
+var Inbox, Post, Subscriber, Tag, User, posts, required, tags;
 
 User = require('./models/user.js');
 
@@ -7,6 +7,8 @@ Post = require('./models/post.js');
 Tag = require('./models/tag.js');
 
 Subscriber = require('./models/subscriber.js');
+
+Inbox = require('./models/inbox.js');
 
 tags = [];
 
@@ -27,8 +29,12 @@ module.exports = {
           req.user.lastUpdate = new Date();
           req.user.save();
           return Tag.getAll(function(err, tags) {
-            return res.render('pages/timeline', {
-              tags: Tag.checkFollowed(tags, req.user.tags)
+            return Inbox.find({}, function(err, docs) {
+              console.log('oo', arguments);
+              return res.render('pages/timeline', {
+                tags: Tag.checkFollowed(tags, req.user.tags),
+                posts: '' + err + docs
+              });
             });
           });
         } else {
@@ -83,7 +89,18 @@ module.exports = {
   '/p/:user': {
     methods: {
       get: function(req, res) {
-        return res.render('pages/profile', {});
+        return User.findOne({
+          username: req.params.user
+        }, function(err, profile) {
+          console.log('profile', err, profile);
+          if (err || !profile) {
+            return res.redirect('/404');
+          } else {
+            return res.render('pages/profile', {
+              profile: profile
+            });
+          }
+        });
       }
     },
     name: 'profile'
