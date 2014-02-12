@@ -1,6 +1,6 @@
 
 # pages.coffee
-# for meavisa.org
+# for qilabs.org
 
 mongoose = require 'mongoose'
 

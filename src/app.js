@@ -8,26 +8,27 @@
 // Import environment keys (if in development)
 try { require('./env.js') } catch (e) {}
 
-// Library
-var flash = require('connect-flash'),
-	passport = require('passport'),
+// Libraries
+var flash 	= require('connect-flash'),
+	passport= require('passport'),
 	connect = require('connect'),
 	express = require('express'),
+	swig 	= require('swig'),
 // Utils
 	pathLib = require('path'),
-	fsLib = require('fs');
-
+	fsLib 	= require('fs')
+;
 
 var mongoose = require('./config/mongoose.js');
 var app = module.exports = express();
 require('./config/passport.js')();
 require('./config/app_config.js')(app);
 
-app.engine('html', require('ejs-locals'))
+app.engine('html', swig.renderFile)
 app.set('view engine', 'html'); // make '.html' the default
-app.set('views', __dirname + '/views'); // set views for error and 404 pages
+app.set('views', app.config.viewsRoot); // set views for error and 404 pages
 app.set('view options', {layout: false}); // disable layout
-app.set('view cache', true);
+app.set('view cache', false);
 app.use(connect.compress());
 app.use(express.static(pathLib.join(app.config.staticRoot, 'robots.txt')));
 app.use(express.static(pathLib.join(app.config.staticRoot, 'people.txt')));
@@ -52,6 +53,10 @@ app.use(require('./config/middlewares/flash_messages.js'));
 app.use(require('./config/middlewares/local_user.js'));
 app.use(app.router);
 app.use(express.logger());
+
+if (app.get('env') === 'development') {
+	swig.setDefaults({ cache: false });
+}
 
 ////////////////////////////////////////////////////////////////////////
 

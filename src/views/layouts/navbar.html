@@ -4,8 +4,8 @@
 		Q.I. Laboratories<!--  <sup class="version"><%= app.semantic_version %></sup> -->
 	</a>
 
-	<% if (typeof user !== "undefined") { %>
-		<ul >
+	{% if user %}
+		<ul>
 			<li>
 				<a href="#" class="model-link home" data-toggle="tooltip" title="Seu Mural" data-placement="bottom">
 					<i class="icon-home"></i>
@@ -83,7 +83,7 @@
 				</ul>
 			</li>
 		</ul>
-	<% } else { %>
+	{% else %}
 		<ul class="nav navbar-nav pull-right">
 			<a data-action="show-signin" href="#signin" data-toggle="dialog">
 				<strong>SEJA UM EARLY-TESTER</strong>
@@ -95,7 +95,7 @@
 				<i class="icon-question"></i>
 			</a>
 		</ul>
-	<% } %>
+	{% endif %}
 </nav>
 
 

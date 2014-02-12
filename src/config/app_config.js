@@ -8,5 +8,6 @@ module.exports = function (app) {
 		staticRoot: path.join(srcDir, 'static'),
 		mediaUrl: '/media/',
 		mediaRoot: path.join(srcDir, 'media'),
+		viewsRoot: path.join(srcDir, 'views'),
 	};
 };
