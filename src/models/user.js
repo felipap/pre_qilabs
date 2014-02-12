@@ -177,6 +177,23 @@ UserSchema.statics.genProfileFromUsername = function(username, cb) {
   });
 };
 
+UserSchema.statics.genProfileFromModel = function(model, cb) {
+  return model.getFollowers(function(err, followers) {
+    if (err) {
+      return cb(err);
+    }
+    return model.getFollowing(function(err, following) {
+      if (err) {
+        return cb(err);
+      }
+      return cb(null, _.extend(model, {
+        followers: followers,
+        following: following
+      }));
+    });
+  });
+};
+
 
 /*
 Create a post object and fan out through inboxes.

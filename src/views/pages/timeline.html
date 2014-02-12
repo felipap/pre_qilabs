@@ -20,6 +20,9 @@
 					<div class="body">
 						<div class="following">
 							seguindo:
+							<% for (var i=0; i<user_profile.followers.length; i++) { %>
+								<%= user_profile.followers[i].username %>
+							<% } %>
 						</div>
 						<div class="followers">
 							seguidores:

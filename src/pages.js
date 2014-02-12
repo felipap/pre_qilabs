@@ -24,7 +24,11 @@ module.exports = {
         if (req.user) {
           req.user.lastUpdate = new Date();
           req.user.save();
-          return res.render('pages/timeline');
+          return User.genProfileFromModel(req.user, function(err, profile) {
+            return res.render('pages/timeline', {
+              user_profile: profile
+            });
+          });
         } else {
           return User.find().sort({
             '_id': 'descending'

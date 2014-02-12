@@ -28,13 +28,16 @@
 
 				<div class="box tags">
 					<div class="head">
-						Seguido Por:
+						Seguido por (<%= profile.followers.length):
 					</div>
 					<ul class="body">
 						<% for (var i=0; i<profile.followers.length; i++) { %>
 							<%= profile.followers[i].username %>
 						<% } %>
 					</ul>
+					<div class="footer">
+						<a href="<%= getPageUrl('user_followers_list')%>">Ver Todos</a>
+					</div>
 				</div>
 
 				<% if (profile.id !== user.id) { %>

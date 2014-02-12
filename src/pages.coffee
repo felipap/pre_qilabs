@@ -22,8 +22,9 @@ module.exports = {
 				if req.user
 					req.user.lastUpdate = new Date()
 					req.user.save()
-					res.render 'pages/timeline'
-
+					User.genProfileFromModel req.user, (err, profile) ->
+						res.render 'pages/timeline',
+							user_profile: profile
 				else
 					User.find()
 						.sort({'_id': 'descending'})

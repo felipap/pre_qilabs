@@ -115,6 +115,12 @@ UserSchema.statics.genProfileFromUsername = (username, cb) ->
 				if err then return cb(err)
 				cb(null, _.extend(doc, {followers:followers, following:following}))
 
+UserSchema.statics.genProfileFromModel = (model, cb) ->
+	model.getFollowers (err, followers) ->
+		if err then return cb(err)
+		model.getFollowing (err, following) ->
+			if err then return cb(err)
+			cb(null, _.extend(model, {followers:followers, following:following}))
 
 ###
 Create a post object and fan out through inboxes.
