@@ -28,13 +28,11 @@ module.exports = {
         if (req.user) {
           req.user.lastUpdate = new Date();
           req.user.save();
-          return Tag.getAll(function(err, tags) {
-            return Inbox.find({}, function(err, docs) {
-              console.log('oo', arguments);
-              return res.render('pages/timeline', {
-                tags: Tag.checkFollowed(tags, req.user.tags),
-                posts: '' + err + docs
-              });
+          return Inbox.find({}, function(err, docs) {
+            console.log('oo', arguments);
+            return res.render('pages/timeline', {
+              tags: Tag.checkFollowed(tags, req.user.tags),
+              posts: '' + err + docs
             });
           });
         } else {
@@ -92,17 +90,17 @@ module.exports = {
         if (!req.params.user) {
           res.redirect('/404');
         }
-        return User.findOne({
-          username: req.params.user
-        }, function(err, profile) {
-          console.log('profile', err, profile);
+        return User.genProfileFromUsername(req.params.user, function(err, profile) {
           if (err || !profile) {
-            return res.redirect('/404');
-          } else {
-            return res.render('pages/profile', {
-              profile: profile
-            });
+            res.redirect('/404');
           }
+          console.log('profile', err, profile);
+          return req.user.doesFollowId(profile.id, function(err, bool) {
+            return res.render('pages/profile', {
+              profile: profile,
+              follows: bool
+            });
+          });
         });
       }
     },

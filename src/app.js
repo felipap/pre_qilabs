@@ -104,9 +104,7 @@ app.locals({
 
 if (app.get('env') === 'production') {
 	app.use(require('./config/middlewares/handle_500.js'));
-}
-
-if (app.get('env') === 'development') {
+} else {
 	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 	app.locals.pretty = false;
 }

@@ -1,10 +1,14 @@
-var Follow, Inbox, UserSchema, mongoose;
+var Follow, Inbox, Post, User, UserSchema, mongoose, _;
 
 mongoose = require('mongoose');
+
+_ = require('underscore');
 
 Inbox = require('./inbox.js');
 
 Follow = require('./follow.js');
+
+Post = require('./post.js');
 
 UserSchema = new mongoose.Schema({
   name: String,
@@ -40,7 +44,7 @@ UserSchema.virtual('avatarUrl').get(function() {
   return 'https://graph.facebook.com/' + this.facebookId + '/picture';
 });
 
-UserSchema.virtual('url').get(function() {
+UserSchema.virtual('profileUrl').get(function() {
   return '/p/' + this.username;
 });
 
@@ -52,43 +56,99 @@ UserSchema.methods.getBoard = function(opts, cb) {
   return Inbox.getUserBoard(this, opts, cb);
 };
 
-UserSchema.methods.followsId = function(userId, cb) {
+UserSchema.methods.getFollowers = function(cb) {
+  return Follow.find({
+    followee: this.id
+  }, function(err, docs) {
+    console.log('found follow relationships:', _.pluck(docs, 'follower'));
+    return User.find({
+      _id: {
+        $in: _.pluck(docs, 'follower')
+      }
+    }, function(err, docs) {
+      console.log('found:', err, docs);
+      return cb(err, docs);
+    });
+  });
+};
+
+UserSchema.methods.post = function(opts, cb) {
+  return this.getFollowers((function(_this) {
+    return function(err, docs) {
+      var follower, _i, _len;
+      for (_i = 0, _len = docs.length; _i < _len; _i++) {
+        follower = docs[_i];
+        Inbox.create({
+          author: _this.id,
+          recipient: follower.id,
+          post: "Fala, " + follower.id + ". Como vai? Seguinte: " + opts
+        }, function(err, doc) {
+          return console.log('saved, really');
+        });
+      }
+      return console.log(err, docs);
+    };
+  })(this));
+};
+
+UserSchema.methods.doesFollowId = function(userId, cb) {
   if (!userId) {
     cb(true);
   }
   return Follow.findOne({
-    followee: this.id,
-    follower: userId
+    followee: userId,
+    follower: this.id
   }, function(err, doc) {
     return cb(err, !!doc);
   });
 };
 
-UserSchema.methods.dofollowId = function(userId, cb) {
+UserSchema.statics.genProfileFromUsername = function(username, cb) {
+  return User.findOne({
+    username: username
+  }, function(err, doc) {
+    if (err) {
+      return cb(err);
+    }
+    if (!doc) {
+      return cb(null, doc);
+    }
+    return doc.getFollowers(function(err, followers) {
+      if (err) {
+        return cb(err);
+      }
+      return cb(null, _.extend(doc, {
+        followers: followers
+      }));
+    });
+  });
+};
+
+UserSchema.methods.followId = function(userId, cb) {
   if (!userId) {
     cb(true);
   }
   return Follow.findOneAndUpdate({
-    followee: this.id,
-    follower: userId
+    follower: this.id,
+    followee: userId
   }, {}, {
     upsert: true
   }, function(err, doc) {
-    return console.log("Now following:", err, doc);
+    console.log("Now following:", err, doc);
+    return cb(err, !!doc);
   });
 };
 
 UserSchema.methods.unfollowId = function(userId, cb) {
   return Follow.findOneAndRemove({
-    followee: this.id,
-    follower: userId
-  }, {
-    upsert: true
+    follower: this.id,
+    followee: userId
   }, function(err, doc) {
-    return console.log("Now unfollowing:", err, doc);
+    console.log("Now unfollowing:", err, doc);
+    return cb(err, !!doc);
   });
 };
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate');
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = User = mongoose.model("User", UserSchema);

@@ -184,7 +184,7 @@ module.exports = {
           methods: {
             post: [
               required.login, function(req, res) {
-                return req.user.dofollowId(req.params.userId, function(err, done) {
+                return req.user.followId(req.params.userId, function(err, done) {
                   return res.end(JSON.stringify({
                     error: !!err
                   }));
@@ -205,53 +205,59 @@ module.exports = {
               }
             ]
           }
-        },
-        'me': {
+        }
+      }
+    },
+    'me': {
+      methods: {
+        post: [
+          required.login, function(req, res) {
+            if ('off' === req.query.notifiable) {
+              req.user.notifiable = false;
+              req.user.save();
+            } else if (__indexOf.call(req.query.notifiable, 'on') >= 0) {
+              req.user.notifiable = true;
+              req.user.save();
+            }
+            return res.end();
+          }
+        ]
+      },
+      children: {
+        'leave': {
+          name: 'user_quit',
           methods: {
             post: [
               required.login, function(req, res) {
-                if ('off' === req.query.notifiable) {
-                  req.user.notifiable = false;
-                  req.user.save();
-                } else if (__indexOf.call(req.query.notifiable, 'on') >= 0) {
-                  req.user.notifiable = true;
-                  req.user.save();
-                }
-                return res.end();
+                return req.user.remove(function(err, data) {
+                  if (err) {
+                    throw err;
+                  }
+                  req.logout();
+                  return res.redirect('/');
+                });
               }
             ]
-          },
-          children: {
-            'leave': {
-              name: 'quit',
-              methods: {
-                post: [
-                  required.login, function(req, res) {
-                    return req.user.remove(function(err, data) {
-                      if (err) {
-                        throw err;
-                      }
-                      req.logout();
-                      return res.redirect('/');
-                    });
-                  }
-                ]
+          }
+        },
+        'logout': {
+          name: 'logout',
+          methods: {
+            post: [
+              required.login, function(req, res) {
+                req.logout();
+                return res.redirect('/');
               }
-            },
-            'logout': {
-              name: 'logout',
-              methods: {
-                post: [
-                  required.login, function(req, res) {
-                    if (!req.user) {
-                      return res.redirect('/');
-                    }
-                    req.logout();
-                    return res.redirect('/');
-                  }
-                ]
+            ]
+          }
+        },
+        'post': {
+          methods: {
+            post: [
+              required.login, function(req, res) {
+                return req.user.post(req.body.content);
               }
-            }
+            ]
           }
         }
       }

@@ -1,12 +1,4 @@
 
-###
-# models/post.coffee
-# for meavisa.org, by Felipe Aragão
-#
-# Post model.
-###
-
-
 mongoose = require 'mongoose'
 crypto = require 'crypto' 
 memjs = require 'memjs'
@@ -103,43 +95,43 @@ PostSchema.statics.fetchAndCache = (cb) ->
 		@flushCache (err2, num) =>
 			cb?(err2 or err, num)
 
-PostSchema.statics.fetchNew = (callback) ->
-	blog = api.getBlog('meavisa.tumblr.com')
-	onGetTPosts = (posts) =>
-		onGetDBPosts = (dbposts) =>
-			postsNotSaved = 0
-			newposts = []
-			for post in posts when not _.findWhere(dbposts, {tumblrId:post.id})
-				++postsNotSaved
-				newposts.push(post)
-				console.log("pushing new post \"#{post.title}\"")
-				@create(
-					{tumblrId:post.id
-					tags:post.tags
-					tumblrUrl:post.post_url
-					tumblrPostType:post.type
-					body:post.body
-					title:post.title
-					date:post.date},
-					((err, data) ->
-						if err then callback?(err)
-						if --postsNotSaved is 0
-							callback?(null, newposts)
-					)
-				)
-			if newposts.length is 0
-				console.log('No new posts to push. Quitting.')
-				callback(null, [])
+# PostSchema.statics.fetchNew = (callback) ->
+# 	blog = api.getBlog('meavisa.tumblr.com')
+# 	onGetTPosts = (posts) =>
+# 		onGetDBPosts = (dbposts) =>
+# 			postsNotSaved = 0
+# 			newposts = []
+# 			for post in posts when not _.findWhere(dbposts, {tumblrId:post.id})
+# 				++postsNotSaved
+# 				newposts.push(post)
+# 				console.log("pushing new post \"#{post.title}\"")
+# 				@create(
+# 					{tumblrId:post.id
+# 					tags:post.tags
+# 					tumblrUrl:post.post_url
+# 					tumblrPostType:post.type
+# 					body:post.body
+# 					title:post.title
+# 					date:post.date},
+# 					((err, data) ->
+# 						if err then callback?(err)
+# 						if --postsNotSaved is 0
+# 							callback?(null, newposts)
+# 					)
+# 				)
+# 			if newposts.length is 0
+# 				console.log('No new posts to push. Quitting.')
+# 				callback(null, [])
 
-		# Get database posts.
-		@find {}, (err, dbposts) =>
-			if err then callback?(err)
-			onGetDBPosts(dbposts)
+# 		# Get database posts.
+# 		@find {}, (err, dbposts) =>
+# 			if err then callback?(err)
+# 			onGetDBPosts(dbposts)
 
-	# Get tumblr posts.
-	blog.posts { limit: -1 }, (err, data) ->
-		if err then callback?(err)
-		onGetTPosts(data.posts)
+# 	# Get tumblr posts.
+# 	blog.posts { limit: -1 }, (err, data) ->
+# 		if err then callback?(err)
+# 		onGetTPosts(data.posts)
 
 ####################################################################################################
 ####################################################################################################

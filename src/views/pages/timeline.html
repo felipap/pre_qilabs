@@ -14,7 +14,7 @@
 				<div class="box">
 					<div class="head">
 						<img src="<%= user.avatarUrl %>" />
-						<span data-info="name"><%= user.name %></span>
+						<a href="<%= user.profileUrl %> "><span data-info="name"><%= user.name %></span></a>
 					</div>
 					<div class="body">
 						<div class="following">
@@ -31,7 +31,6 @@
 						Seguindo Assuntos: (5)
 					</div>
 					<ul class="body">
-						
 					</ul>
 				</div>
 
@@ -42,19 +41,22 @@
 			</div>
 
 			<div id="resultsContainer">
-				<div id="posts-col">
-					<div class="placement">
-						<div class="flash-msgs"></div>
-						<h3 id="no-posts-msg" style="display: none; color: #888">
-							Ops! Nenhum post visível. :/
-						</h3>
+				<div class="flash-msgs"></div>
+				<div id="results-col">
+					<textarea>oi</textarea>
+					<button data-action="send-post" type="submit">Enviar Post</button>
+					<div id="posts-col">
+						<div class="placement">
+							<h3 id="no-posts-msg" style="display: none; color: #888">
+								Ops! Nenhum post visível. :/
+							</h3>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
 	</div>
-
 
 	 <script type="text/javascript">
 	/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */

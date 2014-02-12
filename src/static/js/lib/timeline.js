@@ -9,6 +9,13 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		escape: /\<\@\-(.+?)\@\>/gim
 	};
 
+	$('[data-action="send-post"]').click(function (evt) {
+		var content = $("textarea").val();
+		$.post('/api/me/post', {content: content}, function (data) {
+			alert(JSON.stringify(data));
+		});
+	});
+
 	var Post = (function () {
 		'use strict';
 		//

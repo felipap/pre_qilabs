@@ -19,6 +19,7 @@ InboxSchema.statics.getUserBoard = (user, opts, cb) ->
 		.exec(cb)
 
 InboxSchema.statics.getUserInbox = (user, opts, cb) ->
+	console.log('finding inbox for user', typeof(user.id), user.id)
 	cb ?= opts
 	@
 		.find({recipient: user.id})
@@ -27,6 +28,7 @@ InboxSchema.statics.getUserInbox = (user, opts, cb) ->
 
 InboxSchema.pre 'save', (next) ->
 	console.log('saving date:', @dateSent)
+	@dateSent ?= new Date()
 	next()
 
 module.exports = mongoose.model "Inbox", InboxSchema

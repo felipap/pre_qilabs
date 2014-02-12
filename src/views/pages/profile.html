@@ -25,8 +25,24 @@
 						<h3>18 anos</h3>
 					</div>
 				</div>
+
+				<div class="box tags">
+					<div class="head">
+						Seguido Por:
+					</div>
+					<ul class="body">
+						<% for (var i=0; i<profile.followers.length; i++) { %>
+							<%= profile.followers[i].username %>
+						<% } %>
+					</ul>
+				</div>
+
 				<% if (profile.id !== user.id) { %>
-					<button class="btn-follow" data-action="follow" data-user="<%= profile.id %>">Follow</button>
+					<% if (follows) { %>
+						<button class="btn-follow" data-action="unfollow" data-user="<%= profile.id %>"></button>
+					<% } else { %>
+						<button class="btn-follow" data-action="follow" data-user="<%= profile.id %>"></button>
+					<% } %>
 				<% } %>
 <!-- 
 				<div class="social">

@@ -3,7 +3,7 @@ var FollowSchema, mongoose;
 mongoose = require('mongoose');
 
 FollowSchema = new mongoose.Schema({
-  dateStarted: Date,
+  dateBegin: Date,
   follower: {
     type: mongoose.Schema.ObjectId,
     index: 1
@@ -15,8 +15,8 @@ FollowSchema = new mongoose.Schema({
 });
 
 FollowSchema.pre('save', function(next) {
-  if (this.dateStarted == null) {
-    this.dateStarted = new Date;
+  if (this.dateBegin == null) {
+    this.dateBegin = new Date;
   }
   return next();
 });

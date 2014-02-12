@@ -24,13 +24,12 @@ module.exports = {
 				if req.user
 					req.user.lastUpdate = new Date()
 					req.user.save()
-					Tag.getAll (err, tags) ->
-						# req.user.getInbox (err, docs) ->
-						Inbox.find {}, (err, docs) ->
-							console.log('oo', arguments)
-							res.render 'pages/timeline',
-								tags: Tag.checkFollowed(tags, req.user.tags)
-								posts: ''+err+docs
+					# req.user.getInbox (err, docs) ->
+					Inbox.find {}, (err, docs) ->
+						console.log('oo', arguments)
+						res.render 'pages/timeline',
+							tags: Tag.checkFollowed(tags, req.user.tags)
+							posts: ''+err+docs
 
 				else
 					User.find()
@@ -89,13 +88,15 @@ module.exports = {
 				# User.getBoardFromUsername {}
 				if not req.params.user
 					res.redirect('/404')
-				User.findOne {username: req.params.user}, (err, profile) ->
-					console.log('profile', err, profile)
-					if err or not profile
-						res.redirect('/404')
-					else
-						res.render 'pages/profile', 
-							profile: profile
+				User.genProfileFromUsername req.params.user,
+					(err, profile) ->
+						if err or not profile
+							res.redirect('/404')
+						console.log('profile', err, profile)
+						req.user.doesFollowId profile.id, (err, bool) ->
+							res.render 'pages/profile', 
+								profile: profile
+								follows: bool
 		},
 		name: 'profile'
 	},

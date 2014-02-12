@@ -159,7 +159,7 @@ module.exports = {
 					methods: {
 						post: [required.login,
 							(req, res) ->
-								req.user.dofollowId req.params.userId, (err, done) ->
+								req.user.followId req.params.userId, (err, done) ->
 									res.end(JSON.stringify({
 										error: !!err,
 									}))
@@ -176,44 +176,51 @@ module.exports = {
 									}))
 						],
 					}
+				},	
+			}
+		},
+		'me': {
+			methods: {
+				post: [required.login,
+					(req, res) ->
+						if 'off' is req.query.notifiable
+							req.user.notifiable = off
+							req.user.save()
+						else if 'on' in req.query.notifiable
+							req.user.notifiable = on
+							req.user.save()
+						res.end()
+					]
+			},
+			children: {
+				'leave': {
+					name: 'user_quit'
+					methods: {
+						post: [required.login,
+							(req, res) -> # Deletes user account.
+								req.user.remove (err, data) ->
+									if err then throw err
+									req.logout()
+									res.redirect('/')
+							]
+					}
 				},
-				'me': {
+				'logout': {
+					name: 'logout',
 					methods: {
 						post: [required.login,
 							(req, res) ->
-								if 'off' is req.query.notifiable
-									req.user.notifiable = off
-									req.user.save()
-								else if 'on' in req.query.notifiable
-									req.user.notifiable = on
-									req.user.save()
-								res.end()
-							]
-					},
-					children: {
-						'leave': {
-							name: 'quit'
-							methods: {
-								post: [required.login,
-									(req, res) -> # Deletes user account.
-										req.user.remove (err, data) ->
-											if err then throw err
-											req.logout()
-											res.redirect('/')
-									]
-							}
-						},
-						'logout': {
-							name: 'logout',
-							methods: {
-								post: [required.login,
-									(req, res) ->
-										if not req.user then return res.redirect '/'
-										req.logout()
-										res.redirect('/')
-								]
-							}
-						}
+								req.logout()
+								res.redirect('/')
+						]
+					}
+				},
+				'post': {
+					methods: {
+						post: [required.login,
+							(req, res) ->
+								req.user.post(req.body.content)
+						]
 					}
 				}
 			}

@@ -1,10 +1,3 @@
-
-/*
- * models/post.coffee
- * for meavisa.org, by Felipe Aragão
- *
- * Post model.
- */
 var PostSchema, api, authTypes, blog, blog_url, crypto, findOrCreate, getPostsWithTags, memjs, mongoose, _;
 
 mongoose = require('mongoose');
@@ -141,70 +134,69 @@ PostSchema.statics.fetchAndCache = function(cb) {
   })(this));
 };
 
-PostSchema.statics.fetchNew = function(callback) {
-  var onGetTPosts;
-  blog = api.getBlog('meavisa.tumblr.com');
-  onGetTPosts = (function(_this) {
-    return function(posts) {
-      var onGetDBPosts;
-      onGetDBPosts = function(dbposts) {
-        var newposts, post, postsNotSaved, _i, _len;
-        postsNotSaved = 0;
-        newposts = [];
-        for (_i = 0, _len = posts.length; _i < _len; _i++) {
-          post = posts[_i];
-          if (!(!_.findWhere(dbposts, {
-            tumblrId: post.id
-          }))) {
-            continue;
-          }
-          ++postsNotSaved;
-          newposts.push(post);
-          console.log("pushing new post \"" + post.title + "\"");
-          _this.create({
-            tumblrId: post.id,
-            tags: post.tags,
-            tumblrUrl: post.post_url,
-            tumblrPostType: post.type,
-            body: post.body,
-            title: post.title,
-            date: post.date
-          }, (function(err, data) {
-            if (err) {
-              if (typeof callback === "function") {
-                callback(err);
-              }
-            }
-            if (--postsNotSaved === 0) {
-              return typeof callback === "function" ? callback(null, newposts) : void 0;
-            }
-          }));
-        }
-        if (newposts.length === 0) {
-          console.log('No new posts to push. Quitting.');
-          return callback(null, []);
-        }
-      };
-      return _this.find({}, function(err, dbposts) {
-        if (err) {
-          if (typeof callback === "function") {
-            callback(err);
-          }
-        }
-        return onGetDBPosts(dbposts);
-      });
-    };
-  })(this);
+module.exports = mongoose.model("Post", PostSchema);
+
+var PostSchema, api, authTypes, crypto, findOrCreate, getPostsWithTags, memjs, mongoose, _;
+
+mongoose = require('mongoose');
+
+crypto = require('crypto');
+
+memjs = require('memjs');
+
+_ = require('underscore');
+
+authTypes = [];
+
+api = require('./../api');
+
+findOrCreate = require('./lib/findOrCreate');
+
+PostSchema = new mongoose.Schema({
+  tags: Array,
+  tumblrUrl: String,
+  tumblrPostType: String,
+  date: Date,
+  body: String,
+  isHosted: Boolean,
+  data: {
+    title: String
+  }
+}, {
+  toObject: {
+    virtuals: true
+  },
+  toJSON: {
+    virtuals: true
+  }
+});
+
+PostSchema.virtual('path').get(function() {
+  return "/#posts/{id}".replace(/{id}/, this.tumblrId);
+});
+
+getPostsWithTags = function(tags, callback) {
   return blog.posts({
     limit: -1
   }, function(err, data) {
+    var posts;
     if (err) {
-      if (typeof callback === "function") {
-        callback(err);
-      }
+      return typeof callback === "function" ? callback(err) : void 0;
     }
-    return onGetTPosts(data.posts);
+    posts = [];
+    data.posts.forEach(function(post) {
+      var int;
+      int = _.intersection(post.tags, tags);
+      if (int[0]) {
+        return posts.push(post);
+      }
+    });
+    return typeof callback === "function" ? callback(err, posts) : void 0;
   });
 };
+
+PostSchema.methods = {};
+
+PostSchema.statics.findOrCreate = findOrCreate;
 
 module.exports = mongoose.model("Post", PostSchema);
