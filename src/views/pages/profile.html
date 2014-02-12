@@ -1,7 +1,7 @@
 <% layout('../timeline') -%>
 <% stylesheet(getMediaUrl('css','sn_pages.min.css')) -%>
 
-<script>window.postsRoot='/api/timeline/posts';</script>
+<script>window.postsRoot='/api/board/posts';</script>
 
 <body data-page="profile">
 
@@ -12,7 +12,7 @@
 		<div id="content">
 			<div id="sidebar">
 				<div class="thumbnail">
-					<img alt="seu avatar" width="238" src="http://www.msnbc.com/sites/msnbc/files/x_30_lw_obamaharvard2_120822.jpg">
+					<img alt="seu avatar" width="200" src="http://www.msnbc.com/sites/msnbc/files/x_30_lw_obamaharvard2_120822.jpg">
 				</div>
 				<div class="info-groups">
 					<div class="info-group">
@@ -25,7 +25,10 @@
 						<h3>18 anos</h3>
 					</div>
 				</div>
-
+				<% if (profile.id !== user.id) { %>
+					<button class="btn-follow" data-action="follow" data-user="<%= profile.id %>">Follow</button>
+				<% } %>
+<!-- 
 				<div class="social">
 					<a href="#" data-toggle="tooltip" title="Personal website">
 						<i class="icon-home"></i>
@@ -45,7 +48,7 @@
 					<a href="#" data-toggle="tooltip" title="LinkedIn">
 						<i class="icon-linkedin"></i>
 					</a>
-				</div>
+				</div> -->
 
 				<div class="badges">
 					<a href="#" data-toggle="tooltip" title="Peace Nobel 2010">

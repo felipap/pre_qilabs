@@ -1,6 +1,6 @@
 
 /* router.js
-** for meavisa.org, by @f03lipe
+** for qilabs.org, by @f03lipe
 **
 ** Route an object with many pages.
 **

@@ -89,6 +89,9 @@ module.exports = {
   '/p/:user': {
     methods: {
       get: function(req, res) {
+        if (!req.params.user) {
+          res.redirect('/404');
+        }
         return User.findOne({
           username: req.params.user
         }, function(err, profile) {
@@ -104,6 +107,24 @@ module.exports = {
       }
     },
     name: 'profile'
+  },
+  '/404': {
+    name: '404',
+    methods: {
+      get: function(req, res) {
+        res.status(404);
+        if (req.accepts('html')) {
+          return res.status(404).render('pages/404', {
+            url: req.url,
+            user: req.user
+          });
+        } else if (req.accepts('json')) {
+          res.status(404).send({
+            error: 'Not found'
+          });
+        }
+      }
+    }
   },
   '/sobre': require('./controllers/about'),
   '/api': require('./controllers/api'),

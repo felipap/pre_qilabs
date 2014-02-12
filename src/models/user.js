@@ -1,8 +1,10 @@
-var FollowSchema, Inbox, UserSchema, mongoose;
+var Follow, Inbox, UserSchema, mongoose;
 
 mongoose = require('mongoose');
 
 Inbox = require('./inbox.js');
+
+Follow = require('./follow.js');
 
 UserSchema = new mongoose.Schema({
   name: String,
@@ -34,12 +36,6 @@ UserSchema = new mongoose.Schema({
   id: true
 });
 
-FollowSchema = new mongoose.Schema({
-  start: Date,
-  follower: mongoose.Schema.ObjectId,
-  followee: mongoose.Schema.ObjectId
-});
-
 UserSchema.virtual('avatarUrl').get(function() {
   return 'https://graph.facebook.com/' + this.facebookId + '/picture';
 });
@@ -50,6 +46,47 @@ UserSchema.virtual('url').get(function() {
 
 UserSchema.methods.getInbox = function(opts, cb) {
   return Inbox.getUserInbox(this, opts, cb);
+};
+
+UserSchema.methods.getBoard = function(opts, cb) {
+  return Inbox.getUserBoard(this, opts, cb);
+};
+
+UserSchema.methods.followsId = function(userId, cb) {
+  if (!userId) {
+    cb(true);
+  }
+  return Follow.findOne({
+    followee: this.id,
+    follower: userId
+  }, function(err, doc) {
+    return cb(err, !!doc);
+  });
+};
+
+UserSchema.methods.dofollowId = function(userId, cb) {
+  if (!userId) {
+    cb(true);
+  }
+  return Follow.findOneAndUpdate({
+    followee: this.id,
+    follower: userId
+  }, {}, {
+    upsert: true
+  }, function(err, doc) {
+    return console.log("Now following:", err, doc);
+  });
+};
+
+UserSchema.methods.unfollowId = function(userId, cb) {
+  return Follow.findOneAndRemove({
+    followee: this.id,
+    follower: userId
+  }, {
+    upsert: true
+  }, function(err, doc) {
+    return console.log("Now unfollowing:", err, doc);
+  });
 };
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate');

@@ -54,6 +54,20 @@
 	}
 }
 
+.btn-follow {
+	&[data-action=follow] {
+		&:empty::before {
+			content: "Follow";
+		}
+		.high-xbtn(@color: white, @bg: @COLOR1);
+	}
+	&[data-action=unfollow] {
+		&:empty::before {
+			content: "Unfollow";
+		}
+		.high-xbtn(@color: white, @bg: @COLOR4);
+	}
+}
 
 .btn {
 	display: inline-block;

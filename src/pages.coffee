@@ -16,7 +16,6 @@ Post.fetchAndCache()
 
 required = require './lib/required.js'
 
-
 module.exports = {
 	'/': {
 		name: 'index',
@@ -88,6 +87,8 @@ module.exports = {
 		methods: {
 			get: (req, res) ->
 				# User.getBoardFromUsername {}
+				if not req.params.user
+					res.redirect('/404')
 				User.findOne {username: req.params.user}, (err, profile) ->
 					console.log('profile', err, profile)
 					if err or not profile
@@ -98,6 +99,18 @@ module.exports = {
 		},
 		name: 'profile'
 	},
+	'/404': {
+		name: '404'
+		methods: {
+			get: (req, res) ->
+				res.status(404)		
+				if req.accepts('html') # respond with html page
+					res.status(404).render('pages/404', { url: req.url, user: req.user })
+				else if req.accepts('json') # respond with json
+					res.status(404).send({ error: 'Not found' })
+					return
+		}
+	}
 
 	'/sobre': require('./controllers/about'),
 	'/api': require('./controllers/api'),

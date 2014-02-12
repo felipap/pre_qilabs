@@ -93,6 +93,19 @@ module.exports = {
 				},
 			}
 		},
+		'board/posts': {
+			methods: {
+				get: [required.login,
+					(req, res) ->
+						req.user.getBoard {limit:10}, (err, docs) ->
+							console.log('returning docs:', docs)
+							res.end(JSON.stringify({
+								data: docs, 
+								page: 0,
+							}))
+				],
+			}
+		},
 		'timeline/posts': {
 			methods: {
 				get: [required.login,
@@ -140,43 +153,67 @@ module.exports = {
 				},
 			}
 		},
-		'user': {
-			methods: {
-				post: [required.login,
-					(req, res) ->
-
-						if 'off' is req.query.notifiable
-							req.user.notifiable = off
-							req.user.save()
-						else if 'on' in req.query.notifiable
-							req.user.notifiable = on
-							req.user.save()
-
-						console.log(req.user.notifiable, req.query.notifiable, typeof req.query.notifiable)
-						res.end()
-					]
-			},
+		'users': {
 			children: {
-				'leave': {
-					methods: {
-						post: [required.login,
-							(req, res) -> # Deletes user account.
-								req.user.remove (err, data) ->
-									if err then throw err
-									req.logout()
-									res.redirect('/')
-							]
-					}
-				},
-				'logout': {
-					name: 'logout',
+				':userId/follow': {
 					methods: {
 						post: [required.login,
 							(req, res) ->
-								if not req.user then return res.redirect '/'
-								req.logout()
-								res.redirect('/')
-						]
+								req.user.dofollowId req.params.userId, (err, done) ->
+									res.end(JSON.stringify({
+										error: !!err,
+									}))
+						],
+					}
+				},
+				':userId/unfollow': {
+					methods: {
+						post: [required.login,
+							(req, res) ->
+								req.user.unfollowId req.params.userId, (err, done) ->
+									res.end(JSON.stringify({
+										error: !!err,
+									}))
+						],
+					}
+				},
+				'me': {
+					methods: {
+						post: [required.login,
+							(req, res) ->
+								if 'off' is req.query.notifiable
+									req.user.notifiable = off
+									req.user.save()
+								else if 'on' in req.query.notifiable
+									req.user.notifiable = on
+									req.user.save()
+								res.end()
+							]
+					},
+					children: {
+						'leave': {
+							name: 'quit'
+							methods: {
+								post: [required.login,
+									(req, res) -> # Deletes user account.
+										req.user.remove (err, data) ->
+											if err then throw err
+											req.logout()
+											res.redirect('/')
+									]
+							}
+						},
+						'logout': {
+							name: 'logout',
+							methods: {
+								post: [required.login,
+									(req, res) ->
+										if not req.user then return res.redirect '/'
+										req.logout()
+										res.redirect('/')
+								]
+							}
+						}
 					}
 				}
 			}

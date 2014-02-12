@@ -55,9 +55,10 @@
 
 <body class="" data-page="front">
 	<!-- <script>if(window!=window.top){top.location="http://meavisa.herokuapp.com";}</script> -->
+	<div class="full-bg-img" style="background-image: url(<%= getMediaUrl('images/'+sel_bg.source) %>);"></div>
 
 	<% include ../layouts/navbar.html %>
-	<section id="jumbo" style="background-image: url(<%= getMediaUrl('images/'+sel_bg.source) %>);">
+	<section id="jumbo">
 
 		<div class="box-blackout"></div>
 		<div class="content">
@@ -98,27 +99,7 @@
 		</div>
 		<div class="box-blackout"></div>
 	</section>
-	<% } %>
-
- 	<div class="dialog" id="signin">
-		<div class="box">
-			<button type="button" data-action="close-dialog" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
-			<div class="content">
-				<h1>Quer ajudar a testar? \o/</h1>
-				<h3>Coloca aqui o seu email</h3>
-				<small>(Pode ficar tranquilo, a gente odeia spam!)</small>
-				<div>
-					<form method="post" action="/api/testers">
-						<input type="text" name="email" placeholder="seu email aqui..." />
-						<input type="hidden" name="_csrf" value="<%= token %>" />
-						<button data-action="send-tester-email">Enviar</button>
-					</form>
-				</div>
-			</div>
-		</div>
-		<div class="box-blackout" data-action="close-dialog"></div>
-	</div>
-	
+	<% } %>	
 
 	<footer>
 		

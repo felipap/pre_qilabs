@@ -11,7 +11,7 @@ InboxSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     index: true
   },
-  from: mongoose.Schema.ObjectId,
+  author: mongoose.Schema.ObjectId,
   post: String
 });
 
@@ -20,7 +20,7 @@ InboxSchema.statics.getUserBoard = function(user, opts, cb) {
     cb = opts;
   }
   return this.find({
-    from: user.id
+    author: user.id
   }).sort('-dateSent').exec(cb);
 };
 

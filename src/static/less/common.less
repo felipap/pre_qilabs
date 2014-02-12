@@ -80,3 +80,24 @@ body {
 		&:extend(.alert-info);
 	}
 }
+
+
+.full-bg-img {
+	@blur: 3px;
+	position: absolute;
+	top: -@blur; bottom: -@blur;
+	left: -@blur; right: -@blur;
+
+	-webkit-filter: blur(@blur);
+	-moz-filter: blur(@blur);
+	-o-filter: blur(@blur);
+	-ms-filter: blur(@blur);
+	filter: blur(@blur);
+
+	background: #FFFFFF no-repeat center bottom;
+	background-clip: content-box;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}

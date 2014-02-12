@@ -1,25 +1,104 @@
 <% layout('../stdbody') -%>
 
-<% stylesheet(getMediaUrl('css','about_pages.min.css')) -%>
+<% stylesheet(getMediaUrl('css','frontpage.min.css')) -%>
 
-<body class="notfound">
+	<%
+	var bgs = [
+		{
+			label:'Harvard University, Boston, USA',
+			source:'u/hav.jpg',
+			credits: '',
+		},
+		{
+			label:'Columbia University, New York, USA',
+			source:'u/col.jpg',
+			credits: '',
+		},
+		{
+			label:'Yale University Library, Durham, USA',
+			source:'u/yal.jpg',
+			credits: '',
+		},
+		{
+			label:'Massachusetts Institute of Technology, Boston, USA',
+			source:'u/mit.jpg',
+			credits: '',
+		},
+		{
+			label:'Stanford University, Santa Clara, USA',
+			source:'u/sta.jpg',
+			credits: '',
+		},
+		{
+			label:'Duke University, Durham, USA',
+			source:'u/duk.jpg',
+			credits: '',
+		},
+		{
+			label:'Escola de Engenharia da Universidade de São Paulo, São Paulo',
+			source: 'u/usp.jpg',
+			credits: 'Marcos Santos / USP Imagens',
+		},
+		{
+			label:'Universidade Estadual de Campinas (UNICAMP), São Paulo',
+			source: 'u/unc.jpg',
+			credits: '',
+		},
+		{
+			label: 'Universidade Federal do Rio de Janeiro, Campus Praia Vermelha',
+			source: 'u/ufrj.jpg',
+			credits: 'FOTO: Gabriela d’Araujo / Imagem UFRJ',
+		},
+	];
+	var sel_bg = bgs[Math.floor(bgs.length*Math.random())];
+	%>
+
+<body class="" data-page="front">
+	<!-- <script>if(window!=window.top){top.location="http://meavisa.herokuapp.com";}</script> -->
+	
+	<div class="full-bg-img" style="background-image: url(<%= getMediaUrl('images/'+sel_bg.source) %>);"></div>
 
 	<% include ../layouts/navbar.html %>
+	<section id="jumbo" style="">
 
-	<section>
-		
-		<section>
+		<div class="box-blackout" style=""></div>
+		<div class="content">
+			<div style="position: absolute; margin: auto">
+				<div class="flash-msgs"></div>
+			</div>
+			<section>
 
-			<h1>Ops! <span>:(</span></h1>
-			<h2>Parece que essa página aqui não existe!</h2>
+				<h1>Ops! <span>:(</span></h1>
+				<h2>Parece que a página que vocês estava tentando visualizar não existe...</h2>
 
-			<a href="/" class="btn0 inverted-btn">
-				Voltar para o site
-			</a>
+				<a href="/" class="btn0 inverted-btn">
+					Voltar para o site
+				</a>
 
-		</section>
-
-	<% include ../layouts/footer.html %>
-
+			</section>		</div>
+		<div class="credits">
+		</div>
+		<dfn>
+			<%= sel_bg.label %>
+			<br><%= sel_bg.credits %>
+		</dfn>
 	</section>
+
+	<% if (false && typeof latestSignIns !== 'undefined') { %>
+	<section id="last-signins">
+		<div class="avatars">
+			<% for (var i2=0; i2++<10;) { %>
+			<% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %>
+			<li>
+					<img src="<%= user.avatarUrl %>"></img>
+			</li>
+			<% } %>
+			<% } %>
+		</div>
+		<div class="box-blackout"></div>
+	</section>
+	<% } %>
+	
+
+<script data-main="<%= getMediaUrl('js','all.min.js') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>

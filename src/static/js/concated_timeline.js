@@ -42,6 +42,31 @@ require(['jquery','bootstrap'], function ($) {
 		});
 	});
 
+	$(".btn-follow").click(function (evt) {
+		var self = this;
+		switch (this.dataset.action) {
+			case 'unfollow':
+				$.post('/api/users/'+this.dataset.user+'/unfollow',
+					function (data) {
+						if (data.error) {
+							alert(data.error);
+						} else {
+							self.dataset.action = 'follow';
+						}
+				});
+				break;
+			case 'follow':
+				$.post('/api/users/'+this.dataset.user+'/follow',
+					function (data) {
+						if (data.error) {
+							alert(data.error);
+						} else {
+							self.dataset.action = 'unfollow';
+						}
+				});
+		}
+	});
+
 	$(function () {
 		$("[data-toggle=popover]").popover();
 		$("[data-toggle=tooltip]").tooltip();
@@ -201,8 +226,7 @@ require(['jquery'], function ($) {
 });
 
 
-// home.js
-// for meavisa.org, by @f03lipe
+// for iqlabs.org, by @f03lipe
 
 require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone, _) {
 

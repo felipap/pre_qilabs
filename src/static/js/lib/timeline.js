@@ -1,6 +1,5 @@
 
-// home.js
-// for meavisa.org, by @f03lipe
+// for iqlabs.org, by @f03lipe
 
 require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone, _) {
 

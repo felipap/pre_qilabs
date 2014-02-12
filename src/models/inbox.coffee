@@ -7,14 +7,14 @@ mongoose = require 'mongoose'
 InboxSchema = new mongoose.Schema {
 	dateSent:		{ type:Date, index:true }
 	recipient:	 	{ type:mongoose.Schema.ObjectId, index:true } # Might as well be a group
-	from:			mongoose.Schema.ObjectId
+	author:			mongoose.Schema.ObjectId
 	post: 			String
 }
 
 InboxSchema.statics.getUserBoard = (user, opts, cb) ->
 	cb ?= opts
 	@
-		.find({from: user.id})
+		.find({author: user.id})
 		.sort('-dateSent')
 		.exec(cb)
 

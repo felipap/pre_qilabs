@@ -2,6 +2,7 @@
 mongoose = require 'mongoose'
 
 Inbox = require './inbox.js'
+Follow = require './follow.js'
 
 # Schema
 UserSchema = new mongoose.Schema {
@@ -30,11 +31,6 @@ UserSchema = new mongoose.Schema {
 	followingTags: 	[]
 }, { id: true } # default
 
-FollowSchema = new mongoose.Schema {
-	start: 				Date
-	follower: 			mongoose.Schema.ObjectId
-	followee: 			mongoose.Schema.ObjectId
-}
 
 # Virtuals
 UserSchema.virtual('avatarUrl').get ->
@@ -47,6 +43,31 @@ UserSchema.virtual('url').get ->
 UserSchema.methods.getInbox = (opts, cb) ->
 	Inbox.getUserInbox(@, opts, cb)
 
+UserSchema.methods.getBoard = (opts, cb) ->
+	Inbox.getUserBoard(@, opts, cb)
+
+
+UserSchema.methods.followsId = (userId, cb) ->
+	if not userId
+		cb(true)
+	Follow.findOne {followee:@.id, follower:userId},
+		(err, doc) ->
+			cb(err, !!doc)
+
+UserSchema.methods.dofollowId = (userId, cb) ->
+	if not userId
+		cb(true)
+	Follow.findOneAndUpdate {followee:@.id, follower:userId},
+		{},
+		{upsert: true},
+		(err, doc) ->
+			console.log("Now following:", err, doc)
+
+UserSchema.methods.unfollowId = (userId, cb) ->
+	Follow.findOneAndRemove {followee:@.id, follower:userId},
+		{upsert: true},
+		(err, doc) ->
+			console.log("Now unfollowing:", err, doc)
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate')
 

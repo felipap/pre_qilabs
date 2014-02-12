@@ -106,6 +106,23 @@ module.exports = {
         }
       }
     },
+    'board/posts': {
+      methods: {
+        get: [
+          required.login, function(req, res) {
+            return req.user.getBoard({
+              limit: 10
+            }, function(err, docs) {
+              console.log('returning docs:', docs);
+              return res.end(JSON.stringify({
+                data: docs,
+                page: 0
+              }));
+            });
+          }
+        ]
+      }
+    },
     'timeline/posts': {
       methods: {
         get: [
@@ -161,50 +178,80 @@ module.exports = {
         }
       }
     },
-    'user': {
-      methods: {
-        post: [
-          required.login, function(req, res) {
-            if ('off' === req.query.notifiable) {
-              req.user.notifiable = false;
-              req.user.save();
-            } else if (__indexOf.call(req.query.notifiable, 'on') >= 0) {
-              req.user.notifiable = true;
-              req.user.save();
-            }
-            console.log(req.user.notifiable, req.query.notifiable, typeof req.query.notifiable);
-            return res.end();
-          }
-        ]
-      },
+    'users': {
       children: {
-        'leave': {
+        ':userId/follow': {
           methods: {
             post: [
               required.login, function(req, res) {
-                return req.user.remove(function(err, data) {
-                  if (err) {
-                    throw err;
-                  }
-                  req.logout();
-                  return res.redirect('/');
+                return req.user.dofollowId(req.params.userId, function(err, done) {
+                  return res.end(JSON.stringify({
+                    error: !!err
+                  }));
                 });
               }
             ]
           }
         },
-        'logout': {
-          name: 'logout',
+        ':userId/unfollow': {
           methods: {
             post: [
               required.login, function(req, res) {
-                if (!req.user) {
-                  return res.redirect('/');
-                }
-                req.logout();
-                return res.redirect('/');
+                return req.user.unfollowId(req.params.userId, function(err, done) {
+                  return res.end(JSON.stringify({
+                    error: !!err
+                  }));
+                });
               }
             ]
+          }
+        },
+        'me': {
+          methods: {
+            post: [
+              required.login, function(req, res) {
+                if ('off' === req.query.notifiable) {
+                  req.user.notifiable = false;
+                  req.user.save();
+                } else if (__indexOf.call(req.query.notifiable, 'on') >= 0) {
+                  req.user.notifiable = true;
+                  req.user.save();
+                }
+                return res.end();
+              }
+            ]
+          },
+          children: {
+            'leave': {
+              name: 'quit',
+              methods: {
+                post: [
+                  required.login, function(req, res) {
+                    return req.user.remove(function(err, data) {
+                      if (err) {
+                        throw err;
+                      }
+                      req.logout();
+                      return res.redirect('/');
+                    });
+                  }
+                ]
+              }
+            },
+            'logout': {
+              name: 'logout',
+              methods: {
+                post: [
+                  required.login, function(req, res) {
+                    if (!req.user) {
+                      return res.redirect('/');
+                    }
+                    req.logout();
+                    return res.redirect('/');
+                  }
+                ]
+              }
+            }
           }
         }
       }

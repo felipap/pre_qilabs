@@ -116,14 +116,7 @@ require('./lib/router.js')(app)(require('./pages.js'));
 
 // Handle 404
 app.get('*', function (req, res) {
-	res.status(404);
-	
-	if (req.accepts('html')) { // respond with html page
-		res.status(404).render('pages/404', { url: req.url, user: req.user });
-	} else if (req.accepts('json')) { // respond with json
-		res.status(404).send({ error: 'Not found' });
-		return;
-	}
+	res.redirect('/404');
 });
 
 
