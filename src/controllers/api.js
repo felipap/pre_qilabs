@@ -71,11 +71,11 @@ module.exports = {
     },
     'users': {
       children: {
-        ':userId/board': {
+        ':userId/posts': {
           methods: {
             get: [
               required.login, function(req, res) {
-                return User.getBoard(req.params.userId, {
+                return User.getPostsFromUser(req.params.userId, {
                   limit: 10
                 }, function(err, docs) {
                   console.log('Fetched board:', docs);

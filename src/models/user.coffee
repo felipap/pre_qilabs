@@ -93,9 +93,20 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 		Post
 			.find {id: {$in: _.pluck(docs, 'post')}}
 			.populate 'author'
+			.sort '-dateCreated'
 			.exec (err, posts) ->
 				console.log('posts to user', posts)
 				cb(err, posts)
+
+UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
+	# Inbox.getUserPosts @, opts, (err, docs) ->
+	Post
+		.find {author: userId}
+		.sort '-dateCreated'
+		.populate 'author'
+		.exec (err, posts) ->
+			console.log('posts', posts)
+			cb(err, posts)
 
 UserSchema.statics.getPostsToUser = (userId, opts, cb) ->
 	# Inbox.getUserPosts @, opts, (err, docs) ->

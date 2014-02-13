@@ -7,7 +7,8 @@
 #}
 
 {% block head %}
-<script>window.postsRoot='/api/me/timeline/posts';</script>
+	{% parent %}
+	<script>window.postsRoot='/api/me/timeline/posts';</script>
 {% endblock %}
 
 {% block sidebarContent %}

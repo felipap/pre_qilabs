@@ -2,7 +2,8 @@
 
 
 {% block head %}
-<script>window.postsRoot='/api/me/timeline/posts';</script>
+	{% parent %}
+	<script>window.postsRoot='/api/users/{{profile.id}}/posts';</script>
 {% endblock %}
 
 {% block sidebarContent %}

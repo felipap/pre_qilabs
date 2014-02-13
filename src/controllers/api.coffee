@@ -132,11 +132,11 @@ module.exports = {
 		# },
 		'users': {
 			children: {
-				':userId/board': {
+				':userId/posts': {
 					methods: {
 						get: [required.login,
 							(req, res) ->
-								User.getBoard req.params.userId, {limit:10}, (err, docs) ->
+								User.getPostsFromUser req.params.userId, {limit:10}, (err, docs) ->
 									console.log('Fetched board:', docs)
 									res.end(JSON.stringify({
 										data: docs, 

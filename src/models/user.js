@@ -130,10 +130,19 @@ UserSchema.methods.getTimeline = function(opts, cb) {
       id: {
         $in: _.pluck(docs, 'post')
       }
-    }).populate('author').exec(function(err, posts) {
+    }).populate('author').sort('-dateCreated').exec(function(err, posts) {
       console.log('posts to user', posts);
       return cb(err, posts);
     });
+  });
+};
+
+UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
+  return Post.find({
+    author: userId
+  }).sort('-dateCreated').populate('author').exec(function(err, posts) {
+    console.log('posts', posts);
+    return cb(err, posts);
   });
 };
 
