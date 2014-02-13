@@ -1,5 +1,13 @@
 {% extends '../timeline.html' %}
 
+{% macro renderUser(user, el_width) %}
+<div class="media-user">
+	<a href="{{ user.profileUrl }}">
+		<img src="{{ user.avatarUrl }}" data-toggle="tooltip" title="{{ user.username }}" />
+	</a>
+</div>
+{% endmacro %}
+
 {% block head %}
 	{% parent %}
  	<link rel="stylesheet" href="{{ getMediaUrl('css','sn_pages.min.css') }}" />
@@ -26,7 +34,7 @@
 						<div class="following">
 							seguindo:
 							{% for follower in user_profile.followers %}
-								{{ follower.username }}
+								{{ renderUser(follower) }}
 							{% endfor %}
 						</div>
 						<div class="followers">
