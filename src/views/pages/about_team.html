@@ -1,12 +1,18 @@
-<% layout('../stdbody') -%>
+{% extends '../stdbody.html' %}
 
-<% stylesheet(getMediaUrl('css','about_pages.min.css')) -%>
+
+{% block head %}
+	{% parent %}
+	<link rel="stylesheet" href="{{ getMediaUrl('css','about_pages.min.css') }}" />
+{% endblock %}
+
+{% block body %}
 
 <body class="" data-page="team">
 
-	<% include ../layouts/navbar.html %>
-	<%
-	var team = [
+	{% include '../layouts/navbar.html' %} 
+	{%
+	set team = [
 		{
 			name: 'Felipe Aragão',
 			twitter: 'http://twitter.com/f03lipe',
@@ -15,49 +21,48 @@
 		},
 		{
 			name: 'Viviane Lobo',
-			// twitter: 'http://twitter.com/f03lipe',
 			desc: '',
 			avatar: getMediaUrl('images','t','michelle.jpg'),
 		},
 		{
 			name: 'Michelle Malher',
-			// twitter: 'http://twitter.com/f03lipe',
+			twitter: 'http://twitter.com/mimimalher',
 			desc: '',
 			avatar: getMediaUrl('images','t','viviane.jpg'),
 		},
 		{
 			name: 'João Guio',
-			// twitter: 'http://twitter.com/f03lipe',
+			twitter: 'http://twitter.com/jonnyguio',
 			desc: '',
 			avatar: getMediaUrl('images','t','viviane.jpg'),
 		},
 	]
-	%>
+	%}
 
 	<section class="team">
 		<section>
 			<h1><strong>Equipe</strong></h1>
 
-			<% for (var i=0; i<team.length; i++) {
-				var person = team[i];
-			%>
+			{% for gorgeous in team %}
 			
 			<li>
 				<div class="avatar">
 					<img width=100 src="<%= person.avatar %>" />
 				</div>
 				<div class="">
-				<h3><%= person.name %></h3>
-				<h3><%= person.desc %></h3>
-				<% if (person.twitter) { %>
-					<a href="<%= person.twitter %>"><i class="icon-twitter icon-large"></i></a>
-				<% } %>
+				<h3>{{ gorgeous.name }}</h3>
+				<h3>{{ gorgeous.desc }}</h3>
+				{% if gorgeous.twitter %}
+					<a href="{{ gorgeous.twitter }}"><i class="icon-twitter icon-large"></i></a>
+				{% endif %}
 			</li>
-			<% } %>
+			{% endfor %}
 		</section>
 	</section>
 
-	<% include ../layouts/footer.html %>
+	{% include '../layouts/footer.html' %}
 
-	<script data-main="<%= getMediaUrl('js','all.min.js') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	<script data-main="{{ getMediaUrl('js','all.min.js') }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>
+
+{% endblock %}
