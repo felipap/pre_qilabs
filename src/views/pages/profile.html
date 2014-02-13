@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-<script>window.postsRoot='/api/users/<%= profile.id %>/board';</script>
+<script>window.postsRoot='/api/users/{{ profile.id }}/board';</script>
 
 <body data-page="profile">
 
@@ -32,9 +32,9 @@
 
 				{% if user.id != profile.id %}
 					{% if follows %}
-						<button class="btn-follow" data-action="unfollow" data-user="<%= profile.id %>"></button>
+						<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
 					{% else %}
-						<button class="btn-follow" data-action="follow" data-user="<%= profile.id %>"></button>
+						<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
 					{% endif %}
 				{% endif %}
 
@@ -46,7 +46,7 @@
 						{{ renderUserList(profile.followers) }}
 					</ul>
 					<div class="footer">
-						<a href="<%= getPageUrl('user_followers_list')%>">Ver Todos</a>
+						<a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
 					</div>
 				</div>
 
@@ -58,7 +58,7 @@
 						{{ renderUserList(profile.following) }}
 					</ul>
 					<div class="footer">
-						<a href="<%= getPageUrl('user_followers_list')%>">Ver Todos</a>
+						<a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
 					</div>
 				</div>
 <!-- 
