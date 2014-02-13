@@ -136,12 +136,14 @@ module.exports = {
 					methods: {
 						get: [required.login,
 							(req, res) ->
-								User.getPostsFromUser req.params.userId, {limit:10}, (err, docs) ->
-									console.log('Fetched board:', docs)
-									res.end(JSON.stringify({
-										data: docs, 
-										page: 0,
-									}))
+								User.getPostsFromUser req.params.userId,
+									{limit:3, skip:5*parseInt(req.query.page)},
+									(err, docs) ->
+										console.log('Fetched board:', docs)
+										res.end(JSON.stringify({
+											data: docs, 
+											page: 0,
+										}))
 						],
 					}
 				},

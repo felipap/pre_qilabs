@@ -76,7 +76,8 @@ module.exports = {
             get: [
               required.login, function(req, res) {
                 return User.getPostsFromUser(req.params.userId, {
-                  limit: 10
+                  limit: 3,
+                  skip: 5 * parseInt(req.query.page)
                 }, function(err, docs) {
                   console.log('Fetched board:', docs);
                   return res.end(JSON.stringify({
