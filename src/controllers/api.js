@@ -184,8 +184,12 @@ module.exports = {
                 return req.user.createPost({
                   content: {
                     title: 'My conquest!' + Math.floor(Math.random() * 100),
-                    body: req.body.content
+                    body: req.body.content.body
                   }
+                }, function(err, doc) {
+                  return res.end(JSON.stringify({
+                    error: false
+                  }));
                 });
               }
             ]

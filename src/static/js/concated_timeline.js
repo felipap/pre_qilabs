@@ -237,9 +237,13 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 	};
 
 	$('[data-action="send-post"]').click(function (evt) {
-		var content = $("textarea").val();
-		$.post('/api/me/post', {content: content}, function (data) {
-			alert(JSON.stringify(data));
+		var body = $("textarea").val();
+		$.ajax({
+			type:'post',
+			url: '/api/me/post',
+			data: { content: { body: body } }
+		}).done(function(data) {
+			alert('data', data)
 		});
 	});
 
@@ -350,7 +354,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		return originalSync(method, model, options);
 	};
 
-	// Central functionality for of the app.
+	// Central functionality of the app.
 	WorkspaceRouter = Backbone.Router.extend({
 
 		routes: {
@@ -367,18 +371,15 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			this.postListView = new Post.listView({collection: this.postList});
 			this.postList.fetch({reset:true});
 			this.postListView.$el.appendTo('#posts-col > .placement');
-		},
-		
+		},	
 	});
 
 	$(function () {
 		new WorkspaceRouter;
 		Backbone.history.start({pushState: false});
-
 		$('#globalContainer').scroll(_.throttle(function() {
 			if ($('#posts-col .placement').height()-
 				($(window).height()+$('#posts-col').scrollTop())< 200) {
-				console.log('fetch more')
 				app.postList.fetchMore();
 			}
 		}, 500));

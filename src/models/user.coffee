@@ -156,16 +156,23 @@ UserSchema.methods.createPost = (opts, cb) ->
 				body: opts.content.body
 			}
 		}, (err, post) =>
-		@getFollowers (err, docs) =>
-			for follower in docs
-				# Inbox.createFromPost
+			# Callback now, what happens later doesn't concern the user.
+			cb(err, post)
+			# Iter through followers and fill inboxes.
+			@getFollowers (err, docs) =>
 				Inbox.create {
 					author: @id,
-					recipient: follower.id,
+					recipient: @id,
 					post: post,
-				}, (err, doc) ->
-					console.log('saved, really')
-			console.log err, docs
+				}, () -> ;
+
+				for follower in docs
+					# Inbox.createFromPost
+					Inbox.create {
+						author: @id,
+						recipient: follower.id,
+						post: post,
+					}, () -> ;
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate')
 

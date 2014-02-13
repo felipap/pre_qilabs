@@ -219,19 +219,24 @@ UserSchema.methods.createPost = function(opts, cb) {
     }
   }, (function(_this) {
     return function(err, post) {
+      cb(err, post);
       return _this.getFollowers(function(err, docs) {
-        var follower, _i, _len;
+        var follower, _i, _len, _results;
+        Inbox.create({
+          author: _this.id,
+          recipient: _this.id,
+          post: post
+        }, function() {});
+        _results = [];
         for (_i = 0, _len = docs.length; _i < _len; _i++) {
           follower = docs[_i];
-          Inbox.create({
+          _results.push(Inbox.create({
             author: _this.id,
             recipient: follower.id,
             post: post
-          }, function(err, doc) {
-            return console.log('saved, really');
-          });
+          }, function() {}));
         }
-        return console.log(err, docs);
+        return _results;
       });
     };
   })(this));
