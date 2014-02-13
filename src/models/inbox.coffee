@@ -11,14 +11,14 @@ InboxSchema = new mongoose.Schema {
 	post: 			mongoose.Schema.ObjectId
 }
 
-InboxSchema.statics.getUserPosts = (user, opts, cb) ->
+InboxSchema.statics.getFromUser = (user, opts, cb) ->
 	cb ?= opts
 	@
 		.find({author: user.id})
 		.sort('-dateSent')
 		.exec(cb)
 
-InboxSchema.statics.getPostsToUser = (user, opts, cb) ->
+InboxSchema.statics.getToUser = (user, opts, cb) ->
 	cb ?= opts
 	@
 		.find({recipient: user.id})

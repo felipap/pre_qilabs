@@ -125,12 +125,12 @@ UserSchema.methods.unfollowId = function(userId, cb) {
 };
 
 UserSchema.methods.getTimeline = function(opts, cb) {
-  return Inbox.getPostsToUser(this, opts, function(err, docs) {
+  return Inbox.getToUser(this, opts, function(err, docs) {
     return Post.find({
       id: {
         $in: _.pluck(docs, 'post')
       }
-    }, function(err, posts) {
+    }).populate('author').exec(function(err, posts) {
       console.log('posts to user', posts);
       return cb(err, posts);
     });
@@ -140,7 +140,7 @@ UserSchema.methods.getTimeline = function(opts, cb) {
 UserSchema.statics.getPostsToUser = function(userId, opts, cb) {
   return Post.find({
     author: userId
-  }).sort('-dateCreated').exec(function(err, posts) {
+  }).sort('-dateCreated').populate('author').exec(function(err, posts) {
     console.log('posts', posts);
     return cb(err, posts);
   });

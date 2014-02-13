@@ -4,8 +4,8 @@ _ = require 'underscore'
 
 # Remember to use indexes ...
 PostSchema = new mongoose.Schema {
-	author:		 	mongoose.Schema.ObjectId
-	group:			mongoose.Schema.ObjectId
+	author:			{ type: mongoose.Schema.ObjectId, ref: 'User' }
+	group:			{ type: mongoose.Schema.ObjectId, ref: 'Group' }
 	dateCreated:	Date
 	
 	data: {

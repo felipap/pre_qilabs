@@ -18,7 +18,7 @@ InboxSchema = new mongoose.Schema({
   post: mongoose.Schema.ObjectId
 });
 
-InboxSchema.statics.getUserPosts = function(user, opts, cb) {
+InboxSchema.statics.getFromUser = function(user, opts, cb) {
   if (cb == null) {
     cb = opts;
   }
@@ -27,7 +27,7 @@ InboxSchema.statics.getUserPosts = function(user, opts, cb) {
   }).sort('-dateSent').exec(cb);
 };
 
-InboxSchema.statics.getPostsToUser = function(user, opts, cb) {
+InboxSchema.statics.getToUser = function(user, opts, cb) {
   if (cb == null) {
     cb = opts;
   }
