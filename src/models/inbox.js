@@ -13,9 +13,13 @@ InboxSchema = new mongoose.Schema({
   },
   author: {
     type: mongoose.Schema.ObjectId,
-    index: true
+    index: true,
+    ref: 'User'
   },
-  post: mongoose.Schema.ObjectId
+  post: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Post'
+  }
 });
 
 InboxSchema.statics.getFromUser = function(user, opts, cb) {
@@ -24,15 +28,6 @@ InboxSchema.statics.getFromUser = function(user, opts, cb) {
   }
   return this.find({
     author: user.id
-  }).sort('-dateSent').exec(cb);
-};
-
-InboxSchema.statics.getToUser = function(user, opts, cb) {
-  if (cb == null) {
-    cb = opts;
-  }
-  return this.find({
-    recipient: user.id
   }).sort('-dateSent').exec(cb);
 };
 

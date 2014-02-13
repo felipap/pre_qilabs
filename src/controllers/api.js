@@ -137,12 +137,12 @@ module.exports = {
             get: [
               required.login, function(req, res) {
                 return req.user.getTimeline({
-                  limit: 10
+                  limit: 3,
+                  skip: 5 * parseInt(req.query.page)
                 }, function(err, docs) {
-                  console.log('Fetched timeline:', docs);
                   return res.end(JSON.stringify({
                     data: docs,
-                    page: 0
+                    page: parseInt(req.query.page) || 0
                   }));
                 });
               }

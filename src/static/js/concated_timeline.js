@@ -375,11 +375,12 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		new WorkspaceRouter;
 		Backbone.history.start({pushState: false});
 
-		$('#posts-col').scroll(function() {
+		$('#globalContainer').scroll(_.throttle(function() {
 			if ($('#posts-col .placement').height()-
 				($(window).height()+$('#posts-col').scrollTop())< 200) {
+				console.log('fetch more')
 				app.postList.fetchMore();
 			}
-		});
+		}, 500));
 	});
 });

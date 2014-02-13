@@ -58,7 +58,6 @@ UserSchema.methods.getFollowers = function(cb) {
         $in: _.pluck(docs, 'follower')
       }
     }, function(err, docs) {
-      console.log('found:', err, docs);
       return cb(err, docs);
     });
   });
@@ -73,7 +72,6 @@ UserSchema.methods.getFollowing = function(cb) {
         $in: _.pluck(docs, 'followee')
       }
     }, function(err, docs) {
-      console.log('found:', err, docs);
       return cb(err, docs);
     });
   });
@@ -125,14 +123,16 @@ UserSchema.methods.unfollowId = function(userId, cb) {
 };
 
 UserSchema.methods.getTimeline = function(opts, cb) {
-  return Inbox.getToUser(this, opts, function(err, docs) {
-    return Post.find({
-      id: {
-        $in: _.pluck(docs, 'post')
-      }
-    }).populate('author').sort('-dateCreated').exec(function(err, posts) {
-      console.log('posts to user', posts);
-      return cb(err, posts);
+  return Inbox.find({
+    recipient: this.id
+  }).sort('-dateSent').populate('post').select('post').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, inboxes) {
+    if (err) {
+      return cb(err);
+    }
+    return User.populate(inboxes, {
+      path: 'post.author'
+    }, function(err, docs) {
+      return cb(err, _.pluck(docs, 'post'));
     });
   });
 };

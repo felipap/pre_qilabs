@@ -47,13 +47,13 @@ UserSchema.methods.getFollowers = (cb) ->
 	Follow.find {followee: @id}, (err, docs) ->
 		console.log('found follow relationships:',  _.pluck(docs, 'follower'))
 		User.find {_id: {$in: _.pluck(docs, 'follower')}}, (err, docs) ->
-			console.log('found:', err, docs)
+			# console.log('found:', err, docs)
 			cb(err, docs)
 
 UserSchema.methods.getFollowing = (cb) ->
 	Follow.find {follower: @id}, (err, docs) ->
 		User.find {_id: {$in: _.pluck(docs, 'followee')}}, (err, docs) ->
-			console.log('found:', err, docs)
+			# console.log('found:', err, docs)
 			cb(err, docs)
 
 UserSchema.methods.countFollowers = (cb) ->
@@ -89,14 +89,18 @@ UserSchema.methods.unfollowId = (userId, cb) ->
 ## related to the Timeline and Inboxes
 
 UserSchema.methods.getTimeline = (opts, cb) ->
-	Inbox.getToUser @, opts, (err, docs) ->
-		Post
-			.find {id: {$in: _.pluck(docs, 'post')}} # better populate?
-			.populate 'author'
-			.sort '-dateCreated'
-			.exec (err, posts) ->
-				console.log('posts to user', posts)
-				cb(err, posts)
+	Inbox
+		.find {recipient: @id}
+		.sort '-dateSent'
+		.populate 'post'
+		.select 'post'
+		.limit opts.limit or 10
+		.skip opts.skip or null
+ 		.exec (err, inboxes) ->
+ 			if err then return cb(err)
+ 			User.populate inboxes, {path:'post.author'}, (err, docs) ->
+ 				cb(err, _.pluck(docs, 'post'))
+
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	# Inbox.getUserPosts @, opts, (err, docs) ->

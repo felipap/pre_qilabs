@@ -187,12 +187,13 @@ module.exports = {
 					methods: {
 						get: [required.login,
 							(req, res) ->
-								req.user.getTimeline {limit:10}, (err, docs) ->
-									console.log('Fetched timeline:', docs)
-									res.end(JSON.stringify({
-										data: docs, 
-										page: 0,
-									}))
+								req.user.getTimeline {limit:3, skip:5*parseInt(req.query.page)},
+									(err, docs) ->
+										# console.log('Fetched timeline:', docs)
+										res.end(JSON.stringify({
+											data: docs,
+											page: parseInt(req.query.page) || 0,
+										}))
 						],
 					}
 				},
