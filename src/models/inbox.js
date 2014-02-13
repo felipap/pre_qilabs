@@ -18,7 +18,7 @@ InboxSchema = new mongoose.Schema({
   post: mongoose.Schema.ObjectId
 });
 
-InboxSchema.statics.getUserBoard = function(user, opts, cb) {
+InboxSchema.statics.getUserPosts = function(user, opts, cb) {
   if (cb == null) {
     cb = opts;
   }
@@ -27,8 +27,7 @@ InboxSchema.statics.getUserBoard = function(user, opts, cb) {
   }).sort('-dateSent').exec(cb);
 };
 
-InboxSchema.statics.getUserInbox = function(user, opts, cb) {
-  console.log('finding inbox for user', typeof user.id, user.id);
+InboxSchema.statics.getPostsToUser = function(user, opts, cb) {
   if (cb == null) {
     cb = opts;
   }
@@ -38,7 +37,6 @@ InboxSchema.statics.getUserInbox = function(user, opts, cb) {
 };
 
 InboxSchema.pre('save', function(next) {
-  console.log('saving date:', this.dateSent);
   if (this.dateSent == null) {
     this.dateSent = new Date();
   }

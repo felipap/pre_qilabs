@@ -11,15 +11,14 @@ InboxSchema = new mongoose.Schema {
 	post: 			mongoose.Schema.ObjectId
 }
 
-InboxSchema.statics.getUserBoard = (user, opts, cb) ->
+InboxSchema.statics.getUserPosts = (user, opts, cb) ->
 	cb ?= opts
 	@
 		.find({author: user.id})
 		.sort('-dateSent')
 		.exec(cb)
 
-InboxSchema.statics.getUserInbox = (user, opts, cb) ->
-	console.log('finding inbox for user', typeof(user.id), user.id)
+InboxSchema.statics.getPostsToUser = (user, opts, cb) ->
 	cb ?= opts
 	@
 		.find({recipient: user.id})
@@ -27,7 +26,6 @@ InboxSchema.statics.getUserInbox = (user, opts, cb) ->
  		.exec(cb)
 
 InboxSchema.pre 'save', (next) ->
-	console.log('saving date:', @dateSent)
 	@dateSent ?= new Date()
 	next()
 

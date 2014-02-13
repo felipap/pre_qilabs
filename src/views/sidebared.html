@@ -1,0 +1,37 @@
+{% extends 'stdbody.html' %}
+
+{% import 'macros/user.html' as userMacro %}
+
+{% block stylesheets %}
+ 	<link rel="stylesheet" href="{{ getMediaUrl('css','sn_pages.min.css') }}" />
+{% endblock %}
+
+{% block templates %}
+	{% parent %}
+	<script id="template-postview" type="text/template">
+		{% include 'templates/postview.html' %}
+	</script>
+{% endblock %}
+
+{% block body %}
+<body data-page="{{ data_page }}">
+
+	{% include 'layouts/navbar.html' %}
+
+	<div id="globalContainer">
+		<div id="content">
+			<div id="sidebar">
+				{% block sidebarContent %}{% endblock %}
+				{% include 'layouts/footer.html' %}
+			</div>
+
+			<div id="resultsContainer">
+				<div class="flash-msgs"></div>
+				{% block mainContent %}{% endblock %}
+			</div>
+		</div>
+	</div>
+
+	<script data-main="{{ getMediaUrl('js','timeline.min.js') }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+</body>
+{% endblock %}

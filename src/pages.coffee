@@ -3,13 +3,13 @@
 # for qilabs.org
 
 mongoose = require 'mongoose'
+required = require './lib/required'
 
-Post = mongoose.model('Post')
-Inbox = mongoose.model('Inbox')
-Tag  = mongoose.model('Tag')
-User = mongoose.model('User')
-Subscriber  = mongoose.model('Subscriber')
-required = require './lib/required.js'
+Post 	= mongoose.model 'Post'
+Inbox 	= mongoose.model 'Inbox'
+Tag 	= mongoose.model 'Tag'
+User 	= mongoose.model 'User'
+Subscriber = mongoose.model 'Subscriber'
 
 module.exports = {
 	'/': {
@@ -71,7 +71,6 @@ module.exports = {
 		name: 'profile'
 		methods: {
 			get: (req, res) ->
-				# User.getBoardFromUsername {}
 				if not req.params.user
 					res.redirect('/404')
 				User.genProfileFromUsername req.params.user,
@@ -85,6 +84,7 @@ module.exports = {
 								follows: bool
 		},
 	},
+
 	'/404': {
 		name: '404'
 		methods: {

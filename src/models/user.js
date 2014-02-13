@@ -125,18 +125,19 @@ UserSchema.methods.unfollowId = function(userId, cb) {
 };
 
 UserSchema.methods.getTimeline = function(opts, cb) {
-  return Inbox.getUserInbox(this, opts, function(err, docs) {
+  return Inbox.getPostsToUser(this, opts, function(err, docs) {
     return Post.find({
       id: {
         $in: _.pluck(docs, 'post')
       }
     }, function(err, posts) {
+      console.log('posts to user', posts);
       return cb(err, posts);
     });
   });
 };
 
-UserSchema.statics.getBoard = function(userId, opts, cb) {
+UserSchema.statics.getPostsToUser = function(userId, opts, cb) {
   return Post.find({
     author: userId
   }).sort('-dateCreated').exec(function(err, posts) {

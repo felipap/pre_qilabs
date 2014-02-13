@@ -2,6 +2,8 @@ var Inbox, Post, Subscriber, Tag, User, mongoose, required;
 
 mongoose = require('mongoose');
 
+required = require('./lib/required');
+
 Post = mongoose.model('Post');
 
 Inbox = mongoose.model('Inbox');
@@ -11,8 +13,6 @@ Tag = mongoose.model('Tag');
 User = mongoose.model('User');
 
 Subscriber = mongoose.model('Subscriber');
-
-required = require('./lib/required.js');
 
 module.exports = {
   '/': {

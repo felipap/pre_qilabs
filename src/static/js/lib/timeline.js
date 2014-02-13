@@ -98,35 +98,11 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			}
 		});
 
-		var PostItemSingleView = Backbone.View.extend({
-			id: "#post",
-			className: 'post',
-			template: _.template($("#template-postview-single").html()),
-
-			initialize: function () {
-				this.model.on('change', this.render, this);
-			},
-			
-			destroy: function () {
-				this.undelegateEvents();
-				this.$el.removeData().unbind();
-				this.unbind();
-				this.remove();
-			},
-
-			render: function () {
-				console.log('render');
-				this.$el.html(this.template({post: this.model.toJSON()}));
-				return this;
-			},
-		});
-
 		return {
 			item: PostItem,
 			list: PostList,
 			view: PostView,
 			listView: PostListView,
-			singleView: PostItemSingleView,
 		};
 	})();
 
@@ -151,7 +127,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 	WorkspaceRouter = Backbone.Router.extend({
 
 		routes: {
-			'posts/:post': 'singlePost',
 			'*a':  'index'
 		},
 		
@@ -159,19 +134,8 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			window.app = this;
 		},
 
-		singlePost: function (postId) {
-			this.postListView && this.postListView.destroy();
-
-			this.selPostModel = new Post.item({id:postId});
-			this.postItemSingleView = new Post.singleView({model: this.selPostModel});
-			this.selPostModel.fetch({reset:true});
-			this.postItemSingleView.$el.appendTo('#posts-col > .placement');
-		},
-
 		index: function () {
-			console.log('index)')
-			this.postItemSingleView && this.postItemSingleView.destroy();
-
+			console.log('index')
 			this.postList = new Post.list();
 			this.postListView = new Post.listView({collection: this.postList});
 			this.postList.fetch({reset:true});

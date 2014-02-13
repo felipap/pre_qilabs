@@ -89,15 +89,16 @@ UserSchema.methods.unfollowId = (userId, cb) ->
 ## related to the Timeline and Inboxes
 
 UserSchema.methods.getTimeline = (opts, cb) ->
-	Inbox.getUserInbox @, opts, (err, docs) ->
+	Inbox.getPostsToUser @, opts, (err, docs) ->
 		Post.find {id: {$in: _.pluck(docs, 'post')}}, (err, posts) ->
-			# console.log('timeline posts', posts)
+			console.log('posts to user', posts)
 			cb(err, posts)
 
-UserSchema.statics.getBoard = (userId, opts, cb) ->
+UserSchema.statics.getPostsToUser = (userId, opts, cb) ->
+	# Inbox.getUserPosts @, opts, (err, docs) ->
 	Post
 		.find {author: userId}
-		.sort ('-dateCreated')
+		.sort '-dateCreated'
 		.exec (err, posts) ->
 			console.log('posts', posts)
 			cb(err, posts)

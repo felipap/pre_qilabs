@@ -34,7 +34,6 @@ app.use(express.static(pathLib.join(app.config.staticRoot, 'robots.txt')));
 app.use(express.static(pathLib.join(app.config.staticRoot, 'people.txt')));
 app.use(express.favicon(pathLib.join(app.config.staticRoot, 'favicon.ico')));
 
-app.use(express.favicon(__dirname + '/static/favicon.ico'))
 // app.use(express.logger());
 app.use(express.methodOverride()); // support _method (PUT in forms etc)
 app.use(express.bodyParser()); // parse request bodies (req.body)
