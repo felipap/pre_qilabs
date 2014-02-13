@@ -1,10 +1,12 @@
-<% layout('../stdbody') -%>
-
-<% stylesheet(getMediaUrl('css','about_pages.min.css')) -%>
+{% extends '../stdbody.html' %}
+{% block head %}
+	{% parent %}
+	<link rel="stylesheet" href="{{ getMediaUrl('css','about_pages.min.css') }}" />
+{% endblock %}
 
 <body class="notfound">
 
-	<% include ../layouts/navbar.html %>
+	{% include '../layouts/navbar.html' %}
 
 	<section>
 		
@@ -19,7 +21,7 @@
 
 		</section>
 
-	<% include ../layouts/footer.html %>
+	{% include '../layouts/footer.html' %}
 
 	</section>
 </body>

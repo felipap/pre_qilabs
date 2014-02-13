@@ -1,18 +1,25 @@
-<% layout('../stdbody') -%>
+{% extends '../stdbody.html' %}
 
-<% stylesheet(getMediaUrl('css','about_pages.min.css')) -%>
+{% block head %}
+	{% parent %}
+	<link rel="stylesheet" href="{{ getMediaUrl('css','about_pages.min.css') }}" />
+{% endblock %}
+
+{% block body %}
 
 <body class="" data-page="panel">
 
-	<% include ../layouts/navbar.html %>
+	{% include '../layouts/navbar.html' %}
 
 	<section class="paper">
 		<section>
-		oi
+		ois
 		</section>
 	</section>
 
-	<% include ../layouts/footer.html %>
+	{% include '../layouts/footer.html' %}
 
-	<script data-main="<%= getMediaUrl('js','all.min.js') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	<script data-main="{{ getMediaUrl('js','all.min.js') }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>
+
+{% endblock %}
