@@ -10,7 +10,7 @@ module.exports = {
 			methods:
 				get: (req, res) -> res.render('pages/about_team'),
 		'participe':
-			name: 'join-team'
+			name: 'join_team'
 			methods:
 				get: (req, res) -> res.render('pages/about_jointeam'),
 }

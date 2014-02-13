@@ -9,9 +9,6 @@ Inbox = mongoose.model('Inbox')
 Tag  = mongoose.model('Tag')
 User = mongoose.model('User')
 Subscriber  = mongoose.model('Subscriber')
-
-posts = []
-
 required = require './lib/required.js'
 
 module.exports = {
@@ -71,6 +68,7 @@ module.exports = {
 	},
 
 	'/p/:user': {
+		name: 'profile'
 		methods: {
 			get: (req, res) ->
 				# User.getBoardFromUsername {}
@@ -86,7 +84,6 @@ module.exports = {
 								profile: profile
 								follows: bool
 		},
-		name: 'profile'
 	},
 	'/404': {
 		name: '404'

@@ -1,4 +1,4 @@
-var Inbox, Post, Subscriber, Tag, User, mongoose, posts, required;
+var Inbox, Post, Subscriber, Tag, User, mongoose, required;
 
 mongoose = require('mongoose');
 
@@ -11,8 +11,6 @@ Tag = mongoose.model('Tag');
 User = mongoose.model('User');
 
 Subscriber = mongoose.model('Subscriber');
-
-posts = [];
 
 required = require('./lib/required.js');
 
@@ -74,6 +72,7 @@ module.exports = {
     }
   },
   '/p/:user': {
+    name: 'profile',
     methods: {
       get: function(req, res) {
         if (!req.params.user) {
@@ -92,8 +91,7 @@ module.exports = {
           });
         });
       }
-    },
-    name: 'profile'
+    }
   },
   '/404': {
     name: '404',

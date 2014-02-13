@@ -15,7 +15,7 @@ module.exports = {
       }
     },
     'participe': {
-      name: 'join-team',
+      name: 'join_team',
       methods: {
         get: function(req, res) {
           return res.render('pages/about_jointeam');
