@@ -1,9 +1,7 @@
-<% layout('stdbody') -%>
-
-<%- body -%>
+{% extends 'stdbody.html' %}
 
 <script id="template-postview" type="text/template">
-	<% include templates/postview.html %>
+	{% include 'templates/postview.html' %}
 </script>
 
 <script id="Atemplate-postview" type="text/template">

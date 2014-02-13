@@ -23,7 +23,7 @@ InboxSchema.statics.getUserInbox = (user, opts, cb) ->
 	cb ?= opts
 	@
 		.find({recipient: user.id})
- 		.sort('-dateSent')
+		.sort('-dateSent')
  		.exec(cb)
 
 InboxSchema.pre 'save', (next) ->

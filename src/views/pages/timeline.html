@@ -1,11 +1,16 @@
-<% layout('../timeline') -%>
-<% stylesheet(getMediaUrl('css','sn_pages.min.css')) -%>
+{% extends '../timeline.html' %}
 
+{% block head %}
+	{% parent %}
+ 	<link rel="stylesheet" href="{{ getMediaUrl('css','sn_pages.min.css') }}" />
+{% endblock %}
+
+
+{% block body %}
 <script>window.postsRoot='/api/me/timeline/posts';</script>
-
 <body data-page="timeline">
 
-	<% include ../layouts/navbar.html %>
+	<% include '../layouts/navbar.html' %>
 
 	<div id="globalContainer">
 		
@@ -13,16 +18,16 @@
 			<div id="sidebar">
 				<div class="box">
 					<div class="head">
-						<img src="<%= user.avatarUrl %>" />
-						<a href="<%= user.profileUrl %> "><span data-info="name"><%= user.name %></span></a>
-						<%= user.id %>
+						<img src="{{ user.avatarUrl }}" />
+						<a href="{{ user.profileUrl }} "><span data-info="name">{{ user.name }}</span></a>
+						{{ user.id }}
 					</div>
 					<div class="body">
 						<div class="following">
 							seguindo:
-							<% for (var i=0; i<user_profile.followers.length; i++) { %>
-								<%= user_profile.followers[i].username %>
-							<% } %>
+							{% for follower in user_profile.followers %}
+								{{ follower.username }}
+							{% endfor %}
 						</div>
 						<div class="followers">
 							seguidores:
@@ -41,7 +46,7 @@
 				<div class="box groups">
 				</div>
 				
-				<% include ../layouts/footer.html %>
+				{% include '../layouts/footer.html' %}
 			</div>
 
 			<div id="resultsContainer">
@@ -77,3 +82,4 @@
 
 	<script data-main="<%= getMediaUrl('js','timeline.min.js') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>
+{% endblock %}
