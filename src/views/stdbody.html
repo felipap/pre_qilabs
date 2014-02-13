@@ -29,6 +29,20 @@
 		<script>_flash_msgs={{ JSON.stringify(messages) }}</script>
 </head>
 
+{% macro renderUser(user, el_width) %}
+<div class="media-user">
+	<a href="{{ user.profileUrl }}">
+		<img src="{{ user.avatarUrl }}" data-toggle="tooltip" title="{{ user.username }}" />
+	</a>
+</div>
+{% endmacro %}
+
+{% macro renderUserList (profile) %}
+	{% for follower in profile.followers %}
+		{{ renderUser(follower) }}
+	{% endfor %}
+{% endmacro %}
+
 {% block body %}
 {% endblock %}
 

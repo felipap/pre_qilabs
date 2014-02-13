@@ -1,11 +1,15 @@
-<% layout('../timeline') -%>
-<% stylesheet(getMediaUrl('css','sn_pages.min.css')) -%>
+{% extends '../timeline.html' %}
 
+{% block head %}
+	<link rel="stylesheet" href={{ getMediaUrl('css','sn_pages.min.css') }} />
+{% endblock %}
+
+{% block body %}
 <script>window.postsRoot='/api/users/<%= profile.id %>/board';</script>
 
 <body data-page="profile">
 
-	<% include ../layouts/navbar.html %>
+	{% include '../layouts/navbar.html' %}
 
 	<div id="globalContainer">
 		
@@ -16,7 +20,7 @@
 				</div>
 				<div class="info-groups">
 					<div class="info-group">
-						<h2><%= profile.name %></h2>
+						<h2>{{ profile.name }}</h2>
 					</div>
 					<div class="info-group">
 						<h3>Honolulu, Hawaii, US</h3>
@@ -26,27 +30,37 @@
 					</div>
 				</div>
 
-				<div class="box tags">
+				{% if user.id != profile.id %}
+					{% if follows %}
+						<button class="btn-follow" data-action="unfollow" data-user="<%= profile.id %>"></button>
+					{% else %}
+						<button class="btn-follow" data-action="follow" data-user="<%= profile.id %>"></button>
+					{% endif %}
+				{% endif %}
+
+				<div class="box users-box">
 					<div class="head">
-						Seguido por (<%= profile.followers.length):
+						Seguido por ({{ profile.followers.length }}):
 					</div>
 					<ul class="body">
-						<% for (var i=0; i<profile.followers.length; i++) { %>
-							<%= profile.followers[i].username %>
-						<% } %>
+						{{ renderUserList(profile.followers) }}
 					</ul>
 					<div class="footer">
 						<a href="<%= getPageUrl('user_followers_list')%>">Ver Todos</a>
 					</div>
 				</div>
 
-				<% if (profile.id !== user.id) { %>
-					<% if (follows) { %>
-						<button class="btn-follow" data-action="unfollow" data-user="<%= profile.id %>"></button>
-					<% } else { %>
-						<button class="btn-follow" data-action="follow" data-user="<%= profile.id %>"></button>
-					<% } %>
-				<% } %>
+				<div class="box users-box">
+					<div class="head">
+						Seguindo ({{ profile.following.length }}):
+					</div>
+					<ul class="body">
+						{{ renderUserList(profile.following) }}
+					</ul>
+					<div class="footer">
+						<a href="<%= getPageUrl('user_followers_list')%>">Ver Todos</a>
+					</div>
+				</div>
 <!-- 
 				<div class="social">
 					<a href="#" data-toggle="tooltip" title="Personal website">
@@ -83,7 +97,7 @@
 						<i class="icon-certificate copper"></i>
 					</a>
 				</div>
-				<% include ../layouts/footer.html %>
+				{% include '../layouts/footer.html' %}
 			</div>
 		</id>
 
@@ -140,5 +154,6 @@
 		</div>
 	</section>
 	
-<script data-main="<%= getMediaUrl('js','timeline.min.js') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+<script data-main="{{ getMediaUrl('js','timeline.min.js') }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>
+{% endblock %}

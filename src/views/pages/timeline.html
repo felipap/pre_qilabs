@@ -1,18 +1,9 @@
 {% extends '../timeline.html' %}
 
-{% macro renderUser(user, el_width) %}
-<div class="media-user">
-	<a href="{{ user.profileUrl }}">
-		<img src="{{ user.avatarUrl }}" data-toggle="tooltip" title="{{ user.username }}" />
-	</a>
-</div>
-{% endmacro %}
-
 {% block head %}
 	{% parent %}
  	<link rel="stylesheet" href="{{ getMediaUrl('css','sn_pages.min.css') }}" />
 {% endblock %}
-
 
 {% block body %}
 <script>window.postsRoot='/api/me/timeline/posts';</script>
