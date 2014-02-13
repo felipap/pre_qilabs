@@ -10,7 +10,7 @@
 <script>window.postsRoot='/api/me/timeline/posts';</script>
 <body data-page="timeline">
 
-	<% include '../layouts/navbar.html' %>
+	{% include '../layouts/navbar.html' %}
 
 	<div id="globalContainer">
 		
@@ -57,7 +57,7 @@
 					<div id="posts-col">
 						<div class="placement">
 							<h3 id="no-posts-msg" style="display: none; color: #888">
-								Ops! Nenhum post visível. :/
+								Ops! Nenhum post visível. :s
 							</h3>
 						</div>
 					</div>
@@ -80,6 +80,6 @@
 	}());
 	</script>
 
-	<script data-main="<%= getMediaUrl('js','timeline.min.js') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	<script data-main="{{ getMediaUrl('js','timeline.min.js') }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>
 {% endblock %}

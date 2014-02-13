@@ -1,12 +1,16 @@
-<% layout('../stdbody') -%>
+{% extends '../stdbody.html' %}
 
-<% stylesheet(getMediaUrl('css','feed.min.css')) -%>
+{% block head %}
+	{% parent %}
+	<link rel="stylesheet" href="{{ getMediaUrl('css','feed.min.css') }}" >
+{% endblock %}
 
-<script>window._tags=<%- tags -%></script>
+{% block body %}
+
 
 <body class="home">
 
-	<% include ../layouts/navbar.html %>
+	{% include ../layouts/navbar.html %}
 
 	<div id="sidebar">
 		<div>
@@ -167,3 +171,5 @@
 
 	<script data-main="<%= getMediaUrl('js','feed.min.js') %>" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>
+
+{% endblock %}
