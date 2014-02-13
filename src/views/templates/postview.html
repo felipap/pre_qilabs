@@ -1,6 +1,20 @@
 
-<p><strong>author:</strong> <@= post.author.username @></p>
-<p><strong>title:</strong><@= post.data.title @></p>
-<p><strong>date:</strong><@= post.dateCreated @></p>
-<p><strong>time:</strong><@= post.dateCreated @></p>
-<strong>body:</strong><@= post.data.body @>
+<div class="op-msg">
+	<div class="msg-header">
+		<a href="<@= post.author.profileUrl @>">
+			<img class="author-avatar" src="<@= post.author.avatarUrl @>" />
+		</a>
+		<div class="msg-headline">
+			<div class="author-username">
+				<a href="<@= post.author.profileUrl @>">
+					<@= post.author.username @>
+				</a>
+			</div>
+			disse:
+		</div>
+		<time><@= post.dateCreated @></time>
+	</div>
+	<div class="msg-body">
+		<@= post.data.body @>
+	</div>
+</div>
