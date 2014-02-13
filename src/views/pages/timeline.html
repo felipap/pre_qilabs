@@ -21,12 +21,11 @@
 	<div class="body">
 		<div class="following">
 			seguindo:
-			{% for follower in user_profile.followers %}
-				{{ renderUser(follower) }}
-			{% endfor %}
+			{{ usermacros.renderUserList(user.following) }}
 		</div>
 		<div class="followers">
 			seguidores:
+			{{ usermacros.renderUserList(user.followers) }}
 		</div>
 	</div>
 </div>

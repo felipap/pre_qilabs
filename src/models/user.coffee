@@ -91,7 +91,7 @@ UserSchema.methods.unfollowId = (userId, cb) ->
 UserSchema.methods.getTimeline = (opts, cb) ->
 	Inbox.getToUser @, opts, (err, docs) ->
 		Post
-			.find {id: {$in: _.pluck(docs, 'post')}}
+			.find {id: {$in: _.pluck(docs, 'post')}} # better populate?
 			.populate 'author'
 			.sort '-dateCreated'
 			.exec (err, posts) ->

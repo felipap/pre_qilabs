@@ -6,6 +6,7 @@
 	<script>window.postsRoot='/api/users/{{profile.id}}/posts';</script>
 {% endblock %}
 
+
 {% block sidebarContent %}
 	<div class="thumbnail">
 		<img alt="seu avatar" width="200" src="{{ profile.avatarUrl }}">
@@ -35,7 +36,7 @@
 			Seguido por ({{ profile.followers.length }}):
 		</div>
 		<ul class="body">
-			{{ renderUserList(profile.followers) }}
+			{{ usermacros.renderUserList(profile.followers) }}
 		</ul>
 		<div class="footer">
 			<a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
@@ -47,7 +48,7 @@
 			Seguindo ({{ profile.following.length }}):
 		</div>
 		<ul class="body">
-			{{ renderUserList(profile.following) }}
+			{{ usermacros.renderUserList(profile.following) }}
 		</ul>
 		<div class="footer">
 			<a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>

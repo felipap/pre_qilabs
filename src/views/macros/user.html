@@ -7,8 +7,8 @@
 </div>
 {% endmacro %}
 
-{% macro renderUserList (profile) %}
-	{% for follower in profile.followers %}
-		{{ renderUser(follower) }}
+{% macro renderUserList (list) %}
+	{% for person in list %}
+		{{ renderUser(person) }}
 	{% endfor %}
 {% endmacro %}
