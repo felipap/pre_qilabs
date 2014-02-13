@@ -1,0 +1,119 @@
+{% extends 'stdbody.html' %}
+
+{% block head %}
+	{% parent %}
+	<link rel="stylesheet" href="{{ getMediaUrl('css','frontpage.min.css') }}" />
+{% endblock %}
+
+{% block body %}
+
+	{% set sel_bg = [
+		{
+			label:'Harvard University, Boston, USA',
+			source:'u/hav.jpg',
+			credits: '',
+		},
+		{
+			label:'Columbia University, New York, USA',
+			source:'u/col.jpg',
+			credits: '',
+		},
+		{
+			label:'Yale University Library, Durham, USA',
+			source:'u/yal.jpg',
+			credits: '',
+		},
+		{
+			label:'Massachusetts Institute of Technology, Boston, USA',
+			source:'u/mit.jpg',
+			credits: '',
+		},
+		{
+			label:'Stanford University, Santa Clara, USA',
+			source:'u/sta.jpg',
+			credits: '',
+		},
+		{
+			label:'Duke University, Durham, USA',
+			source:'u/duk.jpg',
+			credits: '',
+		},
+		{
+			label:'Escola de Engenharia da Universidade de São Paulo, São Paulo',
+			source: 'u/usp.jpg',
+			credits: 'Marcos Santos / USP Imagens',
+		},
+		{
+			label:'Universidade Estadual de Campinas (UNICAMP), São Paulo',
+			source: 'u/unc.jpg',
+			credits: '',
+		},
+		{
+			label: 'Universidade Federal do Rio de Janeiro, Campus Praia Vermelha',
+			source: 'u/ufrj.jpg',
+			credits: 'FOTO: Gabriela d’Araujo / Imagem UFRJ',
+		},
+	][Math.floor(bgs.length*Math.random())]
+	%}
+
+
+<body class="" data-page="front">
+	<!-- <script>if(window!=window.top){top.location="http://meavisa.herokuapp.com";}</script> -->
+	<div class="full-bg-img" style="background-image: url({{ getMediaUrl('images/', sel_bg.source) }});"></div>
+
+	{% include 'layouts/navbar.html' %}
+	<section id="jumbo">
+
+		<div class="box-blackout"></div>
+		<div class="content">
+			<div style="position: absolute; margin: auto">
+				<div class="flash-msgs"></div>
+			</div>
+			{% block message %}
+			{% endblock %}
+		</div>
+		<div class="credits">
+		</div>
+		<dfn>
+			{{ sel_bg.label }}
+			<br>{{ sel_bg.credits }}
+		</dfn>
+	</section>
+
+	{#
+	<section id="last-signins">
+		<div class="avatars">
+			{% for (var i2=0; i2++<10;) { %}
+			{% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %}
+			<li>
+					<img src="{{ user.avatarUrl }}"></img>
+			</li>
+			{% } %}
+			{% } %}
+		</div>
+		<div class="box-blackout"></div>
+	</section>
+	#}	
+
+	<footer>
+		
+		<ul class="links">
+			<a href="{{ getPageUrl('about') }}">Sobre</a>
+			<a href="{{ getPageUrl('team') }}">Quem Somos</a>
+			<a href="{{ getPageUrl('join-team') }}">Faça Parte</a>
+			<!-- <a href="{{ getPageUrl('contact') }}">Fale Conosco</a>  -->
+			<!-- <span class="social"> -->
+				<a href="{{ getPageUrl('twitter') }}"><i class="icon-twitter"></i></a>
+				<a href="{{ getPageUrl('facebook') }}"><i class="icon-facebook"></i></a>
+			<!-- </span> -->
+		</ul>
+<!-- 		<div class="reg">
+			www.meavisa.org &reg; 2013
+		</div>
+ -->
+	</footer>
+
+	<script data-main="{{ getMediaUrl('js','all.min.js') }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+</body>
+
+{% endblock %}

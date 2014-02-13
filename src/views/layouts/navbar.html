@@ -1,7 +1,7 @@
 
 <nav class="bar" role="navigation">
 	<a class="brand" href="/" tabindex="-1">
-		Q.I. Laboratories<!--  <sup class="version"><%= app.semantic_version %></sup> -->
+		Q.I. Laboratories<!--  <sup class="version">{{ app.semantic_version }}</sup> -->
 	</a>
 
 	{% if user %}
@@ -46,7 +46,7 @@
 				</button>
 			</li>
 			<li>
-			 	<a href="<%= getPageUrl('panel') %>" class="plain-btn"
+			 	<a href="{{ getPageUrl('panel') }}" class="plain-btn"
 					title="Configurações de conta" data-toggle="tooltip" data-placement="bottom">
 					<i class="icon-cog"></i>
 				</a>
@@ -54,29 +54,29 @@
 		 	<li class="menu-dd" class="dropdown">
 			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle"
 					>
-					<img id="avatarDd" alt="seu avatar" width=45 class="" src="<%= user.avatarUrl %>" />
+					<img id="avatarDd" alt="seu avatar" width=45 class="" src="{{ user.avatarUrl }}" />
 					<i></i>
 					<b class="caret"></b>
 				</div>
 				<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
 					<li role="presentation">
-						<a role="menuitem" tabindex="-1" href="<%= user.url %>">
+						<a role="menuitem" tabindex="-1" href="{{ user.url }}">
 							<i class="icon-user"></i> Meu Perfil
 						</a>
 					</li>
 					<li role="presentation">
-						<a role="menuitem"  tabindex="-1" href="<%= getPageUrl('panel') %>">
+						<a role="menuitem"  tabindex="-1" href="{{ getPageUrl('panel') }}">
 							<i class="icon-cog"></i> Configurações
 						</a>
 					</li>
 					<li role="presentation" class="divider"></li>
 					<li role="presentation">
-						<a role="menuitem" tabindex="-1" href="<%= getPageUrl('about') %>">
+						<a role="menuitem" tabindex="-1" href="{{ getPageUrl('about') }}">
 							<i class="icon-question"></i> Ajuda e FAQ
 						</a>
 					</li>
 					<li role="presentation">
-						<a role="menuitem" tabindex="-1" data-ajax-post-href="<%= getPageUrl('logout') %>" data-redirect-href="/">
+						<a role="menuitem" tabindex="-1" data-ajax-post-href="{{ getPageUrl('logout') }}" data-redirect-href="/">
 							<i class="icon-sign-out"></i> Log Out
 						</a>
 					</li>
@@ -91,7 +91,7 @@
 			<a href="/auth/facebook" class="plain-btn" data-action="login">
 				Entrar
 			</a>
-			<a href="<%= getPageUrl('about') %>" class="plain-btn">
+			<a href="{{ getPageUrl('about') }}" class="plain-btn">
 				<i class="icon-question"></i>
 			</a>
 		</ul>
@@ -109,7 +109,7 @@
 			<div>
 				<form method="post" action="/api/testers">
 					<input type="text" name="email" placeholder="seu email aqui..." />
-					<input type="hidden" name="_csrf" value="<%= token %>" />
+					<input type="hidden" name="_csrf" value="{{ token }}" />
 					<button data-action="send-tester-email">Enviar</button>
 				</form>
 			</div>

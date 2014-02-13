@@ -5,6 +5,7 @@
 node_modules
 env.js
 libpeerconnection.log
+.DS_Store
 
 *.sublime-project
 *.sublime-workspace
