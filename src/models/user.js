@@ -164,7 +164,7 @@ UserSchema.statics.genProfileFromUsername = function(username, cb) {
   return User.findOne({
     username: username
   }, function(err, doc) {
-    if (err) {
+    if (err || !doc) {
       return cb(err);
     }
     if (!doc) {

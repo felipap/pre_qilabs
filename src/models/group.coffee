@@ -15,15 +15,15 @@ GroupSchema = new mongoose.Schema {
 
 MembershipSchema = new mongoose.Schema {
 	joinDate: 	Date,
-	member:		mongoose.Schema.ObjectId,
-	group: 		mongoose.Schema.ObjectId,
+	member:		{ type: mongoose.Schema.ObjectId, index: 1, ref: 'User' }
+	group: 		{ type: mongoose.Schema.ObjectId, index: 1, ref: 'Group' }
 }
 
-# Virtuals
-
 # Methods
-GroupSchema.methods = {}
+GroupSchema.methods.addUserToGroup = (user, group, cb) ->
+	MembershipSchema
 
 GroupSchema.statics.findOrCreate = require('./lib/findOrCreate')
+GroupSchema.statics.Membership = Membership = mongoose.model "Membership", MembershipSchema
 
 module.exports = mongoose.model "Group", GroupSchema

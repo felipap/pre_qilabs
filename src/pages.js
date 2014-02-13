@@ -76,11 +76,11 @@ module.exports = {
     methods: {
       get: function(req, res) {
         if (!req.params.user) {
-          res.redirect('/404');
+          return res.redirect('/404');
         }
         return User.genProfileFromUsername(req.params.user, function(err, profile) {
           if (err || !profile) {
-            res.redirect('/404');
+            return res.redirect('/404');
           }
           console.log('profile', err, profile);
           return req.user.doesFollowId(profile.id, function(err, bool) {

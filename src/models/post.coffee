@@ -5,6 +5,7 @@ PostSchema = new mongoose.Schema {
 	author:			{ type: mongoose.Schema.ObjectId, ref: 'User' }
 	group:			{ type: mongoose.Schema.ObjectId, ref: 'Group' }
 	dateCreated:	Date
+	type: 			String
 	
 	data: {
 		title:		String
@@ -23,6 +24,8 @@ PostSchema.virtual('path').get ->
 PostSchema.pre 'save', (next) ->
 	@dateCreated ?= new Date
 	next()
+
+PostSchema.static.PlainPost = 'PlainPost'
 
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate')
 

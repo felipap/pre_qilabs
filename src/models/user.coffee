@@ -129,7 +129,7 @@ Generate stuffed profile for the controller.
 ###
 UserSchema.statics.genProfileFromUsername = (username, cb) ->
 	User.findOne {username: username}, (err, doc) ->
-		if err then return cb(err)
+		if err or not doc then return cb(err)
 		unless doc then return cb(null, doc)
 		doc.getFollowers (err, followers) ->
 			if err then return cb(err)

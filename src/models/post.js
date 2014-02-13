@@ -12,6 +12,7 @@ PostSchema = new mongoose.Schema({
     ref: 'Group'
   },
   dateCreated: Date,
+  type: String,
   data: {
     title: String,
     body: String,
@@ -36,6 +37,8 @@ PostSchema.pre('save', function(next) {
   }
   return next();
 });
+
+PostSchema["static"].PlainPost = 'PlainPost';
 
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate');
 

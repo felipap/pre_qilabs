@@ -72,11 +72,11 @@ module.exports = {
 		methods: {
 			get: (req, res) ->
 				if not req.params.user
-					res.redirect('/404')
+					return res.redirect('/404')
 				User.genProfileFromUsername req.params.user,
 					(err, profile) ->
 						if err or not profile
-							res.redirect('/404')
+							return res.redirect('/404')
 						console.log('profile', err, profile)
 						req.user.doesFollowId profile.id, (err, bool) ->
 							res.render 'pages/profile', 

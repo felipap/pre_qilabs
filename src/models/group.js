@@ -1,4 +1,4 @@
-var GroupSchema, MembershipSchema, mongoose;
+var GroupSchema, Membership, MembershipSchema, mongoose;
 
 mongoose = require('mongoose');
 
@@ -19,12 +19,24 @@ GroupSchema = new mongoose.Schema({
 
 MembershipSchema = new mongoose.Schema({
   joinDate: Date,
-  member: mongoose.Schema.ObjectId,
-  group: mongoose.Schema.ObjectId
+  member: {
+    type: mongoose.Schema.ObjectId,
+    index: 1,
+    ref: 'User'
+  },
+  group: {
+    type: mongoose.Schema.ObjectId,
+    index: 1,
+    ref: 'Group'
+  }
 });
 
-GroupSchema.methods = {};
+GroupSchema.methods.addUserToGroup = function(user, group, cb) {
+  return MembershipSchema;
+};
 
 GroupSchema.statics.findOrCreate = require('./lib/findOrCreate');
+
+GroupSchema.statics.Membership = Membership = mongoose.model("Membership", MembershipSchema);
 
 module.exports = mongoose.model("Group", GroupSchema);
