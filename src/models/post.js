@@ -1,8 +1,6 @@
-var PostSchema, mongoose, _;
+var PostSchema, mongoose;
 
 mongoose = require('mongoose');
-
-_ = require('underscore');
 
 PostSchema = new mongoose.Schema({
   author: {

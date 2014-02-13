@@ -140,7 +140,7 @@ UserSchema.methods.getTimeline = function(opts, cb) {
 UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
   return Post.find({
     author: userId
-  }).sort('-dateCreated').populate('author').exec(function(err, posts) {
+  }).sort('-dateCreated').populate('author').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, posts) {
     console.log('posts', posts);
     return cb(err, posts);
   });

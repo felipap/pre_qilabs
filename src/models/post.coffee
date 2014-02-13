@@ -1,8 +1,6 @@
 
 mongoose = require 'mongoose'
-_ = require 'underscore'
 
-# Remember to use indexes ...
 PostSchema = new mongoose.Schema {
 	author:			{ type: mongoose.Schema.ObjectId, ref: 'User' }
 	group:			{ type: mongoose.Schema.ObjectId, ref: 'Group' }

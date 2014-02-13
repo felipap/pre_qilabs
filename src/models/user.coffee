@@ -108,6 +108,8 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.find {author: userId}
 		.sort '-dateCreated'
 		.populate 'author'
+		.limit opts.limit or 10
+		.skip opts.skip or null
 		.exec (err, posts) ->
 			console.log('posts', posts)
 			cb(err, posts)
