@@ -37,29 +37,28 @@ HandleErrors = function(res, cb) {
 module.exports = {
   children: {
     'session': {
+      permissions: [required.isMe],
       methods: {
-        get: [
-          required.isMe, function(req, res) {
-            return User.find({}, function(err, users) {
-              return Post.find({}, function(err, posts) {
-                return Subscriber.find({}, function(err, subscribers) {
-                  return Tag.getAll(function(err, tags) {
-                    var obj;
-                    obj = {
-                      ip: req.ip,
-                      session: req.session,
-                      users: users,
-                      tags: tags,
-                      posts: posts,
-                      subscribers: subscribers
-                    };
-                    return res.end(JSON.stringify(obj));
-                  });
+        get: function(req, res) {
+          return User.find({}, function(err, users) {
+            return Post.find({}, function(err, posts) {
+              return Subscriber.find({}, function(err, subscribers) {
+                return Tag.getAll(function(err, tags) {
+                  var obj;
+                  obj = {
+                    ip: req.ip,
+                    session: req.session,
+                    users: users,
+                    tags: tags,
+                    posts: posts,
+                    subscribers: subscribers
+                  };
+                  return res.end(JSON.stringify(obj));
                 });
               });
             });
-          }
-        ]
+          });
+        }
       }
     },
     'testers': {

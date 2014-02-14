@@ -1,7 +1,8 @@
+<@
+@>
 
 <div class="op-msg">
 	<div class="post-msg-header">
-		<button data-action="remove-post">Remove</button>
 		<a href="<@= post.author.profileUrl @>">
 			<img class="author-avatar" src="<@= post.author.avatarUrl @>" />
 		</a>
@@ -13,16 +14,24 @@
 			</div>
 			disse:
 		</div>
-		<time><@= post.dateCreated @></time>
+		<a href="<@= post.path @>"><time><@= post.dateCreated @></time></a>
+		<@ if (post.author.id === '{{ user.id }}') { @>
+		<div class="post-options-dd">
+			<button data-action="remove-post">Remove</button>
+		</div>
+		<@ } @>
 	</div>
 	<div class="post-msg-body">
 		<@= post.data.body @>
 	</div>
 </div>
+
 <div class="post-comments-section">
 </div>
-<div class="post-comment-input">
+
+<div class="post-commen-tinput">
 	<form class="formPostComment" onSubmit="return false;">
+		{{ usermacros.renderUser(user) }}
 		{{ user.username }} diz: <textarea>oi, sou eu</textarea>
 		<button data-action="send-comment">Comentar</button>
 	</form>

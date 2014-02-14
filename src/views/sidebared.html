@@ -1,13 +1,15 @@
 {% extends 'stdbody.html' %}
 
-{% import 'macros/user.html' as usermacros %}
+{% import 'macros/user.html' as _user %}
+{% import 'macros/tags.html' as _tags %}
 
 {% block stylesheets %}
- 	<link rel="stylesheet" href="{{ getMediaUrl('css','sn_pages.min.css') }}" />
+ 	{{ _tags.stylesheet(getMediaUrl('css','sn_pages.min.css')) }}
 {% endblock %}
 
 {% block templates %}
 	{% parent %}
+	
 	<script id="template-postview" type="text/template">
 		{% include 'templates/postview.html' %}
 	</script>

@@ -98,11 +98,11 @@ module.exports = {
     methods: {
       get: function(req, res) {
         if (!req.params.user) {
-          return res.redirect('/404');
+          return res.render404();
         }
         return User.genProfileFromUsername(req.params.user, function(err, profile) {
           if (err || !profile) {
-            return res.redirect('/404');
+            return res.render404();
           }
           console.log('profile', err, profile);
           return req.user.doesFollowId(profile.id, function(err, bool) {
@@ -115,21 +115,24 @@ module.exports = {
       }
     }
   },
+  '/post/:postId': {
+    name: 'profile',
+    methods: {
+      get: function(req, res) {}
+    },
+    children: {
+      '/edit': {
+        methods: {
+          get: function(req, res) {}
+        }
+      }
+    }
+  },
   '/404': {
     name: '404',
     methods: {
-      get: function(req, res) {
-        res.status(404);
-        if (req.accepts('html')) {
-          return res.status(404).render('pages/404', {
-            url: req.url,
-            user: req.user
-          });
-        } else if (req.accepts('json')) {
-          res.status(404).send({
-            error: 'Not found'
-          });
-        }
+      get: function(res, req) {
+        return res.render404();
       }
     }
   },

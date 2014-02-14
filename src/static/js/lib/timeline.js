@@ -38,7 +38,13 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			},
 		});
 
-		var CommentItem = Backbone.Model.extend({
+		var GenericPostItem = Backbone.Model.extend({
+			url: function () {
+				return this.get('apiPath');
+			},
+		})
+
+		var CommentItem = GenericPostItem.extend({
 		});
 
 		var CommentView = GenericPostView.extend({
@@ -114,10 +120,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			}
 		});
 
-		var PostItem = Backbone.Model.extend({
-			url: function () {
-				return this.get('apiPath');
-			},
+		var PostItem = GenericPostItem.extend({
 			initialize: function () {
 				this.commentsList = new CommentList({ postItem: this });
 				this.commentsList.fetch({reset:true});

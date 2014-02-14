@@ -24,22 +24,21 @@ HandleErrors = (res, cb) ->
 module.exports = {
 	children: {
 		'session': {
+			permissions: [required.isMe]
 			methods: {
-				get: [required.isMe, 
-					(req, res) ->
-						User.find {}, (err, users) ->
-							Post.find {}, (err, posts) ->
-								Subscriber.find {}, (err, subscribers) ->
-									Tag.getAll (err, tags) ->
-										obj =
-											ip: req.ip
-											session: req.session
-											users: users
-											tags: tags
-											posts: posts
-											subscribers: subscribers
-										res.end(JSON.stringify(obj))
-					]
+				get: (req, res) ->
+					User.find {}, (err, users) ->
+						Post.find {}, (err, posts) ->
+							Subscriber.find {}, (err, subscribers) ->
+								Tag.getAll (err, tags) ->
+									obj =
+										ip: req.ip
+										session: req.session
+										users: users
+										tags: tags
+										posts: posts
+										subscribers: subscribers
+									res.end(JSON.stringify(obj))
 			}
 		},
 		'testers': {

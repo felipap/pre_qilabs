@@ -36,7 +36,7 @@
 			Seguido por ({{ profile.followers.length }}):
 		</div>
 		<ul class="body">
-			{{ usermacros.renderUserList(profile.followers) }}
+			{{ _user.renderUserList(profile.followers) }}
 		</ul>
 		<div class="footer">
 			<a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
@@ -48,13 +48,12 @@
 			Seguindo ({{ profile.following.length }}):
 		</div>
 		<ul class="body">
-			{{ usermacros.renderUserList(profile.following) }}
+			{{ _user.renderUserList(profile.following) }}
 		</ul>
 		<div class="footer">
 			<a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
 		</div>
 	</div>
-	<!-- 
 	<div class="social">
 		<a href="#" data-toggle="tooltip" title="Personal website">
 			<i class="icon-home"></i>
@@ -74,7 +73,7 @@
 		<a href="#" data-toggle="tooltip" title="LinkedIn">
 			<i class="icon-linkedin"></i>
 		</a>
-	</div> -->
+	</div>
 
 	<div class="badges">
 		<a href="#" data-toggle="tooltip" title="Peace Nobel 2010">
