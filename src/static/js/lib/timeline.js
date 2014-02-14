@@ -16,7 +16,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			url: '/api/posts',
 			data: { content: { body: body } }
 		}).done(function(data) {
-			alert('data', data)
+			alert('data', data);
 		});
 	});
 
@@ -57,7 +57,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			},
 			parse: function (response, options) {
 				this.page = response.page;
-				console.log('this.page', response)
 				return Backbone.Collection.prototype.parse.call(this, response.data, options);
 			},
 			fetchMore: function () {
@@ -116,6 +115,20 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			initialize: function () {
 				this.model.collection.on('reset', this.destroy, this);
 			},
+			events: {
+				'submit .formPostComment':
+					function (evt) {
+						console.log('this is', this)
+						var body = $(evt.target).find("textarea").val();
+						$.ajax({
+							type: 'post',
+							url: this.model.get('apiPath')+'/comments',
+							data: { content: { body: body } }
+						}).done(function(data) {
+							alert('data', data);
+						});
+					},
+			},
 			destroy: function () {
 				this.undelegateEvents();
 				this.$el.removeData().unbind();
@@ -125,7 +138,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			render: function () {
 				this.$el.html(this.template({post: this.model.toJSON()}));
 				this.commentListView = new CommentListView({ collection: this.model.commentsList });
-				this.$el.append(this.commentListView.$el);
+				this.$el.find('.post-comments-section').append(this.commentListView.$el);
 				return this;
 			},
 		});

@@ -1,10 +1,10 @@
 
 <div class="op-msg">
-	<div class="msg-header">
+	<div class="post-msg-header">
 		<a href="<@= post.author.profileUrl @>">
 			<img class="author-avatar" src="<@= post.author.avatarUrl @>" />
 		</a>
-		<div class="msg-headline">
+		<div class="post-msg-headline">
 			<div class="author-username">
 				<a href="<@= post.author.profileUrl @>">
 					<@= post.author.username @>
@@ -14,7 +14,15 @@
 		</div>
 		<time><@= post.dateCreated @></time>
 	</div>
-	<div class="msg-body">
+	<div class="post-msg-body">
 		<@= post.data.body @>
 	</div>
+</div>
+<div class="post-comments-section">
+</div>
+<div class="post-comment-input">
+	<form class="formPostComment" onSubmit="return false;">
+		{{ user.username }} diz: <textarea>oi, sou eu</textarea>
+		<button data-action="send-comment">Comentar</button>
+	</form>
 </div>

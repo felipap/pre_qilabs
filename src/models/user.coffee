@@ -2,9 +2,11 @@
 mongoose = require 'mongoose'
 _ = require 'underscore'
 
-Inbox = mongoose.model('Inbox')
-Follow = mongoose.model('Follow')
-Post = mongoose.model('Post')
+Inbox 	= mongoose.model 'Inbox'
+Follow 	= mongoose.model 'Follow'
+Post 	= mongoose.model 'Post'
+
+ObjectId = mongoose.Types.ObjectId
 
 # Schema
 UserSchema = new mongoose.Schema {
@@ -148,33 +150,43 @@ UserSchema.statics.genProfileFromModel = (model, cb) ->
 ###
 Create a post object with type comment.
 ###
-UserSchema.methods.commentPostWithId = (id, opts, cb) ->
+UserSchema.methods.commentToPostWithId = (_postId, data, cb) ->
 	# Detect repeated posts and comments
-	cb ?= opts
-	throw 'Implementar'
-	post = new Post {
-		author: @id
-		group: null
-		data: {
-			title: opts.content.title
-			body: opts.content.body
-		},
-		parentPost: opts.parentPost
-		postType: Post.PostTypes.Comment or opts
-	}
-	post.save (err, post) =>
-		cb(err, post)
+	if typeof _postId is 'string'
+		try
+			postId = new ObjectId.fromString _postId
+		catch e
+			console.log e
+			return cb(error:true, name:'InvalidId')
+	Post.findById postId, (err, parentPost) =>
+		if err
+			return cb(error:true)
+		else if not parentPost
+			return cb(error:true, name:'NotFound')
+
+		post = new Post {
+			author: @
+			group: null
+			data: {
+				title: data.content.title
+				body: data.content.body
+			},
+			parentPost: parentPost
+			postType: Post.PostTypes.Comment or data
+		}
+		# cb(true)
+		post.save cb
 
 ###
 Create a post object and fan out through inboxes.
 ###
-UserSchema.methods.createPost = (opts, cb) ->
+UserSchema.methods.createPost = (data, cb) ->
 	post = new Post {
 		author: @id
 		group: null
 		data: {
-			title: opts.content.title
-			body: opts.content.body
+			title: data.content.title
+			body: data.content.body
 		},
 		# parentPost: '52fd556aee90f63350000001'
 	}

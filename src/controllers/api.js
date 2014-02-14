@@ -153,7 +153,7 @@ module.exports = {
                         name: 'InvalidId'
                       });
                     }
-                    return Post.findById(postId, HandleErrors(res, function(post) {
+                    return Post.findById(postId).populate('author').exec(HandleErrors(res, function(post) {
                       return post.getComments(HandleErrors(res, function(comments) {
                         return res.endJson({
                           page: 0,
@@ -163,7 +163,13 @@ module.exports = {
                     }));
                   }
                 ],
-                post: [required.login, function(req, res) {}]
+                post: [
+                  required.login, function(req, res) {
+                    return req.user.commentToPostWithId(req.params.id, req.body, HandleErrors(res, function(doc) {
+                      return res.endJson(doc);
+                    }));
+                  }
+                ]
               }
             }
           }

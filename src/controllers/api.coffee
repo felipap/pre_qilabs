@@ -125,7 +125,7 @@ module.exports = {
 						get: [required.login,
 							(req, res) ->
 								try
-									postId = new ObjectId.fromString(req.params.id)
+									postId = new ObjectId.fromString req.params.id
 								catch e
 									return res.status(400).endJson(error:true, name:'InvalidId')
 								Post.findById postId,
@@ -144,10 +144,12 @@ module.exports = {
 								get: [required.login,
 									(req, res) ->
 										try
-											postId = new ObjectId.fromString(req.params.id)
+											postId = new ObjectId.fromString req.params.id
 										catch e
 											return res.status(400).endJson(error:true, name:'InvalidId')
-										Post.findById postId, HandleErrors(res, (post) ->
+										Post.findById postId
+											.populate 'author'
+											.exec HandleErrors(res, (post) ->
 												post.getComments HandleErrors(res, (comments) ->
 													res.endJson {
 														page: 0
@@ -158,8 +160,11 @@ module.exports = {
 								],
 								post: [required.login,
 									(req, res) ->
-										# req.user.commentToPostWithId({id: req.params.id},
-										# 	)
+										req.user.commentToPostWithId req.params.id,
+											req.body,
+											HandleErrors(res, (doc) ->
+												res.endJson(doc)
+											)
 								],
 							}
 						},

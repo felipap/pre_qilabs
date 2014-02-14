@@ -1,4 +1,4 @@
-var Follow, Inbox, Post, User, UserSchema, mongoose, _;
+var Follow, Inbox, ObjectId, Post, User, UserSchema, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -9,6 +9,8 @@ Inbox = mongoose.model('Inbox');
 Follow = mongoose.model('Follow');
 
 Post = mongoose.model('Post');
+
+ObjectId = mongoose.Types.ObjectId;
 
 UserSchema = new mongoose.Schema({
   name: String,
@@ -209,25 +211,44 @@ UserSchema.statics.genProfileFromModel = function(model, cb) {
 Create a post object with type comment.
  */
 
-UserSchema.methods.commentPostWithId = function(id, opts, cb) {
-  var post;
-  if (cb == null) {
-    cb = opts;
+UserSchema.methods.commentToPostWithId = function(_postId, data, cb) {
+  var e, postId;
+  if (typeof _postId === 'string') {
+    try {
+      postId = new ObjectId.fromString(_postId);
+    } catch (_error) {
+      e = _error;
+      console.log(e);
+      return cb({
+        error: true,
+        name: 'InvalidId'
+      });
+    }
   }
-  throw 'Implementar';
-  post = new Post({
-    author: this.id,
-    group: null,
-    data: {
-      title: opts.content.title,
-      body: opts.content.body
-    },
-    parentPost: opts.parentPost,
-    postType: Post.PostTypes.Comment || opts
-  });
-  return post.save((function(_this) {
-    return function(err, post) {
-      return cb(err, post);
+  return Post.findById(postId, (function(_this) {
+    return function(err, parentPost) {
+      var post;
+      if (err) {
+        return cb({
+          error: true
+        });
+      } else if (!parentPost) {
+        return cb({
+          error: true,
+          name: 'NotFound'
+        });
+      }
+      post = new Post({
+        author: _this,
+        group: null,
+        data: {
+          title: data.content.title,
+          body: data.content.body
+        },
+        parentPost: parentPost,
+        postType: Post.PostTypes.Comment || data
+      });
+      return post.save(cb);
     };
   })(this));
 };
@@ -237,14 +258,14 @@ UserSchema.methods.commentPostWithId = function(id, opts, cb) {
 Create a post object and fan out through inboxes.
  */
 
-UserSchema.methods.createPost = function(opts, cb) {
+UserSchema.methods.createPost = function(data, cb) {
   var post;
   post = new Post({
     author: this.id,
     group: null,
     data: {
-      title: opts.content.title,
-      body: opts.content.body
+      title: data.content.title,
+      body: data.content.body
     }
   });
   return post.save((function(_this) {
