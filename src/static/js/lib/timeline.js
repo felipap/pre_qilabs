@@ -41,7 +41,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		var CommentItem = Backbone.Model.extend({
 		});
 
-		var CommentView = Backbone.View.extend({
+		var CommentView = GenericPostView.extend({
 			tagName: 'li',
 			className: 'post',
 			template: _.template($("#template-commentview").html()),

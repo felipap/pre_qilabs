@@ -13,6 +13,7 @@ HandleErrors = (res, cb) ->
 	return (err, result) ->
 		console.log('result:', err, result)
 		if err
+			console.debug('err handled:', err)
 			res.status(400).endJson(error:true)
 		else if not result
 			res.status(404).endJson(error:true, name:404)
@@ -110,7 +111,8 @@ module.exports = {
 										)
 								post: 
 									(req, res) ->
-										req.user.commentToPostWithId req.params.postId,
+										return if not postId = req.paramToObjectId('id')
+										req.user.commentToPostWithId postId,
 											req.body,
 											HandleErrors(res, (doc) ->
 												res.endJson doc

@@ -19,6 +19,7 @@ HandleErrors = function(res, cb) {
   return function(err, result) {
     console.log('result:', err, result);
     if (err) {
+      console.debug('err handled:', err);
       return res.status(400).endJson({
         error: true
       });
@@ -154,7 +155,11 @@ module.exports = {
                   }));
                 },
                 post: function(req, res) {
-                  return req.user.commentToPostWithId(req.params.postId, req.body, HandleErrors(res, function(doc) {
+                  var postId;
+                  if (!(postId = req.paramToObjectId('id'))) {
+                    return;
+                  }
+                  return req.user.commentToPostWithId(postId, req.body, HandleErrors(res, function(doc) {
                     return res.endJson(doc);
                   }));
                 }

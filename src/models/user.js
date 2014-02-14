@@ -191,16 +191,16 @@ UserSchema.statics.genProfileFromUsername = function(username, cb) {
   });
 };
 
-UserSchema.statics.genProfileFromModel = function(model, cb) {
-  return model.getFollowers(function(err, followers) {
+UserSchema.statics.genProfileFromModel = function(userModel, cb) {
+  return userModel.getFollowers(function(err, followers) {
     if (err) {
       return cb(err);
     }
-    return model.getFollowing(function(err, following) {
+    return userModel.getFollowing(function(err, following) {
       if (err) {
         return cb(err);
       }
-      return cb(null, _.extend(model, {
+      return cb(null, _.extend(userModel, {
         followers: followers,
         following: following
       }));
@@ -213,20 +213,8 @@ UserSchema.statics.genProfileFromModel = function(model, cb) {
 Create a post object with type comment.
  */
 
-UserSchema.methods.commentToPostWithId = function(_postId, data, cb) {
-  var e, postId;
-  if (typeof _postId === 'string') {
-    try {
-      postId = new ObjectId.fromString(_postId);
-    } catch (_error) {
-      e = _error;
-      console.log(e);
-      return cb({
-        error: true,
-        name: 'InvalidId'
-      });
-    }
-  }
+UserSchema.methods.commentToPostWithId = function(postId, data, cb) {
+  console.assert(postId instanceof mongoose.Types.ObjectId);
   return Post.findById(postId, (function(_this) {
     return function(err, parentPost) {
       var post;

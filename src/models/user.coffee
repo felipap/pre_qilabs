@@ -139,25 +139,20 @@ UserSchema.statics.genProfileFromUsername = (username, cb) ->
 				if err then return cb(err)
 				cb(null, _.extend(doc, {followers:followers, following:following}))
 
-UserSchema.statics.genProfileFromModel = (model, cb) ->
-	model.getFollowers (err, followers) ->
+UserSchema.statics.genProfileFromModel = (userModel, cb) ->
+	userModel.getFollowers (err, followers) ->
 		if err then return cb(err)
-		model.getFollowing (err, following) ->
+		userModel.getFollowing (err, following) ->
 			if err then return cb(err)
-			cb(null, _.extend(model, {followers:followers, following:following}))
+			cb(null, _.extend(userModel, {followers:followers, following:following}))
 
 
 ###
 Create a post object with type comment.
 ###
-UserSchema.methods.commentToPostWithId = (_postId, data, cb) ->
+UserSchema.methods.commentToPostWithId = (postId, data, cb) ->
 	# Detect repeated posts and comments
-	if typeof _postId is 'string'
-		try
-			postId = new ObjectId.fromString _postId
-		catch e
-			console.log e
-			return cb(error:true, name:'InvalidId')
+	console.assert(postId instanceof mongoose.Types.ObjectId)
 	Post.findById postId, (err, parentPost) =>
 		if err
 			return cb(error:true)
