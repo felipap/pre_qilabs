@@ -1,5 +1,6 @@
 
 mongoose = require 'mongoose'
+ObjectId = mongoose.Types.ObjectId
 
 required = require '../lib/required.js'
 
@@ -7,6 +8,16 @@ User = mongoose.model 'User'
 Post = mongoose.model 'Post'
 Tag  = mongoose.model 'Tag'
 Subscriber  = mongoose.model 'Subscriber'
+
+HandleErrors = (res, cb) ->
+	return (err, result) ->
+		console.log('result:', err, result)
+		if err
+			res.status(400).endJson(error:true)
+		else if not result
+			res.status(404).endJson(error:true, name:404)
+		else
+			cb(result)
 
 # Starts at '/api'
 module.exports = {
@@ -96,40 +107,66 @@ module.exports = {
 		# 	}
 		# },
 		
-		# 'posts': {
-		# 	methods: {
-		# 		# Get all posts.
-		# 		get: [required.login,
-		# 			(req, res) ->
-		# 				# Get all posts.
-		# 				if req.query.tags
-		# 					seltags = req.query.tags.split(',')
-		# 				else
-		# 					seltags = req.user.tags
-		# 				page = parseInt(req.query.page) || 0
-		# 				Post.getWithTags seltags, (err, docs) ->
-		# 					# Fake pagination
-		# 					docs = docs.slice(page*5, (page+1)+5)
-		# 					console.log('length of posts:', docs.length)
-		# 					res.end(JSON.stringify({
-		# 						data: docs,
-		# 						page: page,
-		# 					}))
-		# 		],
-		# 	},
-		# 	children: {
-		# 		':id': {
-		# 			methods: {
-		# 				get: [required.login,
-		# 					(req, res) ->
-		# 						Post.findOne {tumblrId: req.params.id},
-		# 							(err, doc) ->
-		# 								res.end(JSON.stringify(doc))									
-		# 				]
-		# 			}
-		# 		},
-		# 	}
-		# },
+		'posts': {
+			methods: {
+				post: [required.login,
+					(req, res) ->
+						req.user.createPost {
+							content:
+								title: 'My conquest!'+Math.floor(Math.random()*100)
+								body: req.body.content.body
+						}, (err, doc) ->
+							res.end(JSON.stringify({error:false}))
+				],
+			},
+			children: {
+				'/:id': {
+					methods: {
+						get: [required.login,
+							(req, res) ->
+								try
+									postId = new ObjectId.fromString(req.params.id)
+								catch e
+									return res.status(400).endJson(error:true, name:'InvalidId')
+								Post.findById postId,
+									(err, doc) ->
+										if err
+											res.status(400).endJson(error:true)
+										else if not doc
+											res.status(404).endJson(error:true, name:404)
+										else
+											res.endJson(doc)
+							],
+					},
+					children: {
+						'/comments': {
+							methods: {
+								get: [required.login,
+									(req, res) ->
+										try
+											postId = new ObjectId.fromString(req.params.id)
+										catch e
+											return res.status(400).endJson(error:true, name:'InvalidId')
+										Post.findById postId, HandleErrors(res, (post) ->
+												post.getComments HandleErrors(res, (comments) ->
+													res.endJson {
+														page: 0
+														data: comments
+													}
+												)
+											)
+								],
+								post: [required.login,
+									(req, res) ->
+										# req.user.commentToPostWithId({id: req.params.id},
+										# 	)
+								],
+							}
+						},
+					}
+				},
+			},
+		},
 		'users': {
 			children: {
 				':userId/posts': {
@@ -221,19 +258,19 @@ module.exports = {
 						]
 					}
 				},
-				'post': {
-					methods: {
-						post: [required.login,
-							(req, res) ->
-								req.user.createPost {
-									content:
-										title: 'My conquest!'+Math.floor(Math.random()*100)
-										body: req.body.content.body
-								}, (err, doc) ->
-									res.end(JSON.stringify({error:false}))
-						]
-					}
-				}
+				# 'posts': {
+				# 	methods: {
+				# 		post: [required.login,
+				# 			(req, res) ->
+				# 				req.user.createPost {
+				# 					content:
+				# 						title: 'My conquest!'+Math.floor(Math.random()*100)
+				# 						body: req.body.content.body
+				# 				}, (err, doc) ->
+				# 					res.end(JSON.stringify({error:false}))
+				# 		]
+				# 	}
+				# }
 			}
 		}
 	}

@@ -206,19 +206,50 @@ UserSchema.statics.genProfileFromModel = function(model, cb) {
 
 
 /*
+Create a post object with type comment.
+ */
+
+UserSchema.methods.commentPostWithId = function(id, opts, cb) {
+  var post;
+  if (cb == null) {
+    cb = opts;
+  }
+  throw 'Implementar';
+  post = new Post({
+    author: this.id,
+    group: null,
+    data: {
+      title: opts.content.title,
+      body: opts.content.body
+    },
+    parentPost: opts.parentPost,
+    postType: Post.PostTypes.Comment || opts
+  });
+  return post.save((function(_this) {
+    return function(err, post) {
+      return cb(err, post);
+    };
+  })(this));
+};
+
+
+/*
 Create a post object and fan out through inboxes.
  */
 
 UserSchema.methods.createPost = function(opts, cb) {
-  return Post.create({
+  var post;
+  post = new Post({
     author: this.id,
     group: null,
     data: {
       title: opts.content.title,
       body: opts.content.body
     }
-  }, (function(_this) {
+  });
+  return post.save((function(_this) {
     return function(err, post) {
+      console.log('yes, here', err, post);
       cb(err, post);
       return _this.getFollowers(function(err, docs) {
         var follower, _i, _len, _results;

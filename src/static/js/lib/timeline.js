@@ -13,7 +13,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		var body = $("textarea").val();
 		$.ajax({
 			type:'post',
-			url: '/api/me/post',
+			url: '/api/posts',
 			data: { content: { body: body } }
 		}).done(function(data) {
 			alert('data', data)
@@ -22,9 +22,91 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 	var Post = (function () {
 		'use strict';
-		//
+
+		var CommentItem = Backbone.Model.extend({
+		});
+
+		var CommentView = Backbone.View.extend({
+			tagName: 'li',
+			className: 'post',
+			template: _.template($("#template-commentview").html()),
+			initialize: function () {
+			},
+			destroy: function () {
+				this.undelegateEvents();
+				this.$el.removeData().unbind();
+				this.unbind();
+				this.remove();
+			},
+			render: function () {
+				this.$el.html(this.template({comment: this.model.toJSON()}));
+				return this;
+			},
+		});
+
+		var CommentList = Backbone.Collection.extend({
+			model: CommentItem,
+			page: 0,
+			constructor: function (opts) {
+				this.postItem = opts.postItem;
+				console.log('this.postItem', this.postItem);
+				Backbone.Collection.apply(this, arguments);
+			},
+			url: function () {
+				return this.postItem.get('apiPath') + '/comments'; 
+			},
+			parse: function (response, options) {
+				this.page = response.page;
+				console.log('this.page', response)
+				return Backbone.Collection.prototype.parse.call(this, response.data, options);
+			},
+			fetchMore: function () {
+				this.fetch({data: {page:this.page+1}, remove:false});
+			},
+		});
+
+		var CommentListView = Backbone.View.extend({
+			tagName: 'ul',
+			className: "commentList",
+			_commentViews: [],
+			initialize: function () {
+				this.collection.on('reset', this.addAll, this);
+				this.collection.on('add', this.addAll, this);
+			},
+
+			addAll: function () {
+				var views = [];
+				this.collection.each(function(item) {
+					views.push(new CommentView({model:item}));
+				}, this);
+				this._commentViews = views;
+				return this.render();
+			},
+
+			render: function () {
+				console.log('rending commentListView', this.collection);
+				var container = document.createDocumentFragment();
+				_.each(this._commentViews, function (item) {
+					container.appendChild(item.render().el);
+				}, this);
+				this.$el.empty();
+				this.$el.append(container);
+				return this;
+			},
+
+			destroy: function () {
+				this.remove();
+			}
+		});
+
 		var PostItem = Backbone.Model.extend({
-			urlRoot: window.postsRoot || '/api/timeline/posts'
+			url: function () {
+				this.get('apiPath');
+			},
+			initialize: function () {
+				this.commentsList = new CommentList({ postItem: this });
+				this.commentsList.fetch({reset:true});
+			},
 		});
 
 		var PostView = Backbone.View.extend({
@@ -42,6 +124,8 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			},
 			render: function () {
 				this.$el.html(this.template({post: this.model.toJSON()}));
+				this.commentListView = new CommentListView({ collection: this.model.commentsList });
+				this.$el.append(this.commentListView.$el);
 				return this;
 			},
 		});
@@ -51,17 +135,19 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			url: window.postsRoot || '/api/timeline/posts',
 			page: 0,
 			parse: function (response, options) {
-				this.page = response.page
-				return Backbone.Collection.prototype.parse.call(this, response.data, options);
+				this.page = response.page;
+				var data = Backbone.Collection.prototype.parse.call(this, response.data, options);
+				// Filter for non-null results.
+				return _.filter(data, function (i) { return !!i; });
 			},
 			fetchMore: function () {
 				this.fetch({data: {page:this.page+1}, remove:false});
-			}
+			},
 		});
 
 		var PostListView = Backbone.View.extend({
 			id: "#posts",
-			_views: [],
+			_postViews: [],
 			template: _.template(['<@ if (!length) { @>',
 				'<h3 style="color: #888">Nenhum post visível. :/</h3>',
 				'<@ } @>',
@@ -78,19 +164,19 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				this.collection.each(function(postItem) {
 					views.push(new PostView({model:postItem}));
 				}, this);
-				this._views = views;
+				this._postViews = views;
 				return this.render();
 			},
 
 			render: function () {
 				var container = document.createDocumentFragment();
 				// render each postView
-				_.each(this._views, function (postView) {
+				_.each(this._postViews, function (postView) {
 					container.appendChild(postView.render().el);
 				}, this);
 				this.$el.empty();
 				this.$el.append(container);
-				if (this._views.length)
+				if (this._postViews.length)
 					$("#no-posts-msg").hide();
 				else
 					$("#no-posts-msg").show();

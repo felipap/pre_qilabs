@@ -71,6 +71,28 @@ module.exports = {
       ]
     }
   },
+  '/lab/:groupSlug': {
+    name: 'profile',
+    methods: {
+      get: function(req, res) {
+        if (!req.params.groupSlug) {
+          return res.redirect('/404');
+        }
+        return Group.genGroupProfileFromSlug(req.params.groupSlug, function(err, profile) {
+          if (err || !profile) {
+            return res.redirect('/404');
+          }
+          console.log('profile', err, profile);
+          return req.user.doesFollowId(profile.id, function(err, bool) {
+            return res.render('pages/profile', {
+              profile: profile,
+              follows: bool
+            });
+          });
+        });
+      }
+    }
+  },
   '/p/:user': {
     name: 'profile',
     methods: {

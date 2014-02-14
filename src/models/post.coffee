@@ -1,11 +1,19 @@
 
 mongoose = require 'mongoose'
 
+PostTypes = 
+	Comment: 'Comment' 			# Comment
+	Answer: 'Answer' 			# Answer
+	PlainPost: 'PlainPost'		# Default
+
 PostSchema = new mongoose.Schema {
 	author:			{ type: mongoose.Schema.ObjectId, ref: 'User' }
 	group:			{ type: mongoose.Schema.ObjectId, ref: 'Group' }
 	dateCreated:	Date
-	type: 			String
+	type: 			{ type: String, default: PostTypes.PlainPost }
+
+	parentPost: 	{ type: mongoose.Schema.ObjectId, ref: 'Post', index: 1 }
+	points:			Number
 	
 	data: {
 		title:		String
@@ -19,17 +27,27 @@ PostSchema = new mongoose.Schema {
 
 # Virtuals
 PostSchema.virtual('path').get ->
-	"/post/{id}".replace(/{id}/, @tumblrId)
+	"/posts/{id}".replace(/{id}/, @id)
+
+PostSchema.virtual('apiPath').get ->
+	"/api/posts/{id}".replace(/{id}/, @id)
 
 PostSchema.pre 'save', (next) ->
+	console.log 'saving me', @parentPost
 	@dateCreated ?= new Date
 	next()
 
-PostSchema.static.PlainPost = 'PlainPost'
+PostSchema.methods.getComments = (cb) ->
+	Post.find { parentPost: @id }
+		.populate 'author'
+		.exec (err, docs) ->
+			console.log('comment docs:', docs)
+			cb(err, docs)
 
+PostSchema.statics.PostTypes = PostTypes
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
 ####################################################################################################
 ####################################################################################################
 
-module.exports = mongoose.model "Post", PostSchema
+module.exports = Post = mongoose.model "Post", PostSchema

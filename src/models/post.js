@@ -1,6 +1,12 @@
-var PostSchema, mongoose;
+var Post, PostSchema, PostTypes, mongoose;
 
 mongoose = require('mongoose');
+
+PostTypes = {
+  Comment: 'Comment',
+  Answer: 'Answer',
+  PlainPost: 'PlainPost'
+};
 
 PostSchema = new mongoose.Schema({
   author: {
@@ -12,7 +18,16 @@ PostSchema = new mongoose.Schema({
     ref: 'Group'
   },
   dateCreated: Date,
-  type: String,
+  type: {
+    type: String,
+    "default": PostTypes.PlainPost
+  },
+  parentPost: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Post',
+    index: 1
+  },
+  points: Number,
   data: {
     title: String,
     body: String,
@@ -28,18 +43,32 @@ PostSchema = new mongoose.Schema({
 });
 
 PostSchema.virtual('path').get(function() {
-  return "/post/{id}".replace(/{id}/, this.tumblrId);
+  return "/posts/{id}".replace(/{id}/, this.id);
+});
+
+PostSchema.virtual('apiPath').get(function() {
+  return "/api/posts/{id}".replace(/{id}/, this.id);
 });
 
 PostSchema.pre('save', function(next) {
+  console.log('saving me', this.parentPost);
   if (this.dateCreated == null) {
     this.dateCreated = new Date;
   }
   return next();
 });
 
-PostSchema["static"].PlainPost = 'PlainPost';
+PostSchema.methods.getComments = function(cb) {
+  return Post.find({
+    parentPost: this.id
+  }).populate('author').exec(function(err, docs) {
+    console.log('comment docs:', docs);
+    return cb(err, docs);
+  });
+};
+
+PostSchema.statics.PostTypes = PostTypes;
 
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate');
 
-module.exports = mongoose.model("Post", PostSchema);
+module.exports = Post = mongoose.model("Post", PostSchema);

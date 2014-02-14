@@ -17,6 +17,9 @@
 ** });
 */
 
+// TODO next:
+// - support required decorators for paths (eg: required.login for api)
+
 module.exports = function Router (app) {
 
 	function routePath (path, name, mToFunc) {

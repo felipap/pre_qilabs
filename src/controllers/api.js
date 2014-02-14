@@ -1,7 +1,9 @@
-var Post, Subscriber, Tag, User, mongoose, required,
+var HandleErrors, ObjectId, Post, Subscriber, Tag, User, mongoose, required,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
+
+ObjectId = mongoose.Types.ObjectId;
 
 required = require('../lib/required.js');
 
@@ -12,6 +14,24 @@ Post = mongoose.model('Post');
 Tag = mongoose.model('Tag');
 
 Subscriber = mongoose.model('Subscriber');
+
+HandleErrors = function(res, cb) {
+  return function(err, result) {
+    console.log('result:', err, result);
+    if (err) {
+      return res.status(400).endJson({
+        error: true
+      });
+    } else if (!result) {
+      return res.status(404).endJson({
+        error: true,
+        name: 404
+      });
+    } else {
+      return cb(result);
+    }
+  };
+};
 
 module.exports = {
   children: {
@@ -67,6 +87,87 @@ module.exports = {
             }
           }
         ]
+      }
+    },
+    'posts': {
+      methods: {
+        post: [
+          required.login, function(req, res) {
+            return req.user.createPost({
+              content: {
+                title: 'My conquest!' + Math.floor(Math.random() * 100),
+                body: req.body.content.body
+              }
+            }, function(err, doc) {
+              return res.end(JSON.stringify({
+                error: false
+              }));
+            });
+          }
+        ]
+      },
+      children: {
+        '/:id': {
+          methods: {
+            get: [
+              required.login, function(req, res) {
+                var e, postId;
+                try {
+                  postId = new ObjectId.fromString(req.params.id);
+                } catch (_error) {
+                  e = _error;
+                  return res.status(400).endJson({
+                    error: true,
+                    name: 'InvalidId'
+                  });
+                }
+                return Post.findById(postId, function(err, doc) {
+                  if (err) {
+                    return res.status(400).endJson({
+                      error: true
+                    });
+                  } else if (!doc) {
+                    return res.status(404).endJson({
+                      error: true,
+                      name: 404
+                    });
+                  } else {
+                    return res.endJson(doc);
+                  }
+                });
+              }
+            ]
+          },
+          children: {
+            '/comments': {
+              methods: {
+                get: [
+                  required.login, function(req, res) {
+                    var e, postId;
+                    try {
+                      postId = new ObjectId.fromString(req.params.id);
+                    } catch (_error) {
+                      e = _error;
+                      return res.status(400).endJson({
+                        error: true,
+                        name: 'InvalidId'
+                      });
+                    }
+                    return Post.findById(postId, HandleErrors(res, function(post) {
+                      return post.getComments(HandleErrors(res, function(comments) {
+                        return res.endJson({
+                          page: 0,
+                          data: comments
+                        });
+                      }));
+                    }));
+                  }
+                ],
+                post: [required.login, function(req, res) {}]
+              }
+            }
+          }
+        }
       }
     },
     'users': {
@@ -173,24 +274,6 @@ module.exports = {
               required.login, function(req, res) {
                 req.logout();
                 return res.redirect('/');
-              }
-            ]
-          }
-        },
-        'post': {
-          methods: {
-            post: [
-              required.login, function(req, res) {
-                return req.user.createPost({
-                  content: {
-                    title: 'My conquest!' + Math.floor(Math.random() * 100),
-                    body: req.body.content.body
-                  }
-                }, function(err, doc) {
-                  return res.end(JSON.stringify({
-                    error: false
-                  }));
-                });
               }
             ]
           }

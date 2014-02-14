@@ -52,6 +52,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(require('./config/middlewares/flash_messages.js'));
 app.use(require('./config/middlewares/local_user.js'));
+app.use(function(req, res, next) {
+	res.endJson = function (data) {
+		res.end(JSON.stringify(data));
+	};
+	next();
+});
 app.use(app.router);
 app.use(express.logger());
 

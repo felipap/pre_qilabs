@@ -144,18 +144,44 @@ UserSchema.statics.genProfileFromModel = (model, cb) ->
 			if err then return cb(err)
 			cb(null, _.extend(model, {followers:followers, following:following}))
 
+
+###
+Create a post object with type comment.
+###
+UserSchema.methods.commentPostWithId = (id, opts, cb) ->
+	# Detect repeated posts and comments
+	cb ?= opts
+	throw 'Implementar'
+	post = new Post {
+		author: @id
+		group: null
+		data: {
+			title: opts.content.title
+			body: opts.content.body
+		},
+		parentPost: opts.parentPost
+		postType: Post.PostTypes.Comment or opts
+	}
+	post.save (err, post) =>
+		cb(err, post)
+
 ###
 Create a post object and fan out through inboxes.
 ###
 UserSchema.methods.createPost = (opts, cb) ->
-	Post.create {
-			author: @id
-			group: null
-			data: {
-				title: opts.content.title
-				body: opts.content.body
-			}
-		}, (err, post) =>
+	post = new Post {
+		author: @id
+		group: null
+		data: {
+			title: opts.content.title
+			body: opts.content.body
+		},
+		# parentPost: '52fd556aee90f63350000001'
+	}
+
+	post.save (err, post) =>
+			console.log('yes, here', err, post)
+			# use asunc.parallel to run a job
 			# Callback now, what happens later doesn't concern the user.
 			cb(err, post)
 			# Iter through followers and fill inboxes.

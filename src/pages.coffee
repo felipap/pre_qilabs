@@ -67,6 +67,24 @@ module.exports = {
 		}
 	},
 
+	'/lab/:groupSlug': {
+		name: 'profile'
+		methods: {
+			get: (req, res) ->
+				if not req.params.groupSlug
+					return res.redirect('/404')
+				Group.genGroupProfileFromSlug req.params.groupSlug,
+					(err, profile) ->
+						if err or not profile
+							return res.redirect('/404')
+						console.log('profile', err, profile)
+						req.user.doesFollowId profile.id, (err, bool) ->
+							res.render 'pages/profile', 
+								profile: profile
+								follows: bool
+		},
+	},
+
 	'/p/:user': {
 		name: 'profile'
 		methods: {
