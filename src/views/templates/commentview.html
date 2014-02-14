@@ -1,0 +1,21 @@
+
+<div class="post-comment">
+	<div class="msg-header">
+		<@= comment.id @>
+		<a href="<@= comment.author.profileUrl @>">
+			<img class="author-avatar" src="<@= comment.author.avatarUrl @>" />
+		</a>
+		<div class="msg-headline">
+			<div class="author-username">
+				<a href="<@= comment.author.profileUrl @>">
+					<@= comment.author.username @>
+				</a>
+			</div>
+			disse:
+		</div>
+		<time><@= comment.dateCreated @></time>
+	</div>
+	<div class="msg-body">
+		<@= comment.data.body @>
+	</div>
+</div>
