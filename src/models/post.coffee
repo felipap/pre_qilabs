@@ -7,17 +7,17 @@ PostTypes =
 	PlainPost: 'PlainPost'		# Default
 
 PostSchema = new mongoose.Schema {
-	author:			{ type: mongoose.Schema.ObjectId, ref: 'User' }
+	author:			{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
 	group:			{ type: mongoose.Schema.ObjectId, ref: 'Group' }
-	dateCreated:	Date
-	type: 			{ type: String, default: PostTypes.PlainPost }
+	dateCreated:	{ type: Date, required: true }
+	type: 			{ type: String, default: PostTypes.PlainPost, required: true }
 
 	parentPost: 	{ type: mongoose.Schema.ObjectId, ref: 'Post', index: 1 }
-	points:			Number
+	points:			{ type: Number, default: 0 }
 	
 	data: {
 		title:		String
-		body:		String
+		body:		{ type: String, required: true }
 		tags:		Array
 	},
 }, {

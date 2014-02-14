@@ -107,7 +107,7 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	# Inbox.getUserPosts @, opts, (err, docs) ->
 	Post
-		.find {author: userId}
+		.find {author: userId, parentPost: null}
 		.sort '-dateCreated'
 		.populate 'author'
 		.limit opts.limit or 10
@@ -119,7 +119,7 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 UserSchema.statics.getPostsToUser = (userId, opts, cb) ->
 	# Inbox.getUserPosts @, opts, (err, docs) ->
 	Post
-		.find {author: userId}
+		.find {author: userId, parentPost: null}
 		.sort '-dateCreated'
 		.populate 'author'
 		.exec (err, posts) ->

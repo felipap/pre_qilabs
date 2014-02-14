@@ -120,12 +120,12 @@ module.exports = {
 				],
 			},
 			children: {
-				'/:id': {
+				'/:postId': {
 					methods: {
 						get: [required.login,
 							(req, res) ->
 								try
-									postId = new ObjectId.fromString req.params.id
+									postId = new ObjectId.fromString req.params.postId
 								catch e
 									return res.status(400).endJson(error:true, name:'InvalidId')
 								Post.findById postId,
@@ -144,7 +144,7 @@ module.exports = {
 								get: [required.login,
 									(req, res) ->
 										try
-											postId = new ObjectId.fromString req.params.id
+											postId = new ObjectId.fromString req.params.postId
 										catch e
 											return res.status(400).endJson(error:true, name:'InvalidId')
 										Post.findById postId
@@ -160,7 +160,7 @@ module.exports = {
 								],
 								post: [required.login,
 									(req, res) ->
-										req.user.commentToPostWithId req.params.id,
+										req.user.commentToPostWithId req.params.postId,
 											req.body,
 											HandleErrors(res, (doc) ->
 												res.endJson(doc)

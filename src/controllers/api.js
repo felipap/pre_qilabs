@@ -107,13 +107,13 @@ module.exports = {
         ]
       },
       children: {
-        '/:id': {
+        '/:postId': {
           methods: {
             get: [
               required.login, function(req, res) {
                 var e, postId;
                 try {
-                  postId = new ObjectId.fromString(req.params.id);
+                  postId = new ObjectId.fromString(req.params.postId);
                 } catch (_error) {
                   e = _error;
                   return res.status(400).endJson({
@@ -145,7 +145,7 @@ module.exports = {
                   required.login, function(req, res) {
                     var e, postId;
                     try {
-                      postId = new ObjectId.fromString(req.params.id);
+                      postId = new ObjectId.fromString(req.params.postId);
                     } catch (_error) {
                       e = _error;
                       return res.status(400).endJson({
@@ -165,7 +165,7 @@ module.exports = {
                 ],
                 post: [
                   required.login, function(req, res) {
-                    return req.user.commentToPostWithId(req.params.id, req.body, HandleErrors(res, function(doc) {
+                    return req.user.commentToPostWithId(req.params.postId, req.body, HandleErrors(res, function(doc) {
                       return res.endJson(doc);
                     }));
                   }
