@@ -250,6 +250,21 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 	var Post = (function () {
 		'use strict';
 
+		var GenericPostView = Backbone.View.extend({
+			bindDestroyBtn: function () {
+				this.$el.on('click', '[data-action=remove-post]', this.destroy.bind(this));
+			},
+			destroy: function () {
+				var self = this;
+				this.model.destroy({
+					success: function () {
+						self.$el.removeData().unbind();
+						self.remove();
+					}
+				});
+			},
+		});
+
 		var CommentItem = Backbone.Model.extend({
 		});
 
@@ -286,7 +301,9 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				this.page = response.page;
 				return Backbone.Collection.prototype.parse.call(this, response.data, options);
 			},
-			fetchMore: function () {
+			tryFetchMore: function () {
+				if (this.page === -1)
+					return;
 				this.fetch({data: {page:this.page+1}, remove:false});
 			},
 		});
@@ -310,7 +327,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			},
 
 			render: function () {
-				console.log('rending commentListView', this.collection);
 				var container = document.createDocumentFragment();
 				_.each(this._commentViews, function (item) {
 					container.appendChild(item.render().el);
@@ -327,7 +343,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		var PostItem = Backbone.Model.extend({
 			url: function () {
-				this.get('apiPath');
+				return this.get('apiPath');
 			},
 			initialize: function () {
 				this.commentsList = new CommentList({ postItem: this });
@@ -335,12 +351,13 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			},
 		});
 
-		var PostView = Backbone.View.extend({
+		var PostView = GenericPostView.extend({
 			tagName: 'li',
 			className: 'post',
 			template: _.template($("#template-postview").html()),
 			initialize: function () {
 				this.model.collection.on('reset', this.destroy, this);
+				this.bindDestroyBtn();
 			},
 			events: {
 				'submit .formPostComment':
@@ -355,12 +372,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 							alert('data', data);
 						});
 					},
-			},
-			destroy: function () {
-				this.undelegateEvents();
-				this.$el.removeData().unbind();
-				this.unbind();
-				this.remove();
 			},
 			render: function () {
 				this.$el.html(this.template({post: this.model.toJSON()}));
@@ -380,7 +391,9 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				// Filter for non-null results.
 				return _.filter(data, function (i) { return !!i; });
 			},
-			fetchMore: function () {
+			tryFetchMore: function () {
+				if (this.page === -1)
+					return;
 				this.fetch({data: {page:this.page+1}, remove:false});
 			},
 		});
@@ -478,9 +491,8 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		Backbone.history.start({pushState: false});
 		$('#globalContainer').scroll(_.throttle(function() {
 			if ($('#posts-col .placement').height()-
-				($(window).height()+$('#posts-col').scrollTop())< 200) {
-				app.postList.fetchMore();
-			}
+				($(window).height()+$('#posts-col').scrollTop())< 200)
+				app.postList.tryFetchMore();
 		}, 500));
 	});
 });

@@ -6,23 +6,23 @@
 **
 ** Usage:
 ** routePages({
-**     'path': {
-**         name: 'name', // Optional, to be used with app.locals.getPageUrl
-**         methods: {
-**             get: function (req, res) { ... }
-**             ...
-**         },
-**         children: { ... } // same structure, but with relative paths
-**     }
+**    'path': {
+**        name: 'name', // Optional, to be used with app.locals.getPageUrl
+**        permissions: [required.login,] // Decorators to attach to all children
+**        methods: {
+**            get: function (req, res) { ... }
+**            ...
+**        },
+**        children: { ... } // same structure, but with relative paths
+**    }
 ** });
 */
 
-// TODO next:
-// - support required decorators for paths (eg: required.login for api)
-
 module.exports = function Router (app) {
 
-	function routePath (path, name, mToFunc) {
+	var joinPath = require('path').join.bind(require('path'));
+
+	function routePath (path, name, mToFunc, permissions) {
 		// TODO: prevent overriding urls with different paths.
 		app.locals.urls[name] = path;
 		
@@ -30,26 +30,27 @@ module.exports = function Router (app) {
 		for (var method in mToFunc)
 		if (mToFunc.hasOwnProperty(method)) {
 			var func = mToFunc[method];
-			// If obj[method] is a list of functions to call, use apply.
-			if (func instanceof Array) {
-				app[method].apply(app, [path].concat(func));
-			} else {
-				app[method](path, func);
-			}
+			// Call app[method] with arguments (path, *permissions)
+			app[method].apply(app, [path].concat(permissions||[]).concat(func));
 		}
 	}
 
-	var joinPath = require('path').join.bind(require('path'));
-
-	function routeChildren(parentPath, childs) {
+	function routeChildren(parentPath, childs, permissions) {
 		if (!childs) return {};
+		// Type-check just to make sure.
+		permissions = permissions || [];
+		console.assert(permissions instanceof Array);
 
 		for (var relpath in childs)
 		if (childs.hasOwnProperty(relpath)) {
+			// Join with parent's path to get abspath.
 			var abspath = joinPath(parentPath, relpath);
+			// Name is self-assigned or path with dashed instead of slashes.
 			var name = childs[relpath].name || abspath.replace('/','_');
-			routePath(abspath, name, childs[relpath].methods);
-			routeChildren(abspath, childs[relpath].children);
+			// Permissions are parent's + child's ones 
+			var newPermissions = permissions.concat(childs[relpath].permissions || []);
+			routePath(abspath, name, childs[relpath].methods, newPermissions);
+			routeChildren(abspath, childs[relpath].children, newPermissions);
 		}
 	}
 

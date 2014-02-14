@@ -19,8 +19,7 @@ PostSchema = new mongoose.Schema({
     ref: 'Group'
   },
   dateCreated: {
-    type: Date,
-    required: true
+    type: Date
   },
   type: {
     type: String,

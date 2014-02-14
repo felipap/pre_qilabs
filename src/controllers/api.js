@@ -90,86 +90,74 @@ module.exports = {
       }
     },
     'posts': {
+      permissions: [required.login],
       methods: {
-        post: [
-          required.login, function(req, res) {
-            return req.user.createPost({
-              content: {
-                title: 'My conquest!' + Math.floor(Math.random() * 100),
-                body: req.body.content.body
-              }
-            }, function(err, doc) {
-              return res.end(JSON.stringify({
-                error: false
-              }));
-            });
-          }
-        ]
+        post: function(req, res) {
+          return req.user.createPost({
+            content: {
+              title: 'My conquest!' + Math.floor(Math.random() * 100),
+              body: req.body.content.body
+            }
+          }, function(err, doc) {
+            return res.end(JSON.stringify({
+              error: false
+            }));
+          });
+        }
       },
       children: {
-        '/:postId': {
+        '/:id': {
           methods: {
-            get: [
-              required.login, function(req, res) {
-                var e, postId;
-                try {
-                  postId = new ObjectId.fromString(req.params.postId);
-                } catch (_error) {
-                  e = _error;
-                  return res.status(400).endJson({
-                    error: true,
-                    name: 'InvalidId'
-                  });
-                }
-                return Post.findById(postId, function(err, doc) {
-                  if (err) {
-                    return res.status(400).endJson({
-                      error: true
-                    });
-                  } else if (!doc) {
-                    return res.status(404).endJson({
-                      error: true,
-                      name: 404
-                    });
-                  } else {
-                    return res.endJson(doc);
-                  }
-                });
+            get: function(req, res) {
+              var postId;
+              if (!(postId = req.paramToObjectId('id'))) {
+                return;
               }
-            ]
+              return Post.findById(postId, HandleErrors(res, function(doc) {
+                return res.endJson(doc);
+              }));
+            },
+            post: function(req, res) {
+              var postId;
+              if (!(postId = req.paramToObjectId('id'))) {
+
+              }
+            },
+            "delete": function(req, res) {
+              var postId;
+              if (!(postId = req.paramToObjectId('id'))) {
+                return;
+              }
+              return Post.remove({
+                _id: postId,
+                author: req.user
+              }, HandleErrors(res, function(doc) {
+                return res.endJson(doc);
+              }));
+            }
           },
           children: {
             '/comments': {
               methods: {
-                get: [
-                  required.login, function(req, res) {
-                    var e, postId;
-                    try {
-                      postId = new ObjectId.fromString(req.params.postId);
-                    } catch (_error) {
-                      e = _error;
-                      return res.status(400).endJson({
-                        error: true,
-                        name: 'InvalidId'
+                get: function(req, res) {
+                  var postId;
+                  if (!(postId = req.paramToObjectId('id'))) {
+                    return;
+                  }
+                  return Post.findById(postId).populate('author').exec(HandleErrors(res, function(post) {
+                    return post.getComments(HandleErrors(res, function(comments) {
+                      return res.endJson({
+                        page: 0,
+                        data: comments
                       });
-                    }
-                    return Post.findById(postId).populate('author').exec(HandleErrors(res, function(post) {
-                      return post.getComments(HandleErrors(res, function(comments) {
-                        return res.endJson({
-                          page: 0,
-                          data: comments
-                        });
-                      }));
                     }));
-                  }
-                ],
-                post: [
-                  required.login, function(req, res) {
-                    return req.user.commentToPostWithId(req.params.postId, req.body, HandleErrors(res, function(doc) {
-                      return res.endJson(doc);
-                    }));
-                  }
-                ]
+                  }));
+                },
+                post: function(req, res) {
+                  return req.user.commentToPostWithId(req.params.postId, req.body, HandleErrors(res, function(doc) {
+                    return res.endJson(doc);
+                  }));
+                }
               }
             }
           }
@@ -248,9 +236,15 @@ module.exports = {
                   limit: 3,
                   skip: 5 * parseInt(req.query.page)
                 }, function(err, docs) {
+                  var page;
+                  if (docs[0] === null) {
+                    page = -1;
+                  } else {
+                    page = parseInt(req.query.page) || 0;
+                  }
                   return res.end(JSON.stringify({
                     data: docs,
-                    page: parseInt(req.query.page) || 0
+                    page: page
                   }));
                 });
               }

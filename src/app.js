@@ -58,6 +58,18 @@ app.use(function(req, res, next) {
 	};
 	next();
 });
+app.use(function(req, res, next) {
+	req.paramToObjectId = function (param) {
+		try {
+			return new mongoose.Types.ObjectId.fromString(req.params[param])
+		} catch (e) {
+			res.status(400).endJson({error:true, name:'InvalidId'})
+			return false;
+		}
+	};
+	next();
+});
+
 app.use(app.router);
 app.use(express.logger());
 

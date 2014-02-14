@@ -9,7 +9,7 @@ PostTypes =
 PostSchema = new mongoose.Schema {
 	author:			{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
 	group:			{ type: mongoose.Schema.ObjectId, ref: 'Group' }
-	dateCreated:	{ type: Date, required: true }
+	dateCreated:	{ type: Date }
 	type: 			{ type: String, default: PostTypes.PlainPost, required: true }
 
 	parentPost: 	{ type: mongoose.Schema.ObjectId, ref: 'Post', index: 1 }
