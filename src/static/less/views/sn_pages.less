@@ -124,7 +124,12 @@
 		border: 1px solid #DDD;
 		.no-box-shadow;
 		outline: none;
-		padding: 10px;
+		padding: 9px;
+		.transition(all, .2s, linear);
+
+		&:focus {
+			border-color: #08C;
+		}
 	}
 
 	.mediaUser {
@@ -179,13 +184,13 @@
 
 		.postCommentsSection {
 			background: #EEE;
-			border-bottom: 1px solid #AAA;
 
 			.commentWrapper:first-child {
 				border-top: 1px solid #AAA;
 				padding-top: 10px;
 			}
 			.commentWrapper:last-child {
+				border-bottom: 1px solid #AAA;
 				padding-bottom: 10px;
 			}
 

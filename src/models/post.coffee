@@ -1,4 +1,16 @@
 
+# src/models/post
+# Copyright QILabs.org
+# by @f03lipe
+
+###
+Improve:
+- Stop calling /comments to get comments.
+###
+
+################################################################################
+################################################################################
+
 mongoose = require 'mongoose'
 
 PostTypes = 
@@ -32,10 +44,13 @@ PostSchema.virtual('path').get ->
 PostSchema.virtual('apiPath').get ->
 	"/api/posts/{id}".replace(/{id}/, @id)
 
-PostSchema.post 'remove', (next) ->
-	console.log('removing comments after removing this')
+PostSchema.pre 'remove', (next) ->
 	Post.remove { parentPost: @ }, (err, num) ->
 		next()
+	console.log 'removing comments after removing this'
+
+PostSchema.statics.deepRemove = ->
+	console.log('removed?')
 
 PostSchema.pre 'save', (next) ->
 	console.log 'saving me', @parentPost
@@ -43,6 +58,7 @@ PostSchema.pre 'save', (next) ->
 	next()
 
 PostSchema.methods.getComments = (cb) ->
+	cb(false, []) unless @hasComments
 	Post.find { parentPost: @id }
 		.populate 'author'
 		.exec (err, docs) ->
@@ -52,7 +68,7 @@ PostSchema.methods.getComments = (cb) ->
 PostSchema.statics.PostTypes = PostTypes
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
-####################################################################################################
-####################################################################################################
+################################################################################
+################################################################################
 
 module.exports = Post = mongoose.model "Post", PostSchema

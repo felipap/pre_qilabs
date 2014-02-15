@@ -1,3 +1,10 @@
+
+/*
+TODO:
+✔ Implement fan-out write for active users
+- and fan-out read for non-active users.
+See http://blog.mongodb.org/post/65612078649
+ */
 var InboxSchema, mongoose;
 
 mongoose = require('mongoose');

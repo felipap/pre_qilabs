@@ -1,3 +1,10 @@
+
+/*
+GUIDELINES for development:
+- Never utilize directly request parameters or data.
+- Crucial: never remove documents by calling Model.remove. They prevent hooks
+  from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
+ */
 var Follow, Inbox, ObjectId, Post, User, UserSchema, mongoose, _;
 
 mongoose = require('mongoose');
@@ -103,24 +110,31 @@ UserSchema.methods.followId = function(userId, cb) {
   if (!userId) {
     cb(true);
   }
-  return Follow.findOneAndUpdate({
+  return Follow.findOne({
     follower: this.id,
     followee: userId
-  }, {}, {
-    upsert: true
   }, function(err, doc) {
+    if (!doc) {
+      doc = new Follow({
+        follower: this.id,
+        followee: userId
+      });
+      doc.save();
+    }
     console.log("Now following:", err, doc);
     return cb(err, !!doc);
   });
 };
 
 UserSchema.methods.unfollowId = function(userId, cb) {
-  return Follow.findOneAndRemove({
+  return Follow.findOne({
     follower: this.id,
     followee: userId
   }, function(err, doc) {
     console.log("Now unfollowing:", err, doc);
-    return cb(err, !!doc);
+    return doc.remove(function(err, num) {
+      return cb(err, !!num);
+    });
   });
 };
 
@@ -134,7 +148,34 @@ UserSchema.methods.getTimeline = function(opts, cb) {
     return User.populate(inboxes, {
       path: 'post.author'
     }, function(err, docs) {
-      return cb(err, _.pluck(docs, 'post'));
+      var count, post, posts, results, _i, _len, _results;
+      if (err) {
+        return cb(err);
+      }
+      posts = _.pluck(docs, 'post');
+      results = [];
+      count = 0;
+      _results = [];
+      for (_i = 0, _len = posts.length; _i < _len; _i++) {
+        post = posts[_i];
+        if (!(post)) {
+          continue;
+        }
+        count++;
+        _results.push((function(post) {
+          return Post.find({
+            parentPost: post
+          }).populate('author').exec(function(err, comments) {
+            results.push(_.extend({}, post.toObject(), {
+              comments: comments
+            }));
+            if (!--count) {
+              return cb(false, results);
+            }
+          });
+        })(post));
+      }
+      return _results;
     });
   });
 };
@@ -222,7 +263,7 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
       body: data.content.body
     },
     parentPost: parentPost,
-    postType: Post.PostTypes.Comment || data
+    postType: Post.PostTypes.Comment
   });
   return post.save(cb);
 };

@@ -34,12 +34,15 @@ app.use(express.static(pathLib.join(app.config.staticRoot, 'robots.txt')));
 app.use(express.static(pathLib.join(app.config.staticRoot, 'people.txt')));
 app.use(express.favicon(pathLib.join(app.config.staticRoot, 'favicon.ico')));
 
+/******************************************************************************/
+/******************************************************************************/
+/* BEGINNING of DO_NO_TOUCH_ZONE */
 // app.use(express.logger());
-app.use(express.methodOverride()); // support _method (PUT in forms etc)
-app.use(express.bodyParser()); // parse request bodies (req.body)
+app.use(express.methodOverride());
+app.use(express.bodyParser());
 app.use(require('express-validator')());
-app.use(app.config.staticUrl, express.static(app.config.staticRoot)); // serve static files
-app.use(express.cookieParser()); // support cookies
+app.use(app.config.staticUrl, express.static(app.config.staticRoot));
+app.use(express.cookieParser());
 app.use(express.session({
 	secret: process.env.SESSION_SECRET || 'mysecret',
 	maxAge: new Date(Date.now() + 3600000),
@@ -50,6 +53,10 @@ app.use(function(req, res, next){ res.locals.token = req.session._csrf; next(); 
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+/* END of DO_NO_TOUCH_ZONE */
+/******************************************************************************/
+/******************************************************************************/
+
 app.use(require('./config/middlewares/flash_messages.js'));
 app.use(require('./config/middlewares/local_user.js'));
 app.use(function(req, res, next) {
@@ -77,14 +84,16 @@ app.use(function(req, res, next) {
 	next();
 });
 
+/******************************************************************************/
+/* Don't touch EITHER. */
 app.use(app.router);
+/******************************************************************************/
+
 app.use(express.logger());
 
 if (app.get('env') === 'development') {
 	swig.setDefaults({ cache: false });
 }
-
-////////////////////////////////////////////////////////////////////////
 
 app.locals({
 	tags: {},

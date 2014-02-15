@@ -1,4 +1,8 @@
 
+# src/models/follow
+# Copyright QILabs.org
+# by @f03lipe
+
 mongoose = require 'mongoose'
 
 FollowSchema = new mongoose.Schema {

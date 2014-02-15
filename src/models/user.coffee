@@ -1,4 +1,18 @@
 
+# src/models/user
+# Copyright QILabs.org
+# by @f03lipe
+
+###
+GUIDELINES for development:
+- Never utilize directly request parameters or data.
+- Crucial: never remove documents by calling Model.remove. They prevent hooks
+  from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
+###
+
+################################################################################
+################################################################################
+
 mongoose = require 'mongoose'
 _ = require 'underscore'
 
@@ -74,18 +88,23 @@ UserSchema.methods.doesFollowId = (userId, cb) ->
 UserSchema.methods.followId = (userId, cb) ->
 	if not userId
 		cb(true)
-	Follow.findOneAndUpdate {follower:@.id, followee:userId},
-		{},
-		{upsert: true},
+	Follow.findOne {follower:@.id, followee:userId},
 		(err, doc) ->
+			unless doc
+				doc = new Follow {
+					follower: @.id
+					followee: userId
+				}
+				doc.save()
 			console.log("Now following:", err, doc)
 			cb(err, !!doc)
 
 UserSchema.methods.unfollowId = (userId, cb) ->
-	Follow.findOneAndRemove {follower:@id, followee:userId},
+	Follow.findOne {follower:@id, followee:userId},
 		(err, doc) ->
 			console.log("Now unfollowing:", err, doc)
-			cb(err, !!doc)
+			doc.remove (err, num) ->
+				cb(err, !!num)
 
 ################################################################################
 ## related to the Timeline and Inboxes
@@ -101,7 +120,20 @@ UserSchema.methods.getTimeline = (opts, cb) ->
  		.exec (err, inboxes) ->
  			if err then return cb(err)
  			User.populate inboxes, {path:'post.author'}, (err, docs) ->
- 				cb(err, _.pluck(docs, 'post'))
+ 				if err then return cb(err)
+ 				posts = _.pluck(docs, 'post')
+ 				results = []
+ 				count = 0
+ 				for post in posts when post
+ 					count++
+ 					do (post) ->
+	 					Post.find {parentPost: post}
+	 						.populate 'author'
+	 						.exec (err, comments) ->
+		 						## Check for errors here too?
+		 						results.push(_.extend({}, post.toObject(), {comments: comments}))
+		 						if not --count
+		 							cb(false, results)
 
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
@@ -147,6 +179,7 @@ UserSchema.statics.genProfileFromModel = (userModel, cb) ->
 			cb(null, _.extend(userModel, {followers:followers, following:following}))
 
 
+
 ###
 Create a post object with type comment.
 ###
@@ -157,11 +190,10 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 		group: null
 		data: {
 			body: data.content.body
-		},
+		}
 		parentPost: parentPost
-		postType: Post.PostTypes.Comment or data
+		postType: Post.PostTypes.Comment
 	}
-	# cb(true)
 	post.save cb
 
 ###

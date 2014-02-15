@@ -1,4 +1,4 @@
-var SubscriberSchema, mongoose;
+var Subscribe, SubscriberSchema, mongoose;
 
 mongoose = require('mongoose');
 
@@ -12,8 +12,6 @@ SubscriberSchema = new mongoose.Schema({
   id: true
 });
 
-SubscriberSchema.methods = {};
-
 SubscriberSchema.statics.findOrCreate = require('./lib/findOrCreate');
 
-module.exports = mongoose.model("Subscriber", SubscriberSchema);
+module.exports = Subscribe = mongoose.model("Subscriber", SubscriberSchema);

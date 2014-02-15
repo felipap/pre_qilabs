@@ -1,6 +1,14 @@
 
-# models/group.coffee
-# for qilabs.org, by @f03lipe
+# src/models/group
+# Copyright QILabs.org
+# by @f03lipe
+
+###
+Membership is accessible at Group.Membership
+###
+
+################################################################################
+################################################################################
 
 mongoose = require 'mongoose'
 

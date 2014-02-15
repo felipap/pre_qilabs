@@ -1,8 +1,7 @@
 
-###
-# models/topic.coffee
-# for iqlabs.org, by @f03lipe
-###
+# src/models/topic
+# for QILabs.org
+# by @f03lipe
 
 ###
 Topics:
@@ -19,6 +18,9 @@ Topics:
 - Estágio
 - Simulações ONU
 ###
+
+################################################################################
+################################################################################
 
 mongoose = require 'mongoose'
 memjs = require 'memjs'

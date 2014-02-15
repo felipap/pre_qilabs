@@ -1,3 +1,7 @@
+
+/*
+Membership is accessible at Group.Membership
+ */
 var GroupSchema, Membership, MembershipSchema, mongoose;
 
 mongoose = require('mongoose');

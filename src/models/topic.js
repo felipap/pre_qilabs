@@ -1,10 +1,5 @@
 
 /*
- * models/topic.coffee
- * for iqlabs.org, by @f03lipe
- */
-
-/*
 Topics:
 - Application 
 -- Universidades

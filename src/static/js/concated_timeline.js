@@ -226,7 +226,11 @@ require(['jquery'], function ($) {
 });
 
 
-// for iqlabs.org, by @f03lipe
+/*
+** timeline.js
+** Copyright QILabs.org
+** by @f03lipe
+*/
 
 require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone, _) {
 
@@ -237,13 +241,14 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 	};
 
 	$('[data-action="send-post"]').click(function (evt) {
-		var body = $("textarea").val();
+		var body = document.querySelector("#inputPostContent").value;
 		$.ajax({
 			type: 'post',
 			dataType: 'json',
 			url: '/api/posts',
 			data: { content: { body: body } }
 		}).done(function(response) {
+			document.querySelector("#inputPostContent").value = '';
 			app.postList.add(new Post.item(response.data));
 			console.log('data', response.data);
 		});
@@ -298,12 +303,11 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		var CommentList = Backbone.Collection.extend({
 			model: CommentItem,
-			comparator: '-dateCreated',
 			page: 0,
-			constructor: function (opts) {
-				this.postItem = opts.postItem;
-				console.log('this.postItem', this.postItem);
-				Backbone.Collection.apply(this, arguments);
+			comparator: function (i) {
+				// console.log('sort:', i.attributes, i.get("data"))
+				// console.log(i.get('data').body, -1*new Date(i.get('dateCreated')))
+				return -1*new Date(i.get('dateCreated'));
 			},
 			url: function () {
 				return this.postItem.get('apiPath') + '/comments'; 
@@ -327,6 +331,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			initialize: function () {
 				this.collection.on('reset', this.addAll, this);
 				this.collection.on('add', this.addAll, this);
+				this.addAll();
 			},
 
 			addAll: function () {
@@ -340,7 +345,9 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 			render: function () {
 				var container = document.createDocumentFragment();
+				console.log('rendering', this._commentViews)
 				_.each(this._commentViews, function (item) {
+					console.log('item appended')
 					container.appendChild(item.render().el);
 				}, this);
 				this.$el.empty();
@@ -355,41 +362,44 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		var PostItem = GenericPostItem.extend({
 			initialize: function () {
-				this.commentsList = new CommentList({ postItem: this });
-				this.commentsList.fetch({reset:true});
-				console.log('before error', this.toJSON())
+				this.commentList = new CommentList(this.get('comments'));
+				this.commentList.postItem = this.postItem;
+				// this.commentList.
+				// if (this.get('hasComments')) {
+				// 	this.commentList.fetch({reset:true});
+				// }
 			},
 		});
 
 		var PostView = GenericPostItemView.extend({
 			tagName: 'li',
 			className: 'postWrapper',
-			comparator: 'dateCreated',
 			template: _.template($("#template-postview").html()),
 			initialize: function () {
 				this.model.collection.on('reset', this.destroy, this);
 				this.bindDestroyBtn();
+				this.commentListView = new CommentListView({ collection: this.model.commentList });
 			},
 			events: {
 				'submit .formPostComment':
 					function (evt) {
 						console.log('this is', this, this.collection)
-						var body = $(evt.target).find(".commentInput").val();
+						var bodyEl = $(evt.target).find(".commentInput");
 						var self = this;
 						$.ajax({
 							type: 'post',
 							dataType: 'json',
 							url: this.model.get('apiPath')+'/comments',
-							data: { content: { body: body } }
+							data: { content: { body: bodyEl.val() } }
 						}).done(function(response) {
+							bodyEl.val('');
 							// console.log('response', response);
-							self.model.commentsList.add(new CommentItem(response.data));
+							self.model.commentList.add(new CommentItem(response.data));
 						});
 					},
 			},
 			render: function () {
 				this.$el.html(this.template({post: this.model.toJSON()}));
-				this.commentListView = new CommentListView({ collection: this.model.commentsList });
 				this.$el.find('.postCommentsSection').append(this.commentListView.$el);
 				return this;
 			},
@@ -399,6 +409,9 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			model: PostItem,
 			url: window.postsRoot || '/api/timeline/posts',
 			page: 0,
+			comparator: function (i) {
+				return -1*new Date(i.get('dateCreated'));
+			},
 			parse: function (response, options) {
 				this.page = response.page;
 				var data = Backbone.Collection.prototype.parse.call(this, response.data, options);

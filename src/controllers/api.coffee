@@ -1,5 +1,29 @@
 
+# src/controllers/api
+# Copyright QILabs.org
+# by @f03lipe
+
+###
+The controller for /api/* calls.
+###
+
+###
+GUIDELINES for development:
+- Keep controllers sanitized ALWAYS.
+- Never pass request parameters or data to schema methods, always validate
+  before. Use res.paramToObjectId to get create ids:
+  `(req, res) -> return unless userId = res.paramToObjectId('userId'); ...`
+- Prefer no not handle creation/modification of documents. Leave those to
+  schemas statics and methods.
+- Crucial: never remove documents by calling Model.remove. They prevent hooks
+  from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
+###
+
+################################################################################
+################################################################################
+
 mongoose = require 'mongoose'
+_ = require 'underscore'
 ObjectId = mongoose.Types.ObjectId
 
 required = require '../lib/required.js'
@@ -10,6 +34,7 @@ Tag  = mongoose.model 'Tag'
 Subscriber = mongoose.model 'Subscriber'
 
 HandleErrors = (res, cb) ->
+	console.assert typeof cb is 'function'
 	return (err, result) ->
 		console.log('result:', err, result)
 		if err
@@ -30,15 +55,13 @@ module.exports = {
 					User.find {}, (err, users) ->
 						Post.find {}, (err, posts) ->
 							Subscriber.find {}, (err, subscribers) ->
-								Tag.getAll (err, tags) ->
-									obj =
-										ip: req.ip
-										session: req.session
-										users: users
-										tags: tags
-										posts: posts
-										subscribers: subscribers
-									res.end(JSON.stringify(obj))
+								obj =
+									ip: req.ip
+									session: req.session
+									users: users
+									posts: posts
+									subscribers: subscribers
+								res.end(JSON.stringify(obj))
 			}
 		'testers':
 			methods: {
@@ -80,15 +103,21 @@ module.exports = {
 						get: (req, res) ->
 								return if not postId = req.paramToObjectId('id')
 								Post.findById postId, HandleErrors(res, (doc) ->
-									res.endJson doc
+									# If needed to fill response with comments:
+									Post.find {parentPost: doc}
+										.populate 'author'
+										.exec HandleErrors(res, (docs) ->
+											res.endJson _.extend({}, doc.toObject(), { comments: docs })
+										)
 								)
 						post: (req, res) ->
 								return if not postId = req.paramToObjectId('id')
 								# For security, handle each option
 						delete: (req, res) ->
 								return if not postId = req.paramToObjectId('id')
-								Post.remove {_id: postId, author: req.user},
-									HandleErrors(res, (doc) ->	
+								Post.findOne {_id: postId, author: req.user},
+									HandleErrors(res, (doc) ->
+										doc.remove()
 										res.endJson doc
 									)
 					},
@@ -230,19 +259,6 @@ module.exports = {
 						]
 					}
 				},
-				# 'posts': {
-				# 	methods: {
-				# 		post: [required.login,
-				# 			(req, res) ->
-				# 				req.user.createPost {
-				# 					content:
-				# 						title: 'My conquest!'+Math.floor(Math.random()*100)
-				# 						body: req.body.content.body
-				# 				}, (err, doc) ->
-				# 					res.end(JSON.stringify({error:false}))
-				# 		]
-				# 	}
-				# }
 			}
 		}
 	}

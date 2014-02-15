@@ -1,8 +1,19 @@
 
-mongoose = require 'mongoose'
+# src/models/inbox
+# Copyright QILabs.org
+# by @f03lipe
 
-# Use fan-out write for active users, and fan-out read for nonactive
-# http://blog.mongodb.org/post/65612078649/schema-design-for-social-inboxes-in-mongodb
+###
+TODO:
+✔ Implement fan-out write for active users
+- and fan-out read for non-active users.
+See http://blog.mongodb.org/post/65612078649
+###
+
+################################################################################
+################################################################################
+
+mongoose = require 'mongoose'
 
 InboxSchema = new mongoose.Schema {
 	dateSent:		{ type: Date, index: true }

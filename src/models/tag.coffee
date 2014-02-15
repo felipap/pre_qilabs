@@ -1,23 +1,21 @@
 
+# src/models/tag
+# Copyright QILabs.org
+# by @f03lipe
+
 ###
-# models/tag.coffee
-# for qilabs.org, by @f03lipe
-#
-# Tag model.
-# Application
-## 
-# Vestibular
-## Cursos
-## Material
-## Inscrição
-# Cursos e Bolsas
-##
-# Voluntariado
-##
-# Estágio
-##
-# Simulações ONU
+Tags:
+- Application
+- Vestibular
+- Intercâmbio
+- Olimpíadas
+- Cursos e Bolsas de Estudo
+- Simulação ONU
+- Voluntariado
 ###
+
+################################################################################
+################################################################################
 
 mongoose = require 'mongoose'
 crypto = require 'crypto'

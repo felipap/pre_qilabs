@@ -1,7 +1,25 @@
-var HandleErrors, ObjectId, Post, Subscriber, Tag, User, mongoose, required,
+
+/*
+The controller for /api/* calls.
+ */
+
+/*
+GUIDELINES for development:
+- Keep controllers sanitized ALWAYS.
+- Never pass request parameters or data to schema methods, always validate
+  before. Use res.paramToObjectId to get create ids:
+  `(req, res) -> return unless userId = res.paramToObjectId('userId'); ...`
+- Prefer no not handle creation/modification of documents. Leave those to
+  schemas statics and methods.
+- Crucial: never remove documents by calling Model.remove. They prevent hooks
+  from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
+ */
+var HandleErrors, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
+
+_ = require('underscore');
 
 ObjectId = mongoose.Types.ObjectId;
 
@@ -16,6 +34,7 @@ Tag = mongoose.model('Tag');
 Subscriber = mongoose.model('Subscriber');
 
 HandleErrors = function(res, cb) {
+  console.assert(typeof cb === 'function');
   return function(err, result) {
     console.log('result:', err, result);
     if (err) {
@@ -43,18 +62,15 @@ module.exports = {
           return User.find({}, function(err, users) {
             return Post.find({}, function(err, posts) {
               return Subscriber.find({}, function(err, subscribers) {
-                return Tag.getAll(function(err, tags) {
-                  var obj;
-                  obj = {
-                    ip: req.ip,
-                    session: req.session,
-                    users: users,
-                    tags: tags,
-                    posts: posts,
-                    subscribers: subscribers
-                  };
-                  return res.end(JSON.stringify(obj));
-                });
+                var obj;
+                obj = {
+                  ip: req.ip,
+                  session: req.session,
+                  users: users,
+                  posts: posts,
+                  subscribers: subscribers
+                };
+                return res.end(JSON.stringify(obj));
               });
             });
           });
@@ -117,7 +133,13 @@ module.exports = {
                 return;
               }
               return Post.findById(postId, HandleErrors(res, function(doc) {
-                return res.endJson(doc);
+                return Post.find({
+                  parentPost: doc
+                }).populate('author').exec(HandleErrors(res, function(docs) {
+                  return res.endJson(_.extend({}, doc.toObject(), {
+                    comments: docs
+                  }));
+                }));
               }));
             },
             post: function(req, res) {
@@ -131,10 +153,11 @@ module.exports = {
               if (!(postId = req.paramToObjectId('id'))) {
                 return;
               }
-              return Post.remove({
+              return Post.findOne({
                 _id: postId,
                 author: req.user
               }, HandleErrors(res, function(doc) {
+                doc.remove();
                 return res.endJson(doc);
               }));
             }

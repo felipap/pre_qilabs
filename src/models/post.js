@@ -1,3 +1,8 @@
+
+/*
+Improve:
+- Stop calling /comments to get comments.
+ */
 var Post, PostSchema, PostTypes, mongoose;
 
 mongoose = require('mongoose');
@@ -63,14 +68,18 @@ PostSchema.virtual('apiPath').get(function() {
   return "/api/posts/{id}".replace(/{id}/, this.id);
 });
 
-PostSchema.post('remove', function(next) {
-  console.log('removing comments after removing this');
-  return Post.remove({
+PostSchema.pre('remove', function(next) {
+  Post.remove({
     parentPost: this
   }, function(err, num) {
     return next();
   });
+  return console.log('removing comments after removing this');
 });
+
+PostSchema.statics.deepRemove = function() {
+  return console.log('removed?');
+};
 
 PostSchema.pre('save', function(next) {
   console.log('saving me', this.parentPost);
@@ -81,6 +90,9 @@ PostSchema.pre('save', function(next) {
 });
 
 PostSchema.methods.getComments = function(cb) {
+  if (!this.hasComments) {
+    cb(false, []);
+  }
   return Post.find({
     parentPost: this.id
   }).populate('author').exec(function(err, docs) {
