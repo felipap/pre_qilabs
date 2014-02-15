@@ -185,7 +185,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
       return cb(err);
     }
     results = [];
-    return async.forEach([
+    console.log('moar', docs, [
       (function() {
         var _i, _len, _results;
         _results = [];
@@ -195,7 +195,10 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
         }
         return _results;
       })() ? d : void 0
-    ], function(post, asyncCb) {
+    ]);
+    return async.forEach(_.filter(d, function(i) {
+      return i;
+    }), function(post, asyncCb) {
       return Post.find({
         parentPost: post
       }).populate('author').exec(function(err, comments) {

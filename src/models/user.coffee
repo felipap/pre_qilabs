@@ -145,7 +145,8 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.exec (err, docs) ->
 			if err then return cb(err)
 			results = []
-			async.forEach [d if d for d in docs], (post, asyncCb) ->
+			console.log('moar', docs, [d if d for d in docs])
+			async.forEach _.filter(d, (i) -> i), (post, asyncCb) ->
 					Post.find {parentPost: post}
 						.populate 'author'
 						.exec (err, comments) ->
