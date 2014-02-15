@@ -142,41 +142,40 @@ UserSchema.methods.getTimeline = function(opts, cb) {
   return Inbox.find({
     recipient: this.id
   }).sort('-dateSent').populate('post').select('post').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, inboxes) {
+    var count, post, posts, results, _i, _len, _results;
     if (err) {
       return cb(err);
     }
-    return User.populate(inboxes, {
+    User.populate(inboxes, {
       path: 'post.author'
-    }, function(err, docs) {
-      var count, post, posts, results, _i, _len, _results;
-      if (err) {
-        return cb(err);
+    }, function(err, docs) {});
+    if (err) {
+      return cb(err);
+    }
+    posts = _.pluck(docs, 'post');
+    results = [];
+    count = 0;
+    _results = [];
+    for (_i = 0, _len = posts.length; _i < _len; _i++) {
+      post = posts[_i];
+      if (!(post)) {
+        continue;
       }
-      posts = _.pluck(docs, 'post');
-      results = [];
-      count = 0;
-      _results = [];
-      for (_i = 0, _len = posts.length; _i < _len; _i++) {
-        post = posts[_i];
-        if (!(post)) {
-          continue;
-        }
-        count++;
-        _results.push((function(post) {
-          return Post.find({
-            parentPost: post
-          }).populate('author').exec(function(err, comments) {
-            results.push(_.extend({}, post.toObject(), {
-              comments: comments
-            }));
-            if (!--count) {
-              return cb(false, results);
-            }
-          });
-        })(post));
-      }
-      return _results;
-    });
+      count++;
+      _results.push((function(post) {
+        return Post.find({
+          parentPost: post
+        }).populate('author').exec(function(err, comments) {
+          results.push(_.extend({}, post.toObject(), {
+            comments: comments
+          }));
+          if (!--count) {
+            return cb(false, results);
+          }
+        });
+      })(post));
+    }
+    return _results;
   });
 };
 
@@ -185,8 +184,33 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     author: userId,
     parentPost: null
   }).sort('-dateCreated').populate('author').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, posts) {
-    console.log('posts', posts);
-    return cb(err, posts);
+    var count, post, results, _i, _len, _results;
+    if (err) {
+      return cb(err);
+    }
+    results = [];
+    count = 0;
+    _results = [];
+    for (_i = 0, _len = posts.length; _i < _len; _i++) {
+      post = posts[_i];
+      if (!(post)) {
+        continue;
+      }
+      count++;
+      _results.push((function(post) {
+        return Post.find({
+          parentPost: post
+        }).populate('author').exec(function(err, comments) {
+          results.push(_.extend({}, post.toObject(), {
+            comments: comments
+          }));
+          if (!--count) {
+            return cb(false, results);
+          }
+        });
+      })(post));
+    }
+    return _results;
   });
 };
 

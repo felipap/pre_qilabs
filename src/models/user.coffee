@@ -120,20 +120,20 @@ UserSchema.methods.getTimeline = (opts, cb) ->
  		.exec (err, inboxes) ->
  			if err then return cb(err)
  			User.populate inboxes, {path:'post.author'}, (err, docs) ->
- 				if err then return cb(err)
- 				posts = _.pluck(docs, 'post')
- 				results = []
- 				count = 0
- 				for post in posts when post
- 					count++
- 					do (post) ->
-	 					Post.find {parentPost: post}
-	 						.populate 'author'
-	 						.exec (err, comments) ->
-		 						## Check for errors here too?
-		 						results.push(_.extend({}, post.toObject(), {comments: comments}))
-		 						if not --count
-		 							cb(false, results)
+				if err then return cb(err)
+				posts = _.pluck(docs, 'post')
+				results = []
+				count = 0
+				for post in posts when post
+					count++
+					do (post) ->
+						Post.find {parentPost: post}
+							.populate 'author'
+							.exec (err, comments) ->
+								## Check for errors here too?
+								results.push(_.extend({}, post.toObject(), {comments: comments}))
+								if not --count
+									cb(false, results)
 
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
@@ -145,8 +145,20 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.limit opts.limit or 10
 		.skip opts.skip or null
 		.exec (err, posts) ->
-			console.log('posts', posts)
-			cb(err, posts)
+			if err then return cb(err)
+			results = []
+			count = 0
+			for post in posts when post
+				count++
+				do (post) ->
+					Post.find {parentPost: post}
+						.populate 'author'
+						.exec (err, comments) ->
+							## Check for errors here too?
+							results.push(_.extend({}, post.toObject(), {comments: comments}))
+							if not --count
+								cb(false, results)
+
 
 UserSchema.statics.getPostsToUser = (userId, opts, cb) ->
 	# Inbox.getUserPosts @, opts, (err, docs) ->
