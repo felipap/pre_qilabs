@@ -44,7 +44,7 @@ HandleErrors = (res, cb) ->
 		else if not result
 			res.status(404).endJson(error:true, name:404)
 		else
-			cb(result)
+			cb.apply(cb, [].splice.call(arguments,1))
 
 # Starts at '/api'
 module.exports = {
@@ -108,7 +108,7 @@ module.exports = {
 							methods: {
 								get: (req, res) ->
 									return unless id = req.paramToObjectId('id')
-									Post.find {group: id}
+									Post.find {group: id, parentPost: null}
 										.populate 'author'
 										.exec (err, docs) ->
 											res.endJson(error:err, data:docs)
@@ -146,7 +146,7 @@ module.exports = {
 									Post.find {parentPost: doc}
 										.populate 'author'
 										.exec HandleErrors(res, (docs) ->
-											res.endJson _.extend({}, docs.toObject(), { comments: docs })
+											res.endJson _.extend({}, doc.toObject(), { comments: docs })
 										)
 								)
 						post: (req, res) ->
@@ -171,6 +171,7 @@ module.exports = {
 											post.getComments HandleErrors(res, (comments) ->
 												res.endJson {
 													page: 0
+													error: false
 													data: comments
 												}
 											)
@@ -214,8 +215,9 @@ module.exports = {
 									(err, docs) ->
 										console.log('Fetched board:', docs)
 										res.end(JSON.stringify({
-											data: docs, 
-											page: 0,
+											page: 0
+											data: docs 
+											error: false
 										}))
 						],
 					}
@@ -269,8 +271,9 @@ module.exports = {
 											page = parseInt(req.query.page) or 0
 										# console.log('Fetched timeline:', docs)
 										res.end(JSON.stringify({
-											data: docs,
 											page: page
+											data: docs
+											error: false
 										}))
 						],
 					}

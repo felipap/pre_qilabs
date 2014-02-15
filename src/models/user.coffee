@@ -172,7 +172,7 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 	# Detect repeated posts and comments
 	post = new Post {
 		author: @
-		group: null
+		group: parentPost.group
 		data: {
 			body: data.content.body
 		}

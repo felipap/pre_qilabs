@@ -50,7 +50,7 @@ HandleErrors = function(res, cb) {
         name: 404
       });
     } else {
-      return cb(result);
+      return cb.apply(cb, [].splice.call(arguments, 1));
     }
   };
 };
@@ -140,7 +140,8 @@ module.exports = {
                     return;
                   }
                   return Post.find({
-                    group: id
+                    group: id,
+                    parentPost: null
                   }).populate('author').exec(function(err, docs) {
                     return res.endJson({
                       error: err,
@@ -202,7 +203,7 @@ module.exports = {
                 return Post.find({
                   parentPost: doc
                 }).populate('author').exec(HandleErrors(res, function(docs) {
-                  return res.endJson(_.extend({}, docs.toObject(), {
+                  return res.endJson(_.extend({}, doc.toObject(), {
                     comments: docs
                   }));
                 }));
@@ -240,6 +241,7 @@ module.exports = {
                     return post.getComments(HandleErrors(res, function(comments) {
                       return res.endJson({
                         page: 0,
+                        error: false,
                         data: comments
                       });
                     }));
@@ -287,8 +289,9 @@ module.exports = {
                 }, function(err, docs) {
                   console.log('Fetched board:', docs);
                   return res.end(JSON.stringify({
+                    page: 0,
                     data: docs,
-                    page: 0
+                    error: false
                   }));
                 });
               }
@@ -354,8 +357,9 @@ module.exports = {
                     page = parseInt(req.query.page) || 0;
                   }
                   return res.end(JSON.stringify({
+                    page: page,
                     data: docs,
-                    page: page
+                    error: false
                   }));
                 });
               }

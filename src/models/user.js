@@ -233,7 +233,7 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
   var post;
   post = new Post({
     author: this,
-    group: null,
+    group: parentPost.group,
     data: {
       body: data.content.body
     },
