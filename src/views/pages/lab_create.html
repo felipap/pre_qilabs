@@ -1,0 +1,36 @@
+{% extends '../sidebared.html' %}
+
+{% block head %}
+	{% parent %}
+{% endblock %}
+
+{% block sidebarContent %}
+{% endblock %}
+
+{% block mainContent %}
+	<form method="post" action="/api/labs">
+		<h3>Crie um Laborátório</h3>
+		<input type="text" name="name" placeholder="O Nome para o seu laboratório" />
+		<br>
+		<input type="checkbox" name="" placeholder="" value="public_lab" /> <label>Gropo Público</label>
+		<br>
+		<input type="checkbox" placeholder="" value="allow_events" /> <label>Permitir Eventos</label>
+		<br>
+		<input type="checkbox" placeholder="" value="public_lab" /> <label>Moderar a entrada de usuários</label>
+		<br>
+		<h2>Escolha até 4 tipos de post</h2>
+		<div>
+			<input type="checkbox" name="post_type" value="tipoA" /> <label>Tipo A</label>
+			<br>
+			<input type="checkbox" name="post_type" value="tipoB" /> <label>Tipo B</label>
+			<br>
+			<input type="checkbox" name="post_type" value="tipoC" /> <label>Tipo C</label>
+			<br>
+			<input type="checkbox" name="post_type" value="tipoD" /> <label>Tipo D</label>
+			<br>
+		</div>
+		<input type="hidden" name="_csrf" value="{{token}}">
+		
+		<button type="submit">Criar Laboratório</button>
+	</form>
+{% endblock %}

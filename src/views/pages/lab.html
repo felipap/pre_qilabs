@@ -1,0 +1,53 @@
+{% extends '../sidebared.html' %}
+
+{% block head %}
+	{% parent %}
+	<script>window.postsRoot='/api/labs/{{ group._id }}/posts';
+	window.groupId='{{ group._id }}';</script>
+{% endblock %}
+
+{% block sidebarContent %}
+<div class="box">
+
+	<div class="head">
+		<a href="{{ group.path }} "><span data-info="name">{{ group.profile.name }}</span></a>
+	</div>
+	<div class="body">
+		<div class="following">
+			seguindo:
+			{{ userMacros.renderUserList() }}
+		</div>
+	</div>
+
+</div>
+
+<div class="box tags">
+	<div class="head">
+		Seguindo Assuntos: (5)
+	</div>
+	<ul class="body">
+	</ul>
+</div>
+
+<div class="box groups">
+</div>
+{% endblock %}
+
+{% block mainContent %}
+<div class="flash-msgs"></div>
+<div id="results-col">
+	<div class="box">
+	<a href="#">Interessante | </a><a href="#">Seus Grupos | </a><a href="">Global</a>
+		<h2>Enviar uma msg para o seus seguidores</h2>
+		<textarea id="inputPostContent" placeholder="Aqui ó"></textarea>
+		<button data-action="send-post" type="submit">Enviar Post</button>
+	</div>
+	<div id="posts-col">
+		<div class="placement">
+			<h3 id="no-posts-msg" style="display: none; color: #888">
+				Ops! Nenhum post visível. :s
+			</h3>
+		</div>
+	</div>
+</div>
+{% endblock %}
