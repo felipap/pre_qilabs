@@ -136,7 +136,7 @@ module.exports = {
                 return Post.find({
                   parentPost: doc
                 }).populate('author').exec(HandleErrors(res, function(docs) {
-                  return res.endJson(_.extend({}, doc.toObject(), {
+                  return res.endJson(_.extend({}, docs.toObject(), {
                     comments: docs
                   }));
                 }));

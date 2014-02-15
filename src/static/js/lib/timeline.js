@@ -115,6 +115,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				return Backbone.Collection.prototype.parse.call(this, response.data, options);
 			},
 			tryFetchMore: function () {
+				console.log('tryFetchMore')
 				if (this.page === -1)
 					return;
 				this.fetch({data: {page:this.page+1}, remove:false});

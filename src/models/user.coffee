@@ -15,6 +15,7 @@ GUIDELINES for development:
 
 mongoose = require 'mongoose'
 _ = require 'underscore'
+async = require 'async'
 
 Inbox 	= mongoose.model 'Inbox'
 Follow 	= mongoose.model 'Follow'
@@ -116,26 +117,21 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 		.populate 'post'
 		.select 'post'
 		.limit opts.limit or 10
-		.skip opts.skip or null
+		.skip opts.skip or 0
 		.exec (err, inboxes) ->
 			if err then return cb(err)
 			User.populate inboxes, {path:'post.author'}, (err, docs) ->
 				if err then return cb(err)
-				posts = _.pluck(docs, 'post')
 				results = []
-				count = 0
-				for post in posts when post
-					count++
-					do (post) ->
+				docs = _.filter(_.pluck(docs, 'post'), (i) -> i)
+				async.forEach docs, (post, asyncCb) ->
 						Post.find {parentPost: post}
 							.populate 'author'
 							.exec (err, comments) ->
-								## Check for errors here too?
+								console.log 'post', post
 								results.push(_.extend({}, post.toObject(), {comments: comments}))
-								if not --count
-									cb(false, results)
-
-
+								asyncCb()
+					, (err) -> cb(err, results)
 
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
@@ -146,20 +142,17 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.populate 'author'
 		.limit opts.limit or 10
 		.skip opts.skip or null
-		.exec (err, posts) ->
+		.exec (err, docs) ->
 			if err then return cb(err)
 			results = []
-			count = 0
-			for post in posts when post
-				count++
-				do (post) ->
+			async.forEach [d if d for d in docs], (post, asyncCb) ->
 					Post.find {parentPost: post}
 						.populate 'author'
 						.exec (err, comments) ->
-							## Check for errors here too?
+							console.log 'post', post
 							results.push(_.extend({}, post.toObject(), {comments: comments}))
-							if not --count
-								cb(false, results)
+							asyncCb()
+				, (err) -> cb(err, results)
 
 UserSchema.statics.getPostsToUser = (userId, opts, cb) ->
 	# Inbox.getUserPosts @, opts, (err, docs) ->

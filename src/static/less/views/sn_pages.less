@@ -148,21 +148,21 @@
 	}
 
 	.postWrapper {
+		position: relative;
 		margin-bottom: 20px;
-
-		background: white;
 		border: 1px solid #DDD;
 		border-bottom: 1px solid #AAA;
+		background: white;
 
 		.option-buttons {
 			float: right;
-			width: 45px;
 			display: inline-block;
 			position: absolute;
-			right: 5px;
-			top: 0px;
+			right: 5px; top: 0px;
+			z-index: 10;
+			
+			width: 45px;
 			.transition(all, .2s, linear);
-
 			opacity: .5;
 			&:hover {
 				opacity: 1;
@@ -212,6 +212,8 @@
 					font-size: 13px;
 					color: #888;
 					float: right;
+					margin-top: 35px;
+					margin-right: 3px;
 				}
 			}
 
@@ -224,9 +226,9 @@
 					content: '';
 					border: 7px solid transparent;
 					border-bottom-color: white;
-					top: -36px;
-					position: relative;
-					left: 3px;
+					top: -15px;
+					position: absolute;
+					left: 14px;
 
 				}
 			}

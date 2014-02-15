@@ -5,11 +5,13 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Inbox, ObjectId, Post, User, UserSchema, mongoose, _;
+var Follow, Inbox, ObjectId, Post, User, UserSchema, async, mongoose, _;
 
 mongoose = require('mongoose');
 
 _ = require('underscore');
+
+async = require('async');
 
 Inbox = mongoose.model('Inbox');
 
@@ -141,41 +143,34 @@ UserSchema.methods.unfollowId = function(userId, cb) {
 UserSchema.methods.getTimeline = function(opts, cb) {
   return Inbox.find({
     recipient: this.id
-  }).sort('-dateSent').populate('post').select('post').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, inboxes) {
+  }).sort('-dateSent').populate('post').select('post').limit(opts.limit || 10).skip(opts.skip || 0).exec(function(err, inboxes) {
     if (err) {
       return cb(err);
     }
     return User.populate(inboxes, {
       path: 'post.author'
     }, function(err, docs) {
-      var count, post, posts, results, _i, _len, _results;
+      var results;
       if (err) {
         return cb(err);
       }
-      posts = _.pluck(docs, 'post');
       results = [];
-      count = 0;
-      _results = [];
-      for (_i = 0, _len = posts.length; _i < _len; _i++) {
-        post = posts[_i];
-        if (!(post)) {
-          continue;
-        }
-        count++;
-        _results.push((function(post) {
-          return Post.find({
-            parentPost: post
-          }).populate('author').exec(function(err, comments) {
-            results.push(_.extend({}, post.toObject(), {
-              comments: comments
-            }));
-            if (!--count) {
-              return cb(false, results);
-            }
-          });
-        })(post));
-      }
-      return _results;
+      docs = _.filter(_.pluck(docs, 'post'), function(i) {
+        return i;
+      });
+      return async.forEach(docs, function(post, asyncCb) {
+        return Post.find({
+          parentPost: post
+        }).populate('author').exec(function(err, comments) {
+          console.log('post', post);
+          results.push(_.extend({}, post.toObject(), {
+            comments: comments
+          }));
+          return asyncCb();
+        });
+      }, function(err) {
+        return cb(err, results);
+      });
     });
   });
 };
@@ -184,34 +179,35 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
   return Post.find({
     author: userId,
     parentPost: null
-  }).sort('-dateCreated').populate('author').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, posts) {
-    var count, post, results, _i, _len, _results;
+  }).sort('-dateCreated').populate('author').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, docs) {
+    var d, results;
     if (err) {
       return cb(err);
     }
     results = [];
-    count = 0;
-    _results = [];
-    for (_i = 0, _len = posts.length; _i < _len; _i++) {
-      post = posts[_i];
-      if (!(post)) {
-        continue;
-      }
-      count++;
-      _results.push((function(post) {
-        return Post.find({
-          parentPost: post
-        }).populate('author').exec(function(err, comments) {
-          results.push(_.extend({}, post.toObject(), {
-            comments: comments
-          }));
-          if (!--count) {
-            return cb(false, results);
-          }
-        });
-      })(post));
-    }
-    return _results;
+    return async.forEach([
+      (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = docs.length; _i < _len; _i++) {
+          d = docs[_i];
+          _results.push(d);
+        }
+        return _results;
+      })() ? d : void 0
+    ], function(post, asyncCb) {
+      return Post.find({
+        parentPost: post
+      }).populate('author').exec(function(err, comments) {
+        console.log('post', post);
+        results.push(_.extend({}, post.toObject(), {
+          comments: comments
+        }));
+        return asyncCb();
+      });
+    }, function(err) {
+      return cb(err, results);
+    });
   });
 };
 

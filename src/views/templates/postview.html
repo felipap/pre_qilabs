@@ -1,20 +1,5 @@
 {% import '../macros/user.html' as userMacros %}
 
-<@ var calcTimeFrom = function (arg) {
-	var now = new Date(),
-		then = new Date(arg),
-		diff = now-then;
-	if (diff < 1000*60) {
-		return 'há '+Math.floor(diff/1000)+'s';
-	} else if (diff < 1000*60*60) {
-		return 'há '+Math.floor(diff/1000/60)+'min';
-	} else if (diff < 1000*60*60*30) { // até 30 horas
-		return 'há '+Math.floor(diff/1000/60/60)+'h';
-	} else {
-		return 'há '+Math.floor(diff/1000/60/60/24)+'dias';
-	}
-} @>
-
 <div class="opMessage">
 	<div class="msgHeader">
 		<div class="mediaUser">
@@ -30,13 +15,13 @@
 			</div>
 			disse:
 		</div>
+		
 		<a href="<@= post.path @>">
-		<time data-time-count="<@= 1*new Date(post.dateCreated) @>">
-				<@= window.calcTimeFrom(post.dateCreated) @>
-		</time>
+			<time data-time-count="<@= 1*new Date(post.dateCreated) @>">
+					<@= window.calcTimeFrom(post.dateCreated) @>
+			</time>
 		</a>
-	</div>
-	<div class="msgBody">
+
 		<div class="option-buttons">
 		<@ if (post.author.id === '{{ user.id }}') { @>
 			<button data-action="remove-post" data-toggle="tooltip" data-placement="bottom" title="Remover Post">
@@ -47,6 +32,8 @@
 			</button>
 		<@ } @>
 		</div>
+	</div>
+	<div class="msgBody">
 		<@= post.data.body @>
 	</div>
 </div>

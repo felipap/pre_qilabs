@@ -107,7 +107,7 @@ module.exports = {
 									Post.find {parentPost: doc}
 										.populate 'author'
 										.exec HandleErrors(res, (docs) ->
-											res.endJson _.extend({}, doc.toObject(), { comments: docs })
+											res.endJson _.extend({}, docs.toObject(), { comments: docs })
 										)
 								)
 						post: (req, res) ->
