@@ -119,7 +119,7 @@
 		vertical-align: middle;
 		display: inline-block;
 		width: 477px;
-		height: 40px;
+		min-height: 40px;
 		padding-left: 40px;
 		border: 1px solid #DDD;
 		.no-box-shadow;
@@ -154,7 +154,6 @@
 		.opMessage {
 			padding: 10px;
 			padding-bottom: 15px;
-			border-bottom: 1px solid #AAA;
 
 			.msgHeader {
 				.authorAvatar {
@@ -180,10 +179,20 @@
 
 		.postCommentsSection {
 			background: #EEE;
-			padding: 10px;
+			border-bottom: 1px solid #AAA;
+
+			.commentWrapper:first-child {
+				border-top: 1px solid #AAA;
+				padding-top: 10px;
+			}
+			.commentWrapper:last-child {
+				padding-bottom: 10px;
+			}
 
 			.commentWrapper {
-				margin-bottom: 3px;
+				padding-left: 10px;
+				padding-right: 10px;
+				padding-bottom: 3px;
 
 				.mediaUser {
 					.mediaUser-comment;
@@ -203,7 +212,6 @@
 
 		.commentInputSection {
 			padding: 7px 10px;
-			border-top: 1px solid #AAA;
 
 			.mediaUser {
 				.mediaUser-comment;
