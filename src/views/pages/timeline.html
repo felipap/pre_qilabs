@@ -13,6 +13,7 @@
 
 {% block sidebarContent %}
 <div class="box">
+
 	<div class="head">
 		<img src="{{ user.avatarUrl }}" />
 		<a href="{{ user.profileUrl }} "><span data-info="name">{{ user.name }}</span></a>
@@ -46,6 +47,7 @@
 <div class="flash-msgs"></div>
 <div id="results-col">
 	<div class="box">
+	<a href="#">Interessante | </a><a href="#">Seus Grupos | </a><a href="">Global</a>
 		<h2>Enviar uma msg para o seus seguidores</h2>
 		<textarea id="inputPostContent" placeholder="Aqui ó"></textarea>
 		<button data-action="send-post" type="submit">Enviar Post</button>

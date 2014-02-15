@@ -158,6 +158,15 @@
 			float: right;
 			width: 45px;
 			display: inline-block;
+			position: absolute;
+			right: 5px;
+			top: 0px;
+			.transition(all, .2s, linear);
+
+			opacity: .5;
+			&:hover {
+				opacity: 1;
+			}
 
 			[data-action=remove-post],
 			[data-action=edit-post] {
@@ -166,8 +175,9 @@
 				vertical-align: middle;
 				padding-right: 3px;
 				font-size: 105%;
-				font-weight: bold;
+				font-weight: bolder;
 				color: #888;
+				opacity: .6;
 				&:hover {
 					color: #444;
 				}
@@ -182,7 +192,7 @@
 			background: #F3F3F3;
 
 			.msgHeader {
-				height: 50px;
+				height: 55px;
 				.mediaUser {
 					width: 40px;
 					height: 40px;
@@ -201,12 +211,13 @@
 				time {
 					font-size: 13px;
 					color: #888;
+					float: right;
 				}
 			}
 
 			.msgBody {
 				padding: 10px;
-				// border: 1px solid #DDD;
+				position: relative;
 				background: white;
 
 				&::before {
@@ -224,14 +235,14 @@
 		.postCommentsSection {
 			background: white;
 
-			&:not(:empty) {
-				// margin-bottom 7px;
-			}
-
 			.commentWrapper:first-child {
 				border-top: 1px solid #AAA;
 				padding-top: 10px;
 			}
+			.commentWrapper:last-child {
+				padding-bottom: 8px;
+			}
+
 			.commentWrapper {
 				padding-left: 10px;
 				padding-right: 10px;
@@ -239,15 +250,18 @@
 
 				.mediaUser {
 					.mediaUser-comment;
+					vertical-align: top;
 					border: 1px solid #DDD;
 				}
 
 				.msgBody {
 					.msgBody-comment;
-					width: 450px;
+					position: relative;
+					width: 500px;
 				}
 
 				time {
+					vertical-align: middle;
 					font-size: 11px;
 					font-style: italic;
 					padding: 0 5px;
@@ -267,7 +281,7 @@
 			}
 			.commentInput {
 				.msgBody-comment;
-				width: 487px;
+				width: 485px;
 			}
 			[data-action=send-comment] {
 				display: inline-block;
@@ -298,13 +312,10 @@ body {
 		#content {
 			margin: 0 auto;
 			width: @results-container-width+@sidebar-width+@sidebar-gap;
-			
-			padding-top: 10px;
-
+			padding-top: 20px;
 			#sidebar {
 				.sidebar;
 			}
-
 			#resultsContainer {
 				.resultsContainer;
 			}

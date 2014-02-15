@@ -35,6 +35,8 @@
 				<@= calcTimeFrom(post.dateCreated) @>
 		</time>
 		</a>
+	</div>
+	<div class="msgBody">
 		<div class="option-buttons">
 		<@ if (post.author.id === '{{ user.id }}') { @>
 			<button data-action="remove-post" data-toggle="tooltip" data-placement="bottom" title="Remover Post">
@@ -45,8 +47,6 @@
 			</button>
 		<@ } @>
 		</div>
-	</div>
-	<div class="msgBody">
 		<@= post.data.body @>
 	</div>
 </div>
