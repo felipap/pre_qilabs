@@ -6,9 +6,9 @@
 
 @import "../common.less";
 
-@sidebar-width: 330px;
+@sidebar-width: 320px;
 @results-container-width: 630px;
-@sidebar-gap: 15px;
+@sidebar-gap: 25px;
 
 .scrollbared () {
 
@@ -118,7 +118,6 @@
 	.msgBody-comment () {
 		vertical-align: middle;
 		display: inline-block;
-		width: 477px;
 		min-height: 40px;
 		padding-left: 40px;
 		border: 1px solid #DDD;
@@ -135,7 +134,6 @@
 	.mediaUser {
 		display: inline-block;
 		vertical-align: middle;
-		border: 1px solid #DDD;
 		.rounded(5px);
 		width: 50px;
 		height: 50px;
@@ -150,69 +148,90 @@
 	}
 
 	.postWrapper {
-		margin-bottom: 10px;
+		margin-bottom: 20px;
 
 		background: white;
 		border: 1px solid #DDD;
 		border-bottom: 1px solid #AAA;
-		[data-action=remove-post],
-		[data-action=edit-post] {
-			.full-reset-button;
-			padding-left: 3px;
-			padding-right: 3px;
-			font-size: 105%;
-			font-weight: bold;
-			color: #888;
+
+		.option-buttons {
 			float: right;
-			&:hover {
-				color: #444;
-			}
-			&:active {
-				outline: none;
+			width: 45px;
+			display: inline-block;
+
+			[data-action=remove-post],
+			[data-action=edit-post] {
+				.full-reset-button;
+				padding-left: 3px;
+				vertical-align: middle;
+				padding-right: 3px;
+				font-size: 105%;
+				font-weight: bold;
+				color: #888;
+				&:hover {
+					color: #444;
+				}
+				&:active {
+					outline: none;
+				}
 			}
 		}
 
 		.opMessage {
 			padding: 10px;
+			background: #F3F3F3;
 
 			.msgHeader {
-				.authorAvatar {
+				height: 50px;
+				.mediaUser {
+					width: 40px;
+					height: 40px;
+					.rounded(0);
 				}
 				.headline {
+					margin-left: 5px;
 					display: inline-block;
 					font: 14px "Open Sans";
 					.author-username {
 						display: inline;
 						font-weight: bold;
 					}
+					width: 450px;
 				}
 				time {
-					float: right;
+					font-size: 13px;
+					color: #888;
 				}
 			}
 
 			.msgBody {
 				padding: 10px;
-				border: 1px solid #DDD;
+				// border: 1px solid #DDD;
+				background: white;
+
+				&::before {
+					content: '';
+					border: 7px solid transparent;
+					border-bottom-color: white;
+					top: -36px;
+					position: relative;
+					left: 3px;
+
+				}
 			}
 		}
 
 		.postCommentsSection {
-			background: #EFEFEF;
+			background: white;
 
 			&:not(:empty) {
-				margin-bottom: 7px;
+				// margin-bottom 7px;
 			}
 
 			.commentWrapper:first-child {
 				border-top: 1px solid #AAA;
 				padding-top: 10px;
 			}
-			.commentWrapper:last-child {
-				border-bottom: 1px solid #AAA;
-				padding-bottom: 10px;
-			}
-
 			.commentWrapper {
 				padding-left: 10px;
 				padding-right: 10px;
@@ -220,11 +239,12 @@
 
 				.mediaUser {
 					.mediaUser-comment;
+					border: 1px solid #DDD;
 				}
 
 				.msgBody {
 					.msgBody-comment;
-					width: 465px;
+					width: 450px;
 				}
 
 				time {
@@ -232,24 +252,27 @@
 					font-style: italic;
 					padding: 0 5px;
 					color: #888;
-					width: 90px;
+					width: 60px;
 				}
 			}
 		}
 
 		.commentInputSection {
-			padding: 0 10px 7px;
+			padding: 5px 10px 7px;
+			border-top: 1px solid #DDD;
 
 			.mediaUser {
 				.mediaUser-comment;
+				border: 1px solid #DDD;
 			}
 			.commentInput {
 				.msgBody-comment;
+				width: 487px;
 			}
 			[data-action=send-comment] {
 				display: inline-block;
 				.high-xbtn(white, @COLOR2);
-				.high-xbtn-padding(9px, 7px, 2px);
+				.high-xbtn-padding(9px, 15px, 2px);
 			}
 		}
 	}
@@ -257,8 +280,11 @@
 }
 
 body {
-
-	background: url(/static/images/noisy_grid.png);
+	// background: url(/static/images/noisy_grid.png);
+	// background: url('/static/images/cubes.png');
+	// background: url('/static/images/pinstripe.png');
+	// background: url('/static/images/connect.png');
+	background: url('/static/images/project_papper.png');
 
 	#globalContainer {
 		.scrollbared;

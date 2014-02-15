@@ -28,10 +28,12 @@
 	<@= calcTimeFrom(comment.dateCreated) @>
 </time>
 <@ if (comment.author.id === '{{ user.id }}') { @>
+<div class="option-buttons">
 	<button data-action="remove-post" data-toggle="tooltip" title="Remover Comentário" data-placement="bottom">
 		<i class="icon-trash"></i>
 	</button>
-	<button data-action="edit-post" data-placement="bottom" title="Editar Comentário">
+	<button data-action="edit-post" data-toggle="tooltip" data-placement="bottom" title="Editar Comentário">
 		<i class="icon-edit"></i>
 	</button>
+</div>
 <@ } @>

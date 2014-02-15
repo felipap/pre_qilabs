@@ -104,9 +104,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			model: CommentItem,
 			page: 0,
 			comparator: function (i) {
-				// console.log('sort:', i.attributes, i.get("data"))
-				// console.log(i.get('data').body, -1*new Date(i.get('dateCreated')))
-				return -1*new Date(i.get('dateCreated'));
+				return 1*new Date(i.get('dateCreated'));
 			},
 			url: function () {
 				return this.postItem.get('apiPath') + '/comments'; 
