@@ -58,14 +58,13 @@ app.use(function(req, res, next) {
 	};
 
 	res.render404 = function () {
-		res.status(404)
+		res.status(404);
 		if (req.accepts('html')) { // respond with html page;
 			res.render('pages/404', { url: req.url, user: req.user });
 		} else if (req.accepts('json')) { // respond with json;
 			res.send({ error: true, name: 'Notfound' });
-			return
 		}
-	}
+	};
 
 	req.paramToObjectId = function (param) {
 		try {

@@ -131,7 +131,7 @@ module.exports = {
   '/404': {
     name: '404',
     methods: {
-      get: function(res, req) {
+      get: function(req, res) {
         return res.render404();
       }
     }

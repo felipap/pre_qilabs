@@ -36,7 +36,10 @@ PostSchema = new mongoose.Schema({
     "default": 0
   },
   data: {
-    title: String,
+    title: {
+      type: String,
+      required: false
+    },
     body: {
       type: String,
       required: true
@@ -58,6 +61,15 @@ PostSchema.virtual('path').get(function() {
 
 PostSchema.virtual('apiPath').get(function() {
   return "/api/posts/{id}".replace(/{id}/, this.id);
+});
+
+PostSchema.post('remove', function(next) {
+  console.log('removing comments after removing this');
+  return Post.remove({
+    parentPost: this
+  }, function(err, num) {
+    return next();
+  });
 });
 
 PostSchema.pre('save', function(next) {

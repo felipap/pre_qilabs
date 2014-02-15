@@ -1,22 +1,28 @@
-<div class="post-comment">
-	<div class="msg-header">
-		<@= comment.id @>
-		<a href="<@= comment.author.profileUrl @>">
-			<img class="author-avatar" src="<@= comment.author.avatarUrl @>" />
-		</a>
-		<div class="msg-headline">
-			<div class="author-username">
-				<a href="<@= comment.author.profileUrl @>">
-					<@= comment.author.username @>
-				</a>
-			</div>
-			disse:
-		</div>
-		<time>
-			<@= comment.dateCreated @>
-		</time>
-	</div>
-	<div class="msg-body">
-		<@= comment.data.body @>
-	</div>
+{% import '../macros/user.html' as userMacros %}
+
+<@ var minTimeFromNow = function (arg) {
+	var now = new Date(),
+		then = new Date(arg),
+		diff = now-then;
+	if (diff < 1000*60) {
+		return 'há '+Math.floor(diff/1000)+'s';
+	} else if (diff < 1000*60*60) {
+		return 'há '+Math.floor(diff/1000/60)+'min';
+	} else if (diff < 1000*60*60*30) { // até 30 horas
+		return 'há '+Math.floor(diff/1000/60/60)+'h';
+	} else {
+		return 'há '+Math.floor(diff/1000/60/60/24)+'dias';
+	}
+} @>
+
+<div class="mediaUser">
+	<a href="<@= comment.author.profileUrl @>">
+		<div class="mediaUserAvatar" style="background: url(<@= comment.author.avatarUrl @>)" title="<@= comment.author.username @>"/></div>
+	</a>
 </div>
+<div class="msgBody">
+	<@= comment.data.body @>
+</div>
+<time>
+	<@= minTimeFromNow(comment.dateCreated) @>
+</time>

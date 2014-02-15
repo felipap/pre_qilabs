@@ -1,12 +1,13 @@
-<@
-@>
+{% import '../macros/user.html' as userMacros %}
 
-<div class="op-msg">
-	<div class="post-msg-header">
-		<a href="<@= post.author.profileUrl @>">
-			<img class="author-avatar" src="<@= post.author.avatarUrl @>" />
-		</a>
-		<div class="post-msg-headline">
+<div class="opMessage">
+	<div class="msgHeader">
+		<div class="mediaUser">
+			<a href="<@= post.author.profileUrl @>">
+				<div class="mediaUserAvatar" style="background: url(<@= post.author.avatarUrl @>)"></div>
+			</a>
+		</div>
+		<div class="headline">
 			<div class="author-username">
 				<a href="<@= post.author.profileUrl @>">
 					<@= post.author.username @>
@@ -16,23 +17,23 @@
 		</div>
 		<a href="<@= post.path @>"><time><@= post.dateCreated @></time></a>
 		<@ if (post.author.id === '{{ user.id }}') { @>
-		<div class="post-options-dd">
-			<button data-action="remove-post">Remove</button>
-		</div>
+			<div class="post-options-dd">
+				<button data-action="remove-post">Remove</button>
+			</div>
 		<@ } @>
 	</div>
-	<div class="post-msg-body">
+	<div class="msgBody">
 		<@= post.data.body @>
 	</div>
 </div>
 
-<div class="post-comments-section">
+<div class="postCommentsSection">
 </div>
 
-<div class="post-commen-tinput">
+<div class="commentInputSection">
 	<form class="formPostComment" onSubmit="return false;">
-		{{ usermacros.renderUser(user) }}
-		{{ user.username }} diz: <textarea>oi, sou eu</textarea>
+		{{ userMacros.renderUser(user) }}
+		<input class="commentInput" type="text" placeholder="Comente esse post..." />
 		<button data-action="send-comment">Comentar</button>
 	</form>
 </div>

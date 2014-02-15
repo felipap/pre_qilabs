@@ -16,7 +16,7 @@ PostSchema = new mongoose.Schema {
 	points:			{ type: Number, default: 0 }
 	
 	data: {
-		title:		String
+		title:		{ type: String, required: false }
 		body:		{ type: String, required: true }
 		tags:		Array
 	},
@@ -31,6 +31,11 @@ PostSchema.virtual('path').get ->
 
 PostSchema.virtual('apiPath').get ->
 	"/api/posts/{id}".replace(/{id}/, @id)
+
+PostSchema.post 'remove', (next) ->
+	console.log('removing comments after removing this')
+	Post.remove { parentPost: @ }, (err, num) ->
+		next()
 
 PostSchema.pre 'save', (next) ->
 	console.log 'saving me', @parentPost

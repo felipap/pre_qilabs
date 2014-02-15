@@ -3,7 +3,7 @@
 
 {% block head %}
 	{% parent %}
-	<script>window.postsRoot='/api/users/{{profile.id}}/posts';</script>
+	<script>window.postsRoot='/api/users/{{ profile.id }}/posts';</script>
 {% endblock %}
 
 
@@ -36,7 +36,7 @@
 			Seguido por ({{ profile.followers.length }}):
 		</div>
 		<ul class="body">
-			{{ _user.renderUserList(profile.followers) }}
+			{{ userMacros.renderUserList(profile.followers) }}
 		</ul>
 		<div class="footer">
 			<a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
@@ -48,7 +48,7 @@
 			Seguindo ({{ profile.following.length }}):
 		</div>
 		<ul class="body">
-			{{ _user.renderUserList(profile.following) }}
+			{{ userMacros.renderUserList(profile.following) }}
 		</ul>
 		<div class="footer">
 			<a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>

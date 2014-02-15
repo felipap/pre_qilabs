@@ -112,7 +112,7 @@ module.exports = {
 	'/404':
 		name: '404'
 		methods: {
-			get: (res, req) ->
+			get: (req, res) ->
 				res.render404()
 		}
 

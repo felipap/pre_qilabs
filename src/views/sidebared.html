@@ -1,15 +1,14 @@
 {% extends 'stdbody.html' %}
 
-{% import 'macros/user.html' as _user %}
-{% import 'macros/tags.html' as _tags %}
+{% import 'macros/user.html' as userMacros %}
+{% import 'macros/tags.html' as tagMacros %}
 
 {% block stylesheets %}
- 	{{ _tags.stylesheet(getMediaUrl('css','sn_pages.min.css')) }}
+ 	{{ tagMacros.stylesheet(getMediaUrl('css','sn_pages.min.css')) }}
 {% endblock %}
 
 {% block templates %}
 	{% parent %}
-	
 	<script id="template-postview" type="text/template">
 		{% include 'templates/postview.html' %}
 	</script>
@@ -20,9 +19,7 @@
 
 {% block body %}
 <body data-page="{{ data_page }}">
-
 	{% include 'layouts/navbar.html' %}
-
 	<div id="globalContainer">
 		<div id="content">
 			<div id="sidebar">
@@ -36,7 +33,6 @@
 			</div>
 		</div>
 	</div>
-
 	<script data-main="{{ getMediaUrl('js','timeline.min.js') }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>
 {% endblock %}

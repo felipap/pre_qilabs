@@ -7,13 +7,13 @@ required = require '../lib/required.js'
 User = mongoose.model 'User'
 Post = mongoose.model 'Post'
 Tag  = mongoose.model 'Tag'
-Subscriber  = mongoose.model 'Subscriber'
+Subscriber = mongoose.model 'Subscriber'
 
 HandleErrors = (res, cb) ->
 	return (err, result) ->
 		console.log('result:', err, result)
 		if err
-			console.debug('err handled:', err)
+			console.log('err handled:', err)
 			res.status(400).endJson(error:true)
 		else if not result
 			res.status(404).endJson(error:true, name:404)
@@ -23,7 +23,7 @@ HandleErrors = (res, cb) ->
 # Starts at '/api'
 module.exports = {
 	children: {
-		'session': {
+		'session':
 			permissions: [required.isMe]
 			methods: {
 				get: (req, res) ->
@@ -40,8 +40,7 @@ module.exports = {
 										subscribers: subscribers
 									res.end(JSON.stringify(obj))
 			}
-		},
-		'testers': {
+		'testers':
 			methods: {
 				post: [required.logout,
 					(req, res) ->
@@ -62,9 +61,8 @@ module.exports = {
 								res.redirect('/')
 				]
 			}
-		},
 		
-		'posts': {
+		'posts':
 			permissions: [required.login],
 			methods: {
 				post: (req, res) ->
@@ -73,7 +71,8 @@ module.exports = {
 								title: 'My conquest!'+Math.floor(Math.random()*100)
 								body: req.body.content.body
 						}, (err, doc) ->
-							res.end(JSON.stringify({error:false}))
+							doc.populate 'author', (err, doc) ->
+								res.end(JSON.stringify({error:false, data:doc}))
 			},
 			children: {
 				'/:id': {
@@ -89,7 +88,7 @@ module.exports = {
 						delete: (req, res) ->
 								return if not postId = req.paramToObjectId('id')
 								Post.remove {_id: postId, author: req.user},
-									HandleErrors(res, (doc) ->
+									HandleErrors(res, (doc) ->	
 										res.endJson doc
 									)
 					},
@@ -111,17 +110,31 @@ module.exports = {
 								post: 
 									(req, res) ->
 										return if not postId = req.paramToObjectId('id')
-										req.user.commentToPostWithId postId,
-											req.body,
-											HandleErrors(res, (doc) ->
-												res.endJson doc
+										console.log req.body.content
+										data = {
+											content: {
+												body: req.body.content.body
+											}
+										}
+										Post.findById(postId,
+											HandleErrors(res, (parentPost) =>
+												req.user.commentToPost(parentPost,
+													data,
+													HandleErrors(res, (doc) ->
+														doc.populate('author',
+															HandleErrors(res, (doc) ->
+																res.endJson(error:false, data:doc)
+															)
+														)
+													)
+												)
 											)
+										)
 							}
 						},
 					}
 				},
 			},
-		},
 		'users': {
 			children: {
 				':userId/posts': {

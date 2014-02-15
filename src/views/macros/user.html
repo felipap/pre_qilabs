@@ -1,8 +1,8 @@
 
-{% macro renderUser(user) %}
-<div class="media-user">
+{% macro renderUser (user) %}
+<div class="mediaUser">
 	<a href="{{ user.profileUrl }}">
-		<img src="{{ user.avatarUrl }}" data-toggle="tooltip" title="{{ user.username }}" />
+		<div class="mediaUserAvatar" style="background: url({{ user.avatarUrl }})" data-toggle="tooltip" title="{{ user.username }}" ></div>
 	</a>
 </div>
 {% endmacro %}

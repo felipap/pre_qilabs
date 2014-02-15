@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 		banner: '/*! <%= pkg.title || pkg.name %> - v<%= version %>\n' +
 			'<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
 			'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-			' Licensed <%= _.pluck(pkg.licenses, "type").join(", ")||pkg.license %> */\n',
+			' Licensed <%= pkg.license %> */\n',
 		clean: {
 			files: ['min']
 		},
@@ -48,7 +48,9 @@ module.exports = function(grunt) {
  
 		uglify: {
 			options: {
-				banner: '<%= banner %>'
+                // sourceMap: '<% filename %>.map',
+				banner: '<%= banner %>',
+                sourceMap: true,
 			},
 			feed: {
 				src: 'src/static/js/concated_feed.js',

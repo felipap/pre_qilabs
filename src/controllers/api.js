@@ -19,7 +19,7 @@ HandleErrors = function(res, cb) {
   return function(err, result) {
     console.log('result:', err, result);
     if (err) {
-      console.debug('err handled:', err);
+      console.log('err handled:', err);
       return res.status(400).endJson({
         error: true
       });
@@ -99,9 +99,12 @@ module.exports = {
               body: req.body.content.body
             }
           }, function(err, doc) {
-            return res.end(JSON.stringify({
-              error: false
-            }));
+            return doc.populate('author', function(err, doc) {
+              return res.end(JSON.stringify({
+                error: false,
+                data: doc
+              }));
+            });
           });
         }
       },
@@ -154,13 +157,28 @@ module.exports = {
                   }));
                 },
                 post: function(req, res) {
-                  var postId;
+                  var data, postId;
                   if (!(postId = req.paramToObjectId('id'))) {
                     return;
                   }
-                  return req.user.commentToPostWithId(postId, req.body, HandleErrors(res, function(doc) {
-                    return res.endJson(doc);
-                  }));
+                  console.log(req.body.content);
+                  data = {
+                    content: {
+                      body: req.body.content.body
+                    }
+                  };
+                  return Post.findById(postId, HandleErrors(res, (function(_this) {
+                    return function(parentPost) {
+                      return req.user.commentToPost(parentPost, data, HandleErrors(res, function(doc) {
+                        return doc.populate('author', HandleErrors(res, function(doc) {
+                          return res.endJson({
+                            error: false,
+                            data: doc
+                          });
+                        }));
+                      }));
+                    };
+                  })(this)));
                 }
               }
             }

@@ -213,34 +213,18 @@ UserSchema.statics.genProfileFromModel = function(userModel, cb) {
 Create a post object with type comment.
  */
 
-UserSchema.methods.commentToPostWithId = function(postId, data, cb) {
-  console.assert(postId instanceof mongoose.Types.ObjectId);
-  return Post.findById(postId, (function(_this) {
-    return function(err, parentPost) {
-      var post;
-      if (err) {
-        return cb({
-          error: true
-        });
-      } else if (!parentPost) {
-        return cb({
-          error: true,
-          name: 'NotFound'
-        });
-      }
-      post = new Post({
-        author: _this,
-        group: null,
-        data: {
-          title: data.content.title,
-          body: data.content.body
-        },
-        parentPost: parentPost,
-        postType: Post.PostTypes.Comment || data
-      });
-      return post.save(cb);
-    };
-  })(this));
+UserSchema.methods.commentToPost = function(parentPost, data, cb) {
+  var post;
+  post = new Post({
+    author: this,
+    group: null,
+    data: {
+      body: data.content.body
+    },
+    parentPost: parentPost,
+    postType: Post.PostTypes.Comment || data
+  });
+  return post.save(cb);
 };
 
 

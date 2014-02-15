@@ -32,25 +32,34 @@
 	// .color-btn-active(#444, #DDD, #AAA);
 }
 
-.high-xbtn (@color: white, @bg: @COLOR1) {
+.high-xbtn (@color: white, @bg: @COLOR1, @shadowSize:2px) {
 	.btn0;
 
 	.color-btn-focus(@color, @bg, transparent);
-	.inner-shadow(0, -2px, rgba(0,0,0,.2));
+	.inner-shadow(0, -@shadowSize, rgba(0,0,0,.2));
 	.text-shadow(2px, 2px, 0, rgba(0,0,0,.1));
 	.color-btn(@color, @bg, transparent);
-	padding-bottom: 10px;
 
 	&:hover {
 		.color-btn(@color, lighten(@bg, 2%), transparent);
-		.inner-shadow(0, -2px, rgba(0,0,0,.4));
+		.inner-shadow(0, -@shadowSize, rgba(0,0,0,.4));
 	}
+
+	.high-xbtn-padding(9px, 20px, 6px, 2px);
+}
+
+.high-xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px, @shadowSize:2px) {
+	padding: @vertical @horizontal;
+	padding-bottom: @shadowSize+@vertical;
+	margin-top: @verticalMargin;
+	margin-bottom: @verticalMargin;
+
 	&:active {
 		.no-text-shadow;
 		.no-box-shadow;
-		margin-top: 10px;
-		padding-bottom: 9px;
-		margin-bottom: 7px; // -2+1 (from padding-bottom)
+		margin-top: @verticalMargin+@shadowSize;
+		margin-bottom: @verticalMargin; // -2+1 (from padding-bottom)
+		padding-bottom: @vertical;
 	}
 }
 

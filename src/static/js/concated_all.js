@@ -1,6 +1,6 @@
 /*! meavisa - v0.0.2
 * http://meavisa.org
-* Copyright (c) 2014 ; Licensed  */
+* Copyright (c) 2014 ; Licensed BSD */
 requirejs.config({
 	appDir: ".",
 	baseUrl: "static/js",

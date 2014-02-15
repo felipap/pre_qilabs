@@ -35,7 +35,6 @@
 
 .sidebar (@width: @sidebar-width) {
 	width: @width;
-	// position: absolute;
 	float: left;
 
 	.box {
@@ -85,19 +84,14 @@
 	width: @width;
 	min-height: 600px;
 	margin-left: @sidebar-width+@sidebar-gap;
-	
-	.post,
+
 	.box {
 		margin-bottom: 10px;
 		list-style: none;
 		padding: 20px;
 	}
 
-	.box {
-	}
-
 	& {
-
 		textarea {
 			display: block;
 			width: 100%;
@@ -108,17 +102,65 @@
 			.high-xbtn(white, @COLOR1);
 		}
 	}
+	.postListWrapper,
+	.commentListWrapper {
+		list-style: none;
+		padding-left: 0;
+		margin-bottom: 0;
+	}
 
-	.post {
-		.op-msg {
-			.post-msg-header {
-				.author-avatar {
-					display: inline-body;
-					.rounded(5px);
-					border: 1px solid #DDD;
+	.mediaUser-comment () {
+		.rounded(0);
+		width: 40px;
+		height: 40px;
+	}
+
+	.msgBody-comment () {
+		vertical-align: middle;
+		display: inline-block;
+		width: 477px;
+		height: 40px;
+		padding-left: 40px;
+		border: 1px solid #DDD;
+		.no-box-shadow;
+		outline: none;
+		padding: 10px;
+	}
+
+	.mediaUser {
+		display: inline-block;
+		vertical-align: middle;
+		border: 1px solid #DDD;
+		.rounded(5px);
+		width: 50px;
+		height: 50px;
+		text-decoration: none;
+
+		.mediaUserAvatar {
+			vertical-align: middle;
+			width: 100%;
+			height: 100%;
+			background-size: cover !important;
+		}
+	}
+
+	.postWrapper {
+		margin-bottom: 10px;
+
+		background: white;
+		border: 1px solid #DDD;
+		border-bottom: 1px solid #AAA;
+
+		.opMessage {
+			padding: 10px;
+			padding-bottom: 15px;
+			border-bottom: 1px solid #AAA;
+
+			.msgHeader {
+				.authorAvatar {
 				}
-				.post-msg-headline {
-					display: inline;
+				.headline {
+					display: inline-block;
 					font: 14px "Open Sans";
 					.author-username {
 						display: inline;
@@ -130,17 +172,53 @@
 				}
 			}
 
-			.post-msg-body {
+			.msgBody {
 				padding: 10px;
-				margin: 10px 0;
 				border: 1px solid #DDD;
 			}
 		}
 
-		background: white;
-		border: 1px solid #DDD;
-		border-bottom: 1px solid #AAA;
+		.postCommentsSection {
+			background: #EEE;
+			padding: 10px;
+
+			.commentWrapper {
+				margin-bottom: 3px;
+
+				.mediaUser {
+					.mediaUser-comment;
+				}
+
+				.msgBody {
+					.msgBody-comment;
+				}
+
+				time {
+					font-size: 11px;
+					color: #888;
+					width: 90px;
+				}
+			}
+		}
+
+		.commentInputSection {
+			padding: 7px 10px;
+			border-top: 1px solid #AAA;
+
+			.mediaUser {
+				.mediaUser-comment;
+			}
+			.commentInput {
+				.msgBody-comment;
+			}
+			[data-action=send-comment] {
+				display: inline-block;
+				.high-xbtn(white, @COLOR2);
+				.high-xbtn-padding(9px, 7px, 2px);
+			}
+		}
 	}
+
 }
 
 body {
@@ -173,84 +251,7 @@ body {
 	}
 }
 
-[data-page=timeline] {
-
-	.box.tags body {
-
-		li {
-
-			padding-left: 10px;
-			padding-right: 30px;
-			margin-bottom: 10px;
-			list-style: none;
-		
-			i { margin-right: 5px; }
-			display: block;
-
-			padding: 10px;
-			.ultra-reset-button;
-
-			position: relative;
-			display: block;
-			margin: 5px 0;		
-			text-align: left;
-
-			.tag {
-				width: 100%;
-				text-align: left;
-				background: #EEE;
-				.rounded(3px);
-				border: 1px solid #DDD;
-			
-				.tg-btn {
-					text-align: left;
-					margin-bottom: 5px;
-
-					.tg {
-						display: table;
-						display: inline-block;
-						margin-right: 5px;
-					}
-
-				}
-				
-				[data-role=inform] {
-					.reset-button;
-					float: right;
-					padding: 0;
-				}
-			}
-
-			[data-role=expand] {
-				.reset-button;
-				position: absolute;
-				top: 7px;
-				right: -25px;
-			}
-			
-
-			& .tag[data-checked=true] {
-				border: 1px solid green;
-				background: green;
-			}
-
-			& .tag[data-checked=true] {
-				color: #fff;
-				background-color: #5cb85c;
-				border-color: #4cae4c;
-
-				&:hover, &:focus, &:active, &.active {
-					color: #ffffff;
-					background-color: #47a447;
-					border-color: #398439;
-				}
-			}
-		}
-	}
-}
-
-
-body[data-page=profile] {
+[data-page=profile] {
 
 	background: url('/static/images/pinstripe.png');
 	@sidebar-width: 20px;

@@ -1,6 +1,6 @@
 /*! meavisa - v0.0.2
 * http://meavisa.org
-* Copyright (c) 2014 ; Licensed  */
+* Copyright (c) 2014 ; Licensed BSD */
 requirejs.config({
 	appDir: ".",
 	baseUrl: "static/js",
@@ -239,18 +239,24 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 	$('[data-action="send-post"]').click(function (evt) {
 		var body = $("textarea").val();
 		$.ajax({
-			type:'post',
+			type: 'post',
+			dataType: 'json',
 			url: '/api/posts',
 			data: { content: { body: body } }
-		}).done(function(data) {
-			alert('data', data);
+		}).done(function(response) {
+			app.postList.add(new Post.item(response.data));
+			console.log('data', response.data);
 		});
 	});
 
 	var Post = (function () {
 		'use strict';
 
-		var GenericPostView = Backbone.View.extend({
+		var GenericPostItemView = Backbone.View.extend({
+			construction: function (opts) {
+				this.collection = opts.collection;
+				Backbone.View.apply(this, arguments);
+			},
 			bindDestroyBtn: function () {
 				this.$el.on('click', '[data-action=remove-post]', this.destroy.bind(this));
 			},
@@ -274,16 +280,14 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		var CommentItem = GenericPostItem.extend({
 		});
 
-		var CommentView = GenericPostView.extend({
+		var CommentView = GenericPostItemView.extend({
 			tagName: 'li',
-			className: 'post',
+			className: 'commentWrapper',
 			template: _.template($("#template-commentview").html()),
 			initialize: function () {
 			},
 			destroy: function () {
-				this.undelegateEvents();
 				this.$el.removeData().unbind();
-				this.unbind();
 				this.remove();
 			},
 			render: function () {
@@ -294,6 +298,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		var CommentList = Backbone.Collection.extend({
 			model: CommentItem,
+			comparator: '-dateCreated',
 			page: 0,
 			constructor: function (opts) {
 				this.postItem = opts.postItem;
@@ -316,8 +321,9 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		var CommentListView = Backbone.View.extend({
 			tagName: 'ul',
-			className: "commentList",
+			className: "commentListWrapper",
 			_commentViews: [],
+			
 			initialize: function () {
 				this.collection.on('reset', this.addAll, this);
 				this.collection.on('add', this.addAll, this);
@@ -326,7 +332,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			addAll: function () {
 				var views = [];
 				this.collection.each(function(item) {
-					views.push(new CommentView({model:item}));
+					views.push(new CommentView({model:item,collection:this.collection}));
 				}, this);
 				this._commentViews = views;
 				return this.render();
@@ -351,12 +357,14 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			initialize: function () {
 				this.commentsList = new CommentList({ postItem: this });
 				this.commentsList.fetch({reset:true});
+				console.log('before error', this.toJSON())
 			},
 		});
 
-		var PostView = GenericPostView.extend({
+		var PostView = GenericPostItemView.extend({
 			tagName: 'li',
-			className: 'post',
+			className: 'postWrapper',
+			comparator: 'dateCreated',
 			template: _.template($("#template-postview").html()),
 			initialize: function () {
 				this.model.collection.on('reset', this.destroy, this);
@@ -365,21 +373,24 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			events: {
 				'submit .formPostComment':
 					function (evt) {
-						console.log('this is', this)
-						var body = $(evt.target).find("textarea").val();
+						console.log('this is', this, this.collection)
+						var body = $(evt.target).find(".commentInput").val();
+						var self = this;
 						$.ajax({
 							type: 'post',
+							dataType: 'json',
 							url: this.model.get('apiPath')+'/comments',
 							data: { content: { body: body } }
-						}).done(function(data) {
-							alert('data', data);
+						}).done(function(response) {
+							// console.log('response', response);
+							self.model.commentsList.add(new CommentItem(response.data));
 						});
 					},
 			},
 			render: function () {
 				this.$el.html(this.template({post: this.model.toJSON()}));
 				this.commentListView = new CommentListView({ collection: this.model.commentsList });
-				this.$el.find('.post-comments-section').append(this.commentListView.$el);
+				this.$el.find('.postCommentsSection').append(this.commentListView.$el);
 				return this;
 			},
 		});
@@ -402,7 +413,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		});
 
 		var PostListView = Backbone.View.extend({
-			id: "#posts",
+			className: "postListWrapper",
 			_postViews: [],
 			template: _.template(['<@ if (!length) { @>',
 				'<h3 style="color: #888">Nenhum post visível. :/</h3>',
@@ -418,7 +429,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			addAll: function () {
 				var views = [];
 				this.collection.each(function(postItem) {
-					views.push(new PostView({model:postItem}));
+					views.push(new PostView({model:postItem,collection:this.collection}));
 				}, this);
 				this._postViews = views;
 				return this.render();

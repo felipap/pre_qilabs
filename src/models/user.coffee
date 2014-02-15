@@ -150,27 +150,19 @@ UserSchema.statics.genProfileFromModel = (userModel, cb) ->
 ###
 Create a post object with type comment.
 ###
-UserSchema.methods.commentToPostWithId = (postId, data, cb) ->
+UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 	# Detect repeated posts and comments
-	console.assert(postId instanceof mongoose.Types.ObjectId)
-	Post.findById postId, (err, parentPost) =>
-		if err
-			return cb(error:true)
-		else if not parentPost
-			return cb(error:true, name:'NotFound')
-
-		post = new Post {
-			author: @
-			group: null
-			data: {
-				title: data.content.title
-				body: data.content.body
-			},
-			parentPost: parentPost
-			postType: Post.PostTypes.Comment or data
-		}
-		# cb(true)
-		post.save cb
+	post = new Post {
+		author: @
+		group: null
+		data: {
+			body: data.content.body
+		},
+		parentPost: parentPost
+		postType: Post.PostTypes.Comment or data
+	}
+	# cb(true)
+	post.save cb
 
 ###
 Create a post object and fan out through inboxes.
