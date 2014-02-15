@@ -155,10 +155,25 @@
 		background: white;
 		border: 1px solid #DDD;
 		border-bottom: 1px solid #AAA;
+		[data-action=remove-post],
+		[data-action=edit-post] {
+			.full-reset-button;
+			padding-left: 3px;
+			padding-right: 3px;
+			font-size: 105%;
+			font-weight: bold;
+			color: #888;
+			float: right;
+			&:hover {
+				color: #444;
+			}
+			&:active {
+				outline: none;
+			}
+		}
 
 		.opMessage {
 			padding: 10px;
-			padding-bottom: 15px;
 
 			.msgHeader {
 				.authorAvatar {
@@ -183,7 +198,11 @@
 		}
 
 		.postCommentsSection {
-			background: #EEE;
+			background: #EFEFEF;
+
+			&:not(:empty) {
+				margin-bottom: 7px;
+			}
 
 			.commentWrapper:first-child {
 				border-top: 1px solid #AAA;
@@ -205,10 +224,13 @@
 
 				.msgBody {
 					.msgBody-comment;
+					width: 465px;
 				}
 
 				time {
 					font-size: 11px;
+					font-style: italic;
+					padding: 0 5px;
 					color: #888;
 					width: 90px;
 				}
@@ -216,7 +238,7 @@
 		}
 
 		.commentInputSection {
-			padding: 7px 10px;
+			padding: 0 10px 7px;
 
 			.mediaUser {
 				.mediaUser-comment;

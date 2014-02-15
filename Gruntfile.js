@@ -121,7 +121,7 @@ module.exports = function(grunt) {
 					nodeArgs: ['--debug'],
 					// watch: ['src'],
 					ignore: ['node_modules/**','src/static/**'],
-					ext: 'js,html',
+					ext: 'js',
 					delayTime: 1,
 
 					legacyWatch: true,

@@ -69,7 +69,7 @@ require(['jquery','bootstrap'], function ($) {
 
 	$(function () {
 		$("[data-toggle=popover]").popover();
-		$("[data-toggle=tooltip]").tooltip();
+		$("body").tooltip({selector:'[data-toggle=tooltip]'});
 		$("[data-toggle=dialog]").xdialog();
 
 		if (document.body.dataset.page === 'front') {
@@ -240,6 +240,29 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		escape: /\<\@\-(.+?)\@\>/gim
 	};
 
+	setTimeout(function updateCounters () {
+		var calcTimeFrom = function (arg) {
+			var now = new Date(),
+				then = new Date(arg),
+				diff = now-then;
+			if (diff < 1000*60) {
+				return 'agora'; 'há '+Math.floor(diff/1000)+'s';
+			} else if (diff < 1000*60*60) {
+				return 'há '+Math.floor(diff/1000/60)+'min';
+			} else if (diff < 1000*60*60*30) { // até 30 horas
+				return 'há '+Math.floor(diff/1000/60/60)+'h';
+			} else {
+				return 'há '+Math.floor(diff/1000/60/60/24)+'dias';
+			}
+		}
+
+		$('[data-time-count]').each(function () {
+			this.innerHTML = calcTimeFrom(parseInt(this.dataset.timeCount));
+		});
+
+		setTimeout(updateCounters, 1000);
+	}, 1000);
+
 	$('[data-action="send-post"]').click(function (evt) {
 		var body = document.querySelector("#inputPostContent").value;
 		$.ajax({
@@ -262,13 +285,11 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				this.collection = opts.collection;
 				Backbone.View.apply(this, arguments);
 			},
-			bindDestroyBtn: function () {
-				this.$el.on('click', '[data-action=remove-post]', this.destroy.bind(this));
-			},
 			destroy: function () {
 				var self = this;
 				this.model.destroy({
 					success: function () {
+						console.log('succes');
 						self.$el.removeData().unbind();
 						self.remove();
 					}
@@ -290,10 +311,15 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			className: 'commentWrapper',
 			template: _.template($("#template-commentview").html()),
 			initialize: function () {
+				this.bindRemoveBtn();
 			},
-			destroy: function () {
-				this.$el.removeData().unbind();
-				this.remove();
+			bindRemoveBtn: function () {
+				this.$el.on('click', '[data-action=remove-post]', this.askForRemoval.bind(this));
+			},
+			askForRemoval: function () {
+				if (confirm('Tem certeza que deseja excluir esse comentário?')) {
+					this.destroy();
+				}
 			},
 			render: function () {
 				this.$el.html(this.template({comment: this.model.toJSON()}));
@@ -345,9 +371,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 			render: function () {
 				var container = document.createDocumentFragment();
-				console.log('rendering', this._commentViews)
 				_.each(this._commentViews, function (item) {
-					console.log('item appended')
 					container.appendChild(item.render().el);
 				}, this);
 				this.$el.empty();
@@ -364,7 +388,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			initialize: function () {
 				this.commentList = new CommentList(this.get('comments'));
 				this.commentList.postItem = this.postItem;
-				// this.commentList.
 				// if (this.get('hasComments')) {
 				// 	this.commentList.fetch({reset:true});
 				// }
@@ -375,9 +398,17 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			tagName: 'li',
 			className: 'postWrapper',
 			template: _.template($("#template-postview").html()),
+			bindRemoveBtn: function () {
+				this.$el.on('click', '.opMessage [data-action=remove-post]', this.askForRemoval.bind(this));
+			},
+			askForRemoval: function () {
+				if (confirm('Tem certeza que deseja excluir essa postagem?')) {
+					this.destroy();
+				}
+			},
 			initialize: function () {
 				this.model.collection.on('reset', this.destroy, this);
-				this.bindDestroyBtn();
+				this.bindRemoveBtn();
 				this.commentListView = new CommentListView({ collection: this.model.commentList });
 			},
 			events: {

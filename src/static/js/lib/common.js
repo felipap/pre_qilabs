@@ -51,7 +51,7 @@ require(['jquery','bootstrap'], function ($) {
 
 	$(function () {
 		$("[data-toggle=popover]").popover();
-		$("[data-toggle=tooltip]").tooltip();
+		$("body").tooltip({selector:'[data-toggle=tooltip]'});
 		$("[data-toggle=dialog]").xdialog();
 
 		if (document.body.dataset.page === 'front') {
