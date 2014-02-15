@@ -14,7 +14,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var HandleErrors, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
+var Group, HandleErrors, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -30,6 +30,8 @@ User = mongoose.model('User');
 Post = mongoose.model('Post');
 
 Tag = mongoose.model('Tag');
+
+Group = mongoose.model('Group');
 
 Subscriber = mongoose.model('Subscriber');
 
@@ -62,15 +64,18 @@ module.exports = {
           return User.find({}, function(err, users) {
             return Post.find({}, function(err, posts) {
               return Subscriber.find({}, function(err, subscribers) {
-                var obj;
-                obj = {
-                  ip: req.ip,
-                  session: req.session,
-                  users: users,
-                  posts: posts,
-                  subscribers: subscribers
-                };
-                return res.end(JSON.stringify(obj));
+                return Group.find({}, function(err, groups) {
+                  var obj;
+                  obj = {
+                    ip: req.ip,
+                    group: groups,
+                    session: req.session,
+                    users: users,
+                    posts: posts,
+                    subscribers: subscribers
+                  };
+                  return res.end(JSON.stringify(obj));
+                });
               });
             });
           });
@@ -105,11 +110,70 @@ module.exports = {
         ]
       }
     },
+    'labs': {
+      methods: {
+        post: function(req, res) {
+          var group;
+          console.log(req.body);
+          group = new Group({
+            profile: {
+              name: req.body.name
+            }
+          });
+          return group.save(function(err, doc) {
+            console.log('saved lab doc', err, doc);
+            return res.endJson({
+              error: !!err,
+              data: doc
+            });
+          });
+        }
+      },
+      children: {
+        ':id': {
+          children: {
+            'posts': {
+              methods: {
+                get: function(req, res) {
+                  var id;
+                  if (!(id = req.paramToObjectId('id'))) {
+                    return;
+                  }
+                  return Post.find({
+                    group: id
+                  }).populate('author').exec(function(err, docs) {
+                    return res.endJson({
+                      error: err,
+                      data: docs
+                    });
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     'posts': {
       permissions: [required.login],
       methods: {
         post: function(req, res) {
+          var e, groupId;
+          if (req.body.groupId) {
+            try {
+              groupId = new ObjectId.fromString(req.body.groupId);
+            } catch (_error) {
+              e = _error;
+              return res.endJson({
+                error: true,
+                name: 'InvalidId'
+              });
+            }
+          } else {
+            groupId = null;
+          }
           return req.user.createPost({
+            groupId: groupId,
             content: {
               title: 'My conquest!' + Math.floor(Math.random() * 100),
               body: req.body.content.body
@@ -132,7 +196,9 @@ module.exports = {
               if (!(postId = req.paramToObjectId('id'))) {
                 return;
               }
-              return Post.findById(postId, HandleErrors(res, function(doc) {
+              return Post.findOne({
+                _id: postId
+              }, HandleErrors(res, function(doc) {
                 return Post.find({
                   parentPost: doc
                 }).populate('author').exec(HandleErrors(res, function(docs) {

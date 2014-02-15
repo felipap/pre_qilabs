@@ -270,7 +270,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 			type: 'post',
 			dataType: 'json',
 			url: '/api/posts',
-			data: { content: { body: body } }
+			data: { content: { body: body }, groupId: window.groupId }
 		}).done(function(response) {
 			document.querySelector("#inputPostContent").value = '';
 			app.postList.add(new Post.item(response.data));
@@ -438,7 +438,7 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		var PostList = Backbone.Collection.extend({
 			model: PostItem,
-			url: window.postsRoot || '/api/timeline/posts',
+			url: window.postsRoot,
 			page: 0,
 			comparator: function (i) {
 				return -1*new Date(i.get('dateCreated'));
@@ -536,6 +536,9 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		},
 
 		index: function () {
+			if (!window.postsRoot) {
+				return;
+			}
 			console.log('index')
 			this.postList = new Post.list();
 			this.postListView = new Post.listView({collection: this.postList});

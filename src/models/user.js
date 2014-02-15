@@ -39,7 +39,7 @@ UserSchema = new mongoose.Schema({
   contact: {
     email: String
   },
-  portfolio: {
+  profile: {
     fullName: '',
     birthday: Date,
     city: '',
@@ -226,55 +226,6 @@ UserSchema.statics.getPostsToUser = function(userId, opts, cb) {
 
 
 /*
-Generate stuffed profile for the controller.
- */
-
-UserSchema.statics.genProfileFromUsername = function(username, cb) {
-  return User.findOne({
-    username: username
-  }, function(err, doc) {
-    if (err || !doc) {
-      return cb(err);
-    }
-    if (!doc) {
-      return cb(null, doc);
-    }
-    return doc.getFollowers(function(err, followers) {
-      if (err) {
-        return cb(err);
-      }
-      return doc.getFollowing(function(err, following) {
-        if (err) {
-          return cb(err);
-        }
-        return cb(null, _.extend(doc, {
-          followers: followers,
-          following: following
-        }));
-      });
-    });
-  });
-};
-
-UserSchema.statics.genProfileFromModel = function(userModel, cb) {
-  return userModel.getFollowers(function(err, followers) {
-    if (err) {
-      return cb(err);
-    }
-    return userModel.getFollowing(function(err, following) {
-      if (err) {
-        return cb(err);
-      }
-      return cb(null, _.extend(userModel, {
-        followers: followers,
-        following: following
-      }));
-    });
-  });
-};
-
-
-/*
 Create a post object with type comment.
  */
 
@@ -294,6 +245,32 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
 
 
 /*
+Generate stuffed profile for the controller.
+ */
+
+UserSchema.methods.genProfile = function(cb) {
+  return this.getFollowers((function(_this) {
+    return function(err, followers) {
+      if (err) {
+        return cb(err);
+      }
+      return _this.getFollowing(function(err, following) {
+        if (err) {
+          return cb(err);
+        }
+        return cb(null, _.extend(this, {
+          followers: followers,
+          following: following
+        }));
+      });
+    };
+  })(this));
+};
+
+UserSchema.methods.createGroup = function(data) {};
+
+
+/*
 Create a post object and fan out through inboxes.
  */
 
@@ -301,16 +278,21 @@ UserSchema.methods.createPost = function(data, cb) {
   var post;
   post = new Post({
     author: this.id,
-    group: null,
     data: {
       title: data.content.title,
       body: data.content.body
     }
   });
+  if (data.groupId) {
+    post.group = data.groupId;
+  }
   return post.save((function(_this) {
     return function(err, post) {
       console.log('yes, here', err, post);
       cb(err, post);
+      if (post.group) {
+        return;
+      }
       return _this.getFollowers(function(err, docs) {
         var follower, _i, _len, _results;
         Inbox.create({

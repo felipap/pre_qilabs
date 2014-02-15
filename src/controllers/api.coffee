@@ -31,6 +31,7 @@ required = require '../lib/required.js'
 User = mongoose.model 'User'
 Post = mongoose.model 'Post'
 Tag  = mongoose.model 'Tag'
+Group  = mongoose.model 'Group'
 Subscriber = mongoose.model 'Subscriber'
 
 HandleErrors = (res, cb) ->
@@ -55,13 +56,15 @@ module.exports = {
 					User.find {}, (err, users) ->
 						Post.find {}, (err, posts) ->
 							Subscriber.find {}, (err, subscribers) ->
-								obj =
-									ip: req.ip
-									session: req.session
-									users: users
-									posts: posts
-									subscribers: subscribers
-								res.end(JSON.stringify(obj))
+								Group.find {}, (err, groups) ->
+									obj =
+										ip: req.ip
+										group: groups
+										session: req.session
+										users: users
+										posts: posts
+										subscribers: subscribers
+									res.end(JSON.stringify(obj))
 			}
 		'testers':
 			methods: {
@@ -84,25 +87,61 @@ module.exports = {
 								res.redirect('/')
 				]
 			}
-		
+
+		'labs':
+			methods: {
+				post: (req, res) ->
+					console.log req.body
+					group = new Group {
+						profile: {
+							name: req.body.name
+						}
+					}
+					group.save (err, doc) ->
+						console.log('saved lab doc', err, doc)
+						res.endJson(error:!!err, data:doc)
+			}
+			children:
+				':id': {
+					children: {
+						'posts': {
+							methods: {
+								get: (req, res) ->
+									return unless id = req.paramToObjectId('id')
+									Post.find {group: id}
+										.populate 'author'
+										.exec (err, docs) ->
+											res.endJson(error:err, data:docs)
+							}
+						}
+					}
+				}
 		'posts':
 			permissions: [required.login],
 			methods: {
 				post: (req, res) ->
-						req.user.createPost {
-							content:
-								title: 'My conquest!'+Math.floor(Math.random()*100)
-								body: req.body.content.body
-						}, (err, doc) ->
-							doc.populate 'author', (err, doc) ->
-								res.end(JSON.stringify({error:false, data:doc}))
+					if req.body.groupId
+						try
+							groupId = new ObjectId.fromString(req.body.groupId)
+						catch e
+							return res.endJson(error:true, name:'InvalidId')
+					else
+						groupId = null
+					req.user.createPost {
+						groupId: groupId
+						content:
+							title: 'My conquest!'+Math.floor(Math.random()*100)
+							body: req.body.content.body
+					}, (err, doc) ->
+						doc.populate 'author', (err, doc) ->
+							res.end(JSON.stringify({error:false, data:doc}))
 			},
 			children: {
 				'/:id': {
 					methods: {
 						get: (req, res) ->
 								return if not postId = req.paramToObjectId('id')
-								Post.findById postId, HandleErrors(res, (doc) ->
+								Post.findOne {_id: postId}, HandleErrors(res, (doc) ->
 									# If needed to fill response with comments:
 									Post.find {parentPost: doc}
 										.populate 'author'
@@ -164,7 +203,7 @@ module.exports = {
 					}
 				},
 			},
-		'users': {
+		'users': 
 			children: {
 				':userId/posts': {
 					methods: {
@@ -204,8 +243,7 @@ module.exports = {
 					}
 				},	
 			}
-		},
-		'me': {
+		'me': 
 			methods: {
 				post: [required.login,
 					(req, res) ->
@@ -260,6 +298,6 @@ module.exports = {
 					}
 				},
 			}
-		}
+
 	}
 }

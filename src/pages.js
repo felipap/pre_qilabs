@@ -1,4 +1,4 @@
-var Inbox, Post, Subscriber, Tag, User, mongoose, required;
+var Group, HandleErrors, Inbox, Post, Subscriber, Tag, User, mongoose, required;
 
 mongoose = require('mongoose');
 
@@ -12,7 +12,29 @@ Tag = mongoose.model('Tag');
 
 User = mongoose.model('User');
 
+Group = mongoose.model('Group');
+
 Subscriber = mongoose.model('Subscriber');
+
+HandleErrors = function(res, cb) {
+  console.assert(typeof cb === 'function');
+  return function(err, result) {
+    console.log('result:', err, result);
+    if (err) {
+      console.log('err handled:', err);
+      return res.status(400).endJson({
+        error: true
+      });
+    } else if (!result) {
+      return res.status(404).endJson({
+        error: true,
+        name: 404
+      });
+    } else {
+      return cb(result);
+    }
+  };
+};
 
 module.exports = {
   '/': {
@@ -22,7 +44,7 @@ module.exports = {
         if (req.user) {
           req.user.lastUpdate = new Date();
           req.user.save();
-          return User.genProfileFromModel(req.user, function(err, profile) {
+          return req.user.genProfile(function(err, profile) {
             return res.render('pages/timeline', {
               user_profile: profile
             });
@@ -71,47 +93,60 @@ module.exports = {
       ]
     }
   },
-  '/lab/:groupSlug': {
-    name: 'profile',
-    methods: {
-      get: function(req, res) {
-        if (!req.params.groupSlug) {
-          return res.redirect('/404');
-        }
-        return Group.genGroupProfileFromSlug(req.params.groupSlug, function(err, profile) {
-          if (err || !profile) {
-            return res.redirect('/404');
+  '/labs': {
+    permissions: [required.login],
+    children: {
+      'create': {
+        methods: {
+          get: function(req, res) {
+            return res.render('pages/lab_create');
           }
-          console.log('profile', err, profile);
-          return req.user.doesFollowId(profile.id, function(err, bool) {
-            return res.render('pages/profile', {
-              profile: profile,
-              follows: bool
-            });
-          });
-        });
+        }
+      },
+      ':slug': {
+        methods: {
+          get: function(req, res) {
+            if (!req.params.slug) {
+              return res.render404();
+            }
+            return Group.findOne({
+              slug: req.params.slug
+            }, HandleErrors(res, function(group) {
+              return group.genGroupProfile(function(err, profile) {
+                console.log(err, profile);
+                return res.render('pages/lab', {
+                  group: profile
+                });
+              });
+            }));
+          }
+        }
       }
     }
   },
-  '/p/:user': {
+  '/u/:id': {
     name: 'profile',
     methods: {
       get: function(req, res) {
-        if (!req.params.user) {
+        if (!req.params.id) {
           return res.render404();
         }
-        return User.genProfileFromUsername(req.params.user, function(err, profile) {
-          if (err || !profile) {
-            return res.render404();
-          }
-          console.log('profile', err, profile);
-          return req.user.doesFollowId(profile.id, function(err, bool) {
-            return res.render('pages/profile', {
-              profile: profile,
-              follows: bool
+        return User.findOne({
+          username: username
+        }, HandleErrors(res, function(user) {
+          return user.genProfile(function(err, profile) {
+            if (err || !profile) {
+              return res.render404();
+            }
+            console.log('profile', err, profile);
+            return req.user.doesFollowId(profile.id, function(err, bool) {
+              return res.render('pages/profile', {
+                profile: profile,
+                follows: bool
+              });
             });
           });
-        });
+        }));
       }
     }
   },

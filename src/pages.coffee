@@ -9,7 +9,22 @@ Post 	= mongoose.model 'Post'
 Inbox 	= mongoose.model 'Inbox'
 Tag 	= mongoose.model 'Tag'
 User 	= mongoose.model 'User'
+Group 	= mongoose.model 'Group'
+
 Subscriber = mongoose.model 'Subscriber'
+
+HandleErrors = (res, cb) ->
+	console.assert typeof cb is 'function'
+	return (err, result) ->
+		console.log('result:', err, result)
+		if err
+			console.log('err handled:', err)
+			res.status(400).endJson(error:true)
+		else if not result
+			res.status(404).endJson(error:true, name:404)
+		else
+			cb(result)
+
 
 module.exports = {
 	'/':
@@ -19,7 +34,7 @@ module.exports = {
 				if req.user
 					req.user.lastUpdate = new Date()
 					req.user.save()
-					User.genProfileFromModel req.user, (err, profile) ->
+					req.user.genProfile (err, profile) ->
 						res.render 'pages/timeline',
 							user_profile: profile
 				else
@@ -64,38 +79,46 @@ module.exports = {
 			]
 		}
 
-	'/lab/:groupSlug':
-		name: 'profile'
-		methods: {
-			get: (req, res) ->
-				if not req.params.groupSlug
-					return res.redirect('/404')
-				Group.genGroupProfileFromSlug req.params.groupSlug,
-					(err, profile) ->
-						if err or not profile
-							return res.redirect('/404')
-						console.log('profile', err, profile)
-						req.user.doesFollowId profile.id, (err, bool) ->
-							res.render 'pages/profile', 
-								profile: profile
-								follows: bool
+	'/labs':
+		permissions: [required.login]
+		children: {
+			'create':
+				methods:
+					get: (req, res) ->
+						res.render 'pages/lab_create'
+			':slug':
+				methods: {
+					get: (req, res) ->
+						unless req.params.slug
+							return res.render404()
+
+						Group.findOne {slug: req.params.slug},
+							HandleErrors(res, (group) ->
+								group.genGroupProfile (err, profile) -> # profile?
+									console.log(err, profile)
+									res.render 'pages/lab',
+										group: profile
+							)
+				}
 		}
 
-	'/p/:user':
+	'/u/:id':
 		name: 'profile'
 		methods: {
 			get: (req, res) ->
-				if not req.params.user
+				unless req.params.id
 					return res.render404()
-				User.genProfileFromUsername req.params.user,
-					(err, profile) ->
-						if err or not profile
-							return res.render404()
-						console.log('profile', err, profile)
-						req.user.doesFollowId profile.id, (err, bool) ->
-							res.render 'pages/profile', 
-								profile: profile
-								follows: bool
+				User.findOne {username: username},
+					HandleErrors(res, (user) ->
+						user.genProfile (err, profile) ->
+							if err or not profile
+								return res.render404()
+							console.log('profile', err, profile)
+							req.user.doesFollowId profile.id, (err, bool) ->
+								res.render 'pages/profile', 
+									profile: profile
+									follows: bool
+					)
 		}
 
 	'/post/:postId':

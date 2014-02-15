@@ -39,7 +39,7 @@ UserSchema = new mongoose.Schema {
 		email: 		String
 	}
 	
-	portfolio: {
+	profile: {
 		fullName: 	''
 		birthday: 	Date
 		city: 		''
@@ -166,28 +166,6 @@ UserSchema.statics.getPostsToUser = (userId, opts, cb) ->
 			cb(err, posts)
 
 ###
-Generate stuffed profile for the controller.
-###
-UserSchema.statics.genProfileFromUsername = (username, cb) ->
-	User.findOne {username: username}, (err, doc) ->
-		if err or not doc then return cb(err)
-		unless doc then return cb(null, doc)
-		doc.getFollowers (err, followers) ->
-			if err then return cb(err)
-			doc.getFollowing (err, following) ->
-				if err then return cb(err)
-				cb(null, _.extend(doc, {followers:followers, following:following}))
-
-UserSchema.statics.genProfileFromModel = (userModel, cb) ->
-	userModel.getFollowers (err, followers) ->
-		if err then return cb(err)
-		userModel.getFollowing (err, following) ->
-			if err then return cb(err)
-			cb(null, _.extend(userModel, {followers:followers, following:following}))
-
-
-
-###
 Create a post object with type comment.
 ###
 UserSchema.methods.commentToPost = (parentPost, data, cb) ->
@@ -204,24 +182,40 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 	post.save cb
 
 ###
+Generate stuffed profile for the controller.
+###
+UserSchema.methods.genProfile = (cb) ->
+	@getFollowers (err, followers) =>
+		if err then return cb(err)
+		@getFollowing (err, following) ->
+			if err then return cb(err)
+			cb(null, _.extend(@, {followers:followers, following:following}))
+
+UserSchema.methods.createGroup = (data) ->
+
+
+###
 Create a post object and fan out through inboxes.
 ###
 UserSchema.methods.createPost = (data, cb) ->
 	post = new Post {
 		author: @id
-		group: null
 		data: {
 			title: data.content.title
 			body: data.content.body
 		},
 		# parentPost: '52fd556aee90f63350000001'
 	}
+	if data.groupId
+		post.group = data.groupId
 
 	post.save (err, post) =>
 			console.log('yes, here', err, post)
 			# use asunc.parallel to run a job
 			# Callback now, what happens later doesn't concern the user.
 			cb(err, post)
+			if post.group
+				return
 			# Iter through followers and fill inboxes.
 			@getFollowers (err, docs) =>
 				Inbox.create {
