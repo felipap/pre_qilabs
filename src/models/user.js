@@ -142,40 +142,41 @@ UserSchema.methods.getTimeline = function(opts, cb) {
   return Inbox.find({
     recipient: this.id
   }).sort('-dateSent').populate('post').select('post').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, inboxes) {
-    var count, post, posts, results, _i, _len, _results;
     if (err) {
       return cb(err);
     }
-    User.populate(inboxes, {
+    return User.populate(inboxes, {
       path: 'post.author'
-    }, function(err, docs) {});
-    if (err) {
-      return cb(err);
-    }
-    posts = _.pluck(docs, 'post');
-    results = [];
-    count = 0;
-    _results = [];
-    for (_i = 0, _len = posts.length; _i < _len; _i++) {
-      post = posts[_i];
-      if (!(post)) {
-        continue;
+    }, function(err, docs) {
+      var count, post, posts, results, _i, _len, _results;
+      if (err) {
+        return cb(err);
       }
-      count++;
-      _results.push((function(post) {
-        return Post.find({
-          parentPost: post
-        }).populate('author').exec(function(err, comments) {
-          results.push(_.extend({}, post.toObject(), {
-            comments: comments
-          }));
-          if (!--count) {
-            return cb(false, results);
-          }
-        });
-      })(post));
-    }
-    return _results;
+      posts = _.pluck(docs, 'post');
+      results = [];
+      count = 0;
+      _results = [];
+      for (_i = 0, _len = posts.length; _i < _len; _i++) {
+        post = posts[_i];
+        if (!(post)) {
+          continue;
+        }
+        count++;
+        _results.push((function(post) {
+          return Post.find({
+            parentPost: post
+          }).populate('author').exec(function(err, comments) {
+            results.push(_.extend({}, post.toObject(), {
+              comments: comments
+            }));
+            if (!--count) {
+              return cb(false, results);
+            }
+          });
+        })(post));
+      }
+      return _results;
+    });
   });
 };
 
