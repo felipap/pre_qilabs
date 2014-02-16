@@ -15,7 +15,7 @@
 		<div class="following">
 			membros:
 			{% for membership in group.memberships %}
-				{{ userMacros.renderUser(membership.user) }}
+				{{ userMacros.renderUser(membership.member) }}
 			{% endfor %}
 		</div>
 	</div>
