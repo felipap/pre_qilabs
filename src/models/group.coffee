@@ -12,8 +12,6 @@ Membership is accessible at Group.Membership
 
 mongoose = require 'mongoose'
 
-Post = mongoose.model 'Post'
-
 Types =
 	StudyGroup: 'StudyGroup'
 

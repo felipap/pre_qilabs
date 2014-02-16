@@ -16,7 +16,7 @@ window.calcTimeFrom = function (arg) {
 	} else if (diff < 1000*60*60*30) { // até 30 horas
 		return 'há '+Math.floor(diff/1000/60/60)+'h';
 	} else {
-		return 'há '+Math.floor(diff/1000/60/60/24)+'dias';
+		return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
 	}
 }
 

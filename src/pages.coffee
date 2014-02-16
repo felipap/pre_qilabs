@@ -85,10 +85,9 @@ module.exports = {
 						return res.render404()
 					Group.findOne {slug: req.params.slug},
 						HandleErrors(res, (group) ->
-							group.genGroupProfile (err, profile) -> # profile?
-								console.log(err, profile)
+							group.genGroupProfile (err, groupProfile) -> # groupProfile?
 								res.render 'pages/lab',
-									group: profile
+									group: groupProfile
 						)
 			}
 		}
@@ -104,7 +103,6 @@ module.exports = {
 						user2.genProfile (err, profile) ->
 							if err or not profile
 								return res.render404()
-							console.log('profile', err, profile)
 							req.user.doesFollowUser user2, (err, bool) ->
 								res.render 'pages/profile', 
 									profile: profile

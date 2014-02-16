@@ -2,11 +2,9 @@
 /*
 Membership is accessible at Group.Membership
  */
-var GroupSchema, Membership, MembershipSchema, MembershipTypes, Post, Types, mongoose;
+var GroupSchema, Membership, MembershipSchema, MembershipTypes, Types, mongoose;
 
 mongoose = require('mongoose');
-
-Post = mongoose.model('Post');
 
 Types = {
   StudyGroup: 'StudyGroup'

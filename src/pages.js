@@ -101,10 +101,9 @@ module.exports = {
           return Group.findOne({
             slug: req.params.slug
           }, HandleErrors(res, function(group) {
-            return group.genGroupProfile(function(err, profile) {
-              console.log(err, profile);
+            return group.genGroupProfile(function(err, groupProfile) {
               return res.render('pages/lab', {
-                group: profile
+                group: groupProfile
               });
             });
           }));
@@ -126,7 +125,6 @@ module.exports = {
             if (err || !profile) {
               return res.render404();
             }
-            console.log('profile', err, profile);
             return req.user.doesFollowUser(user2, function(err, bool) {
               return res.render('pages/profile', {
                 profile: profile,
