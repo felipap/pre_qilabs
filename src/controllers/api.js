@@ -64,16 +64,19 @@ module.exports = {
             return Post.find({}, function(err, posts) {
               return Subscriber.find({}, function(err, subscribers) {
                 return Group.find({}, function(err, groups) {
-                  var obj;
-                  obj = {
-                    ip: req.ip,
-                    group: groups,
-                    session: req.session,
-                    users: users,
-                    posts: posts,
-                    subscribers: subscribers
-                  };
-                  return res.end(JSON.stringify(obj));
+                  return Group.Membership.find({}, function(err, membership) {
+                    var obj;
+                    obj = {
+                      ip: req.ip,
+                      group: groups,
+                      membership: membership,
+                      session: req.session,
+                      users: users,
+                      posts: posts,
+                      subscribers: subscribers
+                    };
+                    return res.end(JSON.stringify(obj));
+                  });
                 });
               });
             });
@@ -145,6 +148,34 @@ module.exports = {
                   data: docs,
                   error: false,
                   page: page
+                });
+              }));
+            }));
+          }
+        },
+        ':id/addUser/:userId': {
+          get: function(req, res) {
+            var id, userId;
+            if (!(id = req.paramToObjectId('id'))) {
+              return;
+            }
+            if (!(userId = req.paramToObjectId('userId'))) {
+              return;
+            }
+            return Group.findOne({
+              _id: id
+            }, HandleErrors(res, function(group) {
+              return User.findOne({
+                _id: userId
+              }, HandleErrors(res, function(user) {
+                var type;
+                type = Group.Membership.Types.Member;
+                return req.user.addUserToGroup(user, group, type, function(err, membership) {
+                  console.log('what?', err, membership);
+                  return res.endJson({
+                    error: !!err,
+                    membership: membership
+                  });
                 });
               }));
             }));

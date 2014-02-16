@@ -53,6 +53,8 @@ GroupSchema.pre 'save', (next) ->
 	next()
 
 MembershipSchema.pre 'save', (next) ->
+	console.assert _.values(MembershipSchema.statics.Types).indexOf(@type) isnt -1,
+		"Invalid membership type: #{@type}"
 	@joinDate ?= new Date
 	next()
 
@@ -62,14 +64,14 @@ GroupSchema.methods.addUser = (user, type, cb) ->
 	membership = new Membership {
 		member: user
 		group: @
-		type: type or MembershipTypes.Member
+		type: (cb and type) or MembershipTypes.Member
 	}
 	membership.save(cb)
 
 GroupSchema.methods.genGroupProfile = (cb) ->
 	Membership
 		.find {group: @}
-		.populate 'user'
+		.populate 'member'
 		.exec (err, docs) =>
 			cb(err, _.extend({}, @toObject(), {memberships:docs}))
 

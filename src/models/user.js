@@ -109,9 +109,7 @@ UserSchema.methods.doesFollowUser = function(user2, cb) {
 };
 
 UserSchema.methods.followId = function(userId, cb) {
-  if (!userId) {
-    cb(true);
-  }
+  console.assert(userId);
   return Follow.findOne({
     follower: this.id,
     followee: userId
@@ -189,14 +187,6 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
   });
 };
 
-UserSchema.methods.addToGroups = function(opts, group, cb) {
-  return Post.find({
-    group: group
-  }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
-    return fillComments(docs, cb);
-  });
-};
-
 UserSchema.methods.getLabPosts = function(opts, group, cb) {
   return Post.find({
     group: group
@@ -217,11 +207,53 @@ UserSchema.methods.createGroup = function(data, cb) {
       if (err) {
         return cb(err);
       }
-      return group.addMember(_this, function(err, membership) {
+      return group.addUser(_this, Group.Membership.Types.Moderator, function(err, membership) {
         return cb(err, group);
       });
     };
   })(this));
+};
+
+UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
+  console.assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
+  return Group.Membership.find({
+    group: group,
+    member: this
+  }, function(err, mship) {
+    if (err) {
+      return cb(err);
+    }
+    if (!mship) {
+      return cb({
+        error: true,
+        name: 'Unauthorized'
+      });
+    }
+    return Group.Membership.findOne({
+      group: group,
+      member: member
+    }, function(err, mem) {
+      if (err) {
+        return cb(err, mem);
+      }
+      if (mem) {
+        console.log('meme', mem);
+        mem.type = type;
+        return mem.save(function(err) {
+          return cb(err, mem);
+        });
+      } else {
+        mem = new Group.Membership({
+          member: member,
+          type: type,
+          group: group
+        });
+        return mem.save(function(err) {
+          return cb(err, mem);
+        });
+      }
+    });
+  });
 };
 
 

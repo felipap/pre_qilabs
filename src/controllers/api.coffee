@@ -56,14 +56,16 @@ module.exports = {
 						Post.find {}, (err, posts) ->
 							Subscriber.find {}, (err, subscribers) ->
 								Group.find {}, (err, groups) ->
-									obj =
-										ip: req.ip
-										group: groups
-										session: req.session
-										users: users
-										posts: posts
-										subscribers: subscribers
-									res.end(JSON.stringify(obj))
+									Group.Membership.find {}, (err, membership) ->
+										obj =
+											ip: req.ip
+											group: groups
+											membership: membership
+											session: req.session
+											users: users
+											posts: posts
+											subscribers: subscribers
+										res.end(JSON.stringify(obj))
 			}
 		'testers':
 			permissions: [required.logout]
@@ -113,6 +115,24 @@ module.exports = {
 										page: 	page
 									}
 								)
+						)
+				}
+				':id/addUser/:userId': {
+					get: (req, res) ->
+						return unless id = req.paramToObjectId('id')
+						return unless userId = req.paramToObjectId('userId')
+						Group.findOne {_id: id}, HandleErrors(res, (group) ->
+							User.findOne {_id: userId}, HandleErrors(res, (user) ->
+								type = Group.Membership.Types.Member
+								req.user.addUserToGroup(user, group, type,
+									(err, membership) ->
+										console.log('what?', err, membership)
+										res.endJson {
+											error: !!err,
+											membership: membership
+										}
+								)
+							)
 						)
 				}
 		'posts':

@@ -75,6 +75,7 @@ GroupSchema.pre('save', function(next) {
 });
 
 MembershipSchema.pre('save', function(next) {
+  console.assert(_.values(MembershipSchema.statics.Types).indexOf(this.type) !== -1, "Invalid membership type: " + this.type);
   if (this.joinDate == null) {
     this.joinDate = new Date;
   }
@@ -89,7 +90,7 @@ GroupSchema.methods.addUser = function(user, type, cb) {
   membership = new Membership({
     member: user,
     group: this,
-    type: type || MembershipTypes.Member
+    type: (cb && type) || MembershipTypes.Member
   });
   return membership.save(cb);
 };
@@ -97,7 +98,7 @@ GroupSchema.methods.addUser = function(user, type, cb) {
 GroupSchema.methods.genGroupProfile = function(cb) {
   return Membership.find({
     group: this
-  }).populate('user').exec((function(_this) {
+  }).populate('member').exec((function(_this) {
     return function(err, docs) {
       return cb(err, _.extend({}, _this.toObject(), {
         memberships: docs

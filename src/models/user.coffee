@@ -87,8 +87,7 @@ UserSchema.methods.doesFollowUser = (user2, cb) ->
 #### Actions
 
 UserSchema.methods.followId = (userId, cb) ->
-	if not userId
-		cb(true)
+	console.assert(userId)
 	Follow.findOne {follower:@.id, followee:userId},
 		(err, doc) ->
 			unless doc
@@ -152,16 +151,6 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 ## related to Groups
 
 # This is here because of authentication concerns
-UserSchema.methods.addToGroups = (opts, group, cb) ->
-	Post
-		.find {group: group}
-		.limit opts.limit or 10 
-		.skip opts.skip or 0
-		.populate 'author'
-		.exec (err, docs) ->
-			fillComments(docs, cb)
-
-# This is here because of authentication concerns
 UserSchema.methods.getLabPosts = (opts, group, cb) ->
 	Post
 		.find {group: group}
@@ -179,8 +168,31 @@ UserSchema.methods.createGroup = (data, cb) ->
 	}
 	group.save (err, group) =>
 		return cb(err) if err
-		group.addMember @, (err, membership) ->
+		group.addUser @, Group.Membership.Types.Moderator, (err, membership) ->
 			cb(err, group)
+
+UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
+	console.assert _.all([member, group, type, cb]),
+		"Wrong number of arguments supplied to User.addUserToGroup"
+	# First check for priviledges
+	Group.Membership.find {group: group, member: @}, (err, mship) ->
+		return cb(err) if err
+		return cb(error:true,name:'Unauthorized') if not mship
+			# mship.type isnt Group.Membership.Types.Moderator
+		# req.user is Moderator → good to go
+		Group.Membership.findOne {group: group, member: member}, (err, mem) ->
+			return cb(err, mem) if err
+			if mem
+				console.log('meme', mem)
+				mem.type = type
+				mem.save (err) -> cb(err, mem)
+			else
+				mem = new Group.Membership {
+					member: member
+					type: type
+					group: group
+				}
+				mem.save (err) -> cb(err, mem)
 
 ################################################################################
 ## related to the Posting
