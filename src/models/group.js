@@ -2,9 +2,11 @@
 /*
 Membership is accessible at Group.Membership
  */
-var GroupSchema, Membership, MembershipSchema, MembershipTypes, Types, mongoose;
+var GroupSchema, Membership, MembershipSchema, MembershipTypes, Types, mongoose, _;
 
 mongoose = require('mongoose');
+
+_ = require('underscore');
 
 Types = {
   StudyGroup: 'StudyGroup'
@@ -70,18 +72,29 @@ MembershipSchema.pre('save', function(next) {
   return next();
 });
 
-GroupSchema.methods.addUser = function(user, cb) {
+GroupSchema.methods.addUser = function(user, type, cb) {
   var membership;
+  if (cb == null) {
+    cb = type;
+  }
   membership = new Membership({
     user: user,
     group: this,
-    member: MembershipTypes.Member
+    type: type || MembershipTypes.Member
   });
   return membership.save(cb);
 };
 
 GroupSchema.methods.genGroupProfile = function(cb) {
-  return cb(false, this.toObject());
+  return Membership.find({
+    group: this
+  }).populate('user').exec((function(_this) {
+    return function(err, docs) {
+      return cb(err, _.extend({}, _this.toObject(), {
+        memberships: docs
+      }));
+    };
+  })(this));
 };
 
 MembershipSchema.statics.Types = MembershipTypes;

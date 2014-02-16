@@ -11,6 +11,7 @@ Membership is accessible at Group.Membership
 ################################################################################
 
 mongoose = require 'mongoose'
+_ = require 'underscore'
 
 Types =
 	StudyGroup: 'StudyGroup'
@@ -51,16 +52,21 @@ MembershipSchema.pre 'save', (next) ->
 	next()
 
 # Methods
-GroupSchema.methods.addUser = (user, cb) ->
+GroupSchema.methods.addUser = (user, type, cb) ->
+	cb ?= type
 	membership = new Membership {
 		user: user
 		group: @
-		member: MembershipTypes.Member
+		type: type or MembershipTypes.Member
 	}
 	membership.save(cb)
 
 GroupSchema.methods.genGroupProfile = (cb) ->
-	cb(false, @toObject())
+	Membership
+		.find {group: @}
+		.populate 'user'
+		.exec (err, docs) =>
+			cb(err, _.extend({}, @toObject(), {memberships:docs}))
 
 MembershipSchema.statics.Types = MembershipTypes
 

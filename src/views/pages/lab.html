@@ -13,8 +13,10 @@
 	</div>
 	<div class="body">
 		<div class="following">
-			seguindo:
-			{{ userMacros.renderUserList() }}
+			membros:
+			{% for membership in group.memberships %}
+				{{ userMacros.renderUser(membership.user) }}
+			{% endfor %}
 		</div>
 	</div>
 </div>

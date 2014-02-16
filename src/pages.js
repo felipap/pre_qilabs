@@ -102,6 +102,7 @@ module.exports = {
             slug: req.params.slug
           }, HandleErrors(res, function(group) {
             return group.genGroupProfile(function(err, groupProfile) {
+              console.log(groupProfile);
               return res.render('pages/lab', {
                 group: groupProfile
               });

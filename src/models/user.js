@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Inbox, ObjectId, Post, User, UserSchema, async, fillComments, mongoose, _;
+var Follow, Group, Inbox, ObjectId, Post, User, UserSchema, async, fillComments, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -18,6 +18,8 @@ Inbox = mongoose.model('Inbox');
 Follow = mongoose.model('Follow');
 
 Post = mongoose.model('Post');
+
+Group = mongoose.model('Group');
 
 ObjectId = mongoose.Types.ObjectId;
 
@@ -175,14 +177,6 @@ UserSchema.methods.getTimeline = function(opts, cb) {
   });
 };
 
-UserSchema.methods.getLabPosts = function(opts, group, cb) {
-  return Post.find({
-    group: group
-  }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
-    return fillComments(docs, cb);
-  });
-};
-
 UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
   return Post.find({
     author: userId,
@@ -193,6 +187,41 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     }
     return fillComments(docs, cb);
   });
+};
+
+UserSchema.methods.addToGroups = function(opts, group, cb) {
+  return Post.find({
+    group: group
+  }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
+    return fillComments(docs, cb);
+  });
+};
+
+UserSchema.methods.getLabPosts = function(opts, group, cb) {
+  return Post.find({
+    group: group
+  }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
+    return fillComments(docs, cb);
+  });
+};
+
+UserSchema.methods.createGroup = function(data, cb) {
+  var group;
+  group = new Group({
+    profile: {
+      name: data.profile.name
+    }
+  });
+  return group.save((function(_this) {
+    return function(err, group) {
+      if (err) {
+        return cb(err);
+      }
+      return group.addMember(_this, function(err, membership) {
+        return cb(err, group);
+      });
+    };
+  })(this));
 };
 
 
@@ -213,32 +242,6 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
   });
   return post.save(cb);
 };
-
-
-/*
-Generate stuffed profile for the controller.
- */
-
-UserSchema.methods.genProfile = function(cb) {
-  return this.getFollowers((function(_this) {
-    return function(err, followers) {
-      if (err) {
-        return cb(err);
-      }
-      return _this.getFollowing(function(err, following) {
-        if (err) {
-          return cb(err);
-        }
-        return cb(null, _.extend(_this, {
-          followers: followers,
-          following: following
-        }));
-      });
-    };
-  })(this));
-};
-
-UserSchema.methods.createGroup = function(data) {};
 
 
 /*
@@ -281,6 +284,30 @@ UserSchema.methods.createPost = function(data, cb) {
           }, function() {}));
         }
         return _results;
+      });
+    };
+  })(this));
+};
+
+
+/*
+Generate stuffed profile for the controller.
+ */
+
+UserSchema.methods.genProfile = function(cb) {
+  return this.getFollowers((function(_this) {
+    return function(err, followers) {
+      if (err) {
+        return cb(err);
+      }
+      return _this.getFollowing(function(err, following) {
+        if (err) {
+          return cb(err);
+        }
+        return cb(null, _.extend(_this, {
+          followers: followers,
+          following: following
+        }));
       });
     };
   })(this));

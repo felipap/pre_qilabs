@@ -109,19 +109,20 @@ module.exports = {
     'labs': {
       permissions: [required.login],
       post: function(req, res) {
-        var group;
         console.log(req.body);
-        group = new Group({
+        return req.user.createGroup({
           profile: {
             name: req.body.name
           }
-        });
-        return group.save(function(err, doc) {
-          console.log('saved lab doc', err, doc);
-          return res.endJson({
-            error: !!err,
-            data: doc
-          });
+        }, function(err, doc) {
+          if (err) {
+            req.flash('err', err);
+            if (err) {
+              res.redirect('/labs/create');
+            }
+            return;
+          }
+          return res.redirect('/labs/' + doc.id);
         });
       },
       children: {

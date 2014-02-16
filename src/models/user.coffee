@@ -20,6 +20,7 @@ async = require 'async'
 Inbox 	= mongoose.model 'Inbox'
 Follow 	= mongoose.model 'Follow'
 Post 	= mongoose.model 'Post'
+Group 	= mongoose.model 'Group'
 
 ObjectId = mongoose.Types.ObjectId
 
@@ -107,7 +108,7 @@ UserSchema.methods.unfollowId = (userId, cb) ->
 				cb(err, !!num)
 
 ################################################################################
-## related to the Timeline and Inboxes
+## related to fetching Timelines and Inboxes
 
 fillComments = (docs, cb) ->
 	results = []
@@ -130,10 +131,35 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 		.limit opts.limit or 10
 		.skip opts.skip or 0
 		.exec (err, inboxes) ->
-			if err then return cb(err)
+			return cb(err) if err
 			User.populate inboxes, {path:'post.author'}, (err, docs) ->
-				if err then return cb(err)
+				return cb(err) if err
 				fillComments(_.pluck(docs, 'post'), cb)
+
+UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
+	# Inbox.getUserPosts @, opts, (err, docs) ->
+	Post
+		.find {author: userId, parentPost: null}
+		.sort '-dateCreated'
+		.populate 'author'
+		.limit opts.limit or 10
+		.skip opts.skip or null
+		.exec (err, docs) ->
+			return cb(err) if err
+			fillComments(docs, cb)
+
+################################################################################
+## related to Groups
+
+# This is here because of authentication concerns
+UserSchema.methods.addToGroups = (opts, group, cb) ->
+	Post
+		.find {group: group}
+		.limit opts.limit or 10 
+		.skip opts.skip or 0
+		.populate 'author'
+		.exec (err, docs) ->
+			fillComments(docs, cb)
 
 # This is here because of authentication concerns
 UserSchema.methods.getLabPosts = (opts, group, cb) ->
@@ -145,17 +171,19 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 		.exec (err, docs) ->
 			fillComments(docs, cb)
 
-UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
-	# Inbox.getUserPosts @, opts, (err, docs) ->
-	Post
-		.find {author: userId, parentPost: null}
-		.sort '-dateCreated'
-		.populate 'author'
-		.limit opts.limit or 10
-		.skip opts.skip or null
-		.exec (err, docs) ->
-			if err then return cb(err)
-			fillComments(docs, cb)
+UserSchema.methods.createGroup = (data, cb) ->
+	group = new Group {
+		profile: {
+			name: data.profile.name
+		}
+	}
+	group.save (err, group) =>
+		return cb(err) if err
+		group.addMember @, (err, membership) ->
+			cb(err, group)
+
+################################################################################
+## related to the Posting
 
 ###
 Create a post object with type comment.
@@ -172,19 +200,6 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 		postType: Post.PostTypes.Comment
 	}
 	post.save cb
-
-###
-Generate stuffed profile for the controller.
-###
-UserSchema.methods.genProfile = (cb) ->
-	@getFollowers (err, followers) =>
-		if err then return cb(err)
-		@getFollowing (err, following) =>
-			if err then return cb(err)
-			cb(null, _.extend(@, {followers:followers, following:following}))
-
-UserSchema.methods.createGroup = (data) ->
-
 
 ###
 Create a post object and fan out through inboxes.
@@ -223,6 +238,21 @@ UserSchema.methods.createPost = (data, cb) ->
 						recipient: follower.id,
 						post: post,
 					}, () -> ;
+
+################################################################################
+## related to the generation of profiles
+
+###
+Generate stuffed profile for the controller.
+###
+UserSchema.methods.genProfile = (cb) ->
+	@getFollowers (err, followers) =>
+		return cb(err) if err
+		@getFollowing (err, following) =>
+			return cb(err) if err
+			cb(null, _.extend(@, {followers:followers, following:following}))
+
+
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate')
 

@@ -87,14 +87,17 @@ module.exports = {
 			permissions: [required.login],
 			post: (req, res) ->
 				console.log req.body
-				group = new Group {
-					profile: {
-						name: req.body.name
-					}
-				}
-				group.save (err, doc) ->
-					console.log('saved lab doc', err, doc)
-					res.endJson(error:!!err, data:doc)
+				req.user.createGroup {
+						profile: {
+							name: req.body.name
+						}
+					}, (err, doc) ->
+						if err
+							req.flash('err', err)
+							res.redirect('/labs/create') if err
+							return
+						res.redirect('/labs/'+doc.id)
+
 			children:
 				':id/posts': {
 					get: (req, res) ->
