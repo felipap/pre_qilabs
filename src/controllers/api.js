@@ -139,7 +139,7 @@ module.exports = {
                 skip: 5 * parseInt(req.query.page)
               }, group, HandleErrors(res, function(docs) {
                 var page;
-                page = (docs[0] && -1) || parseInt(req.query.page) || 0;
+                page = (!docs[0] && -1) || parseInt(req.query.page) || 0;
                 return res.endJson({
                   data: docs,
                   error: false,
@@ -345,7 +345,7 @@ module.exports = {
                   skip: 5 * parseInt(req.query.page)
                 }, function(err, docs) {
                   var page;
-                  page = (docs[0] && -1) || parseInt(req.query.page) || 0;
+                  page = (!docs[0] && -1) || parseInt(req.query.page) || 0;
                   return res.end(JSON.stringify({
                     page: page,
                     data: docs,

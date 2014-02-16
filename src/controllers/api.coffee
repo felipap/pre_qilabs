@@ -103,7 +103,7 @@ module.exports = {
 							req.user.getLabPosts {limit:3, skip:5*parseInt(req.query.page)},
 								group,
 								HandleErrors(res, (docs) ->
-									page = (docs[0] and -1) or parseInt(req.query.page) or 0
+									page = (not docs[0] and -1) or parseInt(req.query.page) or 0
 									res.endJson {
 										data: 	docs
 										error: 	false
@@ -261,7 +261,7 @@ module.exports = {
 							(req, res) ->
 								req.user.getTimeline {limit:3, skip:5*parseInt(req.query.page)},
 									(err, docs) ->
-										page = (docs[0] and -1) or parseInt(req.query.page) or 0
+										page = (not docs[0] and -1) or parseInt(req.query.page) or 0
 										# console.log('Fetched timeline:', docs)
 										res.end(JSON.stringify({
 											page: page
