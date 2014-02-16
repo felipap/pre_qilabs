@@ -19,17 +19,13 @@ Subscriber = mongoose.model('Subscriber');
 HandleErrors = function(res, cb) {
   console.assert(typeof cb === 'function');
   return function(err, result) {
-    console.log('result:', err, result);
     if (err) {
       console.log('err handled:', err);
       return res.status(400).endJson({
         error: true
       });
     } else if (!result) {
-      return res.status(404).endJson({
-        error: true,
-        name: 404
-      });
+      return res.render404(404);
     } else {
       return cb(result);
     }
@@ -66,21 +62,15 @@ module.exports = {
   },
   '/feed': {
     name: 'feed',
-    methods: {
-      get: [
-        required.login, function(req, res) {
-          req.user.lastUpdate = new Date();
-          req.user.save();
-          return Tag.getAll(function(err, tags) {
-            return res.render('pages/feed', {
-              tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
-            });
-          });
-        }
-      ],
-      post: function(req, res) {
-        return res.end('<html><head></head><body><script type="text/javascript">' + 'window.top.location="http://meavisa.herokuapp.com"</script>' + '</body></html>');
-      }
+    permissions: [required.login],
+    get: function(req, res) {
+      req.user.lastUpdate = new Date();
+      req.user.save();
+      return Tag.getAll(function(err, tags) {
+        return res.render('pages/feed', {
+          tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
+        });
+      });
     }
   },
   '/painel': {
@@ -104,42 +94,40 @@ module.exports = {
         }
       },
       ':slug': {
-        methods: {
-          get: function(req, res) {
-            if (!req.params.slug) {
-              return res.render404();
-            }
-            return Group.findOne({
-              slug: req.params.slug
-            }, HandleErrors(res, function(group) {
-              return group.genGroupProfile(function(err, profile) {
-                console.log(err, profile);
-                return res.render('pages/lab', {
-                  group: profile
-                });
-              });
-            }));
+        get: function(req, res) {
+          if (!req.params.slug) {
+            return res.render404();
           }
+          return Group.findOne({
+            slug: req.params.slug
+          }, HandleErrors(res, function(group) {
+            return group.genGroupProfile(function(err, profile) {
+              console.log(err, profile);
+              return res.render('pages/lab', {
+                group: profile
+              });
+            });
+          }));
         }
       }
     }
   },
-  '/u/:id': {
+  '/p/:username': {
     name: 'profile',
     methods: {
       get: function(req, res) {
-        if (!req.params.id) {
+        if (!req.params.username) {
           return res.render404();
         }
         return User.findOne({
-          username: username
-        }, HandleErrors(res, function(user) {
-          return user.genProfile(function(err, profile) {
+          username: req.params.username
+        }, HandleErrors(res, function(user2) {
+          return user2.genProfile(function(err, profile) {
             if (err || !profile) {
               return res.render404();
             }
             console.log('profile', err, profile);
-            return req.user.doesFollowId(profile.id, function(err, bool) {
+            return req.user.doesFollowUser(user2, function(err, bool) {
               return res.render('pages/profile', {
                 profile: profile,
                 follows: bool

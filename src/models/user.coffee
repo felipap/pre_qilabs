@@ -77,10 +77,9 @@ UserSchema.methods.countFollowers = (cb) ->
 	Follow.count {followee: @id}, (err, count) ->
 		cb(err, count)
 
-UserSchema.methods.doesFollowId = (userId, cb) ->
-	if not userId
-		cb(true)
-	Follow.findOne {followee:userId, follower:@id},
+UserSchema.methods.doesFollowUser = (user2, cb) ->
+	console.assert(user2.id, 'Passed argument not a user document')
+	Follow.findOne {followee: user2.id, follower:@id},
 		(err, doc) ->
 			cb(err, !!doc)
 
@@ -110,6 +109,18 @@ UserSchema.methods.unfollowId = (userId, cb) ->
 ################################################################################
 ## related to the Timeline and Inboxes
 
+fillComments = (docs, cb) ->
+	results = []
+	async.forEach _.filter(docs, (i) -> i), (post, asyncCb) ->
+			Post.find {parentPost: post}
+				.populate 'author'
+				.exec (err, comments) ->
+					results.push(_.extend({}, post.toObject(), {comments: comments}))
+					asyncCb()
+		, (err) -> cb(err, results)
+
+
+# UserSchema.statics.getPostsToUser = (userId, opts, cb) ->
 UserSchema.methods.getTimeline = (opts, cb) ->
 	Inbox
 		.find {recipient: @id}
@@ -122,17 +133,17 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 			if err then return cb(err)
 			User.populate inboxes, {path:'post.author'}, (err, docs) ->
 				if err then return cb(err)
-				results = []
-				docs = _.filter(_.pluck(docs, 'post'), (i) -> i)
-				async.forEach docs, (post, asyncCb) ->
-						Post.find {parentPost: post}
-							.populate 'author'
-							.exec (err, comments) ->
-								console.log 'post', post
-								results.push(_.extend({}, post.toObject(), {comments: comments}))
-								asyncCb()
-					, (err) -> cb(err, results)
+				fillComments(_.pluck(docs, 'post'), cb)
 
+# This is here because of authentication concerns
+UserSchema.methods.getLabPosts = (opts, group, cb) ->
+	Post
+		.find {group: group}
+		.limit opts.limit or 10 
+		.skip opts.skip or 0
+		.populate 'author'
+		.exec (err, docs) ->
+			fillComments(docs, cb)
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	# Inbox.getUserPosts @, opts, (err, docs) ->
@@ -144,26 +155,7 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.skip opts.skip or null
 		.exec (err, docs) ->
 			if err then return cb(err)
-			results = []
-			console.log('moar', docs, [d if d for d in docs])
-			async.forEach _.filter(d, (i) -> i), (post, asyncCb) ->
-					Post.find {parentPost: post}
-						.populate 'author'
-						.exec (err, comments) ->
-							console.log 'post', post
-							results.push(_.extend({}, post.toObject(), {comments: comments}))
-							asyncCb()
-				, (err) -> cb(err, results)
-
-UserSchema.statics.getPostsToUser = (userId, opts, cb) ->
-	# Inbox.getUserPosts @, opts, (err, docs) ->
-	Post
-		.find {author: userId, parentPost: null}
-		.sort '-dateCreated'
-		.populate 'author'
-		.exec (err, posts) ->
-			console.log('posts', posts)
-			cb(err, posts)
+			fillComments(docs, cb)
 
 ###
 Create a post object with type comment.
@@ -187,7 +179,7 @@ Generate stuffed profile for the controller.
 UserSchema.methods.genProfile = (cb) ->
 	@getFollowers (err, followers) =>
 		if err then return cb(err)
-		@getFollowing (err, following) ->
+		@getFollowing (err, following) =>
 			if err then return cb(err)
 			cb(null, _.extend(@, {followers:followers, following:following}))
 

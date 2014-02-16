@@ -16,12 +16,12 @@ Subscriber = mongoose.model 'Subscriber'
 HandleErrors = (res, cb) ->
 	console.assert typeof cb is 'function'
 	return (err, result) ->
-		console.log('result:', err, result)
+		# console.log('result:', err, result)
 		if err
 			console.log('err handled:', err)
 			res.status(400).endJson(error:true)
 		else if not result
-			res.status(404).endJson(error:true, name:404)
+			res.render404(404)
 		else
 			cb(result)
 
@@ -55,27 +55,20 @@ module.exports = {
 
 	'/feed':
 		name: 'feed'
-		methods: {
-			get: [required.login, (req, res) ->
-				# console.log('logged:', req.user.name, req.user.tags)
-				req.user.lastUpdate = new Date()
-				req.user.save()
-				Tag.getAll (err, tags) ->
-					res.render 'pages/feed',
-						tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
-			],
-			post: (req, res) ->
-				# Redirect from frame inside Facebook?
-				res.end('<html><head></head><body><script type="text/javascript">'+
-						'window.top.location="http://meavisa.herokuapp.com"</script>'+
-						'</body></html>')
-		}
+		permissions: [required.login]
+		get: (req, res) ->
+			# console.log('logged:', req.user.name, req.user.tags)
+			req.user.lastUpdate = new Date()
+			req.user.save()
+			Tag.getAll (err, tags) ->
+				res.render 'pages/feed',
+					tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
 
 	'/painel':
 		name: 'panel'
 		methods: {
 			get: [required.login, (req, res) ->
-				res.render('pages/panel', {})
+				res.render 'pages/panel', {}
 			]
 		}
 
@@ -86,35 +79,33 @@ module.exports = {
 				methods:
 					get: (req, res) ->
 						res.render 'pages/lab_create'
-			':slug':
-				methods: {
-					get: (req, res) ->
-						unless req.params.slug
-							return res.render404()
-
-						Group.findOne {slug: req.params.slug},
-							HandleErrors(res, (group) ->
-								group.genGroupProfile (err, profile) -> # profile?
-									console.log(err, profile)
-									res.render 'pages/lab',
-										group: profile
-							)
-				}
+			':slug': {
+				get: (req, res) ->
+					unless req.params.slug
+						return res.render404()
+					Group.findOne {slug: req.params.slug},
+						HandleErrors(res, (group) ->
+							group.genGroupProfile (err, profile) -> # profile?
+								console.log(err, profile)
+								res.render 'pages/lab',
+									group: profile
+						)
+			}
 		}
 
-	'/u/:id':
+	'/p/:username':
 		name: 'profile'
 		methods: {
 			get: (req, res) ->
-				unless req.params.id
+				unless req.params.username
 					return res.render404()
-				User.findOne {username: username},
-					HandleErrors(res, (user) ->
-						user.genProfile (err, profile) ->
+				User.findOne {username: req.params.username},
+					HandleErrors(res, (user2) ->
+						user2.genProfile (err, profile) ->
 							if err or not profile
 								return res.render404()
 							console.log('profile', err, profile)
-							req.user.doesFollowId profile.id, (err, bool) ->
+							req.user.doesFollowUser user2, (err, bool) ->
 								res.render 'pages/profile', 
 									profile: profile
 									follows: bool

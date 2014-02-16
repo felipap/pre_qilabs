@@ -39,7 +39,6 @@ HandleErrors = (res, cb) ->
 	return (err, result) ->
 		console.log('result:', err, result)
 		if err
-			console.log('err handled:', err)
 			res.status(400).endJson(error:true)
 		else if not result
 			res.status(404).endJson(error:true, name:404)
@@ -67,75 +66,70 @@ module.exports = {
 									res.end(JSON.stringify(obj))
 			}
 		'testers':
-			methods: {
-				post: [required.logout,
-					(req, res) ->
-						req.assert('email', 'Email inválido.').notEmpty().isEmail();
+			permissions: [required.logout]
+			post: (req, res) ->
+				req.assert('email', 'Email inválido.').notEmpty().isEmail();
 
-						if errors = req.validationErrors()
-							console.log('invalid', errors)
-							req.flash('warn', 'Parece que esse email que você digitou é inválido. :O &nbsp;')
-							res.redirect('/')
+				if errors = req.validationErrors()
+					console.log('invalid', errors)
+					req.flash('warn', 'Parece que esse email que você digitou é inválido. :O &nbsp;')
+					res.redirect('/')
+				else
+					Subscriber.findOrCreate {email:req.body.email}, (err, doc, isNew) ->
+						if err
+							req.flash('warn', 'Tivemos problemas para processar o seu email. :O &nbsp;')
+						else unless isNew
+							req.flash('info', 'Ops. Seu email já estava aqui! Adicionamos ele à lista de prioridades. :) &nbsp;')
 						else
-							Subscriber.findOrCreate {email:req.body.email}, (err, doc, isNew) ->
-								if err
-									req.flash('warn', 'Tivemos problemas para processar o seu email. :O &nbsp;')
-								else unless isNew
-									req.flash('info', 'Ops. Seu email já estava aqui! Adicionamos ele à lista de prioridades. :) &nbsp;')
-								else
-									req.flash('info', 'Sucesso! Entraremos em contato. \o/ &nbsp;')
-								res.redirect('/')
-				]
-			}
-
+							req.flash('info', 'Sucesso! Entraremos em contato. \o/ &nbsp;')
+						res.redirect('/')
 		'labs':
-			methods: {
-				post: (req, res) ->
-					console.log req.body
-					group = new Group {
-						profile: {
-							name: req.body.name
-						}
+			permissions: [required.login],
+			post: (req, res) ->
+				console.log req.body
+				group = new Group {
+					profile: {
+						name: req.body.name
 					}
-					group.save (err, doc) ->
-						console.log('saved lab doc', err, doc)
-						res.endJson(error:!!err, data:doc)
-			}
+				}
+				group.save (err, doc) ->
+					console.log('saved lab doc', err, doc)
+					res.endJson(error:!!err, data:doc)
 			children:
-				':id': {
-					children: {
-						'posts': {
-							methods: {
-								get: (req, res) ->
-									return unless id = req.paramToObjectId('id')
-									Post.find {group: id, parentPost: null}
-										.populate 'author'
-										.exec (err, docs) ->
-											res.endJson(error:err, data:docs)
-							}
-						}
-					}
+				':id/posts': {
+					get: (req, res) ->
+						return unless id = req.paramToObjectId('id')
+						Group.findOne {_id: id}, HandleErrors(res, (group) ->
+							req.user.getLabPosts {limit:3, skip:5*parseInt(req.query.page)},
+								group,
+								HandleErrors(res, (docs) ->
+									page = (docs[0] and -1) or parseInt(req.query.page) or 0
+									res.endJson {
+										data: 	docs
+										error: 	false
+										page: 	page
+									}
+								)
+						)
 				}
 		'posts':
 			permissions: [required.login],
-			methods: {
-				post: (req, res) ->
-					if req.body.groupId
-						try
-							groupId = new ObjectId.fromString(req.body.groupId)
-						catch e
-							return res.endJson(error:true, name:'InvalidId')
-					else
-						groupId = null
-					req.user.createPost {
-						groupId: groupId
-						content:
-							title: 'My conquest!'+Math.floor(Math.random()*100)
-							body: req.body.content.body
-					}, (err, doc) ->
-						doc.populate 'author', (err, doc) ->
-							res.end(JSON.stringify({error:false, data:doc}))
-			},
+			post: (req, res) ->
+				if req.body.groupId
+					try
+						groupId = new ObjectId.fromString(req.body.groupId)
+					catch e
+						return res.endJson(error:true, name:'InvalidId')
+				else
+					groupId = null
+				req.user.createPost {
+					groupId: groupId
+					content:
+						title: 'My conquest!'+Math.floor(Math.random()*100)
+						body: req.body.content.body
+				}, (err, doc) ->
+					doc.populate 'author', (err, doc) ->
+						res.end(JSON.stringify({error:false, data:doc}))
 			children: {
 				'/:id': {
 					methods: {
@@ -170,9 +164,9 @@ module.exports = {
 										.exec HandleErrors(res, (post) ->
 											post.getComments HandleErrors(res, (comments) ->
 												res.endJson {
-													page: 0
-													error: false
 													data: comments
+													error: false
+													page: -1 # sending all
 												}
 											)
 										)
@@ -212,13 +206,15 @@ module.exports = {
 							(req, res) ->
 								User.getPostsFromUser req.params.userId,
 									{limit:3, skip:5*parseInt(req.query.page)},
-									(err, docs) ->
-										console.log('Fetched board:', docs)
-										res.end(JSON.stringify({
-											page: 0
-											data: docs 
-											error: false
-										}))
+									HandleErrors(res,
+										(docs) ->
+											console.log('Fetched board:', docs)
+											res.end(JSON.stringify({
+												data: docs 
+												error: false
+												page: parseInt(req.query.page)
+											}))
+									)
 						],
 					}
 				},
@@ -265,10 +261,7 @@ module.exports = {
 							(req, res) ->
 								req.user.getTimeline {limit:3, skip:5*parseInt(req.query.page)},
 									(err, docs) ->
-										if docs[0] is null
-											page = -1
-										else
-											page = parseInt(req.query.page) or 0
+										page = (docs[0] and -1) or parseInt(req.query.page) or 0
 										# console.log('Fetched timeline:', docs)
 										res.end(JSON.stringify({
 											page: page

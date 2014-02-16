@@ -2,22 +2,19 @@
 /*
 Membership is accessible at Group.Membership
  */
-var GroupSchema, Membership, MembershipSchema, MembershipTypes, Types, mongoose;
+var GroupSchema, Membership, MembershipSchema, MembershipTypes, Post, Types, mongoose;
 
 mongoose = require('mongoose');
+
+Post = mongoose.model('Post');
 
 Types = {
   StudyGroup: 'StudyGroup'
 };
 
-MembershipTypes = {
-  Moderator: 'Moderator',
-  User: 'User'
-};
-
 GroupSchema = new mongoose.Schema({
   slug: String,
-  dateCreated: Date,
+  creationDate: Date,
   affiliation: '',
   type: String,
   profile: {
@@ -30,6 +27,11 @@ GroupSchema = new mongoose.Schema({
 }, {
   id: true
 });
+
+MembershipTypes = {
+  Moderator: 'Moderator',
+  Member: 'Member'
+};
 
 MembershipSchema = new mongoose.Schema({
   joinDate: Date,
@@ -57,14 +59,27 @@ GroupSchema.pre('save', function(next) {
   if (this.slug == null) {
     this.slug = '' + this.id;
   }
-  if (this.dateCreated == null) {
-    this.dateCreated = new Date;
+  if (this.creationDate == null) {
+    this.creationDate = new Date;
   }
   return next();
 });
 
-GroupSchema.methods.addUserToGroup = function(user, group, cb) {
-  return MembershipSchema;
+MembershipSchema.pre('save', function(next) {
+  if (this.joinDate == null) {
+    this.joinDate = new Date;
+  }
+  return next();
+});
+
+GroupSchema.methods.addUser = function(user, cb) {
+  var membership;
+  membership = new Membership({
+    user: user,
+    group: this,
+    member: MembershipTypes.Member
+  });
+  return membership.save(cb);
 };
 
 GroupSchema.methods.genGroupProfile = function(cb) {

@@ -12,17 +12,15 @@ Membership is accessible at Group.Membership
 
 mongoose = require 'mongoose'
 
+Post = mongoose.model 'Post'
+
 Types =
 	StudyGroup: 'StudyGroup'
-
-MembershipTypes =
-	Moderator: 	'Moderator'
-	User:		'User'
 
 # Schema
 GroupSchema = new mongoose.Schema {
 	slug: 				String
-	dateCreated: 		Date
+	creationDate: 		Date
 	affiliation: 		'' 			# institution, project, NGOs etc (/????)
 	type: 				String
 	profile: {
@@ -30,6 +28,10 @@ GroupSchema = new mongoose.Schema {
 		description: 	String
 	}
 }, { id: true } # default
+
+MembershipTypes =
+	Moderator: 	'Moderator'
+	Member:		'Member'
 
 MembershipSchema = new mongoose.Schema {
 	joinDate: 	Date,
@@ -43,12 +45,21 @@ GroupSchema.virtual('path').get ->
 
 GroupSchema.pre 'save', (next) ->
 	@slug ?= ''+@id
-	@dateCreated ?= new Date
+	@creationDate ?= new Date
+	next()
+
+MembershipSchema.pre 'save', (next) ->
+	@joinDate ?= new Date
 	next()
 
 # Methods
-GroupSchema.methods.addUserToGroup = (user, group, cb) ->
-	MembershipSchema
+GroupSchema.methods.addUser = (user, cb) ->
+	membership = new Membership {
+		user: user
+		group: @
+		member: MembershipTypes.Member
+	}
+	membership.save(cb)
 
 GroupSchema.methods.genGroupProfile = (cb) ->
 	cb(false, @toObject())

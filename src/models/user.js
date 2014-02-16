@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Inbox, ObjectId, Post, User, UserSchema, async, mongoose, _;
+var Follow, Inbox, ObjectId, Post, User, UserSchema, async, fillComments, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -96,12 +96,10 @@ UserSchema.methods.countFollowers = function(cb) {
   });
 };
 
-UserSchema.methods.doesFollowId = function(userId, cb) {
-  if (!userId) {
-    cb(true);
-  }
+UserSchema.methods.doesFollowUser = function(user2, cb) {
+  console.assert(user2.id, 'Passed argument not a user document');
   return Follow.findOne({
-    followee: userId,
+    followee: user2.id,
     follower: this.id
   }, function(err, doc) {
     return cb(err, !!doc);
@@ -140,6 +138,25 @@ UserSchema.methods.unfollowId = function(userId, cb) {
   });
 };
 
+fillComments = function(docs, cb) {
+  var results;
+  results = [];
+  return async.forEach(_.filter(docs, function(i) {
+    return i;
+  }), function(post, asyncCb) {
+    return Post.find({
+      parentPost: post
+    }).populate('author').exec(function(err, comments) {
+      results.push(_.extend({}, post.toObject(), {
+        comments: comments
+      }));
+      return asyncCb();
+    });
+  }, function(err) {
+    return cb(err, results);
+  });
+};
+
 UserSchema.methods.getTimeline = function(opts, cb) {
   return Inbox.find({
     recipient: this.id
@@ -150,28 +167,19 @@ UserSchema.methods.getTimeline = function(opts, cb) {
     return User.populate(inboxes, {
       path: 'post.author'
     }, function(err, docs) {
-      var results;
       if (err) {
         return cb(err);
       }
-      results = [];
-      docs = _.filter(_.pluck(docs, 'post'), function(i) {
-        return i;
-      });
-      return async.forEach(docs, function(post, asyncCb) {
-        return Post.find({
-          parentPost: post
-        }).populate('author').exec(function(err, comments) {
-          console.log('post', post);
-          results.push(_.extend({}, post.toObject(), {
-            comments: comments
-          }));
-          return asyncCb();
-        });
-      }, function(err) {
-        return cb(err, results);
-      });
+      return fillComments(_.pluck(docs, 'post'), cb);
     });
+  });
+};
+
+UserSchema.methods.getLabPosts = function(opts, group, cb) {
+  return Post.find({
+    group: group
+  }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
+    return fillComments(docs, cb);
   });
 };
 
@@ -180,47 +188,10 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     author: userId,
     parentPost: null
   }).sort('-dateCreated').populate('author').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, docs) {
-    var d, results;
     if (err) {
       return cb(err);
     }
-    results = [];
-    console.log('moar', docs, [
-      (function() {
-        var _i, _len, _results;
-        _results = [];
-        for (_i = 0, _len = docs.length; _i < _len; _i++) {
-          d = docs[_i];
-          _results.push(d);
-        }
-        return _results;
-      })() ? d : void 0
-    ]);
-    return async.forEach(_.filter(d, function(i) {
-      return i;
-    }), function(post, asyncCb) {
-      return Post.find({
-        parentPost: post
-      }).populate('author').exec(function(err, comments) {
-        console.log('post', post);
-        results.push(_.extend({}, post.toObject(), {
-          comments: comments
-        }));
-        return asyncCb();
-      });
-    }, function(err) {
-      return cb(err, results);
-    });
-  });
-};
-
-UserSchema.statics.getPostsToUser = function(userId, opts, cb) {
-  return Post.find({
-    author: userId,
-    parentPost: null
-  }).sort('-dateCreated').populate('author').exec(function(err, posts) {
-    console.log('posts', posts);
-    return cb(err, posts);
+    return fillComments(docs, cb);
   });
 };
 
@@ -258,7 +229,7 @@ UserSchema.methods.genProfile = function(cb) {
         if (err) {
           return cb(err);
         }
-        return cb(null, _.extend(this, {
+        return cb(null, _.extend(_this, {
           followers: followers,
           following: following
         }));

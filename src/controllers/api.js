@@ -40,7 +40,6 @@ HandleErrors = function(res, cb) {
   return function(err, result) {
     console.log('result:', err, result);
     if (err) {
-      console.log('err handled:', err);
       return res.status(400).endJson({
         error: true
       });
@@ -83,111 +82,106 @@ module.exports = {
       }
     },
     'testers': {
-      methods: {
-        post: [
-          required.logout, function(req, res) {
-            var errors;
-            req.assert('email', 'Email inválido.').notEmpty().isEmail();
-            if (errors = req.validationErrors()) {
-              console.log('invalid', errors);
-              req.flash('warn', 'Parece que esse email que você digitou é inválido. :O &nbsp;');
-              return res.redirect('/');
+      permissions: [required.logout],
+      post: function(req, res) {
+        var errors;
+        req.assert('email', 'Email inválido.').notEmpty().isEmail();
+        if (errors = req.validationErrors()) {
+          console.log('invalid', errors);
+          req.flash('warn', 'Parece que esse email que você digitou é inválido. :O &nbsp;');
+          return res.redirect('/');
+        } else {
+          return Subscriber.findOrCreate({
+            email: req.body.email
+          }, function(err, doc, isNew) {
+            if (err) {
+              req.flash('warn', 'Tivemos problemas para processar o seu email. :O &nbsp;');
+            } else if (!isNew) {
+              req.flash('info', 'Ops. Seu email já estava aqui! Adicionamos ele à lista de prioridades. :) &nbsp;');
             } else {
-              return Subscriber.findOrCreate({
-                email: req.body.email
-              }, function(err, doc, isNew) {
-                if (err) {
-                  req.flash('warn', 'Tivemos problemas para processar o seu email. :O &nbsp;');
-                } else if (!isNew) {
-                  req.flash('info', 'Ops. Seu email já estava aqui! Adicionamos ele à lista de prioridades. :) &nbsp;');
-                } else {
-                  req.flash('info', 'Sucesso! Entraremos em contato. \o/ &nbsp;');
-                }
-                return res.redirect('/');
-              });
+              req.flash('info', 'Sucesso! Entraremos em contato. \o/ &nbsp;');
             }
-          }
-        ]
+            return res.redirect('/');
+          });
+        }
       }
     },
     'labs': {
-      methods: {
-        post: function(req, res) {
-          var group;
-          console.log(req.body);
-          group = new Group({
-            profile: {
-              name: req.body.name
-            }
+      permissions: [required.login],
+      post: function(req, res) {
+        var group;
+        console.log(req.body);
+        group = new Group({
+          profile: {
+            name: req.body.name
+          }
+        });
+        return group.save(function(err, doc) {
+          console.log('saved lab doc', err, doc);
+          return res.endJson({
+            error: !!err,
+            data: doc
           });
-          return group.save(function(err, doc) {
-            console.log('saved lab doc', err, doc);
-            return res.endJson({
-              error: !!err,
-              data: doc
-            });
-          });
-        }
+        });
       },
       children: {
-        ':id': {
-          children: {
-            'posts': {
-              methods: {
-                get: function(req, res) {
-                  var id;
-                  if (!(id = req.paramToObjectId('id'))) {
-                    return;
-                  }
-                  return Post.find({
-                    group: id,
-                    parentPost: null
-                  }).populate('author').exec(function(err, docs) {
-                    return res.endJson({
-                      error: err,
-                      data: docs
-                    });
-                  });
-                }
-              }
+        ':id/posts': {
+          get: function(req, res) {
+            var id;
+            if (!(id = req.paramToObjectId('id'))) {
+              return;
             }
+            return Group.findOne({
+              _id: id
+            }, HandleErrors(res, function(group) {
+              return req.user.getLabPosts({
+                limit: 3,
+                skip: 5 * parseInt(req.query.page)
+              }, group, HandleErrors(res, function(docs) {
+                var page;
+                page = (docs[0] && -1) || parseInt(req.query.page) || 0;
+                return res.endJson({
+                  data: docs,
+                  error: false,
+                  page: page
+                });
+              }));
+            }));
           }
         }
       }
     },
     'posts': {
       permissions: [required.login],
-      methods: {
-        post: function(req, res) {
-          var e, groupId;
-          if (req.body.groupId) {
-            try {
-              groupId = new ObjectId.fromString(req.body.groupId);
-            } catch (_error) {
-              e = _error;
-              return res.endJson({
-                error: true,
-                name: 'InvalidId'
-              });
-            }
-          } else {
-            groupId = null;
-          }
-          return req.user.createPost({
-            groupId: groupId,
-            content: {
-              title: 'My conquest!' + Math.floor(Math.random() * 100),
-              body: req.body.content.body
-            }
-          }, function(err, doc) {
-            return doc.populate('author', function(err, doc) {
-              return res.end(JSON.stringify({
-                error: false,
-                data: doc
-              }));
+      post: function(req, res) {
+        var e, groupId;
+        if (req.body.groupId) {
+          try {
+            groupId = new ObjectId.fromString(req.body.groupId);
+          } catch (_error) {
+            e = _error;
+            return res.endJson({
+              error: true,
+              name: 'InvalidId'
             });
-          });
+          }
+        } else {
+          groupId = null;
         }
+        return req.user.createPost({
+          groupId: groupId,
+          content: {
+            title: 'My conquest!' + Math.floor(Math.random() * 100),
+            body: req.body.content.body
+          }
+        }, function(err, doc) {
+          return doc.populate('author', function(err, doc) {
+            return res.end(JSON.stringify({
+              error: false,
+              data: doc
+            }));
+          });
+        });
       },
       children: {
         '/:id': {
@@ -240,9 +234,9 @@ module.exports = {
                   return Post.findById(postId).populate('author').exec(HandleErrors(res, function(post) {
                     return post.getComments(HandleErrors(res, function(comments) {
                       return res.endJson({
-                        page: 0,
+                        data: comments,
                         error: false,
-                        data: comments
+                        page: -1
                       });
                     }));
                   }));
@@ -286,14 +280,14 @@ module.exports = {
                 return User.getPostsFromUser(req.params.userId, {
                   limit: 3,
                   skip: 5 * parseInt(req.query.page)
-                }, function(err, docs) {
+                }, HandleErrors(res, function(docs) {
                   console.log('Fetched board:', docs);
                   return res.end(JSON.stringify({
-                    page: 0,
                     data: docs,
-                    error: false
+                    error: false,
+                    page: parseInt(req.query.page)
                   }));
-                });
+                }));
               }
             ]
           }
@@ -351,11 +345,7 @@ module.exports = {
                   skip: 5 * parseInt(req.query.page)
                 }, function(err, docs) {
                   var page;
-                  if (docs[0] === null) {
-                    page = -1;
-                  } else {
-                    page = parseInt(req.query.page) || 0;
-                  }
+                  page = (docs[0] && -1) || parseInt(req.query.page) || 0;
                   return res.end(JSON.stringify({
                     page: page,
                     data: docs,

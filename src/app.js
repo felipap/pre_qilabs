@@ -154,7 +154,8 @@ require('./lib/router.js')(app)(require('./pages.js'));
 
 // Handle 404
 app.get('*', function (req, res) {
-	res.redirect('/404');
+	res.render('pages/404');
+	// res.redirect('/404');
 });
 
 
