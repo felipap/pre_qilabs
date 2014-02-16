@@ -16,6 +16,10 @@ _ = require 'underscore'
 Types =
 	StudyGroup: 'StudyGroup'
 
+Permissions =
+	Public: 'Public'
+	Private: 'Private'
+
 # Schema
 GroupSchema = new mongoose.Schema {
 	slug: 				String
@@ -26,6 +30,7 @@ GroupSchema = new mongoose.Schema {
 		name:			{ type: String, required: true }
 		description: 	String
 	}
+	permissions: 		{ type: String, default: Permissions.Private }
 }, { id: true } # default
 
 MembershipTypes =
@@ -55,7 +60,7 @@ MembershipSchema.pre 'save', (next) ->
 GroupSchema.methods.addUser = (user, type, cb) ->
 	cb ?= type
 	membership = new Membership {
-		user: user
+		member: user
 		group: @
 		type: type or MembershipTypes.Member
 	}
@@ -71,6 +76,7 @@ GroupSchema.methods.genGroupProfile = (cb) ->
 MembershipSchema.statics.Types = MembershipTypes
 
 GroupSchema.statics.Types = Types
+GroupSchema.statics.Permissions = Permissions
 GroupSchema.statics.findOrCreate = require('./lib/findOrCreate')
 GroupSchema.statics.Membership = Membership = mongoose.model "Membership", MembershipSchema
 

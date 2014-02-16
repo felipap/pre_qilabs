@@ -2,7 +2,7 @@
 /*
 Membership is accessible at Group.Membership
  */
-var GroupSchema, Membership, MembershipSchema, MembershipTypes, Types, mongoose, _;
+var GroupSchema, Membership, MembershipSchema, MembershipTypes, Permissions, Types, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -10,6 +10,11 @@ _ = require('underscore');
 
 Types = {
   StudyGroup: 'StudyGroup'
+};
+
+Permissions = {
+  Public: 'Public',
+  Private: 'Private'
 };
 
 GroupSchema = new mongoose.Schema({
@@ -23,6 +28,10 @@ GroupSchema = new mongoose.Schema({
       required: true
     },
     description: String
+  },
+  permissions: {
+    type: String,
+    "default": Permissions.Private
   }
 }, {
   id: true
@@ -78,7 +87,7 @@ GroupSchema.methods.addUser = function(user, type, cb) {
     cb = type;
   }
   membership = new Membership({
-    user: user,
+    member: user,
     group: this,
     type: type || MembershipTypes.Member
   });
@@ -100,6 +109,8 @@ GroupSchema.methods.genGroupProfile = function(cb) {
 MembershipSchema.statics.Types = MembershipTypes;
 
 GroupSchema.statics.Types = Types;
+
+GroupSchema.statics.Permissions = Permissions;
 
 GroupSchema.statics.findOrCreate = require('./lib/findOrCreate');
 
