@@ -48,6 +48,18 @@
 			{{ userMacros.renderUserList(profile.following.docs) }}
 		</ul>
 	</div>
+
+<div class="box tags">
+	<div class="head">
+		Grupos: ({{ user.groups.length }})
+	</div>
+	<ul class="body user-list">
+		{% for group in user.groups %}
+			<a href="{{ group.path }}">{{ group.profile.name }}</a>
+		{% endfor %}
+	</ul>
+</div>
+
 	<div class="social">
 		<a href="#" data-toggle="tooltip" title="Personal website">
 			<i class="icon-home"></i>
