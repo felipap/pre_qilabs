@@ -274,16 +274,22 @@ UserSchema.methods.genProfile = (cb) ->
 		return cb(err) if err
 		@getFollowing (err, following) =>
 			return cb(err) if err
-			cb(null, _.extend(@, {
-				followers: {
-					docs: followers.slice(0,20)
-					count: followers.length
-				},
-				following: {
-					docs: following.slice(0,20)
-					count: following.length
-				},
-			}))
+			Group.Membership
+				.find {member: @}
+				.populate 'group'
+				.exec (err, memberships) =>
+					return cb(err) if err
+					cb(null, _.extend(@, {
+						followers: {
+							docs: followers.slice(0,20)
+							count: followers.length
+						},
+						following: {
+							docs: following.slice(0,20)
+							count: following.length
+						},
+						groups: _.pluck(memberships, 'group')
+					}))
 
 
 

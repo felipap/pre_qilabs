@@ -362,16 +362,24 @@ UserSchema.methods.genProfile = function(cb) {
         if (err) {
           return cb(err);
         }
-        return cb(null, _.extend(_this, {
-          followers: {
-            docs: followers.slice(0, 20),
-            count: followers.length
-          },
-          following: {
-            docs: following.slice(0, 20),
-            count: following.length
+        return Group.Membership.find({
+          member: _this
+        }).populate('group').exec(function(err, memberships) {
+          if (err) {
+            return cb(err);
           }
-        }));
+          return cb(null, _.extend(_this, {
+            followers: {
+              docs: followers.slice(0, 20),
+              count: followers.length
+            },
+            following: {
+              docs: following.slice(0, 20),
+              count: following.length
+            },
+            groups: _.pluck(memberships, 'group')
+          }));
+        });
       });
     };
   })(this));

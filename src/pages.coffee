@@ -35,6 +35,7 @@ module.exports = {
 					req.user.lastUpdate = new Date()
 					req.user.save()
 					req.user.genProfile (err, profile) ->
+						if err then console.log 'err:', err
 						res.render 'pages/timeline',
 							user_profile: profile
 				else
