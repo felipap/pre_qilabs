@@ -19,22 +19,24 @@
 		<a href="{{ user.profileUrl }} "><span data-info="name">{{ user.name }}</span></a>
 	</div>
 	<div class="body">
-		<div class="following">
-			seguindo:
-			{{ userMacros.renderUserList(user.following) }}
-		</div>
-		<div class="followers">
-			seguidores:
-			{{ userMacros.renderUserList(user.followers) }}
-		</div>
 	</div>
 </div>
 
 <div class="box tags">
 	<div class="head">
-		Seguindo Assuntos: (5)
+		Seguidores: ({{ user.following.count }})
 	</div>
 	<ul class="body">
+		{{ userMacros.renderUserList(user.following.docs) }}
+	</ul>
+</div>
+
+<div class="box tags">
+	<div class="head">
+		Seguindo: ({{ user.followers.count }})
+	</div>
+	<ul class="body">
+		{{ userMacros.renderUserList(user.followers.docs) }}
 	</ul>
 </div>
 

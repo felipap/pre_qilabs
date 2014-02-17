@@ -33,26 +33,20 @@
 
 	<div class="box users-box">
 		<div class="head">
-			Seguido por ({{ profile.followers.length }}):
+			Seguido por ({{ profile.followers.count }}) <a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
 		</div>
 		<ul class="body">
-			{{ userMacros.renderUserList(profile.followers) }}
+			{{ userMacros.renderUserList(profile.followers.docs) }}
 		</ul>
-		<div class="footer">
-			<a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
-		</div>
 	</div>
 
 	<div class="box users-box">
 		<div class="head">
-			Seguindo ({{ profile.following.length }}):
+			Seguindo ({{ profile.following.count }}) <a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
 		</div>
 		<ul class="body">
-			{{ userMacros.renderUserList(profile.following) }}
+			{{ userMacros.renderUserList(profile.following.docs) }}
 		</ul>
-		<div class="footer">
-			<a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
-		</div>
 	</div>
 	<div class="social">
 		<a href="#" data-toggle="tooltip" title="Personal website">

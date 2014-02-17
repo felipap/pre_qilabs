@@ -1,14 +1,18 @@
 
-{% macro renderUser (user) %}
+{#
+# Be carefull not to use the same variable names as parent documents as arguments.
+#}
+
+{% macro renderUser (__arg_user) %}
 <div class="mediaUser">
-	<a href="{{ user.profileUrl }}">
-		<div class="mediaUserAvatar" style="background: url({{ user.avatarUrl }})" data-toggle="tooltip" title="{{ user.username }}" data-placement="bottom"></div>
+	<a href="{{ __arg_user.profileUrl }}">
+		<div class="mediaUserAvatar" style="background: url({{ __arg_user.avatarUrl }})" data-toggle="tooltip" title="{{ __arg_user.username }}" data-placement="bottom"></div>
 	</a>
 </div>
 {% endmacro %}
 
-{% macro renderUserList (list) %}
-	{% for person in list %}
-		{{ renderUser(person) }}
+{% macro renderUserList (__arg_list) %}
+	{% for __arg_person in __arg_list %}
+		{{ renderUser(__arg_person) }}
 	{% endfor %}
 {% endmacro %}

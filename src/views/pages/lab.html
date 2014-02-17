@@ -12,20 +12,17 @@
 		<a href="{{ group.path }} "><span data-info="name">{{ group.profile.name }}</span></a>
 	</div>
 	<div class="body">
-		<div class="following">
-			membros:
-			{% for membership in group.memberships %}
-				{{ userMacros.renderUser(membership.member) }}
-			{% endfor %}
-		</div>
 	</div>
 </div>
 
 <div class="box tags">
 	<div class="head">
-		Seguindo Assuntos: (5)
+		membros: ({{ group.memberships.count }})
 	</div>
 	<ul class="body">
+		{% for membership in group.memberships.docs %}
+			{{ userMacros.renderUser(membership.member.docs) }}
+		{% endfor %}
 	</ul>
 </div>
 

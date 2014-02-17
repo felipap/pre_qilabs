@@ -174,10 +174,11 @@ UserSchema.methods.createGroup = (data, cb) ->
 UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 	console.assert _.all([member, group, type, cb]),
 		"Wrong number of arguments supplied to User.addUserToGroup"
-	# First check for priviledges
-	Group.Membership.find {group: group, member: @}, (err, mship) ->
+	# First check for user's own priviledges
+	Group.Membership.findOne {group: group, member: @}, (err, mship) ->
 		return cb(err) if err
 		return cb(error:true,name:'Unauthorized') if not mship
+		console.log(mship)
 			# mship.type isnt Group.Membership.Types.Moderator
 		# req.user is Moderator → good to go
 		Group.Membership.findOne {group: group, member: member}, (err, mem) ->
@@ -193,6 +194,18 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 					group: group
 				}
 				mem.save (err) -> cb(err, mem)
+
+UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
+	console.assert _.all([member, group, type, cb]),
+		"Wrong number of arguments supplied to User.addUserToGroup"
+	# First check for user's own priviledges
+	Group.Membership.find {group: group, member: @}, (err, mship) ->
+		return cb(err) if err
+		return cb(error:true, name:'Unauthorized') if not mship
+			# mship.type isnt Group.Membership.Types.Moderator
+		# req.user is Moderator → good to go
+		Group.Membership.remove {group: group, member: member}, (err, mem) ->
+			return cb(err, mem) if err
 
 ################################################################################
 ## related to the Posting
@@ -262,7 +275,16 @@ UserSchema.methods.genProfile = (cb) ->
 		return cb(err) if err
 		@getFollowing (err, following) =>
 			return cb(err) if err
-			cb(null, _.extend(@, {followers:followers, following:following}))
+			cb(null, _.extend(@, {
+				followers: {
+					docs: followers.slice(0,20)
+					count: followers.length
+				},
+				following: {
+					docs: following.slice(0,20)
+					count: following.length
+				},
+			}))
 
 
 

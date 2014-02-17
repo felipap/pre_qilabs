@@ -101,7 +101,10 @@ GroupSchema.methods.genGroupProfile = function(cb) {
   }).populate('member').exec((function(_this) {
     return function(err, docs) {
       return cb(err, _.extend({}, _this.toObject(), {
-        memberships: docs
+        memberships: {
+          count: docs.length,
+          docs: docs.splice(0, 20)
+        }
       }));
     };
   })(this));

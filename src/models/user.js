@@ -216,7 +216,7 @@ UserSchema.methods.createGroup = function(data, cb) {
 
 UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
   console.assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
-  return Group.Membership.find({
+  return Group.Membership.findOne({
     group: group,
     member: this
   }, function(err, mship) {
@@ -229,6 +229,7 @@ UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
         name: 'Unauthorized'
       });
     }
+    console.log(mship);
     return Group.Membership.findOne({
       group: group,
       member: member
@@ -251,6 +252,32 @@ UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
         return mem.save(function(err) {
           return cb(err, mem);
         });
+      }
+    });
+  });
+};
+
+UserSchema.methods.removeUserFromGroup = function(member, group, type, cb) {
+  console.assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
+  return Group.Membership.find({
+    group: group,
+    member: this
+  }, function(err, mship) {
+    if (err) {
+      return cb(err);
+    }
+    if (!mship) {
+      return cb({
+        error: true,
+        name: 'Unauthorized'
+      });
+    }
+    return Group.Membership.remove({
+      group: group,
+      member: member
+    }, function(err, mem) {
+      if (err) {
+        return cb(err, mem);
       }
     });
   });
@@ -337,8 +364,14 @@ UserSchema.methods.genProfile = function(cb) {
           return cb(err);
         }
         return cb(null, _.extend(_this, {
-          followers: followers,
-          following: following
+          followers: {
+            docs: followers.slice(0, 20),
+            count: followers.length
+          },
+          following: {
+            docs: following.slice(0, 20),
+            count: following.length
+          }
         }));
       });
     };

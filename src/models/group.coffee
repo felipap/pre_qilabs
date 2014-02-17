@@ -73,7 +73,12 @@ GroupSchema.methods.genGroupProfile = (cb) ->
 		.find {group: @}
 		.populate 'member'
 		.exec (err, docs) =>
-			cb(err, _.extend({}, @toObject(), {memberships:docs}))
+			cb(err, _.extend({}, @toObject(), {
+				memberships: {
+					count: docs.length
+					docs: docs.splice(0,20)
+				}
+			}))
 
 MembershipSchema.statics.Types = MembershipTypes
 
