@@ -177,9 +177,8 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 	# First check for user's own priviledges
 	Group.Membership.findOne {group: group, member: @}, (err, mship) ->
 		return cb(err) if err
-		return cb(error:true,name:'Unauthorized') if not mship
-		console.log(mship)
-			# mship.type isnt Group.Membership.Types.Moderator
+		return cb(error:true,name:'Unauthorized') if not mship or
+			mship.type isnt Group.Membership.Types.Moderator
 		# req.user is Moderator → good to go
 		Group.Membership.findOne {group: group, member: member}, (err, mem) ->
 			return cb(err, mem) if err

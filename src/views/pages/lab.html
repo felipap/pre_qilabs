@@ -19,9 +19,9 @@
 	<div class="head">
 		membros: ({{ group.memberships.count }})
 	</div>
-	<ul class="body">
+	<ul class="body user-list">
 		{% for membership in group.memberships.docs %}
-			{{ userMacros.renderUser(membership.member.docs) }}
+			{{ userMacros.renderUser(membership.member) }}
 		{% endfor %}
 	</ul>
 </div>

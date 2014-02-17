@@ -35,7 +35,7 @@
 		<div class="head">
 			Seguido por ({{ profile.followers.count }}) <a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
 		</div>
-		<ul class="body">
+		<ul class="body user-list">
 			{{ userMacros.renderUserList(profile.followers.docs) }}
 		</ul>
 	</div>
@@ -44,7 +44,7 @@
 		<div class="head">
 			Seguindo ({{ profile.following.count }}) <a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
 		</div>
-		<ul class="body">
+		<ul class="body user-list">
 			{{ userMacros.renderUserList(profile.following.docs) }}
 		</ul>
 	</div>

@@ -26,7 +26,7 @@
 	<div class="head">
 		Seguidores: ({{ user.following.count }})
 	</div>
-	<ul class="body">
+	<ul class="body user-list">
 		{{ userMacros.renderUserList(user.following.docs) }}
 	</ul>
 </div>
@@ -35,7 +35,7 @@
 	<div class="head">
 		Seguindo: ({{ user.followers.count }})
 	</div>
-	<ul class="body">
+	<ul class="body user-list">
 		{{ userMacros.renderUserList(user.followers.docs) }}
 	</ul>
 </div>

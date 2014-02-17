@@ -223,13 +223,12 @@ UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
     if (err) {
       return cb(err);
     }
-    if (!mship) {
+    if (!mship || mship.type !== Group.Membership.Types.Moderator) {
       return cb({
         error: true,
         name: 'Unauthorized'
       });
     }
-    console.log(mship);
     return Group.Membership.findOne({
       group: group,
       member: member
