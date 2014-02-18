@@ -97,6 +97,7 @@ module.exports = {
 					HandleErrors(res, (user2) ->
 						user2.genProfile (err, profile) ->
 							if err or not profile
+								req.logMe "err generating profile", err
 								return res.render404()
 							req.user.doesFollowUser user2, (err, bool) ->
 								res.render 'pages/profile', 

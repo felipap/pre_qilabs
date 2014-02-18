@@ -81,6 +81,11 @@ app.use(function(req, res, next) {
 			return false;
 		}
 	};
+
+	req.logMe = function () {
+		console.log.apply(console, ["<"+req.user.username+">:"].concat([].slice.call(arguments)));
+	}
+
 	next();
 });
 
