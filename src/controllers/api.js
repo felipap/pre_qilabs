@@ -308,7 +308,6 @@ module.exports = {
                 if (!(userId = req.paramToObjectId('userId'))) {
                   return;
                 }
-                req.logMe("fetched board of user " + req.params.userId);
                 return User.getPostsFromUser(userId, {
                   limit: 3,
                   skip: 5 * parseInt(req.query.page)
@@ -331,10 +330,14 @@ module.exports = {
                 if (!(userId = req.paramToObjectId('userId'))) {
                   return;
                 }
-                return req.user.followId(userId, function(err, done) {
-                  return res.end(JSON.stringify({
-                    error: !!err
-                  }));
+                return User.find({
+                  _id: userId
+                }, function(err, user) {
+                  return req.user.dofollowUser(user, function(err, done) {
+                    return res.end(JSON.stringify({
+                      error: !!err
+                    }));
+                  });
                 });
               }
             ]
@@ -348,10 +351,14 @@ module.exports = {
                 if (!(userId = req.paramToObjectId('userId'))) {
                   return;
                 }
-                return req.user.unfollowId(userId, function(err, done) {
-                  return res.end(JSON.stringify({
-                    error: !!err
-                  }));
+                return User.find({
+                  _id: userId
+                }, function(err, user) {
+                  return req.user.unfollowUser(user, function(err, done) {
+                    return res.end(JSON.stringify({
+                      error: !!err
+                    }));
+                  });
                 });
               }
             ]

@@ -16,7 +16,6 @@ Subscriber = mongoose.model 'Subscriber'
 HandleErrors = (res, cb) ->
 	console.assert typeof cb is 'function'
 	return (err, result) ->
-		# console.log('result:', err, result)
 		if err
 			console.log('err handled:', err)
 			res.status(400).endJson(error:true)
@@ -97,7 +96,7 @@ module.exports = {
 					HandleErrors(res, (user2) ->
 						user2.genProfile (err, profile) ->
 							if err or not profile
-								req.logMe "err generating profile", err
+								# req.logMe "err generating profile", err
 								return res.render404()
 							req.user.doesFollowUser user2, (err, bool) ->
 								res.render 'pages/profile', 

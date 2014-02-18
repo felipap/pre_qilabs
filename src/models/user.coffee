@@ -24,25 +24,26 @@ Group 	= mongoose.model 'Group'
 
 ObjectId = mongoose.Types.ObjectId
 
-# Schema
+################################################################################
+################################################################################
+# The Schema
+
 UserSchema = new mongoose.Schema {
 	name:			String
 	username: 		String
 	tags:			Array
-	facebookId:		String
-	accessToken:	String
 
 	notifiable:		{ type: Boolean, default: true }
 	lastUpdate:		{ type: Date, default: Date(0) }
 	firstAccess: 	Date
 	
-	contact: {
-		email: 		String
-	}
-	
+	facebookId:		String
+	accessToken:	String
+
 	profile: {
 		fullName: 	''
 		birthday: 	Date
+		email: 		String
 		city: 		''
 		avatarUrl: 	''
 	},
@@ -61,32 +62,33 @@ UserSchema.virtual('profileUrl').get ->
 ################################################################################
 ## related to Following
 
-UserSchema.methods.getFollowers = (cb) ->
-	
-	Follow.find {followee: @id}, (err, docs) ->
-		User.find {_id: {$in: _.pluck(docs, 'follower')}}, (err, docs) ->
-			cb(err, docs)
+UserSchema.methods.getFollowers = (cb) -> # Add opts to prevent getting all?
+	Follow.find {followee: @}, (err, docs) ->
+		return cb(err) if err
+		followers = _.filter(_.pluck(docs, 'follower'), (i) -> i)
+		User.find {_id: {$in:followers}}, cb
 
-UserSchema.methods.getFollowing = (cb) ->
-	Follow.find {follower: @id}, (err, docs) ->
-		User.find {_id: {$in: _.pluck(docs, 'followee')}}, (err, docs) ->
-			cb(err, docs)
+UserSchema.methods.getFollowing = (cb) -> # Add opts to prevent getting all?
+	Follow.find {follower: @}, (err, docs) ->
+		return cb(err) if err
+		followees = _.filter(_.pluck(docs, 'followee'), (i) -> i)
+		User.find {_id: {$in:followees}}, cb
 
 UserSchema.methods.countFollowers = (cb) ->
-	Follow.count {followee: @id}, (err, count) ->
-		cb(err, count)
+	Follow.count {followee: @}, cb
 
-UserSchema.methods.doesFollowUser = (user2, cb) ->
-	console.assert(user2.id, 'Passed argument not a user document')
-	Follow.findOne {followee: user2.id, follower:@id},
-		(err, doc) ->
-			cb(err, !!doc)
+UserSchema.methods.countFollowees = (cb) ->
+	Follow.count {follower: @}, cb
+
+UserSchema.methods.doesFollowUser = (user, cb) ->
+	console.assert(user instanceof User, 'Passed argument not a user document')
+	Follow.findOne {followee:user.id, follower:@id}, (err, doc) -> cb(err, !!doc)
 
 #### Actions
 
-UserSchema.methods.followId = (userId, cb) ->
-	console.assert(userId)
-	Follow.findOne {follower: @, followee:userId},
+UserSchema.methods.dofollowUser = (user, cb) ->
+	console.assert(user instanceof User, 'Passed argument not a user document')
+	Follow.findOne {follower:@, followee:user},
 		(err, doc) =>
 			unless doc
 				doc = new Follow {
@@ -94,20 +96,19 @@ UserSchema.methods.followId = (userId, cb) ->
 					followee: userId
 				}
 				doc.save()
-				console.log("<#{@.username}> followed: #{doc.followee}")
 			cb(err, !!doc)
 
-UserSchema.methods.unfollowId = (userId, cb) ->
-	Follow.findOne {follower: @, followee: userId},
+UserSchema.methods.unfollowUser = (user, cb) ->
+	console.assert(user instanceof User, 'Passed argument not a user document')
+	Follow.findOne {follower:@, followee:user},
 		(err, doc) ->
-			console.log("<#{@.username}> unfollowing: #{doc.followee}")
-			doc.remove (err, num) ->
-				cb(err, !!num)
+			return cb(err) if err
+			doc.remove cb
 
 ################################################################################
 ## related to fetching Timelines and Inboxes
 
-fillComments = (docs, cb) ->
+fillInPostComments = (docs, cb) ->
 	results = []
 	async.forEach _.filter(docs, (i) -> i), (post, asyncCb) ->
 			Post.find {parentPost: post}
@@ -124,26 +125,24 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 		.find {recipient: @id}
 		.sort '-dateSent'
 		.populate 'post'
-		.select 'post'
 		.limit opts.limit or 10
 		.skip opts.skip or 0
 		.exec (err, inboxes) ->
 			return cb(err) if err
 			User.populate inboxes, {path:'post.author'}, (err, docs) ->
 				return cb(err) if err
-				fillComments(_.pluck(docs, 'post'), cb)
+				fillInPostComments(_.pluck(docs, 'post'), cb)
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
-	# Inbox.getUserPosts @, opts, (err, docs) ->
 	Post
-		.find {author: userId, parentPost: null, group: null}
+		.find {author:userId, parentPost:null, group:null}
 		.sort '-dateCreated'
 		.populate 'author'
 		.limit opts.limit or 10
-		.skip opts.skip or null
+		.skip opts.skip or 0
 		.exec (err, docs) ->
 			return cb(err) if err
-			fillComments(docs, cb)
+			fillInPostComments(docs, cb)
 
 ################################################################################
 ## related to Groups
@@ -156,7 +155,7 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 		.skip opts.skip or 0
 		.populate 'author'
 		.exec (err, docs) ->
-			fillComments(docs, cb)
+			fillInPostComments(docs, cb)
 
 UserSchema.methods.createGroup = (data, cb) ->
 	group = new Group {
@@ -181,7 +180,6 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 		Group.Membership.findOne {group: group, member: member}, (err, mem) ->
 			return cb(err, mem) if err
 			if mem
-				console.log('meme', mem)
 				mem.type = type
 				mem.save (err) -> cb(err, mem)
 			else
@@ -239,7 +237,7 @@ UserSchema.methods.createPost = (data, cb) ->
 		post.group = data.groupId
 
 	post.save (err, post) =>
-			console.log('yes, here', err, post)
+			# console.log('yes, here', err, post)
 			# use asunc.parallel to run a job
 			# Callback now, what happens later doesn't concern the user.
 			cb(err, post)
@@ -278,19 +276,16 @@ UserSchema.methods.genProfile = (cb) ->
 				.exec (err3, memberships) =>
 					profile = _.extend(@,{})
 					if followers
-						console.log('followers')
 						profile.followers = {
 							docs: followers.slice(0,20)
 							count: followers.length
 						}
 					if following
-						console.log('following')
 						profile.following = {
 							docs: following.slice(0,20)
 							count: following.length
 						}
 					if memberships
-						console.log('memberships')
 						profile.groups = _.pluck(memberships, 'group')
 					cb(err1 or err2 or err3, profile)
 

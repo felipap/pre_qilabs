@@ -2,18 +2,19 @@
 // apps.js
 // for meavisa.org, by @f03lipe
 
-// This is the main script.
+// This is the main server script.
 // Set up everything.
 
 // Import environment keys (if in development)
-try { require('./env.js') } catch (e) {}
+try { require('./config/env.js') } catch (e) {}
 
 // Libraries
 var _
 ,	express = require('express')				// *THE* nodejs framework
 ,	passport= require('passport') 				// Authentication framework
 ,	swig 	= require('swig')					// template language processor
-,	expressWinston = require('express-winston')	//
+,	expressWinston = require('express-winston')
+,	winston = require('winston')
 // Utils
 ,	pathLib = require('path')
 ,	fsLib 	= require('fs')
@@ -40,8 +41,6 @@ if (app.get('env') === 'development') {
 	swig.setDefaults({ cache: false });
 }
 
-app.use(express.logger());
-
 /******************************************************************************/
 /* BEGINNING of a DO_NO_TOUCH_ZONE ********************************************/
 app.use(express.methodOverride());
@@ -64,10 +63,10 @@ app.use(express.csrf());
 /******************************************************************************/
 /** BEGINNING of a SHOULD_NOT_TOUCH_ZONE **************************************/
 app.use(function(req, res, next){
-	res.locals.token = req.session._csrf;	// Add csrf token to views.
+	res.locals.token = req.session._csrf; // Add csrf token to views.
 	next();
 });
-app.use(require('connect-flash')());		// Flash messages
+app.use(require('connect-flash')());
 app.use(passport.initialize());
 app.use(passport.session());
 /** END of a SHOULD_NOT_TOUCH_ZONE ------------------------------------------**/
@@ -102,28 +101,29 @@ app.use(function(req, res, next) {
 
 	req.logMe = function () {
 		console.log.apply(console, ["<"+req.user.username+">:"].concat([].slice.call(arguments)));
-	}
+	};
 
-	next();
-});
-
-app.use(function (req, res, next) {
-	if (req.user) {
-		console.log('<'+req.user.username+'> requested '+req.path)
-	}
 	next();
 });
 
 
 /******************************************************************************/
 /** Logging (must be after app.use(app.router)) *******************************/
+// app.use(function (req, res, next) {
+// 	if (req.user) {
+// 		console.log('<'+req.user.username+'> requested '+req.path)
+// 	}
+// 	next();
+// });
 app.use(expressWinston.logger({
 	transports: [
 		new winston.transports.Console({
 			json: true,
 			colorize: true
 		})
-	]
+	],
+	meta: false,
+	msg: "<{{(req.user && req.user.username) || 'anonymous' + '@' + req.connection.remoteAddress}}>: HTTP {{req.method}} {{req.url}}"
 }));
 /***************************** Don't remove. **********************************/
 app.use(app.router); 
@@ -135,9 +135,10 @@ app.use(expressWinston.errorLogger({
 			json: true,
 			colorize: true
 		}),
-	]
+	],
 }));
 /**--------------------------------------------------------------------------**/
+
 
 // app.use(express.logger());
 

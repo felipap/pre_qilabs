@@ -120,7 +120,6 @@ module.exports = {
         }, HandleErrors(res, function(user2) {
           return user2.genProfile(function(err, profile) {
             if (err || !profile) {
-              req.logMe("err generating profile", err);
               return res.render404();
             }
             return req.user.doesFollowUser(user2, function(err, bool) {

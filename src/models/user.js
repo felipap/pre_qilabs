@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, Inbox, ObjectId, Post, User, UserSchema, async, fillComments, mongoose, _;
+var Follow, Group, Inbox, ObjectId, Post, User, UserSchema, async, fillInPostComments, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -27,8 +27,6 @@ UserSchema = new mongoose.Schema({
   name: String,
   username: String,
   tags: Array,
-  facebookId: String,
-  accessToken: String,
   notifiable: {
     type: Boolean,
     "default": true
@@ -38,12 +36,12 @@ UserSchema = new mongoose.Schema({
     "default": Date(0)
   },
   firstAccess: Date,
-  contact: {
-    email: String
-  },
+  facebookId: String,
+  accessToken: String,
   profile: {
     fullName: '',
     birthday: Date,
+    email: String,
     city: '',
     avatarUrl: ''
   },
@@ -63,55 +61,69 @@ UserSchema.virtual('profileUrl').get(function() {
 
 UserSchema.methods.getFollowers = function(cb) {
   return Follow.find({
-    followee: this.id
+    followee: this
   }, function(err, docs) {
+    var followers;
+    if (err) {
+      return cb(err);
+    }
+    followers = _.filter(_.pluck(docs, 'follower'), function(i) {
+      return i;
+    });
     return User.find({
       _id: {
-        $in: _.pluck(docs, 'follower')
+        $in: followers
       }
-    }, function(err, docs) {
-      return cb(err, docs);
-    });
+    }, cb);
   });
 };
 
 UserSchema.methods.getFollowing = function(cb) {
   return Follow.find({
-    follower: this.id
+    follower: this
   }, function(err, docs) {
+    var followees;
+    if (err) {
+      return cb(err);
+    }
+    followees = _.filter(_.pluck(docs, 'followee'), function(i) {
+      return i;
+    });
     return User.find({
       _id: {
-        $in: _.pluck(docs, 'followee')
+        $in: followees
       }
-    }, function(err, docs) {
-      return cb(err, docs);
-    });
+    }, cb);
   });
 };
 
 UserSchema.methods.countFollowers = function(cb) {
   return Follow.count({
-    followee: this.id
-  }, function(err, count) {
-    return cb(err, count);
-  });
+    followee: this
+  }, cb);
 };
 
-UserSchema.methods.doesFollowUser = function(user2, cb) {
-  console.assert(user2.id, 'Passed argument not a user document');
+UserSchema.methods.countFollowees = function(cb) {
+  return Follow.count({
+    follower: this
+  }, cb);
+};
+
+UserSchema.methods.doesFollowUser = function(user, cb) {
+  console.assert(user instanceof User, 'Passed argument not a user document');
   return Follow.findOne({
-    followee: user2.id,
+    followee: user.id,
     follower: this.id
   }, function(err, doc) {
     return cb(err, !!doc);
   });
 };
 
-UserSchema.methods.followId = function(userId, cb) {
-  console.assert(userId);
+UserSchema.methods.dofollowUser = function(user, cb) {
+  console.assert(user instanceof User, 'Passed argument not a user document');
   return Follow.findOne({
     follower: this,
-    followee: userId
+    followee: user
   }, (function(_this) {
     return function(err, doc) {
       if (!doc) {
@@ -120,26 +132,26 @@ UserSchema.methods.followId = function(userId, cb) {
           followee: userId
         });
         doc.save();
-        console.log("<" + _this.username + "> followed: " + doc.followee);
       }
       return cb(err, !!doc);
     };
   })(this));
 };
 
-UserSchema.methods.unfollowId = function(userId, cb) {
+UserSchema.methods.unfollowUser = function(user, cb) {
+  console.assert(user instanceof User, 'Passed argument not a user document');
   return Follow.findOne({
     follower: this,
-    followee: userId
+    followee: user
   }, function(err, doc) {
-    console.log("<" + this.username + "> unfollowing: " + doc.followee);
-    return doc.remove(function(err, num) {
-      return cb(err, !!num);
-    });
+    if (err) {
+      return cb(err);
+    }
+    return doc.remove(cb);
   });
 };
 
-fillComments = function(docs, cb) {
+fillInPostComments = function(docs, cb) {
   var results;
   results = [];
   return async.forEach(_.filter(docs, function(i) {
@@ -161,7 +173,7 @@ fillComments = function(docs, cb) {
 UserSchema.methods.getTimeline = function(opts, cb) {
   return Inbox.find({
     recipient: this.id
-  }).sort('-dateSent').populate('post').select('post').limit(opts.limit || 10).skip(opts.skip || 0).exec(function(err, inboxes) {
+  }).sort('-dateSent').populate('post').limit(opts.limit || 10).skip(opts.skip || 0).exec(function(err, inboxes) {
     if (err) {
       return cb(err);
     }
@@ -171,7 +183,7 @@ UserSchema.methods.getTimeline = function(opts, cb) {
       if (err) {
         return cb(err);
       }
-      return fillComments(_.pluck(docs, 'post'), cb);
+      return fillInPostComments(_.pluck(docs, 'post'), cb);
     });
   });
 };
@@ -181,11 +193,11 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     author: userId,
     parentPost: null,
     group: null
-  }).sort('-dateCreated').populate('author').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, docs) {
+  }).sort('-dateCreated').populate('author').limit(opts.limit || 10).skip(opts.skip || 0).exec(function(err, docs) {
     if (err) {
       return cb(err);
     }
-    return fillComments(docs, cb);
+    return fillInPostComments(docs, cb);
   });
 };
 
@@ -193,7 +205,7 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
   return Post.find({
     group: group
   }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
-    return fillComments(docs, cb);
+    return fillInPostComments(docs, cb);
   });
 };
 
@@ -239,7 +251,6 @@ UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
         return cb(err, mem);
       }
       if (mem) {
-        console.log('meme', mem);
         mem.type = type;
         return mem.save(function(err) {
           return cb(err, mem);
@@ -322,7 +333,6 @@ UserSchema.methods.createPost = function(data, cb) {
   }
   return post.save((function(_this) {
     return function(err, post) {
-      console.log('yes, here', err, post);
       cb(err, post);
       if (post.group) {
         return;
@@ -370,21 +380,18 @@ UserSchema.methods.genProfile = function(cb) {
           var profile;
           profile = _.extend(_this, {});
           if (followers) {
-            console.log('followers');
             profile.followers = {
               docs: followers.slice(0, 20),
               count: followers.length
             };
           }
           if (following) {
-            console.log('following');
             profile.following = {
               docs: following.slice(0, 20),
               count: following.length
             };
           }
           if (memberships) {
-            console.log('memberships');
             profile.groups = _.pluck(memberships, 'group');
           }
           return cb(err1 || err2 || err3, profile);

@@ -51,6 +51,7 @@ module.exports = {
 			permissions: [required.isMe]
 			methods: {
 				get: (req, res) ->
+					# This be ugly but me don't care.
 					User.find {}, (err, users) ->
 						Post.find {}, (err, posts) ->
 							Subscriber.find {}, (err, subscribers) ->
@@ -86,7 +87,6 @@ module.exports = {
 		'labs':
 			permissions: [required.login],
 			post: (req, res) ->
-				# console.log req.body
 				req.user.createGroup {
 						profile: {
 							name: req.body.name
@@ -225,7 +225,7 @@ module.exports = {
 						get: [required.login,
 							(req, res) ->
 								return unless userId = req.paramToObjectId('userId') 
-								req.logMe("fetched board of user #{req.params.userId}")
+								# req.logMe("fetched board of user #{req.params.userId}")
 								User.getPostsFromUser userId,
 									{limit:3, skip:5*parseInt(req.query.page)},
 									HandleErrors(res,
@@ -244,10 +244,11 @@ module.exports = {
 						post: [required.login,
 							(req, res) ->
 								return unless userId = req.paramToObjectId('userId')
-								req.user.followId userId, (err, done) ->
-									res.end(JSON.stringify({
-										error: !!err,
-									}))
+								User.find {_id: userId}, (err, user) ->
+									req.user.dofollowUser user, (err, done) ->
+										res.end(JSON.stringify({
+											error: !!err,
+										}))
 						],
 					}
 				},
@@ -256,10 +257,11 @@ module.exports = {
 						post: [required.login,
 							(req, res) ->
 								return unless userId = req.paramToObjectId('userId')
-								req.user.unfollowId userId, (err, done) ->
-									res.end(JSON.stringify({
-										error: !!err,
-									}))
+								User.find {_id: userId}, (err, user) ->
+									req.user.unfollowUser user, (err, done) ->
+										res.end(JSON.stringify({
+											error: !!err,
+										}))
 						],
 					}
 				},	
