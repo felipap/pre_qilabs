@@ -62,6 +62,7 @@ UserSchema.virtual('profileUrl').get ->
 ## related to Following
 
 UserSchema.methods.getFollowers = (cb) ->
+	
 	Follow.find {followee: @id}, (err, docs) ->
 		User.find {_id: {$in: _.pluck(docs, 'follower')}}, (err, docs) ->
 			cb(err, docs)

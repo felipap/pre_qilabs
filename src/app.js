@@ -9,35 +9,41 @@
 try { require('./env.js') } catch (e) {}
 
 // Libraries
-var flash 	= require('connect-flash'),
-	passport= require('passport'),
-	connect = require('connect'),
-	express = require('express'),
-	swig 	= require('swig'),
+var _
+,	express = require('express')				// *THE* nodejs framework
+,	passport= require('passport') 				// Authentication framework
+,	swig 	= require('swig')					// template language processor
+,	expressWinston = require('express-winston')	//
 // Utils
-	pathLib = require('path'),
-	fsLib 	= require('fs')
+,	pathLib = require('path')
+,	fsLib 	= require('fs')
+// Configuration
+,	mongoose = require('./config/mongoose.js') // Set-up mongoose
 ;
 
-var mongoose = require('./config/mongoose.js');
 var app = module.exports = express();
-require('./config/passport.js')();
 require('./config/app_config.js')(app);
+require('./config/passport.js')();
 
+/*
+** Template engines and static files. **/
 app.engine('html', swig.renderFile)
-app.set('view engine', 'html'); // make '.html' the default
-app.set('views', app.config.viewsRoot); // set views for error and 404 pages
-app.set('view options', {layout: false}); // disable layout
+app.set('view engine', 'html'); 			// make '.html' the default
+app.set('views', app.config.viewsRoot); 	// set views for error and 404 pages
 app.set('view cache', false);
-app.use(connect.compress());
+app.use(require('connect').compress());
 app.use(express.static(pathLib.join(app.config.staticRoot, 'robots.txt')));
 app.use(express.static(pathLib.join(app.config.staticRoot, 'people.txt')));
 app.use(express.favicon(pathLib.join(app.config.staticRoot, 'favicon.ico')));
 
+if (app.get('env') === 'development') {
+	swig.setDefaults({ cache: false });
+}
+
+app.use(express.logger());
+
 /******************************************************************************/
-/******************************************************************************/
-/* BEGINNING of DO_NO_TOUCH_ZONE */
-// app.use(express.logger());
+/* BEGINNING of a DO_NO_TOUCH_ZONE ********************************************/
 app.use(express.methodOverride());
 app.use(express.bodyParser());
 app.use(require('express-validator')());
@@ -46,19 +52,31 @@ app.use(express.cookieParser());
 app.use(express.session({
 	secret: process.env.SESSION_SECRET || 'mysecret',
 	maxAge: new Date(Date.now() + 3600000),
-	store: 	new (require('connect-mongo')(express))({ mongoose_connection: mongoose.connection })
+	store: 	new (require('connect-mongo')(express))({
+		mongoose_connection: mongoose.connection
+	})
 }));
 app.use(express.csrf());
-app.use(function(req, res, next){ res.locals.token = req.session._csrf; next(); });
-app.use(flash());
+/** END of a DO_NO_TOUCH_ZONE -----------------------------------------------**/
+/**--------------------------------------------------------------------------**/
+
+
+/******************************************************************************/
+/** BEGINNING of a SHOULD_NOT_TOUCH_ZONE **************************************/
+app.use(function(req, res, next){
+	res.locals.token = req.session._csrf;	// Add csrf token to views.
+	next();
+});
+app.use(require('connect-flash')());		// Flash messages
 app.use(passport.initialize());
 app.use(passport.session());
-/* END of DO_NO_TOUCH_ZONE */
-/******************************************************************************/
-/******************************************************************************/
+/** END of a SHOULD_NOT_TOUCH_ZONE ------------------------------------------**/
+/**--------------------------------------------------------------------------**/
+
 
 app.use(require('./config/middlewares/flash_messages.js'));
 app.use(require('./config/middlewares/local_user.js'));
+
 app.use(function(req, res, next) {
 	res.endJson = function (data) {
 		res.end(JSON.stringify(data));
@@ -96,15 +114,32 @@ app.use(function (req, res, next) {
 	next();
 });
 
-/******************************************************************************/
-/* Don't touch EITHER. */
-app.use(app.router);
-/******************************************************************************/
-// app.use(express.logger());
 
-if (app.get('env') === 'development') {
-	swig.setDefaults({ cache: false });
-}
+/******************************************************************************/
+/** Logging (must be after app.use(app.router)) *******************************/
+app.use(expressWinston.logger({
+	transports: [
+		new winston.transports.Console({
+			json: true,
+			colorize: true
+		})
+	]
+}));
+/***************************** Don't remove. **********************************/
+app.use(app.router); 
+/******************************************************************************/
+/** Error logging (must be after app.use(app.router)) *************************/
+app.use(expressWinston.errorLogger({
+	transports: [
+		new winston.transports.Console({
+			json: true,
+			colorize: true
+		}),
+	]
+}));
+/**--------------------------------------------------------------------------**/
+
+// app.use(express.logger());
 
 app.locals({
 	tags: {},
@@ -166,12 +201,14 @@ require('./lib/router.js')(app)(require('./pages.js'));
 // Handle 404
 app.get('*', function (req, res) {
 	res.render('pages/404');
-	// res.redirect('/404');
 });
 
-
+/******************************************************************************/
+/* BEGINNING of a DO_NO_TOUCH_ZONE ********************************************/
 var server = require('http')
 		.createServer(app)
 		.listen(process.env.PORT || 3000, function () {
 	console.log('Server on port %d in %s mode', server.address().port, app.settings.env);
 });
+/** END of a DO_NO_TOUCH_ZONE -----------------------------------------------**/
+/**--------------------------------------------------------------------------**/
