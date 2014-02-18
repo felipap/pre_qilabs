@@ -63,7 +63,6 @@ UserSchema.virtual('profileUrl').get ->
 
 UserSchema.methods.getFollowers = (cb) ->
 	Follow.find {followee: @id}, (err, docs) ->
-		console.log('followers:', docs, _.pluck(docs, 'follower'))
 		User.find {_id: {$in: _.pluck(docs, 'follower')}}, (err, docs) ->
 			cb(err, docs)
 
@@ -86,21 +85,21 @@ UserSchema.methods.doesFollowUser = (user2, cb) ->
 
 UserSchema.methods.followId = (userId, cb) ->
 	console.assert(userId)
-	Follow.findOne {follower:@.id, followee:userId},
-		(err, doc) ->
+	Follow.findOne {follower: @, followee:userId},
+		(err, doc) =>
 			unless doc
 				doc = new Follow {
-					follower: @.id
+					follower: @
 					followee: userId
 				}
 				doc.save()
-				console.log("<#{@.username}> followed: #{doc.userId}")
+				console.log("<#{@.username}> followed: #{doc.followee}")
 			cb(err, !!doc)
 
 UserSchema.methods.unfollowId = (userId, cb) ->
-	Follow.findOne {follower:@id, followee:userId},
+	Follow.findOne {follower: @, followee: userId},
 		(err, doc) ->
-			console.log("<#{@.username}> unfollowing: #{doc.userId}")
+			console.log("<#{@.username}> unfollowing: #{doc.followee}")
 			doc.remove (err, num) ->
 				cb(err, !!num)
 
@@ -268,26 +267,31 @@ UserSchema.methods.createPost = (data, cb) ->
 Generate stuffed profile for the controller.
 ###
 UserSchema.methods.genProfile = (cb) ->
-	@getFollowers (err, followers) =>
-		return cb(''+err) if err
-		@getFollowing (err, following) =>
-			return cb(''+err+"peguei os following") if err
+	@getFollowers (err1, followers) =>
+		if err1 then followers = null
+		@getFollowing (err2, following) =>
+			if err2 then following = null
 			Group.Membership
 				.find {member: @}
 				.populate 'group'
-				.exec (err, memberships) =>
-					return cb(err) if err
-					cb(null, _.extend(@, {
-						followers: {
+				.exec (err3, memberships) =>
+					profile = _.extend(@,{})
+					if followers
+						console.log('followers')
+						profile.followers = {
 							docs: followers.slice(0,20)
 							count: followers.length
-						},
-						following: {
+						}
+					if following
+						console.log('following')
+						profile.following = {
 							docs: following.slice(0,20)
 							count: following.length
-						},
-						groups: _.pluck(memberships, 'group')
-					}))
+						}
+					if memberships
+						console.log('memberships')
+						profile.groups = _.pluck(memberships, 'group')
+					cb(err1 or err2 or err3, profile)
 
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate')

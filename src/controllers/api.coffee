@@ -225,7 +225,7 @@ module.exports = {
 						get: [required.login,
 							(req, res) ->
 								return unless userId = req.paramToObjectId('userId') 
-								console.log("<#{req.user.username}> fetched board of user #{req.params.userId}")
+								req.logMe("fetched board of user #{req.params.userId}")
 								User.getPostsFromUser userId,
 									{limit:3, skip:5*parseInt(req.query.page)},
 									HandleErrors(res,
@@ -243,7 +243,8 @@ module.exports = {
 					methods: {
 						post: [required.login,
 							(req, res) ->
-								req.user.followId req.params.userId, (err, done) ->
+								return unless userId = req.paramToObjectId('userId')
+								req.user.followId userId, (err, done) ->
 									res.end(JSON.stringify({
 										error: !!err,
 									}))
@@ -254,7 +255,8 @@ module.exports = {
 					methods: {
 						post: [required.login,
 							(req, res) ->
-								req.user.unfollowId req.params.userId, (err, done) ->
+								return unless userId = req.paramToObjectId('userId')
+								req.user.unfollowId userId, (err, done) ->
 									res.end(JSON.stringify({
 										error: !!err,
 									}))

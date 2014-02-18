@@ -308,7 +308,7 @@ module.exports = {
                 if (!(userId = req.paramToObjectId('userId'))) {
                   return;
                 }
-                console.log("<" + req.user.username + "> fetched board of user " + req.params.userId);
+                req.logMe("fetched board of user " + req.params.userId);
                 return User.getPostsFromUser(userId, {
                   limit: 3,
                   skip: 5 * parseInt(req.query.page)
@@ -327,7 +327,11 @@ module.exports = {
           methods: {
             post: [
               required.login, function(req, res) {
-                return req.user.followId(req.params.userId, function(err, done) {
+                var userId;
+                if (!(userId = req.paramToObjectId('userId'))) {
+                  return;
+                }
+                return req.user.followId(userId, function(err, done) {
                   return res.end(JSON.stringify({
                     error: !!err
                   }));
@@ -340,7 +344,11 @@ module.exports = {
           methods: {
             post: [
               required.login, function(req, res) {
-                return req.user.unfollowId(req.params.userId, function(err, done) {
+                var userId;
+                if (!(userId = req.paramToObjectId('userId'))) {
+                  return;
+                }
+                return req.user.unfollowId(userId, function(err, done) {
                   return res.end(JSON.stringify({
                     error: !!err
                   }));

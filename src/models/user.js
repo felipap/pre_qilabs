@@ -65,7 +65,6 @@ UserSchema.methods.getFollowers = function(cb) {
   return Follow.find({
     followee: this.id
   }, function(err, docs) {
-    console.log('followers:', docs, _.pluck(docs, 'follower'));
     return User.find({
       _id: {
         $in: _.pluck(docs, 'follower')
@@ -111,27 +110,29 @@ UserSchema.methods.doesFollowUser = function(user2, cb) {
 UserSchema.methods.followId = function(userId, cb) {
   console.assert(userId);
   return Follow.findOne({
-    follower: this.id,
+    follower: this,
     followee: userId
-  }, function(err, doc) {
-    if (!doc) {
-      doc = new Follow({
-        follower: this.id,
-        followee: userId
-      });
-      doc.save();
-      console.log("<" + this.username + "> followed: " + doc.userId);
-    }
-    return cb(err, !!doc);
-  });
+  }, (function(_this) {
+    return function(err, doc) {
+      if (!doc) {
+        doc = new Follow({
+          follower: _this,
+          followee: userId
+        });
+        doc.save();
+        console.log("<" + _this.username + "> followed: " + doc.followee);
+      }
+      return cb(err, !!doc);
+    };
+  })(this));
 };
 
 UserSchema.methods.unfollowId = function(userId, cb) {
   return Follow.findOne({
-    follower: this.id,
+    follower: this,
     followee: userId
   }, function(err, doc) {
-    console.log("<" + this.username + "> unfollowing: " + doc.userId);
+    console.log("<" + this.username + "> unfollowing: " + doc.followee);
     return doc.remove(function(err, num) {
       return cb(err, !!num);
     });
@@ -355,31 +356,38 @@ Generate stuffed profile for the controller.
 
 UserSchema.methods.genProfile = function(cb) {
   return this.getFollowers((function(_this) {
-    return function(err, followers) {
-      if (err) {
-        return cb('' + err);
+    return function(err1, followers) {
+      if (err1) {
+        followers = null;
       }
-      return _this.getFollowing(function(err, following) {
-        if (err) {
-          return cb('' + err + "peguei os following");
+      return _this.getFollowing(function(err2, following) {
+        if (err2) {
+          following = null;
         }
         return Group.Membership.find({
           member: _this
-        }).populate('group').exec(function(err, memberships) {
-          if (err) {
-            return cb(err);
-          }
-          return cb(null, _.extend(_this, {
-            followers: {
+        }).populate('group').exec(function(err3, memberships) {
+          var profile;
+          profile = _.extend(_this, {});
+          if (followers) {
+            console.log('followers');
+            profile.followers = {
               docs: followers.slice(0, 20),
               count: followers.length
-            },
-            following: {
+            };
+          }
+          if (following) {
+            console.log('following');
+            profile.following = {
               docs: following.slice(0, 20),
               count: following.length
-            },
-            groups: _.pluck(memberships, 'group')
-          }));
+            };
+          }
+          if (memberships) {
+            console.log('memberships');
+            profile.groups = _.pluck(memberships, 'group');
+          }
+          return cb(err1 || err2 || err3, profile);
         });
       });
     };
