@@ -358,10 +358,12 @@ UserSchema.methods.genProfile = function(cb) {
       if (err) {
         return cb(err);
       }
+      console.log("peguei os followers");
       return _this.getFollowing(function(err, following) {
         if (err) {
           return cb(err);
         }
+        console.log("peguei os following");
         return Group.Membership.find({
           member: _this
         }).populate('group').exec(function(err, memberships) {

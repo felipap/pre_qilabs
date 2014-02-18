@@ -269,8 +269,10 @@ Generate stuffed profile for the controller.
 UserSchema.methods.genProfile = (cb) ->
 	@getFollowers (err, followers) =>
 		return cb(err) if err
+		console.log "peguei os followers"
 		@getFollowing (err, following) =>
 			return cb(err) if err
+			console.log "peguei os following"
 			Group.Membership
 				.find {member: @}
 				.populate 'group'
