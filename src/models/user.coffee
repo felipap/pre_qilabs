@@ -292,7 +292,6 @@ UserSchema.methods.genProfile = (cb) ->
 					}))
 
 
-
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
 module.exports = User = mongoose.model "User", UserSchema

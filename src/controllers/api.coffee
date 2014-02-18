@@ -37,7 +37,6 @@ Subscriber = mongoose.model 'Subscriber'
 HandleErrors = (res, cb) ->
 	console.assert typeof cb is 'function'
 	return (err, result) ->
-		console.log('result:', err, result)
 		if err
 			res.status(400).endJson(error:true)
 		else if not result
@@ -73,7 +72,6 @@ module.exports = {
 				req.assert('email', 'Email inválido.').notEmpty().isEmail();
 
 				if errors = req.validationErrors()
-					console.log('invalid', errors)
 					req.flash('warn', 'Parece que esse email que você digitou é inválido. :O &nbsp;')
 					res.redirect('/')
 				else
@@ -88,7 +86,7 @@ module.exports = {
 		'labs':
 			permissions: [required.login],
 			post: (req, res) ->
-				console.log req.body
+				# console.log req.body
 				req.user.createGroup {
 						profile: {
 							name: req.body.name
@@ -126,7 +124,7 @@ module.exports = {
 								type = Group.Membership.Types.Member
 								req.user.addUserToGroup(user, group, type,
 									(err, membership) ->
-										console.log('what?', err, membership)
+										# console.log('what?', err, membership)
 										res.endJson {
 											error: !!err,
 											membership: membership
@@ -196,7 +194,6 @@ module.exports = {
 								post: 
 									(req, res) ->
 										return if not postId = req.paramToObjectId('id')
-										console.log req.body.content
 										data = {
 											content: {
 												body: req.body.content.body
@@ -232,7 +229,7 @@ module.exports = {
 									{limit:3, skip:5*parseInt(req.query.page)},
 									HandleErrors(res,
 										(docs) ->
-											console.log('Fetched board:', docs)
+											console.log('Fetched board', req.user.username, ' for user', docs[0].author.username)
 											res.end(JSON.stringify({
 												data: docs 
 												error: false

@@ -38,7 +38,6 @@ Subscriber = mongoose.model('Subscriber');
 HandleErrors = function(res, cb) {
   console.assert(typeof cb === 'function');
   return function(err, result) {
-    console.log('result:', err, result);
     if (err) {
       return res.status(400).endJson({
         error: true
@@ -90,7 +89,6 @@ module.exports = {
         var errors;
         req.assert('email', 'Email inválido.').notEmpty().isEmail();
         if (errors = req.validationErrors()) {
-          console.log('invalid', errors);
           req.flash('warn', 'Parece que esse email que você digitou é inválido. :O &nbsp;');
           return res.redirect('/');
         } else {
@@ -112,7 +110,6 @@ module.exports = {
     'labs': {
       permissions: [required.login],
       post: function(req, res) {
-        console.log(req.body);
         return req.user.createGroup({
           profile: {
             name: req.body.name
@@ -171,7 +168,6 @@ module.exports = {
                 var type;
                 type = Group.Membership.Types.Member;
                 return req.user.addUserToGroup(user, group, type, function(err, membership) {
-                  console.log('what?', err, membership);
                   return res.endJson({
                     error: !!err,
                     membership: membership
@@ -278,7 +274,6 @@ module.exports = {
                   if (!(postId = req.paramToObjectId('id'))) {
                     return;
                   }
-                  console.log(req.body.content);
                   data = {
                     content: {
                       body: req.body.content.body
@@ -317,7 +312,7 @@ module.exports = {
                   limit: 3,
                   skip: 5 * parseInt(req.query.page)
                 }, HandleErrors(res, function(docs) {
-                  console.log('Fetched board:', docs);
+                  console.log('Fetched board', req.user.username, ' for user', docs[0].author.username);
                   return res.end(JSON.stringify({
                     data: docs,
                     error: false,
