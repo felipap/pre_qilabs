@@ -63,6 +63,7 @@ UserSchema.virtual('profileUrl').get ->
 
 UserSchema.methods.getFollowers = (cb) ->
 	Follow.find {followee: @id}, (err, docs) ->
+		console.log('followers:', docs, _.pluck(docs, 'follower'))
 		User.find {_id: {$in: _.pluck(docs, 'follower')}}, (err, docs) ->
 			cb(err, docs)
 
@@ -268,7 +269,7 @@ Generate stuffed profile for the controller.
 ###
 UserSchema.methods.genProfile = (cb) ->
 	@getFollowers (err, followers) =>
-		return cb(''+err+"peguei os followers") if err
+		return cb(''+err) if err
 		@getFollowing (err, following) =>
 			return cb(''+err+"peguei os following") if err
 			Group.Membership

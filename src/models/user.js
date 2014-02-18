@@ -65,6 +65,7 @@ UserSchema.methods.getFollowers = function(cb) {
   return Follow.find({
     followee: this.id
   }, function(err, docs) {
+    console.log('followers:', docs, _.pluck(docs, 'follower'));
     return User.find({
       _id: {
         $in: _.pluck(docs, 'follower')
@@ -356,7 +357,7 @@ UserSchema.methods.genProfile = function(cb) {
   return this.getFollowers((function(_this) {
     return function(err, followers) {
       if (err) {
-        return cb('' + err + "peguei os followers");
+        return cb('' + err);
       }
       return _this.getFollowing(function(err, following) {
         if (err) {
