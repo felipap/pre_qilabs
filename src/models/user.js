@@ -178,7 +178,8 @@ UserSchema.methods.getTimeline = function(opts, cb) {
 UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
   return Post.find({
     author: userId,
-    parentPost: null
+    parentPost: null,
+    group: null
   }).sort('-dateCreated').populate('author').limit(opts.limit || 10).skip(opts.skip || null).exec(function(err, docs) {
     if (err) {
       return cb(err);

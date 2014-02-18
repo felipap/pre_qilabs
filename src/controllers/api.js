@@ -309,7 +309,11 @@ module.exports = {
           methods: {
             get: [
               required.login, function(req, res) {
-                return User.getPostsFromUser(req.params.userId, {
+                var userId;
+                if (!(userId = req.paramToObjectId('userId'))) {
+                  return;
+                }
+                return User.getPostsFromUser(userId, {
                   limit: 3,
                   skip: 5 * parseInt(req.query.page)
                 }, HandleErrors(res, function(docs) {

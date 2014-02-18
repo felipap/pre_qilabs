@@ -227,7 +227,8 @@ module.exports = {
 					methods: {
 						get: [required.login,
 							(req, res) ->
-								User.getPostsFromUser req.params.userId,
+								return unless userId = req.paramToObjectId('userId') 
+								User.getPostsFromUser userId,
 									{limit:3, skip:5*parseInt(req.query.page)},
 									HandleErrors(res,
 										(docs) ->
