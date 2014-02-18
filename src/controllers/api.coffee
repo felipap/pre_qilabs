@@ -284,7 +284,7 @@ module.exports = {
 					methods: {
 						get: [required.login,
 							(req, res) ->
-								req.user.getTimeline {limit:3, skip:5*parseInt(req.query.page)},
+								req.user.getTimeline {limit:10, skip:5*parseInt(req.query.page)},
 									(err, docs) ->
 										page = (not docs[0] and -1) or parseInt(req.query.page) or 0
 										# console.log('Fetched timeline:', docs)

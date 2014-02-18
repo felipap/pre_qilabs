@@ -387,7 +387,7 @@ module.exports = {
             get: [
               required.login, function(req, res) {
                 return req.user.getTimeline({
-                  limit: 3,
+                  limit: 10,
                   skip: 5 * parseInt(req.query.page)
                 }, function(err, docs) {
                   var page;
