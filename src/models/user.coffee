@@ -63,15 +63,12 @@ UserSchema.virtual('profileUrl').get ->
 
 UserSchema.methods.getFollowers = (cb) ->
 	Follow.find {followee: @id}, (err, docs) ->
-		console.log('found follow relationships:',  _.pluck(docs, 'follower'))
 		User.find {_id: {$in: _.pluck(docs, 'follower')}}, (err, docs) ->
-			# console.log('found:', err, docs)
 			cb(err, docs)
 
 UserSchema.methods.getFollowing = (cb) ->
 	Follow.find {follower: @id}, (err, docs) ->
 		User.find {_id: {$in: _.pluck(docs, 'followee')}}, (err, docs) ->
-			# console.log('found:', err, docs)
 			cb(err, docs)
 
 UserSchema.methods.countFollowers = (cb) ->
@@ -96,13 +93,13 @@ UserSchema.methods.followId = (userId, cb) ->
 					followee: userId
 				}
 				doc.save()
-			console.log("Now following:", err, doc)
+				console.log("<#{@.username}> followed: #{doc.userId}")
 			cb(err, !!doc)
 
 UserSchema.methods.unfollowId = (userId, cb) ->
 	Follow.findOne {follower:@id, followee:userId},
 		(err, doc) ->
-			console.log("Now unfollowing:", err, doc)
+			console.log("<#{@.username}> unfollowing: #{doc.userId}")
 			doc.remove (err, num) ->
 				cb(err, !!num)
 

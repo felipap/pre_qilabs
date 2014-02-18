@@ -65,7 +65,6 @@ UserSchema.methods.getFollowers = function(cb) {
   return Follow.find({
     followee: this.id
   }, function(err, docs) {
-    console.log('found follow relationships:', _.pluck(docs, 'follower'));
     return User.find({
       _id: {
         $in: _.pluck(docs, 'follower')
@@ -120,8 +119,8 @@ UserSchema.methods.followId = function(userId, cb) {
         followee: userId
       });
       doc.save();
+      console.log("<" + this.username + "> followed: " + doc.userId);
     }
-    console.log("Now following:", err, doc);
     return cb(err, !!doc);
   });
 };
@@ -131,7 +130,7 @@ UserSchema.methods.unfollowId = function(userId, cb) {
     follower: this.id,
     followee: userId
   }, function(err, doc) {
-    console.log("Now unfollowing:", err, doc);
+    console.log("<" + this.username + "> unfollowing: " + doc.userId);
     return doc.remove(function(err, num) {
       return cb(err, !!num);
     });

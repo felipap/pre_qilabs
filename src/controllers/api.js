@@ -308,11 +308,11 @@ module.exports = {
                 if (!(userId = req.paramToObjectId('userId'))) {
                   return;
                 }
+                console.log("<" + req.user.username + "> fetched board of user " + req.params.userId);
                 return User.getPostsFromUser(userId, {
                   limit: 3,
                   skip: 5 * parseInt(req.query.page)
                 }, HandleErrors(res, function(docs) {
-                  console.log('Fetched board', req.user.username, ' for user', docs[0].author.username);
                   return res.end(JSON.stringify({
                     data: docs,
                     error: false,

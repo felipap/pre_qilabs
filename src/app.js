@@ -84,12 +84,18 @@ app.use(function(req, res, next) {
 	next();
 });
 
+app.use(function (req, res, next) {
+	if (req.user) {
+		console.log('<'+req.user.username+'> requested '+req.path)
+	}
+	next();
+});
+
 /******************************************************************************/
 /* Don't touch EITHER. */
 app.use(app.router);
 /******************************************************************************/
-
-app.use(express.logger());
+// app.use(express.logger());
 
 if (app.get('env') === 'development') {
 	swig.setDefaults({ cache: false });

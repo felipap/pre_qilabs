@@ -80,7 +80,7 @@ module.exports = {
 					Group.findOne {slug: req.params.slug},
 						HandleErrors(res, (group) ->
 							group.genGroupProfile (err, groupProfile) -> # groupProfile?
-								console.log(groupProfile)
+								# console.log(groupProfile)
 								res.render 'pages/lab',
 									group: groupProfile
 						)

@@ -225,11 +225,11 @@ module.exports = {
 						get: [required.login,
 							(req, res) ->
 								return unless userId = req.paramToObjectId('userId') 
+								console.log("<#{req.user.username}> fetched board of user #{req.params.userId}")
 								User.getPostsFromUser userId,
 									{limit:3, skip:5*parseInt(req.query.page)},
 									HandleErrors(res,
 										(docs) ->
-											console.log('Fetched board', req.user.username, ' for user', docs[0].author.username)
 											res.end(JSON.stringify({
 												data: docs 
 												error: false
