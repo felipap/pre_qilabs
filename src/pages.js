@@ -49,13 +49,7 @@ module.exports = {
             });
           });
         } else {
-          return User.find().sort({
-            '_id': 'descending'
-          }).limit(10).find(function(err, data) {
-            return res.render('pages/frontpage', {
-              latestSignIns: data
-            });
-          });
+          return res.render('pages/frontpage');
         }
       },
       post: function(req, res) {

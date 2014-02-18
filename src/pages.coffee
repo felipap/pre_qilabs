@@ -39,14 +39,7 @@ module.exports = {
 						res.render 'pages/timeline',
 							user_profile: profile
 				else
-					User.find()
-						.sort({'_id': 'descending'})
-						.limit(10)
-						.find((err, data) ->
-							res.render 'pages/frontpage',
-								latestSignIns: data
-							)
-
+					res.render 'pages/frontpage'	
 			post: (req, res) ->
 				# Redirect from frame inside Facebook
 				res.end('<html><head></head><body><script type="text/javascript">'+
