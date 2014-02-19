@@ -6,8 +6,7 @@
 {% endblock %}
 
 {% block body %}
-
-	{% set sel_bg = [
+	{% set bgs = [
 		{
 			label:'Harvard University, Boston, USA',
 			source:'u/hav.jpg',
@@ -53,8 +52,9 @@
 			source: 'u/ufrj.jpg',
 			credits: 'FOTO: Gabriela d’Araujo / Imagem UFRJ',
 		},
-	][Math.floor(bgs.length*Math.random())]
+	]
 	%}
+	{% set sel_bg = bgs[Math.floor(bgs.length*Math.random())] %}
 
 
 <body class="" data-page="front">
