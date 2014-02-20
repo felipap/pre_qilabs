@@ -244,11 +244,12 @@ module.exports = {
 						post: [required.login,
 							(req, res) ->
 								return unless userId = req.paramToObjectId('userId')
-								User.find {_id: userId}, (err, user) ->
+								User.find {_id: userId}, HandleErrors res, ((user) ->
 									req.user.dofollowUser user, (err, done) ->
 										res.end(JSON.stringify({
 											error: !!err,
 										}))
+									)
 						],
 					}
 				},

@@ -1,16 +1,16 @@
-{% extends '../full_msg.html' %}
+{% extends '../full_bg_page.html' %}
 
-{% block message %}
-<section>
-	<h1>Quer chegar lá?<br>A gente te ajuda!</h1>
-	<p>
-		O <strong>QI Labs</strong> é um serviço online gratuito que avisa estudantes sobre oportunidades acadêmicas e profissionais na área de interesse deles.
-	</p>
-	<a href="#signin" data-action="show-signin" data-toggle="dialog">
-		Peça um Convite
-	</a>
-	<a href="{{ getPageUrl('about') }}" data-action="about">
-		Saiba Mais
-	</a>
-</section>
+{% block content %}
+	<section>
+		<h1>Quer chegar lá?<br>A gente te ajuda!</h1>
+		<p>
+			O <strong>QI Labs</strong> é um serviço online gratuito que avisa estudantes sobre oportunidades acadêmicas e profissionais na área de interesse deles.
+		</p>
+		<a href="#signin" data-action="show-signin" data-toggle="dialog">
+			Peça um Convite
+		</a>
+		<a href="{{ getPageUrl('about') }}" data-action="about">
+			Saiba Mais
+		</a>
+	</section>
 {% endblock %}

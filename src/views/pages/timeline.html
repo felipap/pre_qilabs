@@ -12,47 +12,42 @@
 {% endblock %}
 
 {% block sidebarContent %}
-<div class="box">
 
-	<div class="head">
-		<img src="{{ user.avatarUrl }}" />
-		<a href="{{ user.profileUrl }} "><span data-info="name">{{ user.name }}</span></a>
+	<div class="box userList">
+		<div class="head">
+			Seguindo: {{ user.following.count }}
+		</div>
+		<ul class="body">
+			{% for person in user.following.docs %}
+				<li>{{ userMacros.renderUser(person) }}</li>
+			{% endfor %}
+		</ul>
 	</div>
-	<div class="body">
-	</div>
-</div>
 
-<div class="box tags">
-	<div class="head">
-		Seguidores: ({{ user.following.count }})
+	<div class="box userList">
+		<div class="head">
+			Seguidores: {{ user.followers.count }}
+		</div>
+		<ul class="body">
+			{% for person in user.followers.docs %}
+				<li>{{ userMacros.renderUser(person) }}</li>
+			{% endfor %}
+		</ul>
 	</div>
-	<ul class="body user-list">
-		{{ userMacros.renderUserList(user.following.docs) }}
-	</ul>
-</div>
 
-<div class="box tags">
-	<div class="head">
-		Seguindo: ({{ user.followers.count }})
+	<div class="box tags">
+		<div class="head">
+			Grupos: {{ user.groups.length }}
+		</div>
+		<ul class="body groupList">
+			{% for group in user.groups %}
+				<a href="{{ group.path }}">{{ group.profile.name }}</a>
+			{% endfor %}
+		</ul>
 	</div>
-	<ul class="body user-list">
-		{{ userMacros.renderUserList(user.followers.docs) }}
-	</ul>
-</div>
 
-<div class="box tags">
-	<div class="head">
-		Grupos: ({{ user.groups.length }})
-	</div>
-	<ul class="body user-list">
-		{% for group in user.groups %}
-			<a href="{{ group.path }}">{{ group.profile.name }}</a>
-		{% endfor %}
-	</ul>
-</div>
+	{% include '../layouts/footer.html' %}
 
-<div class="box groups">
-</div>
 {% endblock %}
 
 {% block mainContent %}

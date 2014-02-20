@@ -25,10 +25,7 @@ nav.bar {
 	z-index: 5;
 	width: 100%;
 	top: 0;
-
-	body:not([data-page=front]) & {
-		border-bottom: 1px solid #DDD;
-	}
+	border-bottom: 1px solid #DDD;
 
 	.tooltip {
 		margin-top: 6px;
@@ -125,9 +122,17 @@ nav.bar {
 			padding: 6px 7px !important;
 		}
 		
-		[data-action] {
+		a[data-action],
+		button[data-action] {
 			font-size: 13px;
 		}
+
+		.search-input {
+			padding: 6px 7px;
+			outline: none;
+			border: none;
+		}
+
 
 		.menu-dd {
 			display: inline-block;

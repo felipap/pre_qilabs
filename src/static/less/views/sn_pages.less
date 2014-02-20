@@ -10,6 +10,9 @@
 @results-container-width: 630px;
 @sidebar-gap: 25px;
 
+#pg-bg {
+	// background-image: url(/static/images/cubes.png);
+}
 
 .mediaUser {
 	display: inline-block;
@@ -50,49 +53,47 @@
 }
 
 .sidebar (@width: @sidebar-width) 
-{	width: @width;
+{
+	width: @width;
 	float: left;
 
 	.box {
-		background: white;
-		margin-bottom: 15px;
+		margin-bottom: 5px;
+		padding-bottom: 5px;
 
 		.head {
-			padding: 10px;
-			background: #DDD;
+			padding: 5px 0;
 			color: #444;
+			font-size: 13px;
+			font-weight: bold;
 
-			[data-info=name] {
-				font-size: 20px;
-				vertical-align: middle;
+			small {
+				font-size: 12px;
+				font-weight: normal;
+				float: right;
 			}
-			img {
-				margin-right: 10px;
-				.rounded(5px);
+
+			a {
+				text-decoration: none;
 			}
-		}
-		
-		.body:not(ul) {
-			padding: 10px;
 		}
 
 		ul.body {
-			padding: 0;
+			list-style: none;
+		}
+		
+		&.userList {
+			padding-top: 3px;
 
-			& > li {
+			li {
 				list-style: none;
-				display: block;
-				padding: 10px;
-				border-bottom: 1px solid #AAA;
+				display: inline-block;
+				margin-bottom: 3px;
+				margin-right: 3px;
 			}
 		}
-	}
 
-	.box:first-child {
-		.head {
-			background: #444;
-			color: white;
-		}
+		border-bottom: 1px solid #DDD;
 	}
 
 	.mediaUser {
@@ -104,7 +105,7 @@
 	}
 }
 
-.resultsContainer (@width: results-container-width) {
+.resultsContainer (@width: @results-container-width) {
 	width: @width;
 	min-height: 600px;
 	margin-left: @sidebar-width+@sidebar-gap;
@@ -126,20 +127,23 @@
 			.high-xbtn(white, @COLOR1);
 		}
 	}
+
 	.postListWrapper,
 	.commentListWrapper {
 		list-style: none;
 		padding-left: 0;
 		margin-bottom: 0;
 	}
-
-	.mediaUser-comment () {
+	
+	.commentInputSection .mediaUser,
+	.commentWrapper .mediaUser {
 		.rounded(0);
 		width: 40px;
 		height: 40px;
 	}
-
-	.msgBody-comment () {
+	
+	.postWrapper .msgBody,
+	.commentInput {
 		vertical-align: middle;
 		display: inline-block;
 		min-height: 40px;
@@ -155,15 +159,12 @@
 		}
 	}
 
-
 	.postWrapper {
 		position: relative;
 		margin-bottom: 15px;
 		border: 1px solid #DDD;
-		// border-bottom: 1px solid #AAA;
-		background: white;
 
-		.option-buttons {
+		.optionBtns {
 			float: right;
 			display: inline-block;
 			position: absolute;
@@ -197,7 +198,7 @@
 
 		.opMessage {
 			padding: 10px;
-			background: white;
+			background: #DDD;
 
 			.msgHeader {
 				height: 55px;
@@ -229,8 +230,9 @@
 
 			.msgBody {
 				padding: 10px;
+				width: 100%;
 				position: relative;
-				background: #F3F3F3;
+				background: white;
 
 				&::before {
 					content: '';
@@ -239,7 +241,6 @@
 					top: -14px;
 					position: absolute;
 					left: 14px;
-
 				}
 			}
 		}
@@ -261,13 +262,11 @@
 				padding-bottom: 3px;
 
 				.mediaUser {
-					.mediaUser-comment;
 					vertical-align: top;
 					border: 1px solid #DDD;
 				}
 
 				.msgBody {
-					.msgBody-comment;
 					position: relative;
 					width: 500px;
 				}
@@ -288,11 +287,9 @@
 			border-top: 1px solid #DDD;
 
 			.mediaUser {
-				.mediaUser-comment;
 				border: 1px solid #DDD;
 			}
 			.commentInput {
-				.msgBody-comment;
 				width: 485px;
 			}
 			[data-action=send-comment] {

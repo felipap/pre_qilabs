@@ -2,7 +2,7 @@
 
 {% block head %}
 	{% parent %}
-	<link rel="stylesheet" href="{{ getMediaUrl('css','frontpage.min.css') }}" />
+	<link rel="stylesheet" href="{{ getMediaUrl('css','full_bg_page.min.css') }}" />
 {% endblock %}
 
 {% block body %}
@@ -57,19 +57,20 @@
 	{% set sel_bg = bgs[Math.floor(bgs.length*Math.random())] %}
 
 
-<body class="" data-page="front">
+<body>
 	<!-- <script>if(window!=window.top){top.location="http://meavisa.herokuapp.com";}</script> -->
 	<div class="bg-cover" style="background-image: url({{ getMediaUrl('images/', sel_bg.source) }});"></div>
+	<div class="box-blackout"></div>
 
 	{% include 'layouts/navbar.html' %}
+	
 	<section id="jumbo">
 
-		<div class="box-blackout"></div>
 		<div class="content">
 			<div style="position: absolute; margin: auto">
 				<div class="flash-msgs"></div>
 			</div>
-			{% block message %}
+			{% block content %}
 			{% endblock %}
 		</div>
 		<div class="credits">
@@ -79,21 +80,6 @@
 			<br>{{ sel_bg.credits }}
 		</dfn>
 	</section>
-
-	{#
-	<section id="last-signins">
-		<div class="avatars">
-			{% for (var i2=0; i2++<10;) { %}
-			{% for (var i=0, user=latestSignIns[0]; i< latestSignIns.length;user = latestSignIns[++i]) { %}
-			<li>
-					<img src="{{ user.avatarUrl }}"></img>
-			</li>
-			{% } %}
-			{% } %}
-		</div>
-		<div class="box-blackout"></div>
-	</section>
-	#}	
 
 	<footer>
 		

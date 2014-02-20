@@ -1,27 +1,14 @@
-{% extends '../stdbody.html' %}
-{% block head %}
-	{% parent %}
-	<link rel="stylesheet" href="{{ getMediaUrl('css','about_pages.min.css') }}" />
-{% endblock %}
+{% extends '../full_bg_page.html' %}
 
-<body class="notfound">
-
-	{% include '../layouts/navbar.html' %}
-
+{% block content %}
 	<section>
-		
-		<section>
 
-			<h1>Ops! <span>:(</span></h1>
-			<h2>Estamos com problemas no servidor.</h2>
+		<h1>Ops! <span>:(</span></h1>
+		<h2>Estamos com problemas no servidor.</h2>
 
-			<a href="/" class="btn0 inverted-btn">
-				Voltar para o site
-			</a>
-
-		</section>
-
-	{% include '../layouts/footer.html' %}
+		<a href="/" class="btn0 inverted-btn">
+			Voltar para o site
+		</a>
 
 	</section>
-</body>
+{% endblock %}

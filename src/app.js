@@ -173,7 +173,11 @@ app.locals({
 			case "js": {
 				var absPath = pathLib.join(app.config.staticRoot, relPath);
 				if (!fsLib.existsSync(absPath)) {
-					throw "Required css/js file "+absPath+" not found.";
+					if (app.get('env') !== 'production') {
+						throw "Required css/js file "+absPath+" not found.";
+					} else {
+						console.log("Required css/js file "+absPath+" not found.");
+					}
 				}
 			}
 		}

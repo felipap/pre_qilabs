@@ -31,29 +31,33 @@
 		{% endif %}
 	{% endif %}
 
-	<div class="box users-box">
+	<div class="box userList">
 		<div class="head">
-			Seguido por ({{ profile.followers.count }}) <a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
+			Seguindo: {{ profile.following.count }}
 		</div>
-		<ul class="body user-list">
-			{{ userMacros.renderUserList(profile.followers.docs) }}
+		<ul class="body">
+			{% for person in profile.following.docs %}
+				<li>{{ userMacros.renderUser(person) }}</li>
+			{% endfor %}
 		</ul>
 	</div>
 
-	<div class="box users-box">
+	<div class="box userList">
 		<div class="head">
-			Seguindo ({{ profile.following.count }}) <a href="{{ getPageUrl('user_followers_list')}}">Ver Todos</a>
+			Seguidores: {{ profile.followers.count }}
 		</div>
-		<ul class="body user-list">
-			{{ userMacros.renderUserList(profile.following.docs) }}
+		<ul class="body">
+			{% for person in profile.followers.docs %}
+				<li>{{ userMacros.renderUser(person) }}</li>
+			{% endfor %}
 		</ul>
 	</div>
 
 	<div class="box tags">
 		<div class="head">
-			Grupos: ({{ profile.groups.length }})
+			Grupos: {{ profile.groups.length }}
 		</div>
-		<ul class="body user-list">
+		<ul class="body groupList">
 			{% for group in profile.groups %}
 				<a href="{{ group.path }}">{{ group.profile.name }}</a>
 			{% endfor %}

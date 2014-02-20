@@ -332,13 +332,13 @@ module.exports = {
                 }
                 return User.find({
                   _id: userId
-                }, function(err, user) {
+                }, HandleErrors(res, (function(user) {
                   return req.user.dofollowUser(user, function(err, done) {
                     return res.end(JSON.stringify({
                       error: !!err
                     }));
                   });
-                });
+                })));
               }
             ]
           }
