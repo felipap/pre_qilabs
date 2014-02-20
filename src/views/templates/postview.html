@@ -18,7 +18,7 @@
 		
 		<a href="<@= post.path @>">
 			<time data-time-count="<@= 1*new Date(post.dateCreated) @>">
-					<@= window.calcTimeFrom(post.dateCreated) @>
+				<@= window.calcTimeFrom(post.dateCreated) @>
 			</time>
 		</a>
 
@@ -34,6 +34,7 @@
 		</div>
 	</div>
 	<div class="msgBody">
+		<div class="arrow"></div>
 		<@= post.data.body @>
 	</div>
 </div>

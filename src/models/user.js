@@ -203,7 +203,8 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
 
 UserSchema.methods.getLabPosts = function(opts, group, cb) {
   return Post.find({
-    group: group
+    group: group,
+    parentPost: null
   }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
     return fillInPostComments(docs, cb);
   });

@@ -138,20 +138,20 @@
 	.commentInputSection .mediaUser,
 	.commentWrapper .mediaUser {
 		.rounded(0);
-		width: 40px;
-		height: 40px;
+		width: 35px;
+		height: 35px;
 	}
 	
 	.postWrapper .msgBody,
 	.commentInput {
 		vertical-align: middle;
 		display: inline-block;
-		min-height: 40px;
-		padding-left: 40px;
+		min-height: 35px;
+		// padding-left: 40px;
 		border: 1px solid #DDD;
 		.no-box-shadow;
 		outline: none;
-		padding: 9px;
+		padding: 6px 5px;
 		.transition(all, .2s, linear);
 
 		&:focus {
@@ -198,7 +198,6 @@
 
 		.opMessage {
 			padding: 10px;
-			background: #DDD;
 
 			.msgHeader {
 				height: 55px;
@@ -234,10 +233,10 @@
 				position: relative;
 				background: white;
 
-				&::before {
+				.arrow {
 					content: '';
 					border: 7px solid transparent;
-					border-bottom-color: #F3F3F3;
+					border-bottom-color: #DDD;
 					top: -14px;
 					position: absolute;
 					left: 14px;
@@ -246,7 +245,6 @@
 		}
 
 		.postCommentsSection {
-			background: white;
 
 			.commentWrapper:first-child {
 				border-top: 1px solid #DDD;
@@ -283,14 +281,15 @@
 		}
 
 		.commentInputSection {
-			padding: 5px 10px 7px;
+			padding: 3px 9px 5px;
 			border-top: 1px solid #DDD;
+			background: #EEE;
 
 			.mediaUser {
 				border: 1px solid #DDD;
 			}
 			.commentInput {
-				width: 485px;
+				width: 487px;
 			}
 			[data-action=send-comment] {
 				display: inline-block;
