@@ -3,7 +3,7 @@
 Improve:
 - Stop calling /comments to get comments.
  */
-var Post, PostSchema, PostTypes, mongoose;
+var Post, PostSchema, PostTypes, mongoose, urlify;
 
 mongoose = require('mongoose');
 
@@ -66,6 +66,18 @@ PostSchema.virtual('path').get(function() {
 
 PostSchema.virtual('apiPath').get(function() {
   return "/api/posts/{id}".replace(/{id}/, this.id);
+});
+
+urlify = function(text) {
+  var urlRegex;
+  urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, function(url) {
+    return "<a href=\"" + url + "\">" + url + "</a>";
+  });
+};
+
+PostSchema.virtual('unescapedBody').get(function() {
+  return urlify(this.data.body);
 });
 
 PostSchema.pre('remove', function(next) {
