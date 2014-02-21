@@ -143,7 +143,7 @@ module.exports = {
         }
         return Post.findOne({
           _id: postId
-        }, HandleErrors(res, function(post) {
+        }).populate('group').exec(HandleErrors(res, function(post) {
           return res.render('pages/post.html', {
             post: post
           });

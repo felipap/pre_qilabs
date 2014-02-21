@@ -294,7 +294,7 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 	var WorkspaceRouter = Backbone.Router.extend({
 
 		routes: {
-			'posts': 		'post',
+			'posts/:postId':'post',
 			'labs/:labId': 	'lab',
 			'p/:profileId':	'main',
 			'a*':  'main'
@@ -305,6 +305,14 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 			window.app = this;
 		},
 
+		post: function (postId) {
+			console.log('post');
+			this.postList = new Post.list();
+			this.postListView = new Post.listView({collection: this.postList});
+			this.postList.add(conf.postData)
+			this.postListView.$el.appendTo($('#postsPlacement'));
+		},
+
 		lab: function (labId) {
 			console.log('lab');
 			if (!window.conf.postsRoot) {
@@ -313,10 +321,8 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 			this.postsRoot = window.conf.postsRoot;
 			this.labId = window.conf.labId;
 			this.postList = new Post.list();
-			console.log('ppo', this.postList);
 			this.postListView = new Post.listView({collection: this.postList});
 			this.postList.fetch({reset:true});
-			console.log('after')
 			this.postListView.$el.appendTo($('#postsPlacement'));
 		},
 
@@ -327,10 +333,8 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 			}
 			this.postsRoot = window.conf.postsRoot;
 			this.postList = new Post.list();
-			console.log('ppo', this.postList);
 			this.postListView = new Post.listView({collection: this.postList});
 			this.postList.fetch({reset:true});
-			console.log('after')
 			this.postListView.$el.appendTo($('#postsPlacement'));
 		},
 	});
