@@ -294,16 +294,31 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 	var WorkspaceRouter = Backbone.Router.extend({
 
 		routes: {
-			'posts/*': 'post',
-			'labs/*': 'lab',
+			'posts': 		'post',
+			'labs/:labId': 	'lab',
+			'p/:profileId':	'main',
 			'a*':  'main'
 		},
 		
 		initialize: function () {
+			console.log('initialized')
 			window.app = this;
 		},
 
-		post: function () {},
+		lab: function (labId) {
+			console.log('lab');
+			if (!window.conf.postsRoot) {
+				return;
+			}
+			this.postsRoot = window.conf.postsRoot;
+			this.labId = window.conf.labId;
+			this.postList = new Post.list();
+			console.log('ppo', this.postList);
+			this.postListView = new Post.listView({collection: this.postList});
+			this.postList.fetch({reset:true});
+			console.log('after')
+			this.postListView.$el.appendTo($('#postsPlacement'));
+		},
 
 		main: function () {
 			console.log('main', this);
@@ -323,7 +338,7 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 	return {
 		initialize: function () {
 			new WorkspaceRouter;
-			Backbone.history.start({pushState: true});
+			Backbone.history.start({pushState:true});
 			$('#globalContainer').scroll(_.throttle(function() {
 				if ($('#postsPlacement').height()-
 					($(window).height()+$('#posts-col').scrollTop())< 200)

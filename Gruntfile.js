@@ -42,13 +42,11 @@ module.exports = function(grunt) {
 			// Beware of the infinite loop
 			scripts_common: {
 				files: ['src/static/js/lib/common.js','src/static/js/lib/plugins.js','src/static/js/lib/timeline.js'],
-				tasks: ['requirejs:common','requirejs:app'],
-				options: { spawn: false },
+				tasks: ['requirejs'],
 			},
 			scripts_app: {
 				files: ['src/static/js/lib/app.js'],
-				tasks: ['requirejs:app'],
-				options: { spawn: false },
+				tasks: ['requirejs'],
 			},
 			css: {
 				files: ['src/static/less/**/*.less'],
