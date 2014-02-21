@@ -44,12 +44,15 @@ PostSchema.virtual('path').get ->
 PostSchema.virtual('apiPath').get ->
 	"/api/posts/{id}".replace(/{id}/, @id)
 
+# TODO: improve this
 urlify = (text) ->
 	urlRegex = /(https?:\/\/[^\s]+)/g
+	urlRegex = /((https?:\/\/|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
+
 	return text.replace urlRegex, (url) ->
 	    return "<a href=\"#{url}\">#{url}</a>"
 
-PostSchema.virtual('unescapedBody').get ->
+PostSchema.virtual('data.unescapedBody').get ->
 	urlify(@data.body)
 
 PostSchema.pre 'remove', (next) ->

@@ -7,7 +7,7 @@
 	</a>
 </div>
 <div class="msgBody <@= (comment.author.id==='{{ user.id }}')?'editable':'' @>">
-	<@= comment.unescapedBody @>
+	<@= comment.data.unescapedBody @>
 	<@ if (comment.author.id === '{{ user.id }}') { @>
 	<div class="optionBtns">
 		<button data-action="remove-post" data-toggle="tooltip" title="Remover Comentário" data-placement="bottom">
