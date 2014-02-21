@@ -291,48 +291,39 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 	};
 
 	// Central functionality of the app.
-	WorkspaceRouter = Backbone.Router.extend({
+	var WorkspaceRouter = Backbone.Router.extend({
 
 		routes: {
-			'*a':  'index'
+			'posts/*': 'post',
+			'labs/*': 'lab',
+			'a*':  'main'
 		},
 		
 		initialize: function () {
 			window.app = this;
 		},
 
-		index: function () {
-			console.log('index', this);
-			if (!window.postsRoot) {
+		post: function () {},
+
+		main: function () {
+			console.log('main', this);
+			if (!window.conf.postsRoot) {
 				return;
 			}
-			this.config = _.extend({},window.loadConfig);
-			if (this.config.postData) {
-			}
+			this.postsRoot = window.conf.postsRoot;
 			this.postList = new Post.list();
 			console.log('ppo', this.postList);
 			this.postListView = new Post.listView({collection: this.postList});
-			if (false && window.post) {	
-				this.postList.reset([window.post]);
-			} else {
-				this.postList.fetch({reset:true});
-			}
-			this.postListView.$el.appendTo('#postsPlacement');
-		},
-
-		renderPosts: function (opts) {
-			this.postsRoot = opts;
-			this.postList = new Post.list();
-			this.postListView = new Post.listView({collection: this.postList});
 			this.postList.fetch({reset:true});
-			this.postListView.$el.appendTo('#postsPlacement');			
-		}
+			console.log('after')
+			this.postListView.$el.appendTo($('#postsPlacement'));
+		},
 	});
 
 	return {
 		initialize: function () {
 			new WorkspaceRouter;
-			// Backbone.history.start({pushState: false});
+			Backbone.history.start({pushState: true});
 			$('#globalContainer').scroll(_.throttle(function() {
 				if ($('#postsPlacement').height()-
 					($(window).height()+$('#posts-col').scrollTop())< 200)

@@ -172,7 +172,7 @@ app.locals({
 			case "css":
 			case "js": {
 				var absPath = pathLib.join(app.config.staticRoot, relPath);
-				if (!fsLib.existsSync(absPath)) {
+				if (!fsLib.existsSync(absPath) && !fsLib.existsSync(absPath+'.js')) {
 					if (app.get('env') !== 'production') {
 						throw "Required css/js file "+absPath+" not found.";
 					} else {

@@ -10,61 +10,6 @@ module.exports = function(grunt) {
 			'<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
 			'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
 			' Licensed <%= pkg.license %> */\n',
-		clean: {
-			files: ['min']
-		},
-
-		concat: {
-			options: {
-				banner: "<%= banner %>"
-			}, 
-			// feed: {
-			// 	src: [
-			// 		'src/static/js/lib/require.js',
-			// 		'src/static/js/lib/common.js',
-			// 		'src/static/js/lib/plugins.js',
-			// 		'src/static/js/lib/feed.js',
-			// 	],
-			// 	dest: 'src/static/js/concated_feed.js',
-			// },
-			// timeline: {
-			// 	src: [
-			// 		'src/static/js/lib/require.js',
-			// 		'src/static/js/lib/common.js',
-			// 		'src/static/js/lib/plugins.js',
-			// 		'src/static/js/lib/timeline.js',
-			// 	],
-			// 	dest: 'src/static/js/concated_timeline.js',
-			// },
-			// all: {
-			// 	src: [
-			// 		'src/static/js/lib/require.js',
-			// 		'src/static/js/lib/common.js',
-			// 		'src/static/js/lib/plugins.js',
-			// 	],
-			// 	dest: 'src/static/js/concated_all.js',
-			// }
-		},
- 
-		uglify: {
-			options: {
-                // sourceMap: '<% filename %>.map',
-				banner: '<%= banner %>',
-                sourceMap: true,
-			},
-			feed: {
-				src: 'src/static/js/concated_feed.js',
-				dest: 'src/static/js/feed.min.js'
-			},
-			timeline: {
-				src: 'src/static/js/concated_timeline.js',
-				dest: 'src/static/js/timeline.min.js'
-			},
-			all: {
-				src: 'src/static/js/concated_all.js',
-				dest: 'src/static/js/all.min.js'
-			}
-		},
 		
 		less: {
 			dist: {
@@ -93,12 +38,16 @@ module.exports = function(grunt) {
 			options: {
 				// livereload: true,
 				atBegin: true,
-        		banner: '<%= banner %>',
 			},
 			// Beware of the infinite loop
-			scripts: {
-				files: ['src/static/js/lib/*.js'],
-				tasks: ['dist-static-js'],
+			scripts_common: {
+				files: ['src/static/js/lib/common.js','src/static/js/lib/plugins.js','src/static/js/lib/timeline.js'],
+				tasks: ['requirejs:common','requirejs:app'],
+				options: { spawn: false },
+			},
+			scripts_app: {
+				files: ['src/static/js/lib/app.js'],
+				tasks: ['requirejs:app'],
 				options: { spawn: false },
 			},
 			css: {
@@ -129,6 +78,32 @@ module.exports = function(grunt) {
 				}
 			},
 		},
+
+		requirejs: {
+			app: {
+				options: {
+					name: 'app',
+					baseUrl: 'src/static/js/',
+					mainConfigFile: 'src/static/js/build.js',
+					out: 'src/static/js/app.min.js',
+					generateSourceMaps: true,
+					optimize: 'none',
+					preserveLicenseComments: false,
+				}
+			},
+			common: {
+				options: {
+					name: 'common',
+					baseUrl: 'src/static/js/',
+					mainConfigFile: 'src/static/js/build.js',
+					out: 'src/static/js/common.min.js',
+					generateSourceMaps: true,
+					optimize: 'none',
+					preserveLicenseComments: false,
+				}
+			}
+		},
+
 		concurrent: {
 			dev: {
 				tasks: ['nodemon', 'watch'], // +? 'node-inspector'
@@ -140,16 +115,14 @@ module.exports = function(grunt) {
 	});
 
 	// 3. Where we tell Grunt we plan to use this plug-in.
-	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-contrib-coffee');
 	grunt.loadNpmTasks('grunt-concurrent');
+	grunt.loadNpmTasks('grunt-contrib-requirejs');
 	grunt.loadNpmTasks('grunt-nodemon');	
 
 	grunt.registerTask('dist-coffee', ['coffee']);
-	grunt.registerTask('dist-static-js', ['concat', 'uglify']);
 
 	// 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
 	grunt.registerTask('serve', ['nodemon']);

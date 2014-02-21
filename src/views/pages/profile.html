@@ -1,9 +1,10 @@
 {% extends '../sidebared.html' %}
+
 {% import '../macros/user.html' as userMacros %}
 
 {% block head %}
 	{% parent %}
-	<script>window.postsRoot='/api/users/{{ profile.id }}/posts';</script>
+	<script>conf={postsRoot:'/api/users/{{ profile.id }}/posts'};</script>
 {% endblock %}
 
 
