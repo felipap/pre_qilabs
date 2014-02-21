@@ -2,31 +2,26 @@
 * http://meavisa.org
 * Copyright (c) 2014 ; Licensed BSD */
 
+requirejs.config({
+	appDir: ".",
+	baseUrl: "static/js",
+	paths: {
+		'app.index': 	'app.index',
+		'jquery': 		['//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min','vendor/jquery-2.0.3.min'],
+		'bootstrap': 	['//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/bootstrap.min','vendor/bootstrap-3.0.0.min'],
+		'underscore': 	['//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min','vendor/underscore-1.5.1.min'],
+		'backbone': 	['//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min','vendor/backbone-1.0.0.min'],
+	},
+	shim: {
+		'underscore': { exports: '_' },
+		'bootstrap' : { deps: ['jquery'] },
+		'backbone'	: { exports: 'Backbone', deps: ['underscore', 'jquery']},
+	}
+});
+
 // Present in all built javascript.
 
-// Avoid `console` errors in browsers that lack a console.
-(function() {
-	var method;
-	var noop = function () {};
-	var methods = [
-		'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
-		'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
-		'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-		'timeStamp', 'trace', 'warn'
-	];
-	var length = methods.length;
-	var console = (window.console = window.console || {});
-	while (length--) {
-		method = methods[length];
-		// Only stub undefined methods.
-		if (!console[method]) {
-			console[method] = noop;
-		}
-	}
-}());
-
-define(['jquery','bootstrap','plugins'], function ($) {
-
+define(['jquery','bootstrap'], function ($) {
 
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
 		var href = this.dataset['ajaxPostHref'],
@@ -114,9 +109,31 @@ define(['jquery','bootstrap','plugins'], function ($) {
 				.hide().appendTo($(".flash-msgs")).slideDown();
 	})(window._flash_msgs);
 });
+// Avoid `console` errors in browsers that lack a console.
+(function() {
+	var method;
+	var noop = function () {};
+	var methods = [
+		'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+		'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+		'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+		'timeStamp', 'trace', 'warn'
+	];
+	var length = methods.length;
+	var console = (window.console = window.console || {});
+
+	while (length--) {
+		method = methods[length];
+
+		// Only stub undefined methods.
+		if (!console[method]) {
+			console[method] = noop;
+		}
+	}
+}()) ;
 
 // Place any jQuery/helper plugins in here.
-define(['jquery'], function ($) {
+require(['jquery'], function ($) {
 
 	'strict use';
 

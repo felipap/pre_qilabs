@@ -1,14 +1,10 @@
 {% extends '../sidebared.html' %}
 
-{#
-{% block stylesheets %}
-	<link rel="stylesheet" href="{{ getMediaUrl('css','timeline.min.css') }}" />
-{% endblock %}
-#}
+{% import '../macros/user.html' as userMacros %}
 
-{% block head %}
+{% block bodyEnd %}
 	{% parent %}
-	<script>window.postsRoot='/api/me/timeline/posts';</script>
+	<script>conf={postsRoot:'/api/me/timeline/posts'};</script>
 {% endblock %}
 
 {% block sidebarContent %}
@@ -47,23 +43,12 @@
 	</div>
 
 	{% include '../layouts/footer.html' %}
-
 {% endblock %}
 
 {% block mainContent %}
-<div class="flash-msgs"></div>
 <div id="results-col">
-	<div class="box">
-	<a href="#">Interessante | </a><a href="#">Seus Grupos | </a><a href="">Global</a>
-		<h2>Enviar uma msg para o seus seguidores</h2>
-		<textarea id="inputPostContent" placeholder="Aqui ó"></textarea>
-		<button data-action="send-post" type="submit">Enviar Post</button>
-	</div>
 	<div id="posts-col">
-		<div class="placement">
-			<h3 id="no-posts-msg" style="display: none; color: #888">
-				Ops! Nenhum post visível. :s
-			</h3>
+		<div id="postsPlacement">
 		</div>
 	</div>
 </div>

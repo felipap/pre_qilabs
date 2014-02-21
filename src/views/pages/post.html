@@ -1,0 +1,24 @@
+{% extends '../sidebared.html' %}
+
+{% import '../macros/user.html' as userMacros %}
+
+{% block bodyEnd %}
+	{% parent %}
+	<script>conf={postUrl:{{ post|json|safe }}};</script>
+{% endblock %}
+
+{% block sidebarContent %}
+	<div class="box">
+		<div class="head">
+			<a href="{{ group.path }} "><span data-info="name">{{ group.profile.name }}</span></a>
+		</div>
+	</div>
+{% endblock %}
+
+{% block mainContent %}
+<div id="results-col">
+	<div id="posts-col">
+		<div id="postsPlacement"></div>
+	</div>
+</div>
+{% endblock %}

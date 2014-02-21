@@ -211,7 +211,12 @@
 					margin-left: 5px;
 					display: inline-block;
 					font: 14px "Open Sans";
-					.author-username {
+					.authorUsername {
+						color: #666;
+						&:hover {
+							color: #444;
+						}
+						text-decoration: none;
 						display: inline;
 						font-weight: bold;
 					}
@@ -289,12 +294,12 @@
 				border: 1px solid #DDD;
 			}
 			.commentInput {
-				width: 487px;
+				width: 490px;
 			}
 			[data-action=send-comment] {
 				display: inline-block;
 				.high-xbtn(white, @COLOR2);
-				.high-xbtn-padding(9px, 15px, 2px);
+				.high-xbtn-padding(6px, 15px, 2px);
 			}
 		}
 	}

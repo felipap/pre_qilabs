@@ -105,10 +105,15 @@ module.exports = {
 					)
 		}
 
-	'/post/:postId':
+	'/posts/:postId':
 		name: 'profile'
 		methods: {
 			get: (req, res) ->
+				return unless postId = req.paramToObjectId('postId')
+				Post.findOne {_id: postId}, HandleErrors res, (post) ->
+					res.render 'pages/post.html', {
+						post: post
+					}
 		}
 		children: {
 			'/edit':

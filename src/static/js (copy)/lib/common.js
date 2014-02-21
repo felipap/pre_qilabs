@@ -1,29 +1,7 @@
 
 // Present in all built javascript.
 
-// Avoid `console` errors in browsers that lack a console.
-(function() {
-	var method;
-	var noop = function () {};
-	var methods = [
-		'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
-		'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
-		'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-		'timeStamp', 'trace', 'warn'
-	];
-	var length = methods.length;
-	var console = (window.console = window.console || {});
-	while (length--) {
-		method = methods[length];
-		// Only stub undefined methods.
-		if (!console[method]) {
-			console[method] = noop;
-		}
-	}
-}());
-
-define(['jquery','bootstrap','plugins'], function ($) {
-
+define(['jquery','bootstrap'], function ($) {
 
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
 		var href = this.dataset['ajaxPostHref'],

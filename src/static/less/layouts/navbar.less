@@ -119,7 +119,9 @@ nav.bar {
 			&.board { .high-xbtn(white, @COLOR2); }
 			&.agenda { .high-xbtn(white, #345); }
 			&.guia { .high-xbtn(white, @COLOR4); }
-			padding: 6px 7px !important;
+			&.home,&.groups,&.board,&.agenda,&.guia {
+				.high-xbtn-padding(5px, 8px);
+			}
 		}
 		
 		a[data-action],

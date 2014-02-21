@@ -18,32 +18,32 @@ module.exports = function(grunt) {
 			options: {
 				banner: "<%= banner %>"
 			}, 
-			feed: {
-				src: [
-					'src/static/js/lib/require.js',
-					'src/static/js/lib/common.js',
-					'src/static/js/lib/plugins.js',
-					'src/static/js/lib/feed.js',
-				],
-				dest: 'src/static/js/concated_feed.js',
-			},
-			timeline: {
-				src: [
-					'src/static/js/lib/require.js',
-					'src/static/js/lib/common.js',
-					'src/static/js/lib/plugins.js',
-					'src/static/js/lib/timeline.js',
-				],
-				dest: 'src/static/js/concated_timeline.js',
-			},
-			all: {
-				src: [
-					'src/static/js/lib/require.js',
-					'src/static/js/lib/common.js',
-					'src/static/js/lib/plugins.js',
-				],
-				dest: 'src/static/js/concated_all.js',
-			}
+			// feed: {
+			// 	src: [
+			// 		'src/static/js/lib/require.js',
+			// 		'src/static/js/lib/common.js',
+			// 		'src/static/js/lib/plugins.js',
+			// 		'src/static/js/lib/feed.js',
+			// 	],
+			// 	dest: 'src/static/js/concated_feed.js',
+			// },
+			// timeline: {
+			// 	src: [
+			// 		'src/static/js/lib/require.js',
+			// 		'src/static/js/lib/common.js',
+			// 		'src/static/js/lib/plugins.js',
+			// 		'src/static/js/lib/timeline.js',
+			// 	],
+			// 	dest: 'src/static/js/concated_timeline.js',
+			// },
+			// all: {
+			// 	src: [
+			// 		'src/static/js/lib/require.js',
+			// 		'src/static/js/lib/common.js',
+			// 		'src/static/js/lib/plugins.js',
+			// 	],
+			// 	dest: 'src/static/js/concated_all.js',
+			// }
 		},
  
 		uglify: {

@@ -11,43 +11,35 @@
 			label:'Harvard University, Boston, USA',
 			source:'u/hav.jpg',
 			credits: '',
-		},
-		{
+		},{
 			label:'Columbia University, New York, USA',
 			source:'u/col.jpg',
 			credits: '',
-		},
-		{
+		},{
 			label:'Yale University Library, Durham, USA',
 			source:'u/yal.jpg',
 			credits: '',
-		},
-		{
+		},{
 			label:'Massachusetts Institute of Technology, Boston, USA',
 			source:'u/mit.jpg',
 			credits: '',
-		},
-		{
+		},{
 			label:'Stanford University, Santa Clara, USA',
 			source:'u/sta.jpg',
 			credits: '',
-		},
-		{
+		},{
 			label:'Duke University, Durham, USA',
 			source:'u/duk.jpg',
 			credits: '',
-		},
-		{
+		},{
 			label:'Escola de Engenharia da Universidade de São Paulo, São Paulo',
 			source: 'u/usp.jpg',
 			credits: 'Marcos Santos / USP Imagens',
-		},
-		{
+		},{
 			label:'Universidade Estadual de Campinas (UNICAMP), São Paulo',
 			source: 'u/unc.jpg',
 			credits: '',
-		},
-		{
+		},{
 			label: 'Universidade Federal do Rio de Janeiro, Campus Praia Vermelha',
 			source: 'u/ufrj.jpg',
 			credits: 'FOTO: Gabriela d’Araujo / Imagem UFRJ',
@@ -70,8 +62,7 @@
 			<div style="position: absolute; margin: auto">
 				<div class="flash-msgs"></div>
 			</div>
-			{% block content %}
-			{% endblock %}
+			{% block content %}{% endblock %}
 		</div>
 		<div class="credits">
 		</div>
@@ -81,23 +72,7 @@
 		</dfn>
 	</section>
 
-	<footer>
-		
-		<ul class="links">
-			<a href="{{ getPageUrl('about') }}">Sobre</a>
-			<a href="{{ getPageUrl('team') }}">Quem Somos</a>
-			<a href="{{ getPageUrl('join-team') }}">Faça Parte</a>
-			<!-- <a href="{{ getPageUrl('contact') }}">Fale Conosco</a>  -->
-			<!-- <span class="social"> -->
-				<a href="{{ getPageUrl('twitter') }}"><i class="icon-twitter"></i></a>
-				<a href="{{ getPageUrl('facebook') }}"><i class="icon-facebook"></i></a>
-			<!-- </span> -->
-		</ul>
-<!-- 		<div class="reg">
-			www.meavisa.org &reg; 2013
-		</div>
- -->
-	</footer>
+	{% include 'layouts/footer.html' %}
 
 	<script data-main="{{ getMediaUrl('js','all.min.js') }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 </body>

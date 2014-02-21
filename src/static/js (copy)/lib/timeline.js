@@ -20,7 +20,7 @@ window.calcTimeFrom = function (arg) {
 	}
 }
 
-define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone, _) {
+require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone, _) {
 
 	_.templateSettings = {
 		interpolate: /\<\@\=(.+?)\@\>/gim,
@@ -329,15 +329,13 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 		}
 	});
 
-	return {
-		initialize: function () {
-			new WorkspaceRouter;
-			// Backbone.history.start({pushState: false});
-			$('#globalContainer').scroll(_.throttle(function() {
-				if ($('#postsPlacement').height()-
-					($(window).height()+$('#posts-col').scrollTop())< 200)
-					app.postList.tryFetchMore();
-			}, 500));
-		}
-	};
+	$(function () {
+		new WorkspaceRouter;
+		// Backbone.history.start({pushState: false});
+		$('#globalContainer').scroll(_.throttle(function() {
+			if ($('#postsPlacement').height()-
+				($(window).height()+$('#posts-col').scrollTop())< 200)
+				app.postList.tryFetchMore();
+		}, 500));
+	});
 });

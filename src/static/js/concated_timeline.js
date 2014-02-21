@@ -1,25 +1,32 @@
 /*! meavisa - v0.0.2
 * http://meavisa.org
 * Copyright (c) 2014 ; Licensed BSD */
-requirejs.config({
-	appDir: ".",
-	baseUrl: "static/js",
-	paths: { 
-		'jquery':['//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min','vendor/jquery-2.0.3.min'],
-		'bootstrap':['//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/js/bootstrap.min','vendor/bootstrap-3.0.0.min'],
-		'underscore':['//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min','vendor/underscore-1.5.1.min'],
-		'backbone':['//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min','vendor/backbone-1.0.0.min'],
-	},
-	shim: {
-		'underscore': { exports: '_' },
-		'bootstrap' : { deps: ['jquery'] },
-		'backbone'	: { exports: 'Backbone', deps: ['underscore', 'jquery']},
-	}
-});
 
 // Present in all built javascript.
 
-require(['jquery','bootstrap'], function ($) {
+// Avoid `console` errors in browsers that lack a console.
+(function() {
+	var method;
+	var noop = function () {};
+	var methods = [
+		'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+		'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+		'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+		'timeStamp', 'trace', 'warn'
+	];
+	var length = methods.length;
+	var console = (window.console = window.console || {});
+	while (length--) {
+		method = methods[length];
+		// Only stub undefined methods.
+		if (!console[method]) {
+			console[method] = noop;
+		}
+	}
+}());
+
+define(['jquery','bootstrap','plugins'], function ($) {
+
 
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
 		var href = this.dataset['ajaxPostHref'],
@@ -108,31 +115,8 @@ require(['jquery','bootstrap'], function ($) {
 	})(window._flash_msgs);
 });
 
-// Avoid `console` errors in browsers that lack a console.
-(function() {
-	var method;
-	var noop = function () {};
-	var methods = [
-		'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
-		'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
-		'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-		'timeStamp', 'trace', 'warn'
-	];
-	var length = methods.length;
-	var console = (window.console = window.console || {});
-
-	while (length--) {
-		method = methods[length];
-
-		// Only stub undefined methods.
-		if (!console[method]) {
-			console[method] = noop;
-		}
-	}
-}()) ;
-
 // Place any jQuery/helper plugins in here.
-require(['jquery'], function ($) {
+define(['jquery'], function ($) {
 
 	'strict use';
 
@@ -247,7 +231,7 @@ window.calcTimeFrom = function (arg) {
 	}
 }
 
-require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone, _) {
+define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone, _) {
 
 	_.templateSettings = {
 		interpolate: /\<\@\=(.+?)\@\>/gim,
@@ -438,7 +422,9 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 
 		var PostList = Backbone.Collection.extend({
 			model: PostItem,
-			url: window.postsRoot,
+			url: function () {
+				return app.postsRoot;
+			},
 			page: 0,
 			comparator: function (i) {
 				return -1*new Date(i.get('dateCreated'));
@@ -459,11 +445,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		var PostListView = Backbone.View.extend({
 			className: "postListWrapper",
 			_postViews: [],
-			template: _.template(['<@ if (!length) { @>',
-				'<h3 style="color: #888">Nenhum post visível. :/</h3>',
-				'<@ } @>',
-				'<h3 id="posts-desc">Últimas atualizações dos assuntos que você segue...</h3>',
-				'<hr>'].join('\n')),
 			
 			initialize: function () {
 				this.collection.on('reset', this.addAll, this);
@@ -487,10 +468,6 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 				}, this);
 				this.$el.empty();
 				this.$el.append(container);
-				if (this._postViews.length)
-					$("#no-posts-msg").hide();
-				else
-					$("#no-posts-msg").show();
 				return this;
 			},
 
@@ -536,24 +513,42 @@ require(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone
 		},
 
 		index: function () {
+			console.log('index', this);
 			if (!window.postsRoot) {
 				return;
 			}
-			console.log('index')
+			this.config = _.extend({},window.loadConfig);
+			if (this.config.postData) {
+			}
+			this.postList = new Post.list();
+			console.log('ppo', this.postList);
+			this.postListView = new Post.listView({collection: this.postList});
+			if (false && window.post) {	
+				this.postList.reset([window.post]);
+			} else {
+				this.postList.fetch({reset:true});
+			}
+			this.postListView.$el.appendTo('#postsPlacement');
+		},
+
+		renderPosts: function (opts) {
+			this.postsRoot = opts;
 			this.postList = new Post.list();
 			this.postListView = new Post.listView({collection: this.postList});
 			this.postList.fetch({reset:true});
-			this.postListView.$el.appendTo('#posts-col > .placement');
-		},	
+			this.postListView.$el.appendTo('#postsPlacement');			
+		}
 	});
 
-	$(function () {
-		new WorkspaceRouter;
-		Backbone.history.start({pushState: false});
-		$('#globalContainer').scroll(_.throttle(function() {
-			if ($('#posts-col .placement').height()-
-				($(window).height()+$('#posts-col').scrollTop())< 200)
-				app.postList.tryFetchMore();
-		}, 500));
-	});
+	return {
+		initialize: function () {
+			new WorkspaceRouter;
+			// Backbone.history.start({pushState: false});
+			$('#globalContainer').scroll(_.throttle(function() {
+				if ($('#postsPlacement').height()-
+					($(window).height()+$('#posts-col').scrollTop())< 200)
+					app.postList.tryFetchMore();
+			}, 500));
+		}
+	};
 });

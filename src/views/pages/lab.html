@@ -1,50 +1,44 @@
 {% extends '../sidebared.html' %}
 
-{% block head %}
+{% import '../macros/user.html' as userMacros %}
+	
+{% block bodyEnd %}
 	{% parent %}
-	<script>window.postsRoot='/api/labs/{{ group._id }}/posts';
-	window.groupId='{{ group._id }}';</script>
+	<script>conf={postsRoot:'/api/labs/{{ group._id }}/posts',groupId:'{{ group._id }}'};</script>
 {% endblock %}
 
 {% block sidebarContent %}
-<div class="box">
-	<div class="head">
-		<a href="{{ group.path }} "><span data-info="name">{{ group.profile.name }}</span></a>
+	<div class="box">
+		<div class="head">
+			<a href="{{ group.path }} "><span data-info="name">{{ group.profile.name }}</span></a>
+		</div>
 	</div>
-	<div class="body">
-	</div>
-</div>
 
-<div class="box tags">
-	<div class="head">
-		membros: ({{ group.memberships.count }})
+	<div class="box userList">
+		<div class="head">
+			Membros: {{ group.memberships.count }}
+		</div>
+		<ul class="body">
+			{% for membership in group.memberships.docs %}
+				<li>{{ userMacros.renderUser(membership.member) }}</li>
+			{% endfor %}
+		</ul>
 	</div>
-	<ul class="body user-list">
-		{% for membership in group.memberships.docs %}
-			{{ userMacros.renderUser(membership.member) }}
-		{% endfor %}
-	</ul>
-</div>
 
-<div class="box groups">
-</div>
+	<div class="box groups">
+	</div>
 {% endblock %}
 
 {% block mainContent %}
-<div class="flash-msgs"></div>
 <div id="results-col">
 	<div class="box">
-	<a href="#">Interessante | </a><a href="#">Seus Grupos | </a><a href="">Global</a>
+		<a href="#">Interessante | </a><a href="#">Seus Grupos | </a><a href="">Global</a>
 		<h2>Enviar uma msg para o seus seguidores</h2>
 		<textarea id="inputPostContent" placeholder="Aqui ó"></textarea>
 		<button data-action="send-post" type="submit">Enviar Post</button>
 	</div>
 	<div id="posts-col">
-		<div class="placement">
-			<h3 id="no-posts-msg" style="display: none; color: #888">
-				Ops! Nenhum post visível. :s
-			</h3>
-		</div>
+		<div id="postsPlacement"></div>
 	</div>
 </div>
 {% endblock %}
