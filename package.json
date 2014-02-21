@@ -36,7 +36,7 @@
     "jade": "0.28.2",
     "oauth": "0.9.10",
     "underscore": "1.4.4",
-    "async": "~0.1.18",
+    "async": "0.2.10",
     "crypto": "0.0.3",
     "passport": "0.1.17",
     "passport-facebook": "0.1.5",

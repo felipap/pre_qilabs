@@ -93,7 +93,7 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 			unless doc
 				doc = new Follow {
 					follower: @
-					followee: userId
+					followee: user
 				}
 				doc.save()
 			cb(err, !!doc)
@@ -122,16 +122,16 @@ fillInPostComments = (docs, cb) ->
 # UserSchema.statics.getPostsToUser = (userId, opts, cb) ->
 UserSchema.methods.getTimeline = (opts, cb) ->
 	Inbox
-		.find {recipient: @id}
+		.find {recipient: @id, type:Inbox.Types.Post}
 		.sort '-dateSent'
-		.populate 'post'
+		.populate 'resource'
 		.limit opts.limit or 10
 		.skip opts.skip or 0
 		.exec (err, inboxes) ->
 			return cb(err) if err
-			User.populate inboxes, {path:'post.author'}, (err, docs) ->
+			User.populate inboxes, {path: 'resource.author'}, (err, docs) ->
 				return cb(err) if err
-				fillInPostComments(_.pluck(docs, 'post'), cb)
+				fillInPostComments(_.pluck(docs, 'resource'), cb)
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	Post
@@ -240,24 +240,21 @@ UserSchema.methods.createPost = (data, cb) ->
 			# console.log('yes, here', err, post)
 			# use asunc.parallel to run a job
 			# Callback now, what happens later doesn't concern the user.
+			console.log('porra4')
 			cb(err, post)
+			console.log('porra3')
 			if post.group
 				return
+			console.log('porra2')
 			# Iter through followers and fill inboxes.
-			@getFollowers (err, docs) =>
-				Inbox.create {
-					author: @id,
-					recipient: @id,
-					post: post,
-				}, () -> ;
-
-				for follower in docs
-					# Inbox.createFromPost
-					Inbox.create {
-						author: @id,
-						recipient: follower.id,
-						post: post,
-					}, () -> ;
+			@getFollowers (err, followers) =>
+				console.log('porra', err, followers)
+				Inbox.fillInboxes({
+					recipients: [@].concat(followers),
+					resource: post,
+					type: Inbox.Types.Post,
+					author: @id
+				}, () -> )
 
 ################################################################################
 ## related to the generation of profiles

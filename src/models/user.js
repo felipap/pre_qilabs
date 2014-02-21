@@ -129,7 +129,7 @@ UserSchema.methods.dofollowUser = function(user, cb) {
       if (!doc) {
         doc = new Follow({
           follower: _this,
-          followee: userId
+          followee: user
         });
         doc.save();
       }
@@ -172,18 +172,19 @@ fillInPostComments = function(docs, cb) {
 
 UserSchema.methods.getTimeline = function(opts, cb) {
   return Inbox.find({
-    recipient: this.id
-  }).sort('-dateSent').populate('post').limit(opts.limit || 10).skip(opts.skip || 0).exec(function(err, inboxes) {
+    recipient: this.id,
+    type: Inbox.Types.Post
+  }).sort('-dateSent').populate('resource').limit(opts.limit || 10).skip(opts.skip || 0).exec(function(err, inboxes) {
     if (err) {
       return cb(err);
     }
     return User.populate(inboxes, {
-      path: 'post.author'
+      path: 'resource.author'
     }, function(err, docs) {
       if (err) {
         return cb(err);
       }
-      return fillInPostComments(_.pluck(docs, 'post'), cb);
+      return fillInPostComments(_.pluck(docs, 'resource'), cb);
     });
   });
 };
@@ -334,27 +335,21 @@ UserSchema.methods.createPost = function(data, cb) {
   }
   return post.save((function(_this) {
     return function(err, post) {
+      console.log('porra4');
       cb(err, post);
+      console.log('porra3');
       if (post.group) {
         return;
       }
-      return _this.getFollowers(function(err, docs) {
-        var follower, _i, _len, _results;
-        Inbox.create({
-          author: _this.id,
-          recipient: _this.id,
-          post: post
+      console.log('porra2');
+      return _this.getFollowers(function(err, followers) {
+        console.log('porra', err, followers);
+        return Inbox.fillInboxes({
+          recipients: [_this].concat(followers),
+          resource: post,
+          type: Inbox.Types.Post,
+          author: _this.id
         }, function() {});
-        _results = [];
-        for (_i = 0, _len = docs.length; _i < _len; _i++) {
-          follower = docs[_i];
-          _results.push(Inbox.create({
-            author: _this.id,
-            recipient: follower.id,
-            post: post
-          }, function() {}));
-        }
-        return _results;
       });
     };
   })(this));

@@ -1,8 +1,3 @@
-
-/*
-Improve:
-- Stop calling /comments to get comments.
- */
 var Post, PostSchema, PostTypes, mongoose, urlify;
 
 mongoose = require('mongoose');

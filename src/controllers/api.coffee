@@ -30,6 +30,7 @@ required = require '../lib/required.js'
 
 User = mongoose.model 'User'
 Post = mongoose.model 'Post'
+Inbox= mongoose.model 'Inbox'
 Tag  = mongoose.model 'Tag'
 Group  = mongoose.model 'Group'
 Subscriber = mongoose.model 'Subscriber'
@@ -54,18 +55,20 @@ module.exports = {
 					# This be ugly but me don't care.
 					User.find {}, (err, users) ->
 						Post.find {}, (err, posts) ->
-							Subscriber.find {}, (err, subscribers) ->
-								Group.find {}, (err, groups) ->
-									Group.Membership.find {}, (err, membership) ->
-										obj =
-											ip: req.ip
-											group: groups
-											membership: membership
-											session: req.session
-											users: users
-											posts: posts
-											subscribers: subscribers
-										res.end(JSON.stringify(obj))
+							Inbox.find {}, (err, inboxs) ->
+								Subscriber.find {}, (err, subscribers) ->
+									Group.find {}, (err, groups) ->
+										Group.Membership.find {}, (err, membership) ->
+											obj =
+												ip: req.ip
+												group: groups
+												inboxs: inboxs
+												membership: membership
+												session: req.session
+												users: users
+												posts: posts
+												subscribers: subscribers
+											res.end(JSON.stringify(obj))
 			}
 		'testers':
 			permissions: [required.logout]
@@ -244,7 +247,7 @@ module.exports = {
 						post: [required.login,
 							(req, res) ->
 								return unless userId = req.paramToObjectId('userId')
-								User.find {_id: userId}, HandleErrors res, ((user) ->
+								User.findOne {_id: userId}, HandleErrors res, ((user) ->
 									req.user.dofollowUser user, (err, done) ->
 										res.end(JSON.stringify({
 											error: !!err,
@@ -258,7 +261,7 @@ module.exports = {
 						post: [required.login,
 							(req, res) ->
 								return unless userId = req.paramToObjectId('userId')
-								User.find {_id: userId}, (err, user) ->
+								User.findOne {_id: userId}, (err, user) ->
 									req.user.unfollowUser user, (err, done) ->
 										res.end(JSON.stringify({
 											error: !!err,

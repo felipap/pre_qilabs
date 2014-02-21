@@ -14,7 +14,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Group, HandleErrors, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
+var Group, HandleErrors, Inbox, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -28,6 +28,8 @@ required = require('../lib/required.js');
 User = mongoose.model('User');
 
 Post = mongoose.model('Post');
+
+Inbox = mongoose.model('Inbox');
 
 Tag = mongoose.model('Tag');
 
@@ -61,20 +63,23 @@ module.exports = {
         get: function(req, res) {
           return User.find({}, function(err, users) {
             return Post.find({}, function(err, posts) {
-              return Subscriber.find({}, function(err, subscribers) {
-                return Group.find({}, function(err, groups) {
-                  return Group.Membership.find({}, function(err, membership) {
-                    var obj;
-                    obj = {
-                      ip: req.ip,
-                      group: groups,
-                      membership: membership,
-                      session: req.session,
-                      users: users,
-                      posts: posts,
-                      subscribers: subscribers
-                    };
-                    return res.end(JSON.stringify(obj));
+              return Inbox.find({}, function(err, inboxs) {
+                return Subscriber.find({}, function(err, subscribers) {
+                  return Group.find({}, function(err, groups) {
+                    return Group.Membership.find({}, function(err, membership) {
+                      var obj;
+                      obj = {
+                        ip: req.ip,
+                        group: groups,
+                        inboxs: inboxs,
+                        membership: membership,
+                        session: req.session,
+                        users: users,
+                        posts: posts,
+                        subscribers: subscribers
+                      };
+                      return res.end(JSON.stringify(obj));
+                    });
                   });
                 });
               });
@@ -330,7 +335,7 @@ module.exports = {
                 if (!(userId = req.paramToObjectId('userId'))) {
                   return;
                 }
-                return User.find({
+                return User.findOne({
                   _id: userId
                 }, HandleErrors(res, (function(user) {
                   return req.user.dofollowUser(user, function(err, done) {
@@ -351,7 +356,7 @@ module.exports = {
                 if (!(userId = req.paramToObjectId('userId'))) {
                   return;
                 }
-                return User.find({
+                return User.findOne({
                   _id: userId
                 }, function(err, user) {
                   return req.user.unfollowUser(user, function(err, done) {

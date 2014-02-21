@@ -3,11 +3,6 @@
 # Copyright QILabs.org
 # by @f03lipe
 
-###
-Improve:
-- Stop calling /comments to get comments.
-###
-
 ################################################################################
 ################################################################################
 
@@ -44,7 +39,6 @@ PostSchema.virtual('path').get ->
 PostSchema.virtual('apiPath').get ->
 	"/api/posts/{id}".replace(/{id}/, @id)
 
-# TODO: improve this
 urlify = (text) ->
 	urlRegex = /(((https?:(?:\/\/)?)(?:www\.)?[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
 
