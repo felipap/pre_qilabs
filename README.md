@@ -1,5 +1,5 @@
 
-## Me Avisa
+## Q.I. Labs
 
 #### estimated version: alpha 1
 
