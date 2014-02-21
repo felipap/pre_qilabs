@@ -46,8 +46,7 @@ PostSchema.virtual('apiPath').get ->
 
 # TODO: improve this
 urlify = (text) ->
-	urlRegex = /(https?:\/\/[^\s]+)/g
-	urlRegex = /((https?:\/\/|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
+	urlRegex = /(((https?:(?:\/\/)?)(?:www\.)?[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
 
 	return text.replace urlRegex, (url) ->
 	    return "<a href=\"#{url}\">#{url}</a>"

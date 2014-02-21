@@ -70,8 +70,7 @@ PostSchema.virtual('apiPath').get(function() {
 
 urlify = function(text) {
   var urlRegex;
-  urlRegex = /(https?:\/\/[^\s]+)/g;
-  urlRegex = /((https?:\/\/|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+  urlRegex = /(((https?:(?:\/\/)?)(?:www\.)?[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/;
   return text.replace(urlRegex, function(url) {
     return "<a href=\"" + url + "\">" + url + "</a>";
   });
