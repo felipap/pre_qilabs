@@ -207,6 +207,8 @@ UserSchema.methods.getTimeline = function(opts, cb) {
         return async.mapLimit(follows, 5, (function(follow, done) {
           return Post.find({
             author: follow.followee,
+            group: null,
+            parentPost: null,
             dateCreated: {
               $lt: follow.dateBegin,
               $gt: minDate

@@ -141,7 +141,9 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 				async.mapLimit follows, 5, ((follow, done) =>
 					Post
 						.find {
-							author:follow.followee,
+							author: follow.followee,
+							group: null,
+							parentPost: null,
 							dateCreated: {$lt:follow.dateBegin, $gt:minDate}
 						}
 						.limit opts.limit
