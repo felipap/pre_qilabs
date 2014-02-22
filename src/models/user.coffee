@@ -155,8 +155,12 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 
 		onGetNonInboxedPosts = (err, nips) ->
 			return cb(err) if err
+
+			console.log 'every:', _.all(nips), _.all(ips)
 			
-			all = _.sortBy(nips.concat(ips), (p) -> p.dateCreated) # merge n sort
+			all = _.sortBy(nips.concat(ips), (p) ->
+				p.dateCreated
+			) # merge n sort
 			
 			User.populate all, {path: 'author'}, (err, docs) =>
 				return cb(err) if err

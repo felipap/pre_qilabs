@@ -231,6 +231,7 @@ UserSchema.methods.getTimeline = function(opts, cb) {
         if (err) {
           return cb(err);
         }
+        console.log('every:', _.all(nips), _.all(ips));
         all = _.sortBy(nips.concat(ips), function(p) {
           return p.dateCreated;
         });
