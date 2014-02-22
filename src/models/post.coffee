@@ -59,7 +59,6 @@ PostSchema.statics.deepRemove = ->
 	console.log('removed?')
 
 PostSchema.pre 'save', (next) ->
-	console.log 'saving me', @parentPost
 	@dateCreated ?= new Date
 	next()
 

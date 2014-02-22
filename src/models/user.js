@@ -239,7 +239,6 @@ UserSchema.methods.getTimeline = function(opts, cb) {
             if (err) {
               return cb(err);
             }
-            console.log('follows', docs, minDate);
             return fillInPostComments(docs, cb);
           };
         })(this));

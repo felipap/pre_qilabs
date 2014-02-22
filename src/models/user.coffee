@@ -161,7 +161,7 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 			
 			User.populate all, {path: 'author'}, (err, docs) =>
 				return cb(err) if err
-				console.log 'follows', docs, minDate
+				# console.log 'follows', docs, minDate
 				fillInPostComments(docs, cb)
 
 

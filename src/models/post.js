@@ -93,7 +93,6 @@ PostSchema.statics.deepRemove = function() {
 };
 
 PostSchema.pre('save', function(next) {
-  console.log('saving me', this.parentPost);
   if (this.dateCreated == null) {
     this.dateCreated = new Date;
   }
