@@ -260,6 +260,7 @@ UserSchema.methods.getTimeline = function(opts, cb) {
       docs = _.filter(_docs, function(i) {
         return i;
       });
+      console.log('inboxes', _.pluck(docs, 'resource'));
 
       /*
       			 * Get oldest post date

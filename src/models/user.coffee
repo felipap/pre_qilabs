@@ -178,6 +178,7 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 		.exec (err, _docs) =>
 			return cb(err) if err
 			docs = _.filter(_docs, (i) -> i) # prevent null from .limit
+			console.log('inboxes', _.pluck(docs, 'resource'))
 
 			###
 			# Get oldest post date
