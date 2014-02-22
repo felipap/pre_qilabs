@@ -116,7 +116,10 @@ fillInPostComments = (docs, cb) ->
 			Post.find {parentPost: post}
 				.populate 'author'
 				.exec (err, comments) ->
-					results.push(_.extend({}, post, { comments:comments }))
+					if post.toObject
+						results.push(_.extend({}, post.toObject(), { comments:comments }))
+					else
+						results.push(_.extend({}, post, { comments:comments }))
 					asyncCb()
 		, (err) -> cb(err, results)
 
@@ -290,12 +293,12 @@ UserSchema.methods.createPost = (data, cb) ->
 			# console.log('yes, here', err, post)
 			# use asunc.parallel to run a job
 			# Callback now, what happens later doesn't concern the user.
-			console.log('porra4')
+			# console.log('porra4')
 			cb(err, post)
-			console.log('porra3')
+			# console.log('porra3')
 			if post.group
 				return
-			console.log('porra2')
+			# console.log('porra2')
 			# Iter through followers and fill inboxes.
 			@getFollowers (err, followers) =>
 				console.log('porra', err, followers)

@@ -168,9 +168,15 @@ fillInPostComments = function(docs, cb) {
     return Post.find({
       parentPost: post
     }).populate('author').exec(function(err, comments) {
-      results.push(_.extend({}, post, {
-        comments: comments
-      }));
+      if (post.toObject) {
+        results.push(_.extend({}, post.toObject(), {
+          comments: comments
+        }));
+      } else {
+        results.push(_.extend({}, post, {
+          comments: comments
+        }));
+      }
       return asyncCb();
     });
   }, function(err) {
@@ -411,13 +417,10 @@ UserSchema.methods.createPost = function(data, cb) {
   }
   return post.save((function(_this) {
     return function(err, post) {
-      console.log('porra4');
       cb(err, post);
-      console.log('porra3');
       if (post.group) {
         return;
       }
-      console.log('porra2');
       return _this.getFollowers(function(err, followers) {
         console.log('porra', err, followers);
         return Inbox.fillInboxes({
