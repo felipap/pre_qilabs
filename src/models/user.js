@@ -271,7 +271,9 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
       if (err) {
         return cb(err);
       }
-      posts = _.pluck(docs, 'resource');
+      posts = _.pluck(docs, 'resource').filter(function(i) {
+        return !!i;
+      });
 
       /*
       			 * Get oldest post date

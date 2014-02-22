@@ -187,7 +187,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 		.skip opts.skip
 		.exec HandleLimit((err, docs) =>
 			return cb(err) if err
-			posts = _.pluck(docs, 'resource')
+			posts = _.pluck(docs, 'resource').filter((i)->!!i)
 
 			###
 			# Get oldest post date
