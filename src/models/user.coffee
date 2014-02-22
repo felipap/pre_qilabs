@@ -161,7 +161,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 						.exec done
 					), (err, _docs) ->
 						# Flatten lists. Remove undefined (from .limit queries).
-						nips = _.flatten(docs).filter((i)->i)
+						nips = _.flatten(_docs).filter((i)->i)
 						onGetNonInboxedPosts(err, nips)
 
 		onGetNonInboxedPosts = (err, nips) ->

@@ -234,7 +234,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
           }).limit(opts.limit).exec(done);
         }), function(err, _docs) {
           var nips;
-          nips = _.flatten(docs).filter(function(i) {
+          nips = _.flatten(_docs).filter(function(i) {
             return i;
           });
           return onGetNonInboxedPosts(err, nips);
