@@ -160,21 +160,19 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 						.limit opts.limit
 						.exec done
 					), (err, _docs) ->
-						docs = _.filter(_docs, (i) -> i) # prevent null from .limit
-						onGetNonInboxedPosts(err, _.flatten(docs).filter((i)->i))
+						# Flatten lists. Remove undefined (from .limit queries).
+						nips = _.flatten(docs).filter((i)->i)
+						onGetNonInboxedPosts(err, nips)
 
 		onGetNonInboxedPosts = (err, nips) ->
 			return cb(err) if err
-
-			console.log 'every:', _.all(nips), _.all(ips)
 			
-			all = _.sortBy(nips.concat(ips), (p) ->
-				p.dateCreated
-			) # merge n sort
+			all = _.sortBy(nips.concat(ips), (p) -> p.dateCreated) # merge'n'sort by date
 			
+			# Populate author in all docs (nips and ips)
 			User.populate all, {path: 'author'}, (err, docs) =>
 				return cb(err) if err
-				# console.log 'follows', docs, minDate
+				# Fill comments in all docs.
 				fillInPostComments(docs, cb)
 
 

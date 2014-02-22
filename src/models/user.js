@@ -233,13 +233,11 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
             }
           }).limit(opts.limit).exec(done);
         }), function(err, _docs) {
-          var docs;
-          docs = _.filter(_docs, function(i) {
+          var nips;
+          nips = _.flatten(docs).filter(function(i) {
             return i;
           });
-          return onGetNonInboxedPosts(err, _.flatten(docs).filter(function(i) {
-            return i;
-          }));
+          return onGetNonInboxedPosts(err, nips);
         });
       });
       return onGetNonInboxedPosts = function(err, nips) {
@@ -247,7 +245,6 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
         if (err) {
           return cb(err);
         }
-        console.log('every:', _.all(nips), _.all(ips));
         all = _.sortBy(nips.concat(ips), function(p) {
           return p.dateCreated;
         });
