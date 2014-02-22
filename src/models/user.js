@@ -250,7 +250,7 @@ UserSchema.methods.getTimeline = function(opts, cb) {
     type: Inbox.Types.Post
   }).sort('-dateSent').populate('resource').limit(opts.limit || 10).skip(opts.skip || 0).exec((function(_this) {
     return function(err, docs) {
-      var oldestPostDate;
+      var e, oldestPostDate;
       if (err) {
         return cb(err);
       }
@@ -265,7 +265,12 @@ UserSchema.methods.getTimeline = function(opts, cb) {
       } else {
         oldestPostDate = new Date(0);
       }
-      return addNonInboxedPosts(oldestPostDate, _.pluck(docs, 'resource'));
+      try {
+        return addNonInboxedPosts(oldestPostDate, _.pluck(docs, 'resource'));
+      } catch (_error) {
+        e = _error;
+        return cb(e);
+      }
     };
   })(this));
 };

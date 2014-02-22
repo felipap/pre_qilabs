@@ -183,8 +183,10 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 				oldestPostDate = docs[-1].resource.dateCreated
 			else # Not even opts.limit posts exist. Get Date(0).
 				oldestPostDate = new Date(0)
-			addNonInboxedPosts(oldestPostDate, _.pluck(docs, 'resource'))
-
+			try
+				addNonInboxedPosts(oldestPostDate, _.pluck(docs, 'resource'))
+			catch e
+				cb(e)
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	Post
