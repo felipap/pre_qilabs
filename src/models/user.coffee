@@ -161,7 +161,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 						.exec done
 					), (err, _docs) ->
 						docs = _.filter(_docs, (i) -> i) # prevent null from .limit
-						onGetNonInboxedPosts(err, _.flatten(docs))
+						onGetNonInboxedPosts(err, _.flatten(docs).filter((i)->i))
 
 		onGetNonInboxedPosts = (err, nips) ->
 			return cb(err) if err
@@ -187,7 +187,8 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 		.skip opts.skip
 		.exec HandleLimit((err, docs) =>
 			return cb(err) if err
-			posts = _.pluck(docs, 'resource').filter((i)->!!i)
+			# Pluck resources from inbox docs. Remove undefineds and nulls.
+			posts = _.pluck(docs, 'resource').filter((i)->i)
 
 			###
 			# Get oldest post date

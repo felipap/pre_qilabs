@@ -237,7 +237,9 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
           docs = _.filter(_docs, function(i) {
             return i;
           });
-          return onGetNonInboxedPosts(err, _.flatten(docs));
+          return onGetNonInboxedPosts(err, _.flatten(docs).filter(function(i) {
+            return i;
+          }));
         });
       });
       return onGetNonInboxedPosts = function(err, nips) {
@@ -272,7 +274,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
         return cb(err);
       }
       posts = _.pluck(docs, 'resource').filter(function(i) {
-        return !!i;
+        return i;
       });
 
       /*
