@@ -187,7 +187,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 		.skip opts.skip
 		.exec HandleLimit((err, docs) =>
 			return cb(err) if err
-			posts = _.filter(docs, (d) -> d.resource)
+			posts = _.pluck(docs, 'resource')
 
 			###
 			# Get oldest post date
@@ -201,10 +201,10 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			else
 				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
 				oldestPostDate = new Date(0)
-			try
-				addNonInboxedPosts(oldestPostDate, posts)
-			catch e
-				cb(e)
+			# try
+			addNonInboxedPosts(oldestPostDate, posts)
+			# catch e
+			# 	cb(e)
 		)
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
