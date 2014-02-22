@@ -72,7 +72,11 @@ urlify = function(text) {
 };
 
 PostSchema.virtual('data.unescapedBody').get(function() {
-  return urlify(this.data.body);
+  if (this.data.bdy) {
+    return urlify(this.data.body);
+  } else {
+    return '';
+  }
 });
 
 PostSchema.pre('remove', function(next) {

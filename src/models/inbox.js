@@ -22,19 +22,23 @@ InboxSchema = new mongoose.Schema({
   },
   recipient: {
     type: mongoose.Schema.ObjectId,
-    index: true
+    index: true,
+    required: true
   },
   author: {
     type: mongoose.Schema.ObjectId,
     index: true,
-    ref: 'User'
+    ref: 'User',
+    required: true
   },
   resource: {
     type: mongoose.Schema.ObjectId,
-    ref: 'Post'
+    ref: 'Post',
+    required: true
   },
   type: {
-    type: String
+    type: String,
+    required: true
   }
 });
 

@@ -21,10 +21,10 @@ Types =
 
 InboxSchema = new mongoose.Schema {
 	dateSent:		{ type: Date, index: true }
-	recipient:	 	{ type: mongoose.Schema.ObjectId, index: true } # Might as well be a group
-	author:			{ type: mongoose.Schema.ObjectId, index: true, ref: 'User' }
-	resource:		{ type: mongoose.Schema.ObjectId, ref: 'Post' }
-	type: 			{ type: String }
+	recipient:	 	{ type: mongoose.Schema.ObjectId, index: true, required: true }
+	author:			{ type: mongoose.Schema.ObjectId, index: true, ref: 'User', required: true }
+	resource:		{ type: mongoose.Schema.ObjectId, ref: 'Post', required: true }
+	type: 			{ type: String, required: true }
 }
 
 InboxSchema.statics.getFromUser = (user, opts, cb) ->

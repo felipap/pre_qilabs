@@ -41,12 +41,14 @@ PostSchema.virtual('apiPath').get ->
 
 urlify = (text) ->
 	urlRegex = /(((https?:(?:\/\/)?)(?:www\.)?[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
-
 	return text.replace urlRegex, (url) ->
 	    return "<a href=\"#{url}\">#{url}</a>"
 
 PostSchema.virtual('data.unescapedBody').get ->
-	urlify(@data.body)
+	if @data.bdy
+		urlify(@data.body)
+	else
+		''
 
 PostSchema.pre 'remove', (next) ->
 	Post.remove { parentPost: @ }, (err, num) ->
