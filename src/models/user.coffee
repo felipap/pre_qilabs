@@ -171,8 +171,10 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 		.populate 'resource'
 		.limit opts.limit or 10
 		.skip opts.skip or 0
-		.exec (err, docs) =>
+		.exec (err, _docs) =>
 			return cb(err) if err
+			docs = _.filter(_docs, (i) -> i) # prevent null from .limit
+
 			###
 			# Get oldest post date
 			# Non-inboxed posts must be younger than that, so that at least opts.limit

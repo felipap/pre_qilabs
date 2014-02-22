@@ -251,11 +251,14 @@ UserSchema.methods.getTimeline = function(opts, cb) {
     recipient: this.id,
     type: Inbox.Types.Post
   }).sort('-dateSent').populate('resource').limit(opts.limit || 10).skip(opts.skip || 0).exec((function(_this) {
-    return function(err, docs) {
-      var e, oldestPostDate;
+    return function(err, _docs) {
+      var docs, e, oldestPostDate;
       if (err) {
         return cb(err);
       }
+      docs = _.filter(_docs, function(i) {
+        return i;
+      });
 
       /*
       			 * Get oldest post date
