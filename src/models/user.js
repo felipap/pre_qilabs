@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, Inbox, ObjectId, Post, User, UserSchema, async, fillInPostComments, mongoose, _;
+var Follow, Group, HandleLimit, Inbox, ObjectId, Post, User, UserSchema, async, fillInPostComments, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -159,6 +159,16 @@ UserSchema.methods.unfollowUser = function(user, cb) {
   })(this));
 };
 
+HandleLimit = function(func) {
+  return function(err, _docs) {
+    var docs;
+    docs = _.filter(_docs, function(e) {
+      return e;
+    });
+    return func(err, docs);
+  };
+};
+
 fillInPostComments = function(docs, cb) {
   var results;
   results = [];
@@ -189,13 +199,17 @@ fillInPostComments = function(docs, cb) {
  * Behold.
  */
 
-UserSchema.methods.getTimeline = function(opts, cb) {
+UserSchema.methods.getTimeline = function(_opts, cb) {
+  var addNonInboxedPosts, opts;
+  opts = _.extend({
+    limit: 10,
+    skip: 0
+  }, _opts);
 
   /*
   	 * Merge inboxes posts with those from followed users but that preceed "followship".
   	 * Limit search to those posts made after @minDate.
    */
-  var addNonInboxedPosts;
   addNonInboxedPosts = (function(_this) {
     return function(minDate, ips) {
       var onGetNonInboxedPosts;
@@ -251,35 +265,34 @@ UserSchema.methods.getTimeline = function(opts, cb) {
   return Inbox.find({
     recipient: this.id,
     type: Inbox.Types.Post
-  }).sort('-dateSent').populate('resource').limit(opts.limit || 10).skip(opts.skip || 0).exec((function(_this) {
-    return function(err, _docs) {
-      var docs, e, oldestPostDate;
+  }).sort('-dateSent').populate('resource').limit(opts.limit).skip(opts.skip).exec(HandleLimit((function(_this) {
+    return function(err, docs) {
+      var e, oldestPostDate, posts;
       if (err) {
         return cb(err);
       }
-      docs = _.filter(_docs, function(i) {
-        return i;
+      posts = _.filter(docs, function(d) {
+        return d.resource;
       });
-      console.log('inboxes', _.pluck(docs, 'resource'));
 
       /*
       			 * Get oldest post date
       			 * Non-inboxed posts must be younger than that, so that at least opts.limit
       			 * posts are created.
        */
-      if (docs[-1]) {
-        oldestPostDate = docs[-1].resource.dateCreated;
+      if (posts.length === opts.limit) {
+        oldestPostDate = posts[-1].dateCreated;
       } else {
         oldestPostDate = new Date(0);
       }
       try {
-        return addNonInboxedPosts(oldestPostDate, _.pluck(docs, 'resource'));
+        return addNonInboxedPosts(oldestPostDate, posts);
       } catch (_error) {
         e = _error;
         return cb(e);
       }
     };
-  })(this));
+  })(this)));
 };
 
 UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {

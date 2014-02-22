@@ -110,6 +110,11 @@ UserSchema.methods.unfollowUser = (user, cb) ->
 ################################################################################
 ## related to fetching Timelines and Inboxes
 
+HandleLimit = (func) ->
+	return (err, _docs) ->
+		docs = _.filter(_docs, (e) -> e)
+		func(err,docs)
+
 fillInPostComments = (docs, cb) ->
 	results = []
 	async.forEach _.filter(docs, (i) -> i), (post, asyncCb) ->
@@ -126,7 +131,12 @@ fillInPostComments = (docs, cb) ->
 ###
 # Behold.
 ###
-UserSchema.methods.getTimeline = (opts, cb) ->
+UserSchema.methods.getTimeline = (_opts, cb) ->
+
+	opts = _.extend({
+		limit: 10,
+		skip: 0,
+	}, _opts)
 
 	###
 	# Merge inboxes posts with those from followed users but that preceed "followship".
@@ -173,26 +183,29 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 		.find {recipient: @id, type:Inbox.Types.Post}
 		.sort '-dateSent'
 		.populate 'resource'
-		.limit opts.limit or 10
-		.skip opts.skip or 0
-		.exec (err, _docs) =>
+		.limit opts.limit
+		.skip opts.skip
+		.exec HandleLimit((err, docs) =>
 			return cb(err) if err
-			docs = _.filter(_docs, (i) -> i and i.resource)
-			console.log('inboxes', docs)
+			posts = _.filter(docs, (d) -> d.resource)
 
 			###
 			# Get oldest post date
 			# Non-inboxed posts must be younger than that, so that at least opts.limit
 			# posts are created. 
 			###
-			if docs[-1] # Get date of the oldest resource.
-				oldestPostDate = docs[-1].resource.dateCreated
-			else # Not even opts.limit posts exist. Get Date(0).
+			if posts.length is opts.limit
+				# There are at least opts.limit inboxed posts. 
+				# Then limit non-inboxed posts to be younger than oldest post here.
+				oldestPostDate = posts[-1].dateCreated
+			else
+				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
 				oldestPostDate = new Date(0)
 			try
-				addNonInboxedPosts(oldestPostDate, _.pluck(docs, 'resource'))
+				addNonInboxedPosts(oldestPostDate, posts)
 			catch e
 				cb(e)
+		)
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	Post
