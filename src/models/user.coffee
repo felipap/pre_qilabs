@@ -100,10 +100,12 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 
 UserSchema.methods.unfollowUser = (user, cb) ->
 	console.assert(user instanceof User, 'Passed argument not a user document')
-	Follow.findOne {follower:@, followee:user},
-		(err, doc) ->
+	Follow.findOne { follower:@, followee:user },
+		(err, doc) =>
 			return cb(err) if err
 			doc.remove cb
+			Inbox.remove { recipient:@, author:user }, () ->
+				console.log("inbox removed?", arguments)
 
 ################################################################################
 ## related to fetching Timelines and Inboxes
@@ -114,24 +116,70 @@ fillInPostComments = (docs, cb) ->
 			Post.find {parentPost: post}
 				.populate 'author'
 				.exec (err, comments) ->
-					results.push(_.extend({}, post.toObject(), {comments: comments}))
+					results.push(_.extend({}, post, { comments:comments }))
 					asyncCb()
 		, (err) -> cb(err, results)
 
+mergePosts = (docs, cb) ->
 
-# UserSchema.statics.getPostsToUser = (userId, opts, cb) ->
+###
+# Behold.
+###
 UserSchema.methods.getTimeline = (opts, cb) ->
+
+	###
+	# Merge inboxes posts with those from followed users but that preceed "followship".
+	# Limit search to those posts made after @minDate.
+	###
+	addNonInboxedPosts = (minDate, ips) => # ips => Inboxed PostS
+		# Get all "followships" created after @minDate.
+		Follow
+			.find { follower:@, dateBegin:{$gt:minDate} }
+			.exec (err, follows) =>
+				return cb(err) if err
+				# Get posts from these users created before "followship" and after minDate.
+				async.mapLimit follows, 5, ((follow, done) =>
+					Post
+						.find {
+							author:follow.followee,
+							dateCreated: {$lt:follow.dateBegin, $gt:minDate}
+						}
+						.limit opts.limit
+						.exec done
+					), (err, docs) ->
+						onGetNonInboxedPosts(err, _.flatten(docs))
+
+		onGetNonInboxedPosts = (err, nips) ->
+			return cb(err) if err
+			
+			all = _.sortBy(nips.concat(ips), (p) -> p.dateCreated) # merge n sort
+			
+			User.populate all, {path: 'author'}, (err, docs) =>
+				return cb(err) if err
+				console.log 'follows', docs, minDate
+				fillInPostComments(docs, cb)
+
+
+	# Get inboxed posts.
 	Inbox
 		.find {recipient: @id, type:Inbox.Types.Post}
 		.sort '-dateSent'
 		.populate 'resource'
 		.limit opts.limit or 10
 		.skip opts.skip or 0
-		.exec (err, inboxes) ->
+		.exec (err, docs) =>
 			return cb(err) if err
-			User.populate inboxes, {path: 'resource.author'}, (err, docs) ->
-				return cb(err) if err
-				fillInPostComments(_.pluck(docs, 'resource'), cb)
+			###
+			# Get oldest post date
+			# Non-inboxed posts must be younger than that, so that at least opts.limit
+			# posts are created. 
+			###
+			if docs[-1] # Get date of the oldest resource.
+				oldestPostDate = docs[-1].resource.dateCreated
+			else # Not even opts.limit posts exist. Get Date(0).
+				oldestPostDate = new Date(0)
+			addNonInboxedPosts(oldestPostDate, _.pluck(docs, 'resource'))
+
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	Post

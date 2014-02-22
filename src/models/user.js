@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, Inbox, ObjectId, Post, User, UserSchema, async, fillInPostComments, mongoose, _;
+var Follow, Group, Inbox, ObjectId, Post, User, UserSchema, async, fillInPostComments, mergePosts, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -143,12 +143,20 @@ UserSchema.methods.unfollowUser = function(user, cb) {
   return Follow.findOne({
     follower: this,
     followee: user
-  }, function(err, doc) {
-    if (err) {
-      return cb(err);
-    }
-    return doc.remove(cb);
-  });
+  }, (function(_this) {
+    return function(err, doc) {
+      if (err) {
+        return cb(err);
+      }
+      doc.remove(cb);
+      return Inbox.remove({
+        recipient: _this,
+        author: user
+      }, function() {
+        return console.log("inbox removed?", arguments);
+      });
+    };
+  })(this));
 };
 
 fillInPostComments = function(docs, cb) {
@@ -160,7 +168,7 @@ fillInPostComments = function(docs, cb) {
     return Post.find({
       parentPost: post
     }).populate('author').exec(function(err, comments) {
-      results.push(_.extend({}, post.toObject(), {
+      results.push(_.extend({}, post, {
         comments: comments
       }));
       return asyncCb();
@@ -170,23 +178,89 @@ fillInPostComments = function(docs, cb) {
   });
 };
 
+mergePosts = function(docs, cb) {};
+
+
+/*
+ * Behold.
+ */
+
 UserSchema.methods.getTimeline = function(opts, cb) {
+
+  /*
+  	 * Merge inboxes posts with those from followed users but that preceed "followship".
+  	 * Limit search to those posts made after @minDate.
+   */
+  var addNonInboxedPosts;
+  addNonInboxedPosts = (function(_this) {
+    return function(minDate, ips) {
+      var onGetNonInboxedPosts;
+      Follow.find({
+        follower: _this,
+        dateBegin: {
+          $gt: minDate
+        }
+      }).exec(function(err, follows) {
+        if (err) {
+          return cb(err);
+        }
+        return async.mapLimit(follows, 5, (function(follow, done) {
+          return Post.find({
+            author: follow.followee,
+            dateCreated: {
+              $lt: follow.dateBegin,
+              $gt: minDate
+            }
+          }).limit(opts.limit).exec(done);
+        }), function(err, docs) {
+          return onGetNonInboxedPosts(err, _.flatten(docs));
+        });
+      });
+      return onGetNonInboxedPosts = function(err, nips) {
+        var all;
+        if (err) {
+          return cb(err);
+        }
+        all = _.sortBy(nips.concat(ips), function(p) {
+          return p.dateCreated;
+        });
+        return User.populate(all, {
+          path: 'author'
+        }, (function(_this) {
+          return function(err, docs) {
+            if (err) {
+              return cb(err);
+            }
+            console.log('follows', docs, minDate);
+            return fillInPostComments(docs, cb);
+          };
+        })(this));
+      };
+    };
+  })(this);
   return Inbox.find({
     recipient: this.id,
     type: Inbox.Types.Post
-  }).sort('-dateSent').populate('resource').limit(opts.limit || 10).skip(opts.skip || 0).exec(function(err, inboxes) {
-    if (err) {
-      return cb(err);
-    }
-    return User.populate(inboxes, {
-      path: 'resource.author'
-    }, function(err, docs) {
+  }).sort('-dateSent').populate('resource').limit(opts.limit || 10).skip(opts.skip || 0).exec((function(_this) {
+    return function(err, docs) {
+      var oldestPostDate;
       if (err) {
         return cb(err);
       }
-      return fillInPostComments(_.pluck(docs, 'resource'), cb);
-    });
-  });
+
+      /*
+      			 * Get oldest post date
+      			 * Non-inboxed posts must be younger than that, so that at least opts.limit
+      			 * posts are created.
+       */
+      if (docs[-1]) {
+        oldestPostDate = docs[-1].resource.dateCreated;
+      } else {
+        oldestPostDate = new Date(0);
+      }
+      return addNonInboxedPosts(oldestPostDate, _.pluck(docs, 'resource'));
+    };
+  })(this));
 };
 
 UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
