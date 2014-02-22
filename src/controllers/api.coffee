@@ -270,57 +270,51 @@ module.exports = {
 					}
 				},	
 			}
-		'me': 
-			methods: {
-				post: [required.login,
-					(req, res) ->
-						if 'off' is req.query.notifiable
-							req.user.notifiable = off
-							req.user.save()
-						else if 'on' in req.query.notifiable
-							req.user.notifiable = on
-							req.user.save()
-						res.end()
-					]
-			},
+		'me':
+			permissions: [required.login],
+			post: (req, res) ->
+					if 'off' is req.query.notifiable
+						req.user.notifiable = off
+						req.user.save()
+					else if 'on' in req.query.notifiable
+						req.user.notifiable = on
+						req.user.save()
+					res.end()
 			children: {
+				'notifications': {
+					get: (req, res) ->
+						req.user.getNotifications HandleErrors(req, (notes) ->
+								res.end(JSON.stringify({
+									data: notes,
+									error: false
+								}))
+							)
+				}
 				'timeline/posts': {
-					methods: {
-						get: [required.login,
-							(req, res) ->
-								req.user.getTimeline {limit:10, skip:5*parseInt(req.query.page)},
-									(err, docs) ->
-										page = (not docs[0] and -1) or parseInt(req.query.page) or 0
-										# console.log('Fetched timeline:', docs)
-										res.end(JSON.stringify({
-											page: page
-											data: docs
-											error: false
-										}))
-						],
-					}
+					get: (req, res) ->
+							req.user.getTimeline {limit:10, skip:5*parseInt(req.query.page)},
+								(err, docs) ->
+									page = (not docs[0] and -1) or parseInt(req.query.page) or 0
+									# console.log('Fetched timeline:', docs)
+									res.end(JSON.stringify({
+										page: page
+										data: docs
+										error: false
+									}))
 				},
 				'leave': {
 					name: 'user_quit'
-					methods: {
-						post: [required.login,
-							(req, res) -> # Deletes user account.
-								req.user.remove (err, data) ->
-									if err then throw err
-									req.logout()
-									res.redirect('/')
-							]
-					}
+					post: (req, res) -> # Deletes user account.
+							req.user.remove (err, data) ->
+								if err then throw err
+								req.logout()
+								res.redirect('/')
 				},
 				'logout': {
 					name: 'logout',
-					methods: {
-						post: [required.login,
-							(req, res) ->
-								req.logout()
-								res.redirect('/')
-						]
-					}
+					post: (req, res) ->
+							req.logout()
+							res.redirect('/')
 				},
 			}
 

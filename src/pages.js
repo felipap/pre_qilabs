@@ -141,9 +141,10 @@ module.exports = {
         if (!(postId = req.paramToObjectId('postId'))) {
           return;
         }
-        return Post.findOne({
+        return req.user.findAndPopulatePost({
           _id: postId
-        }).populate('group').exec(HandleErrors(res, function(post) {
+        }, HandleErrors(res, function(post) {
+          console.log('post:', post);
           return res.render('pages/post.html', {
             post: post
           });

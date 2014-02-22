@@ -190,7 +190,7 @@ app.locals({
 	},
 	app: {
 		semantic_version: 'α1'
-	}
+	},
 });
 
 if (app.get('env') === 'production') {

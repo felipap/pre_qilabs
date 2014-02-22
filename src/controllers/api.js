@@ -372,66 +372,61 @@ module.exports = {
       }
     },
     'me': {
-      methods: {
-        post: [
-          required.login, function(req, res) {
-            if ('off' === req.query.notifiable) {
-              req.user.notifiable = false;
-              req.user.save();
-            } else if (__indexOf.call(req.query.notifiable, 'on') >= 0) {
-              req.user.notifiable = true;
-              req.user.save();
-            }
-            return res.end();
-          }
-        ]
+      permissions: [required.login],
+      post: function(req, res) {
+        if ('off' === req.query.notifiable) {
+          req.user.notifiable = false;
+          req.user.save();
+        } else if (__indexOf.call(req.query.notifiable, 'on') >= 0) {
+          req.user.notifiable = true;
+          req.user.save();
+        }
+        return res.end();
       },
       children: {
+        'notifications': {
+          get: function(req, res) {
+            return req.user.getNotifications(HandleErrors(req, function(notes) {
+              return res.end(JSON.stringify({
+                data: notes,
+                error: false
+              }));
+            }));
+          }
+        },
         'timeline/posts': {
-          methods: {
-            get: [
-              required.login, function(req, res) {
-                return req.user.getTimeline({
-                  limit: 10,
-                  skip: 5 * parseInt(req.query.page)
-                }, function(err, docs) {
-                  var page;
-                  page = (!docs[0] && -1) || parseInt(req.query.page) || 0;
-                  return res.end(JSON.stringify({
-                    page: page,
-                    data: docs,
-                    error: false
-                  }));
-                });
-              }
-            ]
+          get: function(req, res) {
+            return req.user.getTimeline({
+              limit: 10,
+              skip: 5 * parseInt(req.query.page)
+            }, function(err, docs) {
+              var page;
+              page = (!docs[0] && -1) || parseInt(req.query.page) || 0;
+              return res.end(JSON.stringify({
+                page: page,
+                data: docs,
+                error: false
+              }));
+            });
           }
         },
         'leave': {
           name: 'user_quit',
-          methods: {
-            post: [
-              required.login, function(req, res) {
-                return req.user.remove(function(err, data) {
-                  if (err) {
-                    throw err;
-                  }
-                  req.logout();
-                  return res.redirect('/');
-                });
+          post: function(req, res) {
+            return req.user.remove(function(err, data) {
+              if (err) {
+                throw err;
               }
-            ]
+              req.logout();
+              return res.redirect('/');
+            });
           }
         },
         'logout': {
           name: 'logout',
-          methods: {
-            post: [
-              required.login, function(req, res) {
-                req.logout();
-                return res.redirect('/');
-              }
-            ]
+          post: function(req, res) {
+            req.logout();
+            return res.redirect('/');
           }
         }
       }

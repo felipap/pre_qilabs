@@ -21,6 +21,7 @@ Inbox 	= mongoose.model 'Inbox'
 Follow 	= mongoose.model 'Follow'
 Post 	= mongoose.model 'Post'
 Group 	= mongoose.model 'Group'
+Notification = mongoose.model 'Notification'
 
 ObjectId = mongoose.Types.ObjectId
 
@@ -116,17 +117,27 @@ HandleLimit = (func) ->
 		func(err,docs)
 
 fillInPostComments = (docs, cb) ->
-	results = []
-	async.forEach _.filter(docs, (i) -> i), (post, asyncCb) ->
-			Post.find {parentPost: post}
-				.populate 'author'
-				.exec (err, comments) ->
-					if post.toObject
-						results.push(_.extend({}, post.toObject(), { comments:comments }))
-					else
-						results.push(_.extend({}, post, { comments:comments }))
-					asyncCb()
-		, (err) -> cb(err, results)
+	if docs.length > 1
+		results = []
+		async.forEach _.filter(docs, (i) -> i), (post, done) ->
+				Post.find {parentPost: post}
+					.populate 'author'
+					.exec (err, comments) ->
+						if post.toObject
+							results.push(_.extend({}, post.toObject(), { comments:comments }))
+						else
+							results.push(_.extend({}, post, { comments:comments }))
+						done()
+			, (err) -> cb(err, results)
+	else
+		post = docs
+		Post.find {parentPost: post}
+		.populate 'author'
+		.exec (err, comments) ->
+			if post.toObject
+				cb(err, _.extend({}, post.toObject(), { comments:comments }))
+			else
+				cb(err, _.extend({}, post, { comments:comments }))
 
 ###
 # Behold.
@@ -174,7 +185,6 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 				return cb(err) if err
 				# Fill comments in all docs.
 				fillInPostComments(docs, cb)
-
 
 	# Get inboxed posts.
 	Inbox
@@ -293,6 +303,13 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 		postType: Post.PostTypes.Comment
 	}
 	post.save cb
+	if parentPost.author isnt @
+		User.findOne {_id: parentPost.author}, (err, parentPostAuthor) =>
+			if parentPostAuthor and not err
+				parentPostAuthor.notify({
+					msg: "#{parentPostAuthor.name} comentou no seu post",
+					url: post.path,
+				})
 
 ###
 Create a post object and fan out through inboxes.
@@ -329,6 +346,15 @@ UserSchema.methods.createPost = (data, cb) ->
 					author: @id
 				}, () -> )
 
+
+UserSchema.methods.findAndPopulatePost = (args, cb) ->
+	Post
+		.findOne args
+		.populate 'author'
+		.populate 'group'
+		.exec (err, doc) ->
+			fillInPostComments(doc, cb)
+
 ################################################################################
 ## related to the generation of profiles
 
@@ -359,6 +385,21 @@ UserSchema.methods.genProfile = (cb) ->
 						profile.groups = _.pluck(memberships, 'group')
 					cb(err1 or err2 or err3, profile)
 
+################################################################################
+## related to the notification
+
+UserSchema.methods.notify = (args, cb) ->
+	note = new Notification {
+		recipient: @
+		msg: args.msg
+		url: args.url
+	}
+	note.save (err, doc) ->
+		console.log('note to user', doc)
+		cb?(err, doc)
+
+UserSchema.methods.getNotifications = (cb) ->
+	Notification.find { recipient:@ }, cb
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate')
 

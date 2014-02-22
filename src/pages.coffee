@@ -110,12 +110,13 @@ module.exports = {
 		methods: {
 			get: (req, res) ->
 				return unless postId = req.paramToObjectId('postId')
-				Post.findOne {_id: postId}
-					.populate 'group'
-					.exec HandleErrors res, (post) ->
+				req.user.findAndPopulatePost {_id: postId},
+					(HandleErrors res, (post) ->
+						console.log('post:', post)
 						res.render 'pages/post.html', {
 							post: post,
 						}
+					)
 		}
 		children: {
 			'/edit':

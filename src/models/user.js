@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, HandleLimit, Inbox, ObjectId, Post, User, UserSchema, async, fillInPostComments, mongoose, _;
+var Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, User, UserSchema, async, fillInPostComments, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -20,6 +20,8 @@ Follow = mongoose.model('Follow');
 Post = mongoose.model('Post');
 
 Group = mongoose.model('Group');
+
+Notification = mongoose.model('Notification');
 
 ObjectId = mongoose.Types.ObjectId;
 
@@ -170,28 +172,45 @@ HandleLimit = function(func) {
 };
 
 fillInPostComments = function(docs, cb) {
-  var results;
-  results = [];
-  return async.forEach(_.filter(docs, function(i) {
-    return i;
-  }), function(post, asyncCb) {
+  var post, results;
+  if (docs.length > 1) {
+    results = [];
+    return async.forEach(_.filter(docs, function(i) {
+      return i;
+    }), function(post, done) {
+      return Post.find({
+        parentPost: post
+      }).populate('author').exec(function(err, comments) {
+        if (post.toObject) {
+          results.push(_.extend({}, post.toObject(), {
+            comments: comments
+          }));
+        } else {
+          results.push(_.extend({}, post, {
+            comments: comments
+          }));
+        }
+        return done();
+      });
+    }, function(err) {
+      return cb(err, results);
+    });
+  } else {
+    post = docs;
     return Post.find({
       parentPost: post
     }).populate('author').exec(function(err, comments) {
       if (post.toObject) {
-        results.push(_.extend({}, post.toObject(), {
+        return cb(err, _.extend({}, post.toObject(), {
           comments: comments
         }));
       } else {
-        results.push(_.extend({}, post, {
+        return cb(err, _.extend({}, post, {
           comments: comments
         }));
       }
-      return asyncCb();
     });
-  }, function(err) {
-    return cb(err, results);
-  });
+  }
 };
 
 
@@ -413,7 +432,21 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
     parentPost: parentPost,
     postType: Post.PostTypes.Comment
   });
-  return post.save(cb);
+  post.save(cb);
+  if (parentPost.author !== this) {
+    return User.findOne({
+      _id: parentPost.author
+    }, (function(_this) {
+      return function(err, parentPostAuthor) {
+        if (parentPostAuthor && !err) {
+          return parentPostAuthor.notify({
+            msg: "" + parentPostAuthor.name + " comentou no seu post",
+            url: post.path
+          });
+        }
+      };
+    })(this));
+  }
 };
 
 
@@ -450,6 +483,12 @@ UserSchema.methods.createPost = function(data, cb) {
       });
     };
   })(this));
+};
+
+UserSchema.methods.findAndPopulatePost = function(args, cb) {
+  return Post.findOne(args).populate('author').populate('group').exec(function(err, doc) {
+    return fillInPostComments(doc, cb);
+  });
 };
 
 
@@ -492,6 +531,25 @@ UserSchema.methods.genProfile = function(cb) {
       });
     };
   })(this));
+};
+
+UserSchema.methods.notify = function(args, cb) {
+  var note;
+  note = new Notification({
+    recipient: this,
+    msg: args.msg,
+    url: args.url
+  });
+  return note.save(function(err, doc) {
+    console.log('note to user', doc);
+    return typeof cb === "function" ? cb(err, doc) : void 0;
+  });
+};
+
+UserSchema.methods.getNotifications = function(cb) {
+  return Notification.find({
+    recipient: this
+  }, cb);
 };
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate');
