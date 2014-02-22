@@ -72,7 +72,7 @@ urlify = function(text) {
 };
 
 PostSchema.virtual('data.unescapedBody').get(function() {
-  if (this.data.bdy) {
+  if (this.data.body) {
     return urlify(this.data.body);
   } else {
     return '';

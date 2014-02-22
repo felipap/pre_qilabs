@@ -45,7 +45,7 @@ urlify = (text) ->
 	    return "<a href=\"#{url}\">#{url}</a>"
 
 PostSchema.virtual('data.unescapedBody').get ->
-	if @data.bdy
+	if @data.body
 		urlify(@data.body)
 	else
 		''
