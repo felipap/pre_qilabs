@@ -123,8 +123,6 @@ fillInPostComments = (docs, cb) ->
 					asyncCb()
 		, (err) -> cb(err, results)
 
-mergePosts = (docs, cb) ->
-
 ###
 # Behold.
 ###
@@ -151,7 +149,8 @@ UserSchema.methods.getTimeline = (opts, cb) ->
 						}
 						.limit opts.limit
 						.exec done
-					), (err, docs) ->
+					), (err, _docs) ->
+						docs = _.filter(_docs, (i) -> i) # prevent null from .limit
 						onGetNonInboxedPosts(err, _.flatten(docs))
 
 		onGetNonInboxedPosts = (err, nips) ->

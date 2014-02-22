@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, Inbox, ObjectId, Post, User, UserSchema, async, fillInPostComments, mergePosts, mongoose, _;
+var Follow, Group, Inbox, ObjectId, Post, User, UserSchema, async, fillInPostComments, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -184,8 +184,6 @@ fillInPostComments = function(docs, cb) {
   });
 };
 
-mergePosts = function(docs, cb) {};
-
 
 /*
  * Behold.
@@ -220,7 +218,11 @@ UserSchema.methods.getTimeline = function(opts, cb) {
               $gt: minDate
             }
           }).limit(opts.limit).exec(done);
-        }), function(err, docs) {
+        }), function(err, _docs) {
+          var docs;
+          docs = _.filter(_docs, function(i) {
+            return i;
+          });
           return onGetNonInboxedPosts(err, _.flatten(docs));
         });
       });
