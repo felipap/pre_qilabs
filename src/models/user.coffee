@@ -117,7 +117,7 @@ HandleLimit = (func) ->
 		func(err,docs)
 
 fillInPostComments = (docs, cb) ->
-	if docs.length
+	if docs instanceof Array
 		results = []
 		async.forEach _.filter(docs, (i) -> i), (post, done) ->
 				Post.find {parentPost: post}
@@ -132,6 +132,7 @@ fillInPostComments = (docs, cb) ->
 				console.log 'err', err
 				cb(err, results)
 	else
+		console.log 'second option'
 		post = docs
 		Post.find {parentPost: post}
 		.populate 'author'

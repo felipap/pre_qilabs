@@ -173,7 +173,7 @@ HandleLimit = function(func) {
 
 fillInPostComments = function(docs, cb) {
   var post, results;
-  if (docs.length) {
+  if (docs instanceof Array) {
     results = [];
     return async.forEach(_.filter(docs, function(i) {
       return i;
@@ -197,6 +197,7 @@ fillInPostComments = function(docs, cb) {
       return cb(err, results);
     });
   } else {
+    console.log('second option');
     post = docs;
     return Post.find({
       parentPost: post
