@@ -117,7 +117,7 @@ HandleLimit = (func) ->
 		func(err,docs)
 
 fillInPostComments = (docs, cb) ->
-	if docs.length > 1
+	if docs.length
 		results = []
 		async.forEach _.filter(docs, (i) -> i), (post, done) ->
 				Post.find {parentPost: post}
@@ -128,7 +128,9 @@ fillInPostComments = (docs, cb) ->
 						else
 							results.push(_.extend({}, post, { comments:comments }))
 						done()
-			, (err) -> cb(err, results)
+			, (err) ->
+				console.log 'err', err
+				cb(err, results)
 	else
 		post = docs
 		Post.find {parentPost: post}
@@ -305,13 +307,14 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 	}
 	comment.save cb
 
-	if parentPost.author isnt @
-		User.findOne {_id: parentPost.author}, (err, parentPostAuthor) =>
-			if parentPostAuthor and not err
-				parentPostAuthor.notify({
-					msg: "#{@.name} comentou na sua publicação",
-					url: comment.path,
-				})
+	# if parentPost.author isnt @
+	# 	User.findOne {_id: parentPost.author}, (err, parentPostAuthor) =>
+	# 		if parentPostAuthor and not err
+	# 			parentPostAuthor.notifyMe({
+	# 				type: Notification.Types.PostComment
+	# 				msgTemplate: "#{@.name} comentou na sua publicação"
+	# 				url: comment.path
+	# 			})
 
 ###
 Create a post object and fan out through inboxes.
@@ -328,21 +331,22 @@ UserSchema.methods.createPost = (data, cb) ->
 		post.group = data.groupId
 
 	post.save (err, post) =>
-			# use asunc.parallel to run a job
-			# Callback now, what happens later doesn't concern the user.
-			cb(err, post)
-			if post.group
-				return
-			# Make separate job for this.
-			# Iter through followers and fill inboxes.
-			@getFollowers (err, followers) =>
-				console.log('porra', err, followers)
-				Inbox.fillInboxes({
-					recipients: [@].concat(followers),
-					resource: post,
-					type: Inbox.Types.Post,
-					author: @id
-				}, () -> )
+		console.log('post save:', err, post)
+		# use asunc.parallel to run a job
+		# Callback now, what happens later doesn't concern the user.
+		cb(err, post)
+		if post.group
+			return
+		# Make separate job for this.
+		# Iter through followers and fill inboxes.
+		@getFollowers (err, followers) =>
+			console.log('porra', err, followers)
+			Inbox.fillInboxes({
+				recipients: [@].concat(followers),
+				resource: post,
+				type: Inbox.Types.Post,
+				author: @id
+			}, () -> )
 
 UserSchema.methods.findAndPopulatePost = (args, cb) ->
 	Post
@@ -385,15 +389,16 @@ UserSchema.methods.genProfile = (cb) ->
 ################################################################################
 ## related to the notification
 
-UserSchema.methods.notify = (args, cb) ->
+UserSchema.methods.notifyMe = (args, cb) ->
 	note = new Notification {
 		recipient: @
-		msg: args.msg
+		msgTemplate: args.msgTemplate
 		agents: [@]
 		url: args.url
+		type: args.type
 	}
 	note.save (err, doc) ->
-		console.log('note to user', doc)
+		console.log('note to user', err, doc)
 		cb?(err, doc)
 
 UserSchema.methods.getNotifications = (cb) ->

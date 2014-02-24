@@ -1,8 +1,10 @@
-var Notification, NotificationSchema, Types, async, mongoose;
+var Notification, NotificationSchema, Types, async, mongoose, _;
 
 mongoose = require('mongoose');
 
 async = require('async');
+
+_ = require('underscore');
 
 Types = {
   PostComment: 'PostComment',
@@ -16,11 +18,13 @@ NotificationSchema = new mongoose.Schema({
     type: Date,
     index: true
   },
-  agents: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: true
-  },
+  agents: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: true
+    }
+  ],
   recipient: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
@@ -33,6 +37,10 @@ NotificationSchema = new mongoose.Schema({
     required: false
   },
   type: {
+    type: String,
+    required: true
+  },
+  msgTemplate: {
     type: String,
     required: true
   },
@@ -55,15 +63,8 @@ NotificationSchema = new mongoose.Schema({
 NotificationSchema.statics.Types = Types;
 
 NotificationSchema.virtual('msg').get = function() {
-  switch (this.type) {
-    case PostComment:
-      return "<agent> comentou a sua publicação".replace(/<agent>/, this.agents[0]);
-    case PostAnswer:
-      return "<agent> respondeu à sua pergunta no grupo".replace(/<agent>/, this.agents[0]);
-    case UpvotedAnswer:
-      break;
-    case SharedPost:
-  }
+  console.log(this.msgTemplate);
+  return _.template(this.msgTemplate, this);
 };
 
 NotificationSchema.pre('save', function(next) {

@@ -1,6 +1,8 @@
-var Post, PostSchema, PostTypes, mongoose, urlify;
+var Inbox, Post, PostSchema, PostTypes, mongoose, urlify;
 
 mongoose = require('mongoose');
+
+Inbox = mongoose.model('Inbox');
 
 PostTypes = {
   Comment: 'Comment',
@@ -76,11 +78,7 @@ urlify = function(text) {
 };
 
 PostSchema.virtual('data.unescapedBody').get(function() {
-  if (this.data.body) {
-    return urlify(this.data.body);
-  } else {
-    return '';
-  }
+  return urlify(this.data.body);
 });
 
 PostSchema.pre('remove', function(next) {

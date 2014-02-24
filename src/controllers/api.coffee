@@ -30,13 +30,15 @@ required = require '../lib/required.js'
 
 User = mongoose.model 'User'
 Post = mongoose.model 'Post'
-Inbox= mongoose.model 'Inbox'
 Tag  = mongoose.model 'Tag'
-Group  = mongoose.model 'Group'
+Inbox = mongoose.model 'Inbox'
+Group = mongoose.model 'Group'
 Subscriber = mongoose.model 'Subscriber'
+Notification = mongoose.model 'Notification'
 
 HandleErrors = (res, cb) ->
-	console.assert typeof cb is 'function'
+	console.assert arguments.length is 2 and
+		typeof cb is 'function', "Invalid arguments to HandleErrors"
 	return (err, result) ->
 		if err
 			res.status(400).endJson(error:true)
@@ -57,18 +59,20 @@ module.exports = {
 						Post.find {}, (err, posts) ->
 							Inbox.find {}, (err, inboxs) ->
 								Subscriber.find {}, (err, subscribers) ->
-									Group.find {}, (err, groups) ->
-										Group.Membership.find {}, (err, membership) ->
-											obj =
-												ip: req.ip
-												group: groups
-												inboxs: inboxs
-												membership: membership
-												session: req.session
-												users: users
-												posts: posts
-												subscribers: subscribers
-											res.end(JSON.stringify(obj))
+									Notification.find {}, (err, notifics) ->
+										Group.find {}, (err, groups) ->
+											Group.Membership.find {}, (err, membership) ->
+												obj =
+													ip: req.ip
+													group: groups
+													inboxs: inboxs
+													notifics: notifics
+													membership: membership
+													session: req.session
+													users: users
+													posts: posts
+													subscribers: subscribers
+												res.end(JSON.stringify(obj))
 			}
 		'testers':
 			permissions: [required.logout]
@@ -151,7 +155,7 @@ module.exports = {
 					content:
 						title: 'My conquest!'+Math.floor(Math.random()*100)
 						body: req.body.content.body
-				}, (err, doc) ->
+				}, HandleErrors res, (doc) ->
 					doc.populate 'author', (err, doc) ->
 						res.end(JSON.stringify({error:false, data:doc}))
 			children: {
@@ -174,6 +178,7 @@ module.exports = {
 								return if not postId = req.paramToObjectId('id')
 								Post.findOne {_id: postId, author: req.user},
 									HandleErrors(res, (doc) ->
+										Inbox.remove { resource: doc }, (err, num) ->
 										doc.remove()
 										res.endJson doc
 									)
@@ -295,7 +300,7 @@ module.exports = {
 							req.user.getTimeline {limit:10, skip:5*parseInt(req.query.page)},
 								(err, docs) ->
 									page = (not docs[0] and -1) or parseInt(req.query.page) or 0
-									# console.log('Fetched timeline:', docs)
+									console.log('Fetched timeline:', docs)
 									res.end(JSON.stringify({
 										page: page
 										data: docs
