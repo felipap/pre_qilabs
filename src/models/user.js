@@ -434,7 +434,22 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
     parentPost: parentPost,
     postType: Post.PostTypes.Comment
   });
-  return comment.save(cb);
+  comment.save(cb);
+  if (parentPost.author !== this) {
+    return User.findOne({
+      _id: parentPost.author
+    }, (function(_this) {
+      return function(err, parentPostAuthor) {
+        if (parentPostAuthor && !err) {
+          return parentPostAuthor.notifyMe({
+            type: Notification.Types.PostComment,
+            msgTemplate: "" + _this.name + " comentou na sua publicação",
+            url: comment.path
+          });
+        }
+      };
+    })(this));
+  }
 };
 
 

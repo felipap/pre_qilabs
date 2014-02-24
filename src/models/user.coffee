@@ -308,14 +308,14 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 	}
 	comment.save cb
 
-	# if parentPost.author isnt @
-	# 	User.findOne {_id: parentPost.author}, (err, parentPostAuthor) =>
-	# 		if parentPostAuthor and not err
-	# 			parentPostAuthor.notifyMe({
-	# 				type: Notification.Types.PostComment
-	# 				msgTemplate: "#{@.name} comentou na sua publicação"
-	# 				url: comment.path
-	# 			})
+	if parentPost.author isnt @
+		User.findOne {_id: parentPost.author}, (err, parentPostAuthor) =>
+			if parentPostAuthor and not err
+				parentPostAuthor.notifyMe({
+					type: Notification.Types.PostComment
+					msgTemplate: "#{@.name} comentou na sua publicação"
+					url: comment.path
+				})
 
 ###
 Create a post object and fan out through inboxes.
