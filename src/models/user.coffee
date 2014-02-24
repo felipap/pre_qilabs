@@ -259,6 +259,7 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 		return cb(err) if err
 		return cb(error:true,name:'Unauthorized') if not mship or
 			mship.type isnt Group.Membership.Types.Moderator
+
 		# req.user is Moderator → good to go
 		Group.Membership.findOne {group: group, member: member}, (err, mem) ->
 			return cb(err, mem) if err
@@ -292,8 +293,8 @@ UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 Create a post object with type comment.
 ###
 UserSchema.methods.commentToPost = (parentPost, data, cb) ->
-	# Detect repeated posts and comments
-	post = new Post {
+	# Detect repeated posts and comments!
+	comment = new Post {
 		author: @
 		group: parentPost.group
 		data: {
@@ -302,13 +303,14 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 		parentPost: parentPost
 		postType: Post.PostTypes.Comment
 	}
-	post.save cb
+	comment.save cb
+
 	if parentPost.author isnt @
 		User.findOne {_id: parentPost.author}, (err, parentPostAuthor) =>
 			if parentPostAuthor and not err
 				parentPostAuthor.notify({
-					msg: "#{parentPostAuthor.name} comentou no seu post",
-					url: post.path,
+					msg: "#{@.name} comentou na sua publicação",
+					url: comment.path,
 				})
 
 ###
@@ -321,21 +323,17 @@ UserSchema.methods.createPost = (data, cb) ->
 			title: data.content.title
 			body: data.content.body
 		},
-		# parentPost: '52fd556aee90f63350000001'
 	}
 	if data.groupId
 		post.group = data.groupId
 
 	post.save (err, post) =>
-			# console.log('yes, here', err, post)
 			# use asunc.parallel to run a job
 			# Callback now, what happens later doesn't concern the user.
-			# console.log('porra4')
 			cb(err, post)
-			# console.log('porra3')
 			if post.group
 				return
-			# console.log('porra2')
+			# Make separate job for this.
 			# Iter through followers and fill inboxes.
 			@getFollowers (err, followers) =>
 				console.log('porra', err, followers)
@@ -345,7 +343,6 @@ UserSchema.methods.createPost = (data, cb) ->
 					type: Inbox.Types.Post,
 					author: @id
 				}, () -> )
-
 
 UserSchema.methods.findAndPopulatePost = (args, cb) ->
 	Post
@@ -392,6 +389,7 @@ UserSchema.methods.notify = (args, cb) ->
 	note = new Notification {
 		recipient: @
 		msg: args.msg
+		agents: [@]
 		url: args.url
 	}
 	note.save (err, doc) ->

@@ -56,7 +56,11 @@ PostSchema = new mongoose.Schema({
 });
 
 PostSchema.virtual('path').get(function() {
-  return "/posts/{id}".replace(/{id}/, this.id);
+  if (this.parentPost) {
+    return "/posts/" + this.parentPost + "#" + this.id;
+  } else {
+    return "/posts/{id}".replace(/{id}/, this.id);
+  }
 });
 
 PostSchema.virtual('apiPath').get(function() {

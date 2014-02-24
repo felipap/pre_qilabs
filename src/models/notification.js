@@ -5,7 +5,10 @@ mongoose = require('mongoose');
 async = require('async');
 
 Types = {
-  Post: 'Post'
+  PostComment: 'PostComment',
+  PostAnswer: 'PostAnswer',
+  UpvotedAnswer: 'UpvotedAnswer',
+  SharedPost: 'SharedPost'
 };
 
 NotificationSchema = new mongoose.Schema({
@@ -13,14 +16,25 @@ NotificationSchema = new mongoose.Schema({
     type: Date,
     index: true
   },
+  agents: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: true
+  },
   recipient: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
-    index: 1,
-    required: true
+    required: true,
+    index: 1
   },
-  msg: {
-    type: String
+  group: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Group',
+    required: false
+  },
+  type: {
+    type: String,
+    required: true
   },
   url: {
     type: String
@@ -29,9 +43,28 @@ NotificationSchema = new mongoose.Schema({
     type: Boolean,
     "default": false
   }
+}, {
+  toObject: {
+    virtuals: true
+  },
+  toJson: {
+    virtuals: true
+  }
 });
 
 NotificationSchema.statics.Types = Types;
+
+NotificationSchema.virtual('msg').get = function() {
+  switch (this.type) {
+    case PostComment:
+      return "<agent> comentou a sua publicação".replace(/<agent>/, this.agents[0]);
+    case PostAnswer:
+      return "<agent> respondeu à sua pergunta no grupo".replace(/<agent>/, this.agents[0]);
+    case UpvotedAnswer:
+      break;
+    case SharedPost:
+  }
+};
 
 NotificationSchema.pre('save', function(next) {
   if (this.dateSent == null) {

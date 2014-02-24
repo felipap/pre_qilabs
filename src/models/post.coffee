@@ -34,7 +34,10 @@ PostSchema = new mongoose.Schema {
 
 # Virtuals
 PostSchema.virtual('path').get ->
-	"/posts/{id}".replace(/{id}/, @id)
+	if @parentPost
+		"/posts/"+@parentPost+"#"+@id
+	else
+		"/posts/{id}".replace(/{id}/, @id)
 
 PostSchema.virtual('apiPath').get ->
 	"/api/posts/{id}".replace(/{id}/, @id)

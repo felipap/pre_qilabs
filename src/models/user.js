@@ -422,8 +422,8 @@ Create a post object with type comment.
  */
 
 UserSchema.methods.commentToPost = function(parentPost, data, cb) {
-  var post;
-  post = new Post({
+  var comment;
+  comment = new Post({
     author: this,
     group: parentPost.group,
     data: {
@@ -432,7 +432,7 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
     parentPost: parentPost,
     postType: Post.PostTypes.Comment
   });
-  post.save(cb);
+  comment.save(cb);
   if (parentPost.author !== this) {
     return User.findOne({
       _id: parentPost.author
@@ -440,8 +440,8 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
       return function(err, parentPostAuthor) {
         if (parentPostAuthor && !err) {
           return parentPostAuthor.notify({
-            msg: "" + parentPostAuthor.name + " comentou no seu post",
-            url: post.path
+            msg: "" + _this.name + " comentou na sua publicação",
+            url: comment.path
           });
         }
       };
@@ -538,6 +538,7 @@ UserSchema.methods.notify = function(args, cb) {
   note = new Notification({
     recipient: this,
     msg: args.msg,
+    agents: [this],
     url: args.url
   });
   return note.save(function(err, doc) {
