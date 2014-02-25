@@ -25,6 +25,7 @@ NotificationSchema = new mongoose.Schema {
 	msgTemplate:	{ type:String, required:true }
 	url:			{ type:String }
 	seen:			{ type:Boolean, default:false }
+	avatarUrl: 		{ type:String, required:false}
 }, {
 	toObject:	{ virtuals: true }
 	toJSON: 	{ virtuals: true }

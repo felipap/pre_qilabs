@@ -72,7 +72,7 @@ module.exports = {
 													users: users
 													posts: posts
 													subscribers: subscribers
-												res.end(JSON.stringify(obj))
+												res.endJson obj
 			}
 		'testers':
 			permissions: [required.logout]
@@ -157,7 +157,7 @@ module.exports = {
 						body: req.body.content.body
 				}, HandleErrors res, (doc) ->
 					doc.populate 'author', (err, doc) ->
-						res.end(JSON.stringify({error:false, data:doc}))
+						res.endJson {error:false, data:doc}
 			children: {
 				'/:id': {
 					methods: {
@@ -238,11 +238,11 @@ module.exports = {
 									{limit:3, skip:5*parseInt(req.query.page)},
 									HandleErrors(res,
 										(docs) ->
-											res.end(JSON.stringify({
+											res.endJson {
 												data: docs 
 												error: false
 												page: parseInt(req.query.page)
-											}))
+											}
 									)
 						],
 					}
@@ -254,9 +254,9 @@ module.exports = {
 								return unless userId = req.paramToObjectId('userId')
 								User.findOne {_id: userId}, HandleErrors res, ((user) ->
 									req.user.dofollowUser user, (err, done) ->
-										res.end(JSON.stringify({
+										res.endJson {
 											error: !!err,
-										}))
+										}
 									)
 						],
 					}
@@ -268,9 +268,9 @@ module.exports = {
 								return unless userId = req.paramToObjectId('userId')
 								User.findOne {_id: userId}, (err, user) ->
 									req.user.unfollowUser user, (err, done) ->
-										res.end(JSON.stringify({
+										res.endJson {
 											error: !!err,
-										}))
+										}
 						],
 					}
 				},	
@@ -289,11 +289,20 @@ module.exports = {
 				'notifications': {
 					get: (req, res) ->
 						req.user.getNotifications HandleErrors(req, (notes) ->
-								res.end(JSON.stringify({
+								res.endJson {
 									data: notes
 									error: false
-								}))
-							)
+								}
+							),
+					childre: {
+						':id': 
+							delete: (req, res) ->
+								return unless nId = req.paramToObjectId('id')
+								Notification.deleteNotification req.user, nId, (err) ->
+									res.endJson {
+										error: !!err
+									}
+					}
 				}
 				'timeline/posts': {
 					get: (req, res) ->
@@ -301,11 +310,11 @@ module.exports = {
 								(err, docs) ->
 									page = (not docs[0] and -1) or parseInt(req.query.page) or 0
 									# console.log('Fetched timeline:', docs)
-									res.end(JSON.stringify({
+									res.endJson {
 										page: page
 										data: docs
 										error: false
-									}))
+									}
 				},
 				'leave': {
 					name: 'user_quit'

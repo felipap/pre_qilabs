@@ -82,7 +82,7 @@ module.exports = {
                           posts: posts,
                           subscribers: subscribers
                         };
-                        return res.end(JSON.stringify(obj));
+                        return res.endJson(obj);
                       });
                     });
                   });
@@ -214,10 +214,10 @@ module.exports = {
           }
         }, HandleErrors(res, function(doc) {
           return doc.populate('author', function(err, doc) {
-            return res.end(JSON.stringify({
+            return res.endJson({
               error: false,
               data: doc
-            }));
+            });
           });
         }));
       },
@@ -325,11 +325,11 @@ module.exports = {
                   limit: 3,
                   skip: 5 * parseInt(req.query.page)
                 }, HandleErrors(res, function(docs) {
-                  return res.end(JSON.stringify({
+                  return res.endJson({
                     data: docs,
                     error: false,
                     page: parseInt(req.query.page)
-                  }));
+                  });
                 }));
               }
             ]
@@ -347,9 +347,9 @@ module.exports = {
                   _id: userId
                 }, HandleErrors(res, (function(user) {
                   return req.user.dofollowUser(user, function(err, done) {
-                    return res.end(JSON.stringify({
+                    return res.endJson({
                       error: !!err
-                    }));
+                    });
                   });
                 })));
               }
@@ -368,9 +368,9 @@ module.exports = {
                   _id: userId
                 }, function(err, user) {
                   return req.user.unfollowUser(user, function(err, done) {
-                    return res.end(JSON.stringify({
+                    return res.endJson({
                       error: !!err
-                    }));
+                    });
                   });
                 });
               }
@@ -395,11 +395,26 @@ module.exports = {
         'notifications': {
           get: function(req, res) {
             return req.user.getNotifications(HandleErrors(req, function(notes) {
-              return res.end(JSON.stringify({
+              return res.endJson({
                 data: notes,
                 error: false
-              }));
+              });
             }));
+          },
+          childre: {
+            ':id': {
+              "delete": function(req, res) {
+                var nId;
+                if (!(nId = req.paramToObjectId('id'))) {
+                  return;
+                }
+                return Notification.deleteNotification(req.user, nId, function(err) {
+                  return res.endJson({
+                    error: !!err
+                  });
+                });
+              }
+            }
           }
         },
         'timeline/posts': {
@@ -410,11 +425,11 @@ module.exports = {
             }, function(err, docs) {
               var page;
               page = (!docs[0] && -1) || parseInt(req.query.page) || 0;
-              return res.end(JSON.stringify({
+              return res.endJson({
                 page: page,
                 data: docs,
                 error: false
-              }));
+              });
             });
           }
         },

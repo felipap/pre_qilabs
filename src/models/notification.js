@@ -50,6 +50,10 @@ NotificationSchema = new mongoose.Schema({
   seen: {
     type: Boolean,
     "default": false
+  },
+  avatarUrl: {
+    type: String,
+    required: false
   }
 }, {
   toObject: {
