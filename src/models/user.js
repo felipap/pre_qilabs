@@ -435,7 +435,8 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
     postType: Post.PostTypes.Comment
   });
   comment.save(cb);
-  if (parentPost.author !== this.id) {
+  if ('' + parentPost.author !== this.id) {
+    console.log('isnt', '' + parentPost.author, this.id, typeof parentPost.author, typeof this._id);
     return User.findOne({
       _id: parentPost.author
     }, (function(_this) {

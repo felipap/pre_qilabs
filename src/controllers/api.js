@@ -410,7 +410,6 @@ module.exports = {
             }, function(err, docs) {
               var page;
               page = (!docs[0] && -1) || parseInt(req.query.page) || 0;
-              console.log('Fetched timeline:', docs);
               return res.end(JSON.stringify({
                 page: page,
                 data: docs,
