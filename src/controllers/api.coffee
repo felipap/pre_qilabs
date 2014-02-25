@@ -290,7 +290,7 @@ module.exports = {
 					get: (req, res) ->
 						req.user.getNotifications HandleErrors(req, (notes) ->
 								res.end(JSON.stringify({
-									data: notes,
+									data: notes
 									error: false
 								}))
 							)

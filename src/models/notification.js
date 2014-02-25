@@ -55,17 +55,16 @@ NotificationSchema = new mongoose.Schema({
   toObject: {
     virtuals: true
   },
-  toJson: {
+  toJSON: {
     virtuals: true
   }
 });
 
 NotificationSchema.statics.Types = Types;
 
-NotificationSchema.virtual('msg').get = function() {
-  console.log(this.msgTemplate);
+NotificationSchema.virtual('msg').get(function() {
   return _.template(this.msgTemplate, this);
-};
+});
 
 NotificationSchema.pre('save', function(next) {
   if (this.dateSent == null) {

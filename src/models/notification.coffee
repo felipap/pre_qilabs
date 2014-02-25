@@ -26,17 +26,16 @@ NotificationSchema = new mongoose.Schema {
 	url:			{ type:String }
 	seen:			{ type:Boolean, default:false }
 }, {
-	toObject: 	{ virtuals : true },
-	toJson: 	{ virtuals : true },
+	toObject:	{ virtuals: true }
+	toJSON: 	{ virtuals: true }
 }
 
 # Think internationalization!
 
 NotificationSchema.statics.Types = Types
 
-NotificationSchema.virtual('msg').get = () ->
-	console.log (@msgTemplate)
-	return _.template(@msgTemplate, @)
+NotificationSchema.virtual('msg').get ->
+	_.template(@msgTemplate, @)
 
 NotificationSchema.pre 'save', (next) ->
 	@dateSent ?= new Date()
