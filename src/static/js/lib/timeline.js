@@ -103,7 +103,7 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 
 		var CommentList = Backbone.Collection.extend({
 			model: CommentItem,
-			page: 0,
+			endDate: new Date(),
 			comparator: function (i) {
 				return 1*new Date(i.get('dateCreated'));
 			},
@@ -111,14 +111,14 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 				return this.postItem.get('apiPath') + '/comments'; 
 			},
 			parse: function (response, options) {
-				this.page = response.page;
+				this.endDate = new Date(response.endDate);
 				return Backbone.Collection.prototype.parse.call(this, response.data, options);
 			},
 			tryFetchMore: function () {
 				console.log('tryFetchMore')
-				if (this.page === -1)
+				if (this.endDate === new Date(0))
 					return;
-				this.fetch({data: {page:this.page+1}, remove:false});
+				this.fetch({data: {endDate:this.endDate}, remove:false});
 			},
 		});
 

@@ -8,6 +8,8 @@
 
 mongoose = require 'mongoose'
 
+Inbox = mongoose.model 'Inbox'
+
 PostTypes = 
 	Comment: 'Comment' 			# Comment
 	Answer: 'Answer' 			# Answer
@@ -34,7 +36,10 @@ PostSchema = new mongoose.Schema {
 
 # Virtuals
 PostSchema.virtual('path').get ->
-	"/posts/{id}".replace(/{id}/, @id)
+	if @parentPost
+		"/posts/"+@parentPost+"#"+@id
+	else
+		"/posts/{id}".replace(/{id}/, @id)
 
 PostSchema.virtual('apiPath').get ->
 	"/api/posts/{id}".replace(/{id}/, @id)
@@ -45,14 +50,12 @@ urlify = (text) ->
 	    return "<a href=\"#{url}\">#{url}</a>"
 
 PostSchema.virtual('data.unescapedBody').get ->
-	if @data.body
-		urlify(@data.body)
-	else
-		''
+	urlify(@data.body)
 
 PostSchema.pre 'remove', (next) ->
 	Post.remove { parentPost: @ }, (err, num) ->
 		next()
+
 	console.log 'removing comments after removing this'
 
 PostSchema.statics.deepRemove = ->

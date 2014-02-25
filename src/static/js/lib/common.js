@@ -24,25 +24,28 @@
 
 define(['jquery','underscore', 'bootstrap','plugins'], function ($, _) {
 
-	$.ajax({
-		url: '/api/me/notifications',
-		type: 'get',
-		dataType: 'json',
-	}).done(function (data) {
-		var $bell = $("[data-action=show-notifications]");
-		var notes = data.data;
-		console.log(data)
-		var notSeen = _.filter(notes, function(i){return !i.seen;});
-		$bell.find('#count').html(notSeen.length || '');
-		var html = '<@ for (var i=0; i<notifications.length; i++) { var note = notifications[i]; @><li> <a href="<@= note.url @>"> <@= note.msg @> </li> <@}@>';
-		$bell.popover({
-			title: 'Suas Notificações',
-			placement: 'bottom',
-			content: _.template(html, {notifications:notes}),
-			html: true,
-			trigger: 'click'
+	if (window.loggedUser) {
+		$.ajax({
+			url: '/api/me/notifications',
+			type: 'get',
+			dataType: 'json',
+		}).done(function (data) {
+			var $bell = $("[data-action=show-notifications]");
+			var notes = data.data;
+			console.log(data)
+			var notSeen = _.filter(notes, function(i){return !i.seen;});
+			$bell.find('#count').html(notSeen.length || '');
+			var html = '<@ for (var i=0; i<notifications.length; i++) { var note = notifications[i]; @><li> <a href="<@= note.url @>" onClick="readNote(); return false"> <@= note.msg @> </li> <@}@>';
+			$bell.popover({
+				title: 'Suas Notificações',
+				placement: 'bottom',
+				container: 'body',
+				content: _.template(html, {notifications:notes}),
+				html: true,
+				// trigger: 'click'
+			});
 		});
-	});
+	}
 
 
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {

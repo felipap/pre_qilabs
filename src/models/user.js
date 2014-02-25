@@ -173,7 +173,7 @@ HandleLimit = function(func) {
 
 fillInPostComments = function(docs, cb) {
   var post, results;
-  if (docs.length > 1) {
+  if (docs instanceof Array) {
     results = [];
     return async.forEach(_.filter(docs, function(i) {
       return i;
@@ -193,9 +193,11 @@ fillInPostComments = function(docs, cb) {
         return done();
       });
     }, function(err) {
+      console.log('err', err);
       return cb(err, results);
     });
   } else {
+    console.log('second option');
     post = docs;
     return Post.find({
       parentPost: post
@@ -422,8 +424,8 @@ Create a post object with type comment.
  */
 
 UserSchema.methods.commentToPost = function(parentPost, data, cb) {
-  var post;
-  post = new Post({
+  var comment;
+  comment = new Post({
     author: this,
     group: parentPost.group,
     data: {
@@ -432,16 +434,18 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
     parentPost: parentPost,
     postType: Post.PostTypes.Comment
   });
-  post.save(cb);
-  if (parentPost.author !== this) {
+  comment.save(cb);
+  if ('' + parentPost.author !== this.id) {
+    console.log('isnt', '' + parentPost.author, this.id, typeof parentPost.author, typeof this._id);
     return User.findOne({
       _id: parentPost.author
     }, (function(_this) {
       return function(err, parentPostAuthor) {
         if (parentPostAuthor && !err) {
-          return parentPostAuthor.notify({
-            msg: "" + parentPostAuthor.name + " comentou no seu post",
-            url: post.path
+          return parentPostAuthor.notifyMe({
+            type: Notification.Types.PostComment,
+            msgTemplate: "" + _this.name + " comentou na sua publicação",
+            url: comment.path
           });
         }
       };
@@ -468,6 +472,7 @@ UserSchema.methods.createPost = function(data, cb) {
   }
   return post.save((function(_this) {
     return function(err, post) {
+      console.log('post save:', err, post);
       cb(err, post);
       if (post.group) {
         return;
@@ -533,15 +538,17 @@ UserSchema.methods.genProfile = function(cb) {
   })(this));
 };
 
-UserSchema.methods.notify = function(args, cb) {
+UserSchema.methods.notifyMe = function(args, cb) {
   var note;
   note = new Notification({
     recipient: this,
-    msg: args.msg,
-    url: args.url
+    msgTemplate: args.msgTemplate,
+    agents: [this],
+    url: args.url,
+    type: args.type
   });
   return note.save(function(err, doc) {
-    console.log('note to user', doc);
+    console.log('note to user', err, doc);
     return typeof cb === "function" ? cb(err, doc) : void 0;
   });
 };

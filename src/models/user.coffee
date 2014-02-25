@@ -117,7 +117,7 @@ HandleLimit = (func) ->
 		func(err,docs)
 
 fillInPostComments = (docs, cb) ->
-	if docs.length > 1
+	if docs instanceof Array
 		results = []
 		async.forEach _.filter(docs, (i) -> i), (post, done) ->
 				Post.find {parentPost: post}
@@ -128,8 +128,11 @@ fillInPostComments = (docs, cb) ->
 						else
 							results.push(_.extend({}, post, { comments:comments }))
 						done()
-			, (err) -> cb(err, results)
+			, (err) ->
+				console.log 'err', err
+				cb(err, results)
 	else
+		console.log 'second option'
 		post = docs
 		Post.find {parentPost: post}
 		.populate 'author'
@@ -259,6 +262,7 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 		return cb(err) if err
 		return cb(error:true,name:'Unauthorized') if not mship or
 			mship.type isnt Group.Membership.Types.Moderator
+
 		# req.user is Moderator → good to go
 		Group.Membership.findOne {group: group, member: member}, (err, mem) ->
 			return cb(err, mem) if err
@@ -292,8 +296,8 @@ UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 Create a post object with type comment.
 ###
 UserSchema.methods.commentToPost = (parentPost, data, cb) ->
-	# Detect repeated posts and comments
-	post = new Post {
+	# Detect repeated posts and comments!
+	comment = new Post {
 		author: @
 		group: parentPost.group
 		data: {
@@ -302,13 +306,16 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 		parentPost: parentPost
 		postType: Post.PostTypes.Comment
 	}
-	post.save cb
-	if parentPost.author isnt @
+	comment.save cb
+
+	if ''+parentPost.author isnt @id
+		console.log 'isnt', ''+parentPost.author, @id, typeof parentPost.author, typeof @_id
 		User.findOne {_id: parentPost.author}, (err, parentPostAuthor) =>
 			if parentPostAuthor and not err
-				parentPostAuthor.notify({
-					msg: "#{parentPostAuthor.name} comentou no seu post",
-					url: post.path,
+				parentPostAuthor.notifyMe({
+					type: Notification.Types.PostComment
+					msgTemplate: "#{@.name} comentou na sua publicação"
+					url: comment.path
 				})
 
 ###
@@ -321,31 +328,27 @@ UserSchema.methods.createPost = (data, cb) ->
 			title: data.content.title
 			body: data.content.body
 		},
-		# parentPost: '52fd556aee90f63350000001'
 	}
 	if data.groupId
 		post.group = data.groupId
 
 	post.save (err, post) =>
-			# console.log('yes, here', err, post)
-			# use asunc.parallel to run a job
-			# Callback now, what happens later doesn't concern the user.
-			# console.log('porra4')
-			cb(err, post)
-			# console.log('porra3')
-			if post.group
-				return
-			# console.log('porra2')
-			# Iter through followers and fill inboxes.
-			@getFollowers (err, followers) =>
-				console.log('porra', err, followers)
-				Inbox.fillInboxes({
-					recipients: [@].concat(followers),
-					resource: post,
-					type: Inbox.Types.Post,
-					author: @id
-				}, () -> )
-
+		console.log('post save:', err, post)
+		# use asunc.parallel to run a job
+		# Callback now, what happens later doesn't concern the user.
+		cb(err, post)
+		if post.group
+			return
+		# Make separate job for this.
+		# Iter through followers and fill inboxes.
+		@getFollowers (err, followers) =>
+			console.log('porra', err, followers)
+			Inbox.fillInboxes({
+				recipients: [@].concat(followers),
+				resource: post,
+				type: Inbox.Types.Post,
+				author: @id
+			}, () -> )
 
 UserSchema.methods.findAndPopulatePost = (args, cb) ->
 	Post
@@ -388,14 +391,16 @@ UserSchema.methods.genProfile = (cb) ->
 ################################################################################
 ## related to the notification
 
-UserSchema.methods.notify = (args, cb) ->
+UserSchema.methods.notifyMe = (args, cb) ->
 	note = new Notification {
 		recipient: @
-		msg: args.msg
+		msgTemplate: args.msgTemplate
+		agents: [@]
 		url: args.url
+		type: args.type
 	}
 	note.save (err, doc) ->
-		console.log('note to user', doc)
+		console.log('note to user', err, doc)
 		cb?(err, doc)
 
 UserSchema.methods.getNotifications = (cb) ->

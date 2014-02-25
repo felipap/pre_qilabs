@@ -1,6 +1,8 @@
-var Post, PostSchema, PostTypes, mongoose, urlify;
+var Inbox, Post, PostSchema, PostTypes, mongoose, urlify;
 
 mongoose = require('mongoose');
+
+Inbox = mongoose.model('Inbox');
 
 PostTypes = {
   Comment: 'Comment',
@@ -56,7 +58,11 @@ PostSchema = new mongoose.Schema({
 });
 
 PostSchema.virtual('path').get(function() {
-  return "/posts/{id}".replace(/{id}/, this.id);
+  if (this.parentPost) {
+    return "/posts/" + this.parentPost + "#" + this.id;
+  } else {
+    return "/posts/{id}".replace(/{id}/, this.id);
+  }
 });
 
 PostSchema.virtual('apiPath').get(function() {
@@ -72,11 +78,7 @@ urlify = function(text) {
 };
 
 PostSchema.virtual('data.unescapedBody').get(function() {
-  if (this.data.body) {
-    return urlify(this.data.body);
-  } else {
-    return '';
-  }
+  return urlify(this.data.body);
 });
 
 PostSchema.pre('remove', function(next) {

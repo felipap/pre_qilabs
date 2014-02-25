@@ -14,7 +14,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Group, HandleErrors, Inbox, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
+var Group, HandleErrors, Inbox, Notification, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -29,16 +29,18 @@ User = mongoose.model('User');
 
 Post = mongoose.model('Post');
 
-Inbox = mongoose.model('Inbox');
-
 Tag = mongoose.model('Tag');
+
+Inbox = mongoose.model('Inbox');
 
 Group = mongoose.model('Group');
 
 Subscriber = mongoose.model('Subscriber');
 
+Notification = mongoose.model('Notification');
+
 HandleErrors = function(res, cb) {
-  console.assert(typeof cb === 'function');
+  console.assert(arguments.length === 2 && typeof cb === 'function', "Invalid arguments to HandleErrors");
   return function(err, result) {
     if (err) {
       return res.status(400).endJson({
@@ -65,20 +67,23 @@ module.exports = {
             return Post.find({}, function(err, posts) {
               return Inbox.find({}, function(err, inboxs) {
                 return Subscriber.find({}, function(err, subscribers) {
-                  return Group.find({}, function(err, groups) {
-                    return Group.Membership.find({}, function(err, membership) {
-                      var obj;
-                      obj = {
-                        ip: req.ip,
-                        group: groups,
-                        inboxs: inboxs,
-                        membership: membership,
-                        session: req.session,
-                        users: users,
-                        posts: posts,
-                        subscribers: subscribers
-                      };
-                      return res.end(JSON.stringify(obj));
+                  return Notification.find({}, function(err, notifics) {
+                    return Group.find({}, function(err, groups) {
+                      return Group.Membership.find({}, function(err, membership) {
+                        var obj;
+                        obj = {
+                          ip: req.ip,
+                          group: groups,
+                          inboxs: inboxs,
+                          notifics: notifics,
+                          membership: membership,
+                          session: req.session,
+                          users: users,
+                          posts: posts,
+                          subscribers: subscribers
+                        };
+                        return res.endJson(obj);
+                      });
                     });
                   });
                 });
@@ -207,14 +212,14 @@ module.exports = {
             title: 'My conquest!' + Math.floor(Math.random() * 100),
             body: req.body.content.body
           }
-        }, function(err, doc) {
+        }, HandleErrors(res, function(doc) {
           return doc.populate('author', function(err, doc) {
-            return res.end(JSON.stringify({
+            return res.endJson({
               error: false,
               data: doc
-            }));
+            });
           });
-        });
+        }));
       },
       children: {
         '/:id': {
@@ -251,6 +256,9 @@ module.exports = {
                 _id: postId,
                 author: req.user
               }, HandleErrors(res, function(doc) {
+                Inbox.remove({
+                  resource: doc
+                }, function(err, num) {});
                 doc.remove();
                 return res.endJson(doc);
               }));
@@ -317,11 +325,11 @@ module.exports = {
                   limit: 3,
                   skip: 5 * parseInt(req.query.page)
                 }, HandleErrors(res, function(docs) {
-                  return res.end(JSON.stringify({
+                  return res.endJson({
                     data: docs,
                     error: false,
                     page: parseInt(req.query.page)
-                  }));
+                  });
                 }));
               }
             ]
@@ -339,9 +347,9 @@ module.exports = {
                   _id: userId
                 }, HandleErrors(res, (function(user) {
                   return req.user.dofollowUser(user, function(err, done) {
-                    return res.end(JSON.stringify({
+                    return res.endJson({
                       error: !!err
-                    }));
+                    });
                   });
                 })));
               }
@@ -360,9 +368,9 @@ module.exports = {
                   _id: userId
                 }, function(err, user) {
                   return req.user.unfollowUser(user, function(err, done) {
-                    return res.end(JSON.stringify({
+                    return res.endJson({
                       error: !!err
-                    }));
+                    });
                   });
                 });
               }
@@ -387,11 +395,26 @@ module.exports = {
         'notifications': {
           get: function(req, res) {
             return req.user.getNotifications(HandleErrors(req, function(notes) {
-              return res.end(JSON.stringify({
+              return res.endJson({
                 data: notes,
                 error: false
-              }));
+              });
             }));
+          },
+          childre: {
+            ':id': {
+              "delete": function(req, res) {
+                var nId;
+                if (!(nId = req.paramToObjectId('id'))) {
+                  return;
+                }
+                return Notification.deleteNotification(req.user, nId, function(err) {
+                  return res.endJson({
+                    error: !!err
+                  });
+                });
+              }
+            }
           }
         },
         'timeline/posts': {
@@ -402,11 +425,11 @@ module.exports = {
             }, function(err, docs) {
               var page;
               page = (!docs[0] && -1) || parseInt(req.query.page) || 0;
-              return res.end(JSON.stringify({
+              return res.endJson({
                 page: page,
                 data: docs,
                 error: false
-              }));
+              });
             });
           }
         },

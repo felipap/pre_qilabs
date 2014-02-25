@@ -1,11 +1,16 @@
-var Notification, NotificationSchema, Types, async, mongoose;
+var Notification, NotificationSchema, Types, async, mongoose, _;
 
 mongoose = require('mongoose');
 
 async = require('async');
 
+_ = require('underscore');
+
 Types = {
-  Post: 'Post'
+  PostComment: 'PostComment',
+  PostAnswer: 'PostAnswer',
+  UpvotedAnswer: 'UpvotedAnswer',
+  SharedPost: 'SharedPost'
 };
 
 NotificationSchema = new mongoose.Schema({
@@ -13,14 +18,31 @@ NotificationSchema = new mongoose.Schema({
     type: Date,
     index: true
   },
+  agents: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: true
+    }
+  ],
   recipient: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
-    index: 1,
+    required: true,
+    index: 1
+  },
+  group: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Group',
+    required: false
+  },
+  type: {
+    type: String,
     required: true
   },
-  msg: {
-    type: String
+  msgTemplate: {
+    type: String,
+    required: true
   },
   url: {
     type: String
@@ -28,10 +50,25 @@ NotificationSchema = new mongoose.Schema({
   seen: {
     type: Boolean,
     "default": false
+  },
+  avatarUrl: {
+    type: String,
+    required: false
+  }
+}, {
+  toObject: {
+    virtuals: true
+  },
+  toJSON: {
+    virtuals: true
   }
 });
 
 NotificationSchema.statics.Types = Types;
+
+NotificationSchema.virtual('msg').get(function() {
+  return _.template(this.msgTemplate, this);
+});
 
 NotificationSchema.pre('save', function(next) {
   if (this.dateSent == null) {
