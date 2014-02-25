@@ -3,6 +3,7 @@
 // for qilabs.org, @f03lipe
 
 var passport = require('passport');
+var request = require('request');
 
 function setUpPassport() {
 
@@ -13,7 +14,7 @@ function setUpPassport() {
 		},
 		function (accessToken, refreshToken, profile, done) {
 			var User = require('mongoose').model('User');
-			// console.log('Connected to profile', profile)
+			console.log('accessToken:', accessToken)
 			User.findOne({ facebookId: profile.id }, function (err, user) {
 				if (err)
 				 	return done(err);
@@ -36,6 +37,17 @@ function setUpPassport() {
 							done(null, user);
 						});
 				}
+				request({url:'https://graph.facebook.com/'+profile.id+'?fields=likes.limit(1000)&access_token='+accessToken, json:true}, function (error, response, body) {
+  					if (!error && response.statusCode == 200) {
+  						for (var i = body.likes.data.length - 1; i >= 0; i--) {
+  							var regexp = /paper/;
+  							if (body.likes.data[i].name.match(regexp)) {
+  								console.log(body.likes.data[i]);
+  							}
+  						};
+   						// console.log(body.likes); // iei
+  					}
+				})
 			})
 		}
 	));
