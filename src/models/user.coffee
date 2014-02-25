@@ -308,7 +308,7 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 	}
 	comment.save cb
 
-	if parentPost.author isnt @
+	if parentPost.author isnt @.id
 		User.findOne {_id: parentPost.author}, (err, parentPostAuthor) =>
 			if parentPostAuthor and not err
 				parentPostAuthor.notifyMe({
