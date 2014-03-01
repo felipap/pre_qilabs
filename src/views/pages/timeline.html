@@ -2,6 +2,16 @@
 
 {% import '../macros/user.html' as userMacros %}
 
+{% block head %}
+	{% parent %}
+
+	{% if user %}
+		<script>window.user = {id: '{{user.id}}'}</script>
+	{% else %}
+		<script>window.user = {}</script>
+	{% endif %}
+{% endblock %}
+
 {% block bodyEnd %}
 	{% parent %}
 	<script>conf={postsRoot:'/api/me/timeline/posts'};</script>

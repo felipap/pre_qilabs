@@ -198,26 +198,26 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 		var CommentItem = GenericPostItem.extend({
 		});
 
-		var CommentView = GenericPostItemView.extend({
-			tagName: 'li',
-			className: 'commentWrapper',
-			template: _.template($("#template-commentview").html()),
-			initialize: function () {
-				this.bindRemoveBtn();
-			},
-			bindRemoveBtn: function () {
-				this.$el.on('click', '[data-action=remove-post]', this.askForRemoval.bind(this));
-			},
-			askForRemoval: function () {
-				if (confirm('Tem certeza que deseja excluir esse comentário?')) {
-					this.destroy();
-				}
-			},
-			render: function () {
-				this.$el.html(this.template({comment: this.model.toJSON()}));
-				return this;
-			},
-		});
+		// var CommentView = GenericPostItemView.extend({
+		// 	tagName: 'li',
+		// 	className: 'commentWrapper',
+		// 	template: _.template($("#template-commentview").html()),
+		// 	initialize: function () {
+		// 		this.bindRemoveBtn();
+		// 	},
+		// 	bindRemoveBtn: function () {
+		// 		this.$el.on('click', '[data-action=remove-post]', this.askForRemoval.bind(this));
+		// 	},
+		// 	askForRemoval: function () {
+		// 		if (confirm('Tem certeza que deseja excluir esse comentário?')) {
+		// 			this.destroy();
+		// 		}
+		// 	},
+		// 	render: function () {
+		// 		this.$el.html(this.template({comment: this.model.toJSON()}));
+		// 		return this;
+		// 	},
+		// });
 
 		var CommentList = Backbone.Collection.extend({
 			model: CommentItem,
@@ -240,44 +240,106 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			},
 		});
 
-		var CommentListView = Backbone.View.extend({
-			tagName: 'ul',
-			className: "commentListWrapper",
-			_commentViews: [],
+		// var CommentListView = Backbone.View.extend({
+		// 	tagName: 'ul',
+		// 	className: "commentListWrapper",
+		// 	_commentViews: [],
 			
-			initialize: function () {
-				this.collection.on('reset', this.addAll, this);
-				this.collection.on('add', this.addAll, this);
-				this.addAll();
-			},
+		// 	initialize: function () {
+		// 		this.collection.on('reset', this.addAll, this);
+		// 		this.collection.on('add', this.addAll, this);
+		// 		this.addAll();
+		// 	},
 
-			addAll: function () {
-				var views = [];
-				this.collection.each(function(item) {
-					views.push(new CommentView({model:item,collection:this.collection}));
-				}, this);
-				this._commentViews = views;
-				return this.render();
+		// 	addAll: function () {
+		// 		var views = [];
+		// 		this.collection.each(function(item) {
+		// 			views.push(new CommentView({model:item,collection:this.collection}));
+		// 		}, this);
+		// 		this._commentViews = views;
+		// 		return this.render();
+		// 	},
+
+		// 	render: function () {
+		// 		var container = document.createDocumentFragment();
+		// 		_.each(this._commentViews, function (item) {
+		// 			container.appendChild(item.render().el);
+		// 		}, this);
+		// 		this.$el.empty();
+		// 		this.$el.append(container);
+		// 		return this;
+		// 	},
+
+		// 	destroy: function () {
+		// 		this.remove();
+		// 	}
+		// });
+
+		var CommentView = React.createClass({
+			render: function () {
+				var comment = this.props.model.attributes;
+				console.log('comment:', comment)
+				var mediaUserAvatarStyle = {
+					background: 'url('+comment.author.avatarUrl+')',
+				};
+
+				return (
+					<div className="commentWrapper">
+						<div className="mediaUser">
+							<a href={comment.author.profileUrl}>
+								<div className="mediaUserAvatar" style={mediaUserAvatarStyle} title={comment.author.username}>
+								</div>
+							</a>
+						</div>
+						<div className="msgBody {(comment.author.id==='{{ user.id }}')?'editable':''}">
+							{comment.data.unescapedBody}
+							{function(){
+								if (window.user && window.user.id === comment.author.id)
+									return (
+										<div className="optionBtns">
+											<button data-action="remove-post" data-toggle="tooltip" title="Remover Comentário" data-placement="bottom">
+												<i className="icon-trash"></i>
+											</button>
+										</div>
+									);
+							}()}
+						</div>
+						<a href={comment.path} data-time-count={1*new Date(comment.dateCreated)}>
+							{window.calcTimeFrom(comment.dateCreated)}
+						</a>
+					</div>
+				);
+			},
+		});
+
+
+		var CommentListView = React.createClass({			
+			componentWillMount: function () {
+				var update = function () {
+					this.forceUpdate(function(){});
+				}
+				this.props.collection.on('reset', update.bind(this));
+				this.props.collection.on('add', update.bind(this));
 			},
 
 			render: function () {
-				var container = document.createDocumentFragment();
-				_.each(this._commentViews, function (item) {
-					container.appendChild(item.render().el);
-				}, this);
-				this.$el.empty();
-				this.$el.append(container);
-				return this;
-			},
+				var commentNodes = this.props.collection.map(function (comment) {
+					return (
+						<CommentView model={comment} /> 
+					);
+				});
 
-			destroy: function () {
-				this.remove();
-			}
+				return (
+					<div className="commentListWrapper">
+						{commentNodes}
+					</div>
+				);
+			},
 		});
 
 		var PostItem = GenericPostItem.extend({
 			initialize: function () {
-				this.commentList = new CommentList({ collection:this.get('comments') });
+				this.commentList = new CommentList(this.get('comments'));
 				this.commentList.postItem = this.postItem;
 				// if (this.get('hasComments')) {
 				// 	this.commentList.fetch({reset:true});
@@ -285,60 +347,115 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			},
 		});
 
-		var PostView = GenericPostItemView.extend({
-			tagName: 'li',
-			className: 'postWrapper',
-			template: _.template($("#template-postview").html()),
-			bindRemoveBtn: function () {
-				this.$el.on('click', '.opMessage [data-action=remove-post]', this.askForRemoval.bind(this));
-			},
-			askForRemoval: function () {
-				if (confirm('Tem certeza que deseja excluir essa postagem?')) {
-					this.destroy();
-				}
-			},
-			initialize: function () {
-				this.model.collection.on('reset', this.destroy, this);
-				this.bindRemoveBtn();
-				this.commentListView = new CommentListView({ collection: this.model.commentList });
-			},
-			events: {
-				// 'submit .formPostComment':
-				// 	function (evt) {
-				// 		console.log('this is', this, this.collection)
-				// 		var bodyEl = $(evt.target).find(".commentInput");
-				// 		var self = this;
-				// 		$.ajax({
-				// 			type: 'post',
-				// 			dataType: 'json',
-				// 			url: this.model.get('apiPath')+'/comments',
-				// 			data: { content: { body: bodyEl.val() } }
-				// 		}).done(function(response) {
-				// 			bodyEl.val('');
-				// 			// console.log('response', response);
-				// 			self.model.commentList.add(new CommentItem(response.data));
-				// 		});
-				// 	},
-			},
-			render: function () {
-				this.$el.html(this.template({post: this.model.toJSON()}));
-				React.renderComponent(
-					<CommentBox url="/api/posts/530b7b66bd95abc20500000a/comments" pollInterval={2000} />,
-					document.getElementById('container')
-				);
+		// var PostView = GenericPostItemView.extend({
+		// 	tagName: 'li',
+		// 	className: 'postWrapper',
+		// 	template: _.template($("#template-postview").html()),
+		// 	bindRemoveBtn: function () {
+		// 		this.$el.on('click', '.opMessage [data-action=remove-post]', this.askForRemoval.bind(this));
+		// 	},
+		// 	askForRemoval: function () {
+		// 		if (confirm('Tem certeza que deseja excluir essa postagem?')) {
+		// 			this.destroy();
+		// 		}
+		// 	},
+		// 	initialize: function () {
+		// 		this.model.collection.on('reset', this.destroy, this);
+		// 		this.bindRemoveBtn();
+		// 		this.commentListView = new CommentListView({ collection: this.model.commentList });
+		// 	},
+		// 	events: {
+		// 		// 'submit .formPostComment':
+		// 		// 	function (evt) {
+		// 		// 		console.log('this is', this, this.collection)
+		// 		// 		var bodyEl = $(evt.target).find(".commentInput");
+		// 		// 		var self = this;
+		// 		// 		$.ajax({
+		// 		// 			type: 'post',
+		// 		// 			dataType: 'json',
+		// 		// 			url: this.model.get('apiPath')+'/comments',
+		// 		// 			data: { content: { body: bodyEl.val() } }
+		// 		// 		}).done(function(response) {
+		// 		// 			bodyEl.val('');
+		// 		// 			// console.log('response', response);
+		// 		// 			self.model.commentList.add(new CommentItem(response.data));
+		// 		// 		});
+		// 		// 	},
+		// 	},
+		// 	render: function () {
+		// 		this.$el.html(this.template({post: this.model.toJSON()}));
+		// 		React.renderComponent(
+		// 			<CommentBox url="/api/posts/530b7b66bd95abc20500000a/comments" pollInterval={2000} />,
+		// 			document.getElementById('container')
+		// 		);
 
-				this.$el.find('.postCommentsSection').append(this.commentListView.$el);
-				return this;
-			},
+		// 		this.$el.find('.postCommentsSection').append(this.commentListView.$el);
+		// 		return this;
+		// 	},
+		// });
+
+		var PlainPostView = React.createClass({
+
+			render: function () {
+				var post = this.props.model.attributes;
+
+				var mediaUserStyle = {
+					background: 'url('+post.author.avatarUrl+')',
+				};
+
+				return (
+					<div className="opMessage">
+						<div className="msgHeader">
+							<div className="mediaUser">
+								<a href={post.author.profileUrl}>
+									<div className="mediaUserAvatar" style={mediaUserStyle}></div>
+								</a>
+							</div>
+							<div className="headline">
+								<a href={post.author.profileUrl} className="authorUsername">
+									{post.author.name}
+								</a>
+								disse:
+							</div>
+							
+							<a href={post.path}>
+								<time data-time-count={1*new Date(post.dateCreated)}>
+									{window.calcTimeFrom(post.dateCreated)}
+								</time>
+							</a>
+
+							{function () {
+								if (window.user && post.author.id === window.user.id)
+									return (
+										<div className="optionBtns">
+											<button data-action="remove-post" data-toggle="tooltip" data-placement="bottom" title="Remover Post">
+												<i className="icon-trash"></i>
+											</button>
+											<button data-action="edit-post" data-toggle="tooltip" data-placement="bottom" title="Editar Post">
+												<i className="icon-edit"></i>
+											</button>
+										</div>
+									);
+								return;
+							}()}
+						</div>
+						<div className="msgBody">
+							<div className="arrow"></div>
+							{post.data.unescapedBody}
+						</div>
+					</div>
+				);
+			}
 		});
 
 		var PostWrapperView = React.createClass({
 
 			render: function () {
+				console.log('list', this.props.model.commentList)
 				return (
-					<div>
-						<h2>{this.props.data.author.name}</h2>
-						<div>{this.props.data.data.body}</div>
+					<div className="postWrapper">
+						<PlainPostView model={this.props.model}/>
+						<CommentListView collection={this.props.model.commentList}/>
 					</div>
 				);
 			}
@@ -394,62 +511,62 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			}
 		});
 
-		var PostListView = Backbone.View.extend({
-			className: "postListWrapper",
-			_postViews: [],
+		// var PostListView = Backbone.View.extend({
+		// 	className: "postListWrapper",
+		// 	_postViews: [],
 			
-			initialize: function () {
-				this.collection.on('reset', this.addAll, this);
-				this.collection.on('add', this.addAll, this);
-			},
+		// 	initialize: function () {
+		// 		this.collection.on('reset', this.addAll, this);
+		// 		this.collection.on('add', this.addAll, this);
+		// 	},
 
-			addAll: function () {
-				var views = [];
-				this.collection.each(function(postItem) {
-					views.push(new PostView({model:postItem,collection:this.collection}));
-				}, this);
-				this._postViews = views;
-				return this.render();
-			},
+		// 	addAll: function () {
+		// 		var views = [];
+		// 		this.collection.each(function(postItem) {
+		// 			views.push(new PostView({model:postItem,collection:this.collection}));
+		// 		}, this);
+		// 		this._postViews = views;
+		// 		return this.render();
+		// 	},
 
-			render: function () {
-				var container = document.createDocumentFragment();
-				// render each postView
-				_.each(this._postViews, function (postView) {
-					container.appendChild(postView.render().el);
-				}, this);
-				this.$el.empty();
-				this.$el.append(container);
-				return this;
-			},
+		// 	render: function () {
+		// 		var container = document.createDocumentFragment();
+		// 		// render each postView
+		// 		_.each(this._postViews, function (postView) {
+		// 			container.appendChild(postView.render().el);
+		// 		}, this);
+		// 		this.$el.empty();
+		// 		this.$el.append(container);
+		// 		return this;
+		// 	},
 
-			destroy: function () {
-				this.remove();
-			}
-		});
+		// 	destroy: function () {
+		// 		this.remove();
+		// 	}
+		// });
 
 		var PostListView = React.createClass({
 			getInitialState: function () {
-				console.log('this', this.props.collection.toJSON())
-				return {posts:this.props.collection.toJSON()};
+				return {};
 			},
 			componentWillMount: function () {
-				this.props.collection.on('add', this.updateState.bind(this));
-				this.props.collection.on('reset', this.updateState.bind(this));
-			},
-			updateState: function () {
-				this.setState({posts:this.props.collection.toJSON()});
+				var self = this;
+				function updateMe (evt) {
+					console.log('oi', arguments)
+					self.forceUpdate(function(){});
+				}
+				this.props.collection.on('add', updateMe);
+				this.props.collection.on('reset', updateMe);
 			},
 			// changeOptions: "change:name",
 			render: function () {
-				var postNodes = this.state.posts.map(function (post) {
+				var postNodes = this.props.collection.map(function (post) {
 					return (
-						<PostWrapperView data={post}/>
+						<PostWrapperView model={post}/>
 					);
 				});
-
 				return (
-					<div>
+					<div className="postListWrapper">
 						<PostForm />
 						{postNodes}
 					</div>
@@ -460,7 +577,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 		return {
 			item: PostItem,
 			list: PostList,
-			view: PostView,
+			// view: PostView,
 			listView: PostListView,
 		};
 	})();
@@ -518,7 +635,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 
 			React.renderComponent(<ListView collection={postList} />, document.getElementById('postsPlacement'));
 
-			this.postListView = new Post.listView({collection: this.postList});
+			// this.postListView = new Post.listView({collection: this.postList});
 			this.postList.fetch({reset:true});
 		},
 	});

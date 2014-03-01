@@ -10,7 +10,7 @@ requirejs.config({
 		'bootstrap': 	'vendor/bootstrap-3.0.0.min',
 		'underscore': 	'vendor/underscore-1.5.1.min',
 		'backbone': 	'vendor/backbone-1.0.0.min',
-		'react': 		'vendor/react-0.9.0.min',
+		'react': 		'vendor/react-0.9.0',
 		'react.backbone':'vendor/react.backbone',
 	},
 	shim: {
