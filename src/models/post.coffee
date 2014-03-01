@@ -53,13 +53,10 @@ PostSchema.virtual('data.unescapedBody').get ->
 	urlify(@data.body)
 
 PostSchema.pre 'remove', (next) ->
-	Post.remove { parentPost: @ }, (err, num) ->
-		next()
-
 	console.log 'removing comments after removing this'
-
-PostSchema.statics.deepRemove = ->
-	console.log('removed?')
+	next()
+	Post.find { parentPost: @ }, (err, docs) ->
+		docs.remove()
 
 PostSchema.pre 'save', (next) ->
 	@dateCreated ?= new Date

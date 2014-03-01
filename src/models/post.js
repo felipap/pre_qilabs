@@ -82,17 +82,14 @@ PostSchema.virtual('data.unescapedBody').get(function() {
 });
 
 PostSchema.pre('remove', function(next) {
-  Post.remove({
+  console.log('removing comments after removing this');
+  next();
+  return Post.find({
     parentPost: this
-  }, function(err, num) {
-    return next();
+  }, function(err, docs) {
+    return docs.remove();
   });
-  return console.log('removing comments after removing this');
 });
-
-PostSchema.statics.deepRemove = function() {
-  return console.log('removed?');
-};
 
 PostSchema.pre('save', function(next) {
   if (this.dateCreated == null) {

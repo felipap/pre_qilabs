@@ -48,6 +48,10 @@ module.exports = function(grunt) {
 				files: ['src/static/js/lib/app.js'],
 				tasks: ['requirejs'],
 			},
+			react: {
+				files: ['src/static/js/**/*.jsx'],
+				tasks: ['react'],
+			},
 			css: {
 				files: ['src/static/less/**/*.less'],
 				tasks: ['less'],
@@ -55,7 +59,7 @@ module.exports = function(grunt) {
 			},
 			coffee: {
 				files: ['**/*.coffee'],
-				tasks: ['dist-coffee'],
+				tasks: ['coffee'],
 				options: { spawn: false },
 			},
 		},
@@ -104,6 +108,16 @@ module.exports = function(grunt) {
 			}
 		},
 
+		react: {
+			files: {
+				expand: true,
+				cwd: 'src/static/js/lib',
+				src: ['**/*.jsx'],
+				dest: 'src/static/js/lib',
+				ext: '.js'
+			}
+		},
+
 		concurrent: {
 			dev: {
 				tasks: ['nodemon', 'watch'], // +? 'node-inspector'
@@ -120,9 +134,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-coffee');
 	grunt.loadNpmTasks('grunt-concurrent');
 	grunt.loadNpmTasks('grunt-contrib-requirejs');
-	grunt.loadNpmTasks('grunt-nodemon');	
-
-	grunt.registerTask('dist-coffee', ['coffee']);
+	grunt.loadNpmTasks('grunt-nodemon');
+	grunt.loadNpmTasks('grunt-react');
 
 	// 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
 	grunt.registerTask('serve', ['nodemon']);

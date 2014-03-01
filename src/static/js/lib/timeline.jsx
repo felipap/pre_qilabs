@@ -30,18 +30,18 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		escape: /\<\@\-(.+?)\@\>/gim
 	};
 
-	var PostInputForm = React.createClass({displayName: 'PostInputForm',
+	var PostInputForm = React.createClass({
 		render: function () {
 			return (
-				React.DOM.div( {className:"postInputForm"}, 
-					React.DOM.h2(null, "Enviar uma msg para o seus seguidores"),
-					React.DOM.textarea( {placeholder:"Aqui ó"}),
-					React.DOM.button( {'data-action':"send-post", type:"submit"}, "Enviar Post")
-				)
+				<div className="postInputForm">
+					<h2>Enviar uma msg para o seus seguidores</h2>
+					<textarea placeholder="Aqui ó"></textarea>
+					<button data-action="send-post" type="submit">Enviar Post</button>
+				</div>
 			);
 		}
 	});
-	React.renderComponent(PostInputForm(null ), document.getElementById('postInput'));
+	React.renderComponent(<PostInputForm />, document.getElementById('postInput'));
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
