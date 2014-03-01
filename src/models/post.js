@@ -87,7 +87,9 @@ PostSchema.pre('remove', function(next) {
   return Post.find({
     parentPost: this
   }, function(err, docs) {
-    return docs.remove();
+    return docs.forEach(function(doc) {
+      return doc.remove();
+    });
   });
 });
 
@@ -99,9 +101,6 @@ PostSchema.pre('save', function(next) {
 });
 
 PostSchema.methods.getComments = function(cb) {
-  if (!this.hasComments) {
-    cb(false, []);
-  }
   return Post.find({
     parentPost: this.id
   }).populate('author').exec(function(err, docs) {

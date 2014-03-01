@@ -41,7 +41,19 @@
 			</div>
 		</div>
 	</div>
-	<script data-main="{{ getMediaUrl('js','app.min') }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	
+	{% if app.env == "development" %}
+		<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+		<script>
+			require(["{{ getMediaUrl('js','build.js') }}"], function () {
+				require(['common', 'timeline'], function (common, App) {
+					App.initialize();
+				});
+			});
+		</script>
+	{% else %}
+		<script data-main="{{ getMediaUrl('js','app.min') }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	{% endif %}
 	
 	{% block bodyEnd %}
 	{% endblock %}

@@ -56,14 +56,14 @@ PostSchema.pre 'remove', (next) ->
 	console.log 'removing comments after removing this'
 	next()
 	Post.find { parentPost: @ }, (err, docs) ->
-		docs.remove()
+		docs.forEach (doc) ->
+			doc.remove()
 
 PostSchema.pre 'save', (next) ->
 	@dateCreated ?= new Date
 	next()
 
 PostSchema.methods.getComments = (cb) ->
-	cb(false, []) unless @hasComments
 	Post.find { parentPost: @id }
 		.populate 'author'
 		.exec (err, docs) ->

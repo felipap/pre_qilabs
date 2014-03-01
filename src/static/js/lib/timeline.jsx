@@ -20,28 +20,15 @@ window.calcTimeFrom = function (arg) {
 	} else {
 		return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
 	}
-}
+};
 
-define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, React) {
+define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function ($, Backbone, _, React) {
 
 	_.templateSettings = {
 		interpolate: /\<\@\=(.+?)\@\>/gim,
 		evaluate: /\<\@([\s\S]+?)\@\>/gim,
 		escape: /\<\@\-(.+?)\@\>/gim
 	};
-
-	var PostInputForm = React.createClass({
-		render: function () {
-			return (
-				<div className="postInputForm">
-					<h2>Enviar uma msg para o seus seguidores</h2>
-					<textarea placeholder="Aqui ó"></textarea>
-					<button data-action="send-post" type="submit">Enviar Post</button>
-				</div>
-			);
-		}
-	});
-	React.renderComponent(<PostInputForm />, document.getElementById('postInput'));
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
@@ -50,19 +37,137 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		setTimeout(updateCounters, 1000);
 	}, 1000);
 
-	$('[data-action="send-post"]').click(function (evt) {
-		var body = document.querySelector(".postInputForm > textarea").value;
-		$.ajax({
-			type: 'post',
-			dataType: 'json',
-			url: '/api/posts',
-			data: { content: { body: body }, groupId: window.groupId }
-		}).done(function(response) {
-			document.querySelector("#inputPostContent").value = '';
-			app.postList.add(new Post.item(response.data));
-			console.log('data', response.data);
-		});
-	});
+	// Extend PATCH:true option of Backbone.
+	// When model.save([attrs], {patch:true}) is called:
+	// - the method is changed to PUT;
+	// - the data sent is a hash with the passed attributes and their values;
+	var originalSync = Backbone.sync;
+	Backbone.sync = function(method, model, options) {
+		if (method === 'patch' && options.attrs instanceof Array) {
+			// pop attributes and add their values
+			while (e = options.attrs.pop())
+				options.attrs[e] = model.get(e);
+			options.type = 'PUT';
+			// turn options.attrs into an Object
+			options.attrs = _.extend({}, options.attrs);
+		}
+		return originalSync(method, model, options);
+	};
+
+	/************************************************************************************/
+	/************************************************************************************/
+	/************************************************************************************/
+	/************************************************************************************/
+
+	// var Comment = React.createClass({
+	// 	render: function () {
+	// 		var raw = this.props.children.toString(); // add markup converter
+	// 		return (
+	// 			<div className="comment">
+	// 				<h2 className="commentAuthor">{this.props.author}</h2>
+	// 				<span>{raw}</span>
+	// 			</div>
+	// 		);
+	// 	}
+	// });
+		
+	// var CommentList = React.createClass({
+	// 	render: function() {
+	// 		// console.log('oi?', this.props.data)
+	// 		var commentNodes = this.props.data.map(function (comment, index) {
+	// 			return <Comment key={index} author={comment.author.name}>{comment.data.body}</Comment>;
+	// 		});
+	// 		return <div className="commentList">{commentNodes}</div>;
+	// 	}
+	// });
+
+	// var CommentForm = React.createClass({
+	// 	handleSubmit: function() {
+	// 		var author = this.refs.author.getDOMNode().value.trim();
+	// 		var text = this.refs.text.getDOMNode().value.trim();
+	// 		this.props.onCommentSubmit({author: author, text: text});
+	// 		this.refs.author.getDOMNode().value = '';
+	// 		this.refs.text.getDOMNode().value = '';
+	// 		return false;
+	// 	},
+	// 	render: function() {
+	// 		return (
+	// 			<form className="commentForm" onSubmit={this.handleSubmit}>
+	// 				<input type="text" placeholder="Your name" ref="author" />
+	// 				<input type="text" placeholder="Say something..." ref="text" />
+	// 				<input type="submit" value="Post" />
+	// 			</form>
+	// 		);
+	// 	}
+	// });
+
+	// var CommentBox = React.createClass({
+	// 	loadCommentsFromServer: function () {
+	// 		$.ajax({
+	// 			url: this.props.url,
+	// 			dataType: 'json',
+	// 			success: function (data) {
+	// 				this.setState({data: data.data});
+	// 			}.bind(this)
+	// 		});
+	// 	},
+	// 	handleCommentSubmit: function (comment) {
+	// 		var comments = this.state.data;
+	// 		comments.push(comment);
+	// 		this.setState({data: comments});
+	// 		$.ajax({
+	// 			url: this.props.url,
+	// 			type: 'POST',
+	// 			data: comment,
+	// 			success: function (data) {
+	// 				this.setState({data: data.data});
+	// 			}.bind(this)
+	// 		});
+	// 	},
+	// 	getInitialState: function () {
+	// 		return {data:[]};
+	// 	},
+	// 	componentWillMount: function () {
+	// 		this.loadCommentsFromServer();
+	// 		setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+	// 	},
+	// 	render: function () {
+	// 		return (
+	// 			<div className="commentBox">
+	// 				<h1>Comments</h1>
+	// 				<CommentList data={this.state.data} />
+	// 				<CommentForm onCommentSubmit={this.handleCommentSubmit} />
+	// 			</div>
+	// 		);
+	// 	}
+	// })
+
+
+	// var PostBox = React.createClass({
+	// 	getInitialState: function () {
+	// 		return {data:[]};
+	// 	},
+	// 	componentWillMount: function () {
+
+	// 	},
+	// 	render: function () {
+	// 		return (
+	// 			<div className="postWrapper">
+	// 				<PostForm onPostSubmit={this.handlePostSubmit} />
+	// 				<h1>Posts</h1>
+	// 				<PostList model={this.state.data} />
+	// 			</div>
+	// 		);
+	// 	},
+	// });
+
+	// React.renderComponent(<PostBox />, document.getElementById('postInput'));
+
+	/************************************************************************************/
+	/************************************************************************************/
+	/************************************************************************************/
+	/************************************************************************************/
+
 
 	var Post = (function () {
 		'use strict';
@@ -172,7 +277,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 
 		var PostItem = GenericPostItem.extend({
 			initialize: function () {
-				this.commentList = new CommentList(this.get('comments'));
+				this.commentList = new CommentList({ collection:this.get('comments') });
 				this.commentList.postItem = this.postItem;
 				// if (this.get('hasComments')) {
 				// 	this.commentList.fetch({reset:true});
@@ -198,28 +303,45 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				this.commentListView = new CommentListView({ collection: this.model.commentList });
 			},
 			events: {
-				'submit .formPostComment':
-					function (evt) {
-						console.log('this is', this, this.collection)
-						var bodyEl = $(evt.target).find(".commentInput");
-						var self = this;
-						$.ajax({
-							type: 'post',
-							dataType: 'json',
-							url: this.model.get('apiPath')+'/comments',
-							data: { content: { body: bodyEl.val() } }
-						}).done(function(response) {
-							bodyEl.val('');
-							// console.log('response', response);
-							self.model.commentList.add(new CommentItem(response.data));
-						});
-					},
+				// 'submit .formPostComment':
+				// 	function (evt) {
+				// 		console.log('this is', this, this.collection)
+				// 		var bodyEl = $(evt.target).find(".commentInput");
+				// 		var self = this;
+				// 		$.ajax({
+				// 			type: 'post',
+				// 			dataType: 'json',
+				// 			url: this.model.get('apiPath')+'/comments',
+				// 			data: { content: { body: bodyEl.val() } }
+				// 		}).done(function(response) {
+				// 			bodyEl.val('');
+				// 			// console.log('response', response);
+				// 			self.model.commentList.add(new CommentItem(response.data));
+				// 		});
+				// 	},
 			},
 			render: function () {
 				this.$el.html(this.template({post: this.model.toJSON()}));
+				React.renderComponent(
+					<CommentBox url="/api/posts/530b7b66bd95abc20500000a/comments" pollInterval={2000} />,
+					document.getElementById('container')
+				);
+
 				this.$el.find('.postCommentsSection').append(this.commentListView.$el);
 				return this;
 			},
+		});
+
+		var PostWrapperView = React.createClass({
+
+			render: function () {
+				return (
+					<div>
+						<h2>{this.props.data.author.name}</h2>
+						<div>{this.props.data.data.body}</div>
+					</div>
+				);
+			}
 		});
 
 		var PostList = Backbone.Collection.extend({
@@ -242,6 +364,34 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 					return;
 				this.fetch({data: {page:this.page+1}, remove:false});
 			},
+		});
+
+		var PostForm = React.createClass({
+			handleSubmit: function (evt) {
+				var body = this.refs.postBody.getDOMNode().value.trim();
+				if (!body) {
+					return false;
+				}
+				$.ajax({
+					type: 'post', dataType: 'json', url: '/api/posts',
+					data: { content: { body: body }, groupId: window.groupId }
+				}).done(function(response) {
+					app.postList.add(new Post.item(response.data));
+					console.log('data', response.data);
+				});
+				this.refs.postBody.getDOMNode().value = '';
+
+				return false;
+			},
+			render: function () {
+				return (
+					<form className="postInputForm" onSubmit={this.handleSubmit}>
+						<h2>Enviar uma msg para o seus seguidores</h2>
+						<textarea placeholder="Escreva uma mensagem aqui" ref="postBody"></textarea>
+						<button data-action="send-post" type="submit">Enviar Post</button>
+					</form>
+				);
+			}
 		});
 
 		var PostListView = Backbone.View.extend({
@@ -278,6 +428,35 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			}
 		});
 
+		var PostListView = React.createClass({
+			getInitialState: function () {
+				console.log('this', this.props.collection.toJSON())
+				return {posts:this.props.collection.toJSON()};
+			},
+			componentWillMount: function () {
+				this.props.collection.on('add', this.updateState.bind(this));
+				this.props.collection.on('reset', this.updateState.bind(this));
+			},
+			updateState: function () {
+				this.setState({posts:this.props.collection.toJSON()});
+			},
+			// changeOptions: "change:name",
+			render: function () {
+				var postNodes = this.state.posts.map(function (post) {
+					return (
+						<PostWrapperView data={post}/>
+					);
+				});
+
+				return (
+					<div>
+						<PostForm />
+						{postNodes}
+					</div>
+				);
+			},
+		});
+
 		return {
 			item: PostItem,
 			list: PostList,
@@ -286,22 +465,6 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		};
 	})();
 
-	// Extend PATCH:true option of Backbone.
-	// When model.save([attrs], {patch:true}) is called:
-	// - the method is changed to PUT;
-	// - the data sent is a hash with the passed attributes and their values;
-	var originalSync = Backbone.sync;
-	Backbone.sync = function(method, model, options) {
-		if (method === 'patch' && options.attrs instanceof Array) {
-			// pop attributes and add their values
-			while (e = options.attrs.pop())
-				options.attrs[e] = model.get(e);
-			options.type = 'PUT';
-			// turn options.attrs into an Object
-			options.attrs = _.extend({}, options.attrs);
-		}
-		return originalSync(method, model, options);
-	};
 
 	// Central functionality of the app.
 	var WorkspaceRouter = Backbone.Router.extend({
@@ -349,9 +512,14 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			}
 			this.postsRoot = window.conf.postsRoot;
 			this.postList = new Post.list();
+
+			var ListView = Post.listView;
+			var postList = this.postList;
+
+			React.renderComponent(<ListView collection={postList} />, document.getElementById('postsPlacement'));
+
 			this.postListView = new Post.listView({collection: this.postList});
 			this.postList.fetch({reset:true});
-			this.postListView.$el.appendTo($('#postsPlacement'));
 		},
 	});
 

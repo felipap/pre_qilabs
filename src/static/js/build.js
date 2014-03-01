@@ -11,6 +11,7 @@ requirejs.config({
 		'underscore': 	'vendor/underscore-1.5.1.min',
 		'backbone': 	'vendor/backbone-1.0.0.min',
 		'react': 		'vendor/react-0.9.0.min',
+		'react.backbone':'vendor/react.backbone',
 	},
 	shim: {
 		'underscore': { exports: '_' },

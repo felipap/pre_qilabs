@@ -143,6 +143,7 @@ app.use(expressWinston.errorLogger({
 // app.use(express.logger());
 
 app.locals({
+	// process: {},
 	tags: {},
 	errors: {},
 	version_label: "alpha",
@@ -189,7 +190,8 @@ app.locals({
 		'facebook': '#'
 	},
 	app: {
-		semantic_version: 'α1'
+		semantic_version: 'α1',
+		env: app.get('env')
 	},
 });
 
