@@ -344,7 +344,7 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 	return {
 		initialize: function () {
 			new WorkspaceRouter;
-			Backbone.history.start();
+			Backbone.history.start({ pushState:false, hashChange:false });
 		}
 	};
 });

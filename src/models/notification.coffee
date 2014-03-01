@@ -18,7 +18,7 @@ Types =
 
 NotificationSchema = new mongoose.Schema {
 	dateSent:		{ type:Date, index:true }
-	agents:		 [	{ type:mongoose.Schema.ObjectId, ref:'User', required:true }	]
+	agent:		 	{ type:mongoose.Schema.ObjectId, ref:'User', required:true }
 	recipient:	 	{ type:mongoose.Schema.ObjectId, ref:'User', required:true, index:1 }
 	group:			{ type:mongoose.Schema.ObjectId, ref:'Group', required:false }
 	type:			{ type:String, required:true }
@@ -41,5 +41,7 @@ NotificationSchema.virtual('msg').get ->
 NotificationSchema.pre 'save', (next) ->
 	@dateSent ?= new Date()
 	next()
+
+NotificationSchema.statics.createNotification
 
 module.exports = Notification = mongoose.model "Notification", NotificationSchema

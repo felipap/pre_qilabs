@@ -18,13 +18,11 @@ NotificationSchema = new mongoose.Schema({
     type: Date,
     index: true
   },
-  agents: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: true
-    }
-  ],
+  agent: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: true
+  },
   recipient: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
@@ -76,5 +74,7 @@ NotificationSchema.pre('save', function(next) {
   }
   return next();
 });
+
+NotificationSchema.statics.createNotification;
 
 module.exports = Notification = mongoose.model("Notification", NotificationSchema);

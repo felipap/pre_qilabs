@@ -80,6 +80,7 @@ module.exports = function(grunt) {
 		requirejs: {
 			app: {
 				options: {
+					logLevel: 2,
 					name: 'app',
 					baseUrl: 'src/static/js/',
 					mainConfigFile: 'src/static/js/build.js',
@@ -91,6 +92,7 @@ module.exports = function(grunt) {
 			},
 			common: {
 				options: {
+					logLevel: 2,
 					name: 'common',
 					baseUrl: 'src/static/js/',
 					mainConfigFile: 'src/static/js/build.js',
