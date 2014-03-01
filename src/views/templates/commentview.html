@@ -16,6 +16,6 @@
 	</div>
 	<@ } @>
 </div>
-<time data-time-count="<@= 1*new Date(comment.dateCreated) @>">
+<a href="<@= comment.path @>" data-time-count="<@= 1*new Date(comment.dateCreated) @>">
 	<@= window.calcTimeFrom(comment.dateCreated) @>
-</time>
+</a>
