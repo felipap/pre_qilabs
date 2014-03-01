@@ -279,6 +279,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			render: function () {
 				var comment = this.props.model.attributes;
 				console.log('comment:', comment)
+
 				var mediaUserAvatarStyle = {
 					background: 'url('+comment.author.avatarUrl+')',
 				};
@@ -287,10 +288,11 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 					React.DOM.div( {className:"commentWrapper"}, 
 						React.DOM.div( {className:"mediaUser"}, 
 							React.DOM.a( {href:comment.author.profileUrl}, 
-								React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle, title:comment.author.username} )
+								React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle, title:comment.author.username}
+								)
 							)
 						),
-						React.DOM.div( {className:"msgBody {(comment.author.id==='{{ user.id }}')?'editable':''}"}, 
+						React.DOM.div( {className:(comment.author.id==='{{ user.id }}')?'msgBody editable':'msgBody'}, 
 							comment.data.unescapedBody,
 							function(){
 								if (window.user && window.user.id === comment.author.id)

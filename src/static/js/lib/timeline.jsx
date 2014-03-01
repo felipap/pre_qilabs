@@ -279,6 +279,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			render: function () {
 				var comment = this.props.model.attributes;
 				console.log('comment:', comment)
+
 				var mediaUserAvatarStyle = {
 					background: 'url('+comment.author.avatarUrl+')',
 				};
@@ -291,7 +292,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 								</div>
 							</a>
 						</div>
-						<div className="msgBody {(comment.author.id==='{{ user.id }}')?'editable':''}">
+						<div className={(comment.author.id==='{{ user.id }}')?'msgBody editable':'msgBody'}>
 							{comment.data.unescapedBody}
 							{function(){
 								if (window.user && window.user.id === comment.author.id)
