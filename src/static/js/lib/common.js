@@ -47,7 +47,6 @@ define(['jquery','underscore', 'bootstrap','plugins'], function ($, _) {
 		});
 	}
 
-
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
 		var href = this.dataset['ajaxPostHref'],
 			redirect = this.dataset['redirectHref'];
