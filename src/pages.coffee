@@ -1,6 +1,7 @@
 
 # pages.coffee
-# for qilabs.org
+# for QILabs.org
+# BSD License
 
 mongoose = require 'mongoose'
 required = require './lib/required'
@@ -18,7 +19,7 @@ HandleErrors = (res, cb) ->
 	return (err, result) ->
 		if err
 			console.log('err handled:', err)
-			res.status(400).endJson(error:true)
+			res.render404(error:true)
 		else if not result
 			res.render404(404)
 		else

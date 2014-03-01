@@ -21,7 +21,7 @@ HandleErrors = function(res, cb) {
   return function(err, result) {
     if (err) {
       console.log('err handled:', err);
-      return res.status(400).endJson({
+      return res.render404({
         error: true
       });
     } else if (!result) {
