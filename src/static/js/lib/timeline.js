@@ -2,6 +2,7 @@
 /*
 ** timeline.js
 ** Copyright QILabs.org
+** BSD License
 ** by @f03lipe
 */
 
@@ -29,11 +30,9 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 	};
 
 	setTimeout(function updateCounters () {
-
 		$('[data-time-count]').each(function () {
 			this.innerHTML = calcTimeFrom(parseInt(this.dataset.timeCount));
 		});
-
 		setTimeout(updateCounters, 1000);
 	}, 1000);
 
@@ -316,12 +315,17 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 					this.postListView.$el.appendTo($('#postsPlacement'));
 				},
 			'p/:profileId':	'main',
-			'a*':  'main'
+			'':  'main'
 		},
 		
 		initialize: function () {
 			console.log('initialized')
 			window.app = this;
+			$('#globalContainer').scroll(_.throttle(function() {
+				if ($('#postsPlacement').height()-
+					($(window).height()+$('#posts-col').scrollTop())< 200)
+					app.postList.tryFetchMore();
+			}, 500));
 		},
 
 		main: function () {
@@ -340,12 +344,7 @@ define(['jquery', 'backbone', 'underscore', 'bootstrap'], function ($, Backbone,
 	return {
 		initialize: function () {
 			new WorkspaceRouter;
-			Backbone.history.start({pushState:true});
-			$('#globalContainer').scroll(_.throttle(function() {
-				if ($('#postsPlacement').height()-
-					($(window).height()+$('#posts-col').scrollTop())< 200)
-					app.postList.tryFetchMore();
-			}, 500));
+			Backbone.history.start();
 		}
 	};
 });
