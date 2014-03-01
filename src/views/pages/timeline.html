@@ -6,7 +6,7 @@
 	{% parent %}
 
 	{% if user %}
-		<script>window.user = {id: '{{user.id}}'}</script>
+		<script>window.user = {id: '{{user.id}}', avatarUrl: '{{user.avatarUrl}}'}</script>
 	{% else %}
 		<script>window.user = {}</script>
 	{% endif %}

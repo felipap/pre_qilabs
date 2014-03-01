@@ -313,6 +313,32 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			},
 		});
 
+		var CommentInputView = React.createClass({
+
+			render: function () {
+				if (!window.user)
+					return;
+
+				var mediaUserAvatarStyle = {
+					background: 'url('+window.user.avatarUrl+')',
+				};
+
+				return (
+					<div className="commentInputSection">
+						<form className="formPostComment" onSubmit="return false;">
+							<div className="mediaUser">
+								<a href={window.user.profileUrl}>
+									<div className="mediaUserAvatar" style={mediaUserAvatarStyle}>
+									</div>
+								</a>
+							</div>
+							<input className="commentInput" type="text" placeholder="Comente esse post..." />
+							<button data-action="send-comment">Enviar</button>
+						</form>
+					</div>
+				);
+			},
+		})
 
 		var CommentListView = React.createClass({			
 			componentWillMount: function () {
@@ -369,7 +395,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 		// 		// 'submit .formPostComment':
 		// 		// 	function (evt) {
 		// 		// 		console.log('this is', this, this.collection)
-		// 		// 		var bodyEl = $(evt.target).find(".commentInput");
+		// 		// 		var bodyEl = $(evt.target).find(".commentInputView");
 		// 		// 		var self = this;
 		// 		// 		$.ajax({
 		// 		// 			type: 'post',
@@ -399,10 +425,24 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 
 			render: function () {
 				var post = this.props.model.attributes;
+				var self = this;
 
 				var mediaUserStyle = {
 					background: 'url('+post.author.avatarUrl+')',
 				};
+
+				function onClickTrash () {
+					if (confirm('Tem certeza que deseja excluir essa postagem?')) {
+						self.props.model.destroy();
+					}
+				}
+
+				function onClickEdit () {
+				}
+
+				function componentWillMount () {
+					this.props.model.on('delete');
+				}
 
 				return (
 					<div className="opMessage">
@@ -425,20 +465,27 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 								</time>
 							</a>
 
-							{function () {
-								if (window.user && post.author.id === window.user.id)
-									return (
-										<div className="optionBtns">
-											<button data-action="remove-post" data-toggle="tooltip" data-placement="bottom" title="Remover Post">
-												<i className="icon-trash"></i>
-											</button>
-											<button data-action="edit-post" data-toggle="tooltip" data-placement="bottom" title="Editar Post">
-												<i className="icon-edit"></i>
-											</button>
-										</div>
-									);
-								return;
-							}()}
+							{(window.user && post.author.id === window.user.id)?
+								<div className="optionBtns">
+									<button
+										onClick={onClickTrash}
+										data-action="remove-post"
+										data-toggle="tooltip"
+										data-placement="bottom"
+										title="Remover Post">
+										<i className="icon-trash"></i>
+									</button>
+									<button
+										onClick={onClickEdit}
+										data-action="edit-post"
+										data-toggle="tooltip"
+										data-placement="bottom"
+										title="Editar Post">
+										<i className="icon-edit"></i>
+									</button>
+								</div>
+								:undefined
+							}
 						</div>
 						<div className="msgBody">
 							<div className="arrow"></div>
@@ -448,15 +495,15 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				);
 			}
 		});
-
 		var PostWrapperView = React.createClass({
 
 			render: function () {
 				console.log('list', this.props.model.commentList)
 				return (
 					<div className="postWrapper">
-						<PlainPostView model={this.props.model}/>
-						<CommentListView collection={this.props.model.commentList}/>
+						<PlainPostView model={this.props.model} />
+						<CommentListView collection={this.props.model.commentList} />
+						<CommentInputView model={this.props.model} />
 					</div>
 				);
 			}
@@ -557,13 +604,14 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 					self.forceUpdate(function(){});
 				}
 				this.props.collection.on('add', updateMe);
+				this.props.collection.on('remove', updateMe);
 				this.props.collection.on('reset', updateMe);
 			},
 			// changeOptions: "change:name",
 			render: function () {
 				var postNodes = this.props.collection.map(function (post) {
 					return (
-						<PostWrapperView model={post}/>
+						<PostWrapperView model={post} />
 					);
 				});
 				return (
