@@ -172,22 +172,22 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 	var Post = (function () {
 		'use strict';
 
-		var GenericPostItemView = Backbone.View.extend({
-			construction: function (opts) {
-				this.collection = opts.collection;
-				Backbone.View.apply(this, arguments);
-			},
-			destroy: function () {
-				var self = this;
-				this.model.destroy({
-					success: function () {
-						console.log('succes');
-						self.$el.removeData().unbind();
-						self.remove();
-					}
-				});
-			},
-		});
+		// var GenericPostItemView = Backbone.View.extend({
+		// 	construction: function (opts) {
+		// 		this.collection = opts.collection;
+		// 		Backbone.View.apply(this, arguments);
+		// 	},
+		// 	destroy: function () {
+		// 		var self = this;
+		// 		this.model.destroy({
+		// 			success: function () {
+		// 				console.log('succes');
+		// 				self.$el.removeData().unbind();
+		// 				self.remove();
+		// 			}
+		// 		});
+		// 	},
+		// });
 
 		var GenericPostItem = Backbone.Model.extend({
 			url: function () {
@@ -278,7 +278,13 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 		var CommentView = React.createClass({
 			render: function () {
 				var comment = this.props.model.attributes;
-				console.log('comment:', comment)
+				var self = this;
+
+				function onClickTrash () {
+					if (confirm('Tem certeza que deseja excluir esse comentário?')) {
+						self.props.model.destroy();
+					}
+				}
 
 				var mediaUserAvatarStyle = {
 					background: 'url('+comment.author.avatarUrl+')',
@@ -294,16 +300,13 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 						</div>
 						<div className={(comment.author.id==='{{ user.id }}')?'msgBody editable':'msgBody'}>
 							{comment.data.unescapedBody}
-							{function(){
-								if (window.user && window.user.id === comment.author.id)
-									return (
-										<div className="optionBtns">
-											<button data-action="remove-post" data-toggle="tooltip" title="Remover Comentário" data-placement="bottom">
-												<i className="icon-trash"></i>
-											</button>
-										</div>
-									);
-							}()}
+							{(window.user && window.user.id === comment.author.id)?
+								<div className="optionBtns">
+									<button data-action="remove-post" onClick={onClickTrash} data-toggle="tooltip" title="Remover Comentário" data-placement="bottom">
+										<i className="icon-trash"></i>
+									</button>
+								</div>
+							:undefined}
 						</div>
 						<a href={comment.path} data-time-count={1*new Date(comment.dateCreated)}>
 							{window.calcTimeFrom(comment.dateCreated)}
@@ -315,6 +318,24 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 
 		var CommentInputView = React.createClass({
 
+			handleSubmit: function (evt) {
+				evt.preventDefault();
+
+				var bodyEl = $(this.refs.input.getDOMNode());
+				var self = this;
+				$.ajax({
+					type: 'post',
+					dataType: 'json',
+					url: this.props.model.get('apiPath')+'/comments',
+					data: { content: { body: bodyEl.val() } }
+				}).done(function(response) {
+					bodyEl.val('');
+					console.log('response', response);
+					self.props.model.commentList.add(new CommentItem(response.data));
+				});
+				console.log('ooo')
+			},
+
 			render: function () {
 				if (!window.user)
 					return;
@@ -325,14 +346,14 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 
 				return (
 					<div className="commentInputSection">
-						<form className="formPostComment" onSubmit="return false;">
+						<form className="formPostComment" onSubmit={this.handleSubmit}>
 							<div className="mediaUser">
 								<a href={window.user.profileUrl}>
 									<div className="mediaUserAvatar" style={mediaUserAvatarStyle}>
 									</div>
 								</a>
 							</div>
-							<input className="commentInput" type="text" placeholder="Comente esse post..." />
+							<input className="commentInput" ref="input" type="text" placeholder="Comente esse post..." />
 							<button data-action="send-comment">Enviar</button>
 						</form>
 					</div>
@@ -345,8 +366,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				var update = function () {
 					this.forceUpdate(function(){});
 				}
-				this.props.collection.on('reset', update.bind(this));
-				this.props.collection.on('add', update.bind(this));
+				this.props.collection.on('add reset remove', update.bind(this));
 			},
 
 			render: function () {
@@ -374,23 +394,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			},
 		});
 
-		// var PostView = GenericPostItemView.extend({
-		// 	tagName: 'li',
-		// 	className: 'postWrapper',
-		// 	template: _.template($("#template-postview").html()),
-		// 	bindRemoveBtn: function () {
-		// 		this.$el.on('click', '.opMessage [data-action=remove-post]', this.askForRemoval.bind(this));
-		// 	},
-		// 	askForRemoval: function () {
-		// 		if (confirm('Tem certeza que deseja excluir essa postagem?')) {
-		// 			this.destroy();
-		// 		}
-		// 	},
-		// 	initialize: function () {
-		// 		this.model.collection.on('reset', this.destroy, this);
-		// 		this.bindRemoveBtn();
-		// 		this.commentListView = new CommentListView({ collection: this.model.commentList });
-		// 	},
 		// 	events: {
 		// 		// 'submit .formPostComment':
 		// 		// 	function (evt) {
@@ -598,14 +601,12 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				return {};
 			},
 			componentWillMount: function () {
-				var self = this;
-				function updateMe (evt) {
-					console.log('oi', arguments)
-					self.forceUpdate(function(){});
+				function update () {
+					this.forceUpdate(function(){});
 				}
-				this.props.collection.on('add', updateMe);
-				this.props.collection.on('remove', updateMe);
-				this.props.collection.on('reset', updateMe);
+				this.props.collection.on('add', update.bind(this));
+				this.props.collection.on('remove', update.bind(this));
+				this.props.collection.on('reset', update.bind(this));
 			},
 			// changeOptions: "change:name",
 			render: function () {
