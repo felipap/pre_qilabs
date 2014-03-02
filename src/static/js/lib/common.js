@@ -22,7 +22,7 @@
 	}
 }());
 
-define(['jquery','underscore', 'bootstrap','plugins'], function ($, _) {
+define(['jquery','underscore','bootstrap','plugins'], function ($, _) {
 
 	if (window.loggedUser) {
 		$.ajax({
@@ -35,7 +35,8 @@ define(['jquery','underscore', 'bootstrap','plugins'], function ($, _) {
 			console.log(data)
 			var notSeen = _.filter(notes, function(i){return !i.seen;});
 			$bell.find('#count').html(notSeen.length || '');
-			var html = '<@ for (var i=0; i<notifications.length; i++) { var note = notifications[i]; @><li> <a href="<@= note.url @>" onClick="readNote(); return false"> <@= note.msg @> </li> <@}@>';
+			var html = '<@ for (var i=0; i<notifications.length; i++) { var note = notifications[i]; @><li>'+
+			'<a onClick="readNotification(\'<@= note.id @>\', \'<@= note.url @>\')" href="<@= note.url @>"> <@= note.msg @> </li> <@}@>';
 			$bell.popover({
 				title: 'Suas Notificações',
 				placement: 'bottom',
@@ -45,6 +46,18 @@ define(['jquery','underscore', 'bootstrap','plugins'], function ($, _) {
 				// trigger: 'click'
 			});
 		});
+
+		window.readNotification = function (id, url) {
+			$.ajax({
+				url: '/api/me/notifications/'+id,
+				data: {see: true},
+				type: 'get',
+				datatType: 'json',
+			}).done(function (data) {
+				window.location.href = url;
+			});
+			return false;
+		}
 	}
 
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {

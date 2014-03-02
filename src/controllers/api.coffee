@@ -302,14 +302,15 @@ module.exports = {
 									error: false
 								}
 							),
-					childre: {
-						':id': 
-							delete: (req, res) ->
+					children: {
+						':id':
+							get: (req, res) ->
 								return unless nId = req.paramToObjectId('id')
-								Notification.deleteNotification req.user, nId, (err) ->
-									res.endJson {
-										error: !!err
-									}
+								Notification.update { recipient: req.user.id, _id: nId },
+									{ seen: true }, (err) ->
+										res.endJson {
+											error: !!err
+										}
 					}
 				}
 				'timeline/posts': {

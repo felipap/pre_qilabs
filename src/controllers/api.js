@@ -415,14 +415,19 @@ module.exports = {
               });
             }));
           },
-          childre: {
+          children: {
             ':id': {
-              "delete": function(req, res) {
+              get: function(req, res) {
                 var nId;
                 if (!(nId = req.paramToObjectId('id'))) {
                   return;
                 }
-                return Notification.deleteNotification(req.user, nId, function(err) {
+                return Notification.update({
+                  recipient: req.user.id,
+                  _id: nId
+                }, {
+                  seen: true
+                }, function(err) {
                   return res.endJson({
                     error: !!err
                   });
