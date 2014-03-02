@@ -1,4 +1,4 @@
-var Notification, NotificationSchema, Types, async, mongoose, _;
+var MsgTemplates, Notification, NotificationSchema, Types, async, mongoose, notifyUser, _;
 
 mongoose = require('mongoose');
 
@@ -6,22 +6,14 @@ async = require('async');
 
 _ = require('underscore');
 
-Types = {
-  PostComment: 'PostComment',
-  PostAnswer: 'PostAnswer',
-  UpvotedAnswer: 'UpvotedAnswer',
-  SharedPost: 'SharedPost'
-};
-
 NotificationSchema = new mongoose.Schema({
-  dateSent: {
-    type: Date,
-    index: true
-  },
   agent: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
     required: true
+  },
+  agentName: {
+    type: String
   },
   recipient: {
     type: mongoose.Schema.ObjectId,
@@ -29,27 +21,27 @@ NotificationSchema = new mongoose.Schema({
     required: true,
     index: 1
   },
-  group: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Group',
-    required: false
-  },
   type: {
     type: String,
     required: true
-  },
-  msgTemplate: {
-    type: String,
-    required: true
-  },
-  url: {
-    type: String
   },
   seen: {
     type: Boolean,
     "default": false
   },
-  avatarUrl: {
+  group: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Group',
+    required: false
+  },
+  url: {
+    type: String
+  },
+  dateSent: {
+    type: Date,
+    index: true
+  },
+  thumbnailUrl: {
     type: String,
     required: false
   }
@@ -62,10 +54,25 @@ NotificationSchema = new mongoose.Schema({
   }
 });
 
-NotificationSchema.statics.Types = Types;
+Types = {
+  PostComment: 'PostComment',
+  PostAnswer: 'PostAnswer',
+  UpvotedAnswer: 'UpvotedAnswer',
+  SharedPost: 'SharedPost'
+};
+
+MsgTemplates = {
+  PostComment: '<%= agentName %> comentou na sua publicação',
+  PostAnswer: 'PostAnswer',
+  UpvotedAnswer: 'UpvotedAnswer',
+  SharedPost: 'SharedPost'
+};
 
 NotificationSchema.virtual('msg').get(function() {
-  return _.template(this.msgTemplate, this);
+  if (MsgTemplates[this.type]) {
+    return _.template(MsgTemplates[this.type], this);
+  }
+  return "Notificação";
 });
 
 NotificationSchema.pre('save', function(next) {
@@ -75,6 +82,42 @@ NotificationSchema.pre('save', function(next) {
   return next();
 });
 
-NotificationSchema.statics.createNotification;
+notifyUser = function(recpObj, agentObj, data, cb) {
+  var note;
+  note = new Notification({
+    agent: agentObj,
+    agentName: agentObj.name,
+    recipient: recpObj,
+    type: data.type,
+    url: data.url
+  });
+  return note.save(cb);
+};
+
+NotificationSchema.statics.Trigger = function(agentObj, type) {
+  var User;
+  User = mongoose.model('User');
+  switch (type) {
+    case Types.PostComment:
+      return function(commentObj) {
+        var parentPostAuthorId;
+        parentPostAuthorId = commentObj.parentPost.author;
+        return User.findOne({
+          _id: parentPostAuthorId
+        }, function(err, parentPostAuthor) {
+          if (parentPostAuthor && !err) {
+            return notifyUser(parentPostAuthor, agentObj, {
+              type: Types.PostComment,
+              url: commentObj.path
+            });
+          }
+        });
+      };
+    case Types.NewFollower:
+      return function() {};
+  }
+};
+
+NotificationSchema.statics.Types = Types;
 
 module.exports = Notification = mongoose.model("Notification", NotificationSchema);

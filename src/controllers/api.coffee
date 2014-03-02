@@ -48,6 +48,16 @@ HandleErrors = (res, cb) ->
 		else
 			cb.apply(cb, [].splice.call(arguments,1))
 
+HandleErrResult = (res) ->
+	(cb) ->
+		(err, result) ->
+			if err
+				res.status(400).endJson(error:true)
+			else if not result
+				res.status(404).endJson(error:true, name:404)
+			else
+				cb.apply(cb, [].splice.call(arguments,1))
+
 # Starts at '/api'
 module.exports = {
 	children: {
@@ -160,15 +170,15 @@ module.exports = {
 				'/:id': {
 					methods: {
 						get: (req, res) ->
-								return if not postId = req.paramToObjectId('id')
-								Post.findOne {_id: postId}, HandleErrors(res, (doc) ->
+							return if not postId = req.paramToObjectId('id')
+							Post.findOne {_id: postId},
+								HandleErrResult(res) \
+								(doc) ->
 									# If needed to fill response with comments:
 									Post.find {parentPost: doc}
 										.populate 'author'
-										.exec HandleErrors(res, (docs) ->
+										.exec HandleErrResult(res) (docs) ->
 											res.endJson _.extend({}, doc.toObject(), { comments: docs })
-										)
-								)
 						post: (req, res) ->
 								return if not postId = req.paramToObjectId('id')
 								# For security, handle each option

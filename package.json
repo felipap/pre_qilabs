@@ -51,6 +51,7 @@
     "memjs": "~0.8.1",
     "express-validator": "~1.0.1",
     "express-winston": "~0.2.4",
-    "winston": "~0.7.2"
+    "winston": "~0.7.2",
+    "assert": "^1.1.1"
   }
 }

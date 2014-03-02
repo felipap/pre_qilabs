@@ -10,22 +10,18 @@ mongoose = require 'mongoose'
 async = require 'async'
 _ = require 'underscore'
 
-Types =
-	PostComment: 'PostComment'
-	PostAnswer: 'PostAnswer'
-	UpvotedAnswer: 'UpvotedAnswer'
-	SharedPost: 'SharedPost'
-
 NotificationSchema = new mongoose.Schema {
-	dateSent:		{ type:Date, index:true }
 	agent:		 	{ type:mongoose.Schema.ObjectId, ref:'User', required:true }
+	agentName:	 	{ type:String }
 	recipient:	 	{ type:mongoose.Schema.ObjectId, ref:'User', required:true, index:1 }
-	group:			{ type:mongoose.Schema.ObjectId, ref:'Group', required:false }
 	type:			{ type:String, required:true }
-	msgTemplate:	{ type:String, required:true }
-	url:			{ type:String }
 	seen:			{ type:Boolean, default:false }
-	avatarUrl: 		{ type:String, required:false}
+
+	group:			{ type:mongoose.Schema.ObjectId, ref:'Group', required:false }
+	url:			{ type:String }
+	dateSent:		{ type:Date, index:true }
+	
+	thumbnailUrl:	{ type:String, required:false}
 }, {
 	toObject:	{ virtuals: true }
 	toJSON: 	{ virtuals: true }
@@ -33,15 +29,67 @@ NotificationSchema = new mongoose.Schema {
 
 # Think internationalization!
 
-NotificationSchema.statics.Types = Types
+Types =
+	PostComment: 'PostComment'
+	PostAnswer: 'PostAnswer'
+	UpvotedAnswer: 'UpvotedAnswer'
+	SharedPost: 'SharedPost'
+
+MsgTemplates = 
+	PostComment: '<%= agentName %> comentou na sua publicação'
+	PostAnswer: 'PostAnswer'
+	UpvotedAnswer: 'UpvotedAnswer'
+	SharedPost: 'SharedPost'	
+
+################################################################################
+# Virtuals #####################################################################
 
 NotificationSchema.virtual('msg').get ->
-	_.template(@msgTemplate, @)
+	if MsgTemplates[@type]
+		return _.template(MsgTemplates[@type], @)
+	return "Notificação"
+
+################################################################################
+# Mongoose Hooks ###############################################################
 
 NotificationSchema.pre 'save', (next) ->
 	@dateSent ?= new Date()
 	next()
 
-NotificationSchema.statics.createNotification
+################################################################################
+# Statics ######################################################################
+
+notifyUser = (recpObj, agentObj, data, cb) -> # (sign, data, cb)
+	note = new Notification {
+		agent: agentObj
+		agentName: agentObj.name
+		recipient: recpObj
+		type: data.type
+		url: data.url
+	}
+	
+	note.save cb
+
+NotificationSchema.statics.Trigger = (agentObj, type) ->
+	# if agentObj
+	User = mongoose.model 'User'
+
+	switch type
+		when Types.PostComment
+			return (commentObj) ->
+				parentPostAuthorId = commentObj.parentPost.author 
+				# Find author of parent post and notify him.
+				User.findOne {_id: parentPostAuthorId}, (err, parentPostAuthor) ->
+					if parentPostAuthor and not err
+						notifyUser parentPostAuthor, agentObj, {
+							type: Types.PostComment
+							url: commentObj.path
+						}
+		when Types.NewFollower
+			return () ->
+
+
+
+NotificationSchema.statics.Types = Types
 
 module.exports = Notification = mongoose.model "Notification", NotificationSchema

@@ -436,20 +436,7 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
   });
   comment.save(cb);
   if ('' + parentPost.author !== this.id) {
-    console.log('isnt', '' + parentPost.author, this.id, typeof parentPost.author, typeof this._id);
-    return User.findOne({
-      _id: parentPost.author
-    }, (function(_this) {
-      return function(err, parentPostAuthor) {
-        if (parentPostAuthor && !err) {
-          return parentPostAuthor.notifyMe({
-            type: Notification.Types.PostComment,
-            msgTemplate: "" + _this.name + " comentou na sua publicação",
-            url: comment.path
-          });
-        }
-      };
-    })(this));
+    return Notification.Trigger(this, Notification.Types.PostComment)(comment);
   }
 };
 

@@ -14,7 +14,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, HandleErrors, Inbox, Notification, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
+var Follow, Group, HandleErrResult, HandleErrors, Inbox, Notification, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -56,6 +56,25 @@ HandleErrors = function(res, cb) {
     } else {
       return cb.apply(cb, [].splice.call(arguments, 1));
     }
+  };
+};
+
+HandleErrResult = function(res) {
+  return function(cb) {
+    return function(err, result) {
+      if (err) {
+        return res.status(400).endJson({
+          error: true
+        });
+      } else if (!result) {
+        return res.status(404).endJson({
+          error: true,
+          name: 404
+        });
+      } else {
+        return cb.apply(cb, [].splice.call(arguments, 1));
+      }
+    };
   };
 };
 
@@ -226,10 +245,10 @@ module.exports = {
               }
               return Post.findOne({
                 _id: postId
-              }, HandleErrors(res, function(doc) {
+              }, HandleErrResult(res)(function(doc) {
                 return Post.find({
                   parentPost: doc
-                }).populate('author').exec(HandleErrors(res, function(docs) {
+                }).populate('author').exec(HandleErrResult(res)(function(docs) {
                   return res.endJson(_.extend({}, doc.toObject(), {
                     comments: docs
                   }));
