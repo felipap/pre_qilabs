@@ -33,6 +33,7 @@ Post = mongoose.model 'Post'
 Tag  = mongoose.model 'Tag'
 Inbox = mongoose.model 'Inbox'
 Group = mongoose.model 'Group'
+Follow = mongoose.model 'Follow'
 Subscriber = mongoose.model 'Subscriber'
 Notification = mongoose.model 'Notification'
 
@@ -59,20 +60,22 @@ module.exports = {
 						Post.find {}, (err, posts) ->
 							Inbox.find {}, (err, inboxs) ->
 								Subscriber.find {}, (err, subscribers) ->
-									Notification.find {}, (err, notifics) ->
-										Group.find {}, (err, groups) ->
-											Group.Membership.find {}, (err, membership) ->
-												obj =
-													ip: req.ip
-													group: groups
-													inboxs: inboxs
-													notifics: notifics
-													membership: membership
-													session: req.session
-													users: users
-													posts: posts
-													subscribers: subscribers
-												res.endJson obj
+									Follow.find {}, (err, follows) ->
+										Notification.find {}, (err, notifics) ->
+											Group.find {}, (err, groups) ->
+												Group.Membership.find {}, (err, membership) ->
+													obj =
+														ip: req.ip
+														group: groups
+														inboxs: inboxs
+														notifics: notifics
+														membership: membership
+														session: req.session
+														users: users
+														posts: posts
+														follows: follows
+														subscribers: subscribers
+													res.endJson obj
 			}
 		'testers':
 			permissions: [required.logout]
