@@ -56,138 +56,9 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 
 	/************************************************************************************/
 	/************************************************************************************/
-	/************************************************************************************/
-	/************************************************************************************/
-
-	// var Comment = React.createClass({
-	// 	render: function () {
-	// 		var raw = this.props.children.toString(); // add markup converter
-	// 		return (
-	// 			<div className="comment">
-	// 				<h2 className="commentAuthor">{this.props.author}</h2>
-	// 				<span>{raw}</span>
-	// 			</div>
-	// 		);
-	// 	}
-	// });
-		
-	// var CommentList = React.createClass({
-	// 	render: function() {
-	// 		// console.log('oi?', this.props.data)
-	// 		var commentNodes = this.props.data.map(function (comment, index) {
-	// 			return <Comment key={index} author={comment.author.name}>{comment.data.body}</Comment>;
-	// 		});
-	// 		return <div className="commentList">{commentNodes}</div>;
-	// 	}
-	// });
-
-	// var CommentForm = React.createClass({
-	// 	handleSubmit: function() {
-	// 		var author = this.refs.author.getDOMNode().value.trim();
-	// 		var text = this.refs.text.getDOMNode().value.trim();
-	// 		this.props.onCommentSubmit({author: author, text: text});
-	// 		this.refs.author.getDOMNode().value = '';
-	// 		this.refs.text.getDOMNode().value = '';
-	// 		return false;
-	// 	},
-	// 	render: function() {
-	// 		return (
-	// 			<form className="commentForm" onSubmit={this.handleSubmit}>
-	// 				<input type="text" placeholder="Your name" ref="author" />
-	// 				<input type="text" placeholder="Say something..." ref="text" />
-	// 				<input type="submit" value="Post" />
-	// 			</form>
-	// 		);
-	// 	}
-	// });
-
-	// var CommentBox = React.createClass({
-	// 	loadCommentsFromServer: function () {
-	// 		$.ajax({
-	// 			url: this.props.url,
-	// 			dataType: 'json',
-	// 			success: function (data) {
-	// 				this.setState({data: data.data});
-	// 			}.bind(this)
-	// 		});
-	// 	},
-	// 	handleCommentSubmit: function (comment) {
-	// 		var comments = this.state.data;
-	// 		comments.push(comment);
-	// 		this.setState({data: comments});
-	// 		$.ajax({
-	// 			url: this.props.url,
-	// 			type: 'POST',
-	// 			data: comment,
-	// 			success: function (data) {
-	// 				this.setState({data: data.data});
-	// 			}.bind(this)
-	// 		});
-	// 	},
-	// 	getInitialState: function () {
-	// 		return {data:[]};
-	// 	},
-	// 	componentWillMount: function () {
-	// 		this.loadCommentsFromServer();
-	// 		setInterval(this.loadCommentsFromServer, this.props.pollInterval);
-	// 	},
-	// 	render: function () {
-	// 		return (
-	// 			<div className="commentBox">
-	// 				<h1>Comments</h1>
-	// 				<CommentList data={this.state.data} />
-	// 				<CommentForm onCommentSubmit={this.handleCommentSubmit} />
-	// 			</div>
-	// 		);
-	// 	}
-	// })
-
-
-	// var PostBox = React.createClass({
-	// 	getInitialState: function () {
-	// 		return {data:[]};
-	// 	},
-	// 	componentWillMount: function () {
-
-	// 	},
-	// 	render: function () {
-	// 		return (
-	// 			<div className="postWrapper">
-	// 				<PostForm onPostSubmit={this.handlePostSubmit} />
-	// 				<h1>Posts</h1>
-	// 				<PostList model={this.state.data} />
-	// 			</div>
-	// 		);
-	// 	},
-	// });
-
-	// React.renderComponent(<PostBox />, document.getElementById('postInput'));
-
-	/************************************************************************************/
-	/************************************************************************************/
-	/************************************************************************************/
-	/************************************************************************************/
-
 
 	var Post = (function () {
 		'use strict';
-
-		// var GenericPostItemView = Backbone.View.extend({
-		// 	construction: function (opts) {
-		// 		this.collection = opts.collection;
-		// 		Backbone.View.apply(this, arguments);
-		// 	},
-		// 	destroy: function () {
-		// 		var self = this;
-		// 		this.model.destroy({
-		// 			success: function () {
-		// 				console.log('succes');
-		// 				self.$el.removeData().unbind();
-		// 				self.remove();
-		// 			}
-		// 		});
-		// 	},
-		// });
 
 		var GenericPostItem = Backbone.Model.extend({
 			url: function () {
@@ -195,29 +66,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			},
 		})
 
-		var CommentItem = GenericPostItem.extend({
-		});
-
-		// var CommentView = GenericPostItemView.extend({
-		// 	tagName: 'li',
-		// 	className: 'commentWrapper',
-		// 	template: _.template($("#template-commentview").html()),
-		// 	initialize: function () {
-		// 		this.bindRemoveBtn();
-		// 	},
-		// 	bindRemoveBtn: function () {
-		// 		this.$el.on('click', '[data-action=remove-post]', this.askForRemoval.bind(this));
-		// 	},
-		// 	askForRemoval: function () {
-		// 		if (confirm('Tem certeza que deseja excluir esse comentário?')) {
-		// 			this.destroy();
-		// 		}
-		// 	},
-		// 	render: function () {
-		// 		this.$el.html(this.template({comment: this.model.toJSON()}));
-		// 		return this;
-		// 	},
-		// });
+		var CommentItem = GenericPostItem.extend({});
 
 		var CommentList = Backbone.Collection.extend({
 			model: CommentItem,
@@ -239,41 +88,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				this.fetch({data: {endDate:this.endDate}, remove:false});
 			},
 		});
-
-		// var CommentListView = Backbone.View.extend({
-		// 	tagName: 'ul',
-		// 	className: "commentListWrapper",
-		// 	_commentViews: [],
-			
-		// 	initialize: function () {
-		// 		this.collection.on('reset', this.addAll, this);
-		// 		this.collection.on('add', this.addAll, this);
-		// 		this.addAll();
-		// 	},
-
-		// 	addAll: function () {
-		// 		var views = [];
-		// 		this.collection.each(function(item) {
-		// 			views.push(new CommentView({model:item,collection:this.collection}));
-		// 		}, this);
-		// 		this._commentViews = views;
-		// 		return this.render();
-		// 	},
-
-		// 	render: function () {
-		// 		var container = document.createDocumentFragment();
-		// 		_.each(this._commentViews, function (item) {
-		// 			container.appendChild(item.render().el);
-		// 		}, this);
-		// 		this.$el.empty();
-		// 		this.$el.append(container);
-		// 		return this;
-		// 	},
-
-		// 	destroy: function () {
-		// 		this.remove();
-		// 	}
-		// });
 
 		var CommentView = React.createClass({displayName: 'CommentView',
 			render: function () {
@@ -338,7 +152,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 
 			render: function () {
 				if (!window.user)
-					return;
+					return (React.DOM.div(null));
 
 				var mediaUserAvatarStyle = {
 					background: 'url('+window.user.avatarUrl+')',
@@ -394,36 +208,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			},
 		});
 
-		// 	events: {
-		// 		// 'submit .formPostComment':
-		// 		// 	function (evt) {
-		// 		// 		console.log('this is', this, this.collection)
-		// 		// 		var bodyEl = $(evt.target).find(".commentInputView");
-		// 		// 		var self = this;
-		// 		// 		$.ajax({
-		// 		// 			type: 'post',
-		// 		// 			dataType: 'json',
-		// 		// 			url: this.model.get('apiPath')+'/comments',
-		// 		// 			data: { content: { body: bodyEl.val() } }
-		// 		// 		}).done(function(response) {
-		// 		// 			bodyEl.val('');
-		// 		// 			// console.log('response', response);
-		// 		// 			self.model.commentList.add(new CommentItem(response.data));
-		// 		// 		});
-		// 		// 	},
-		// 	},
-		// 	render: function () {
-		// 		this.$el.html(this.template({post: this.model.toJSON()}));
-		// 		React.renderComponent(
-		// 			<CommentBox url="/api/posts/530b7b66bd95abc20500000a/comments" pollInterval={2000} />,
-		// 			document.getElementById('container')
-		// 		);
-
-		// 		this.$el.find('.postCommentsSection').append(this.commentListView.$el);
-		// 		return this;
-		// 	},
-		// });
-
 		var PlainPostView = React.createClass({displayName: 'PlainPostView',
 
 			render: function () {
@@ -447,6 +231,8 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 					this.props.model.on('delete');
 				}
 
+				// var raw = this.props.children.toString();
+
 				return (
 					React.DOM.div( {className:"opMessage"}, 
 						React.DOM.div( {className:"msgHeader"}, 
@@ -458,7 +244,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 							React.DOM.div( {className:"headline"}, 
 								React.DOM.a( {href:post.author.profileUrl, className:"authorUsername"}, 
 									post.author.name
-								),
+								), 
 								"disse:"
 							),
 							
@@ -488,7 +274,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 									)
 								)
 								:undefined
-							
 						),
 						React.DOM.div( {className:"msgBody"}, 
 							React.DOM.div( {className:"arrow"}),
@@ -498,10 +283,10 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				);
 			}
 		});
-		var PostWrapperView = React.createClass({displayName: 'PostWrapperView',
 
+		var PostWrapperView = React.createClass({displayName: 'PostWrapperView',
 			render: function () {
-				console.log('list', this.props.model.commentList)
+				console.log('oi?', this)
 				return (
 					React.DOM.div( {className:"postWrapper"}, 
 						PlainPostView( {model:this.props.model} ),
@@ -562,51 +347,16 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			}
 		});
 
-		// var PostListView = Backbone.View.extend({
-		// 	className: "postListWrapper",
-		// 	_postViews: [],
-			
-		// 	initialize: function () {
-		// 		this.collection.on('reset', this.addAll, this);
-		// 		this.collection.on('add', this.addAll, this);
-		// 	},
-
-		// 	addAll: function () {
-		// 		var views = [];
-		// 		this.collection.each(function(postItem) {
-		// 			views.push(new PostView({model:postItem,collection:this.collection}));
-		// 		}, this);
-		// 		this._postViews = views;
-		// 		return this.render();
-		// 	},
-
-		// 	render: function () {
-		// 		var container = document.createDocumentFragment();
-		// 		// render each postView
-		// 		_.each(this._postViews, function (postView) {
-		// 			container.appendChild(postView.render().el);
-		// 		}, this);
-		// 		this.$el.empty();
-		// 		this.$el.append(container);
-		// 		return this;
-		// 	},
-
-		// 	destroy: function () {
-		// 		this.remove();
-		// 	}
-		// });
-
 		var PostListView = React.createClass({displayName: 'PostListView',
 			getInitialState: function () {
 				return {};
 			},
 			componentWillMount: function () {
+				console.log('this', this.props.collection)
 				function update () {
 					this.forceUpdate(function(){});
 				}
-				this.props.collection.on('add', update.bind(this));
-				this.props.collection.on('remove', update.bind(this));
-				this.props.collection.on('reset', update.bind(this));
+				this.props.collection.on('add remove reset', update.bind(this));
 			},
 			// changeOptions: "change:name",
 			render: function () {
@@ -627,7 +377,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 		return {
 			item: PostItem,
 			list: PostList,
-			// view: PostView,
 			listView: PostListView,
 		};
 	})();
@@ -647,7 +396,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				},
 			'labs/:labId':
 				function (labId) {
-					console.log('lab');
 					if (!window.conf.postsRoot) {
 						return;
 					}
