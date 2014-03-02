@@ -142,7 +142,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				};
 
 				return (
-					<div className="commentWrapper" id="{comment.id}">
+					<div className="commentWrapper" id={comment.id}>
 						<div className="mediaUser">
 							<a href={comment.author.profileUrl}>
 								<div className="mediaUserAvatar" style={mediaUserAvatarStyle} title={comment.author.username}>

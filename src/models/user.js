@@ -30,15 +30,7 @@ ObjectId = mongoose.Types.ObjectId;
 UserSchema = new mongoose.Schema({
   name: String,
   username: String,
-  tags: Array,
-  notifiable: {
-    type: Boolean,
-    "default": true
-  },
-  lastUpdate: {
-    type: Date,
-    "default": Date(0)
-  },
+  lastAccess: Date,
   firstAccess: Date,
   facebookId: String,
   accessToken: String,
@@ -47,9 +39,18 @@ UserSchema = new mongoose.Schema({
     birthday: Date,
     email: String,
     city: '',
-    avatarUrl: ''
+    avatarUrl: '',
+    badges: []
   },
-  badges: [],
+  lastUpdate: {
+    type: Date,
+    "default": Date(0)
+  },
+  notifiable: {
+    type: Boolean,
+    "default": true
+  },
+  tags: Array,
   followingTags: []
 }, {
   id: true

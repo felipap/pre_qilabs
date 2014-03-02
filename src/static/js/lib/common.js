@@ -50,7 +50,7 @@ define(['jquery','underscore','bootstrap','plugins'], function ($, _) {
 		window.readNotification = function (id, url) {
 			setTimeout(function () {
 				window.location.href = url;	
-			}, 500)
+			}, 1500)
 			$.ajax({
 				url: '/api/me/notifications/'+id,
 				data: {see: true},

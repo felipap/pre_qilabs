@@ -296,12 +296,12 @@ module.exports = {
 			children: {
 				'notifications': {
 					get: (req, res) ->
-						req.user.getNotifications HandleErrors(req, (notes) ->
+						req.user.getNotifications HandleErrResult(req) (notes) ->
 								res.endJson {
 									data: notes
 									error: false
 								}
-							),
+							,
 					children: {
 						':id':
 							get: (req, res) ->

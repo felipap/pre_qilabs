@@ -408,7 +408,7 @@ module.exports = {
       children: {
         'notifications': {
           get: function(req, res) {
-            return req.user.getNotifications(HandleErrors(req, function(notes) {
+            return req.user.getNotifications(HandleErrResult(req)(function(notes) {
               return res.endJson({
                 data: notes,
                 error: false

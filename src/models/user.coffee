@@ -27,18 +27,15 @@ Notification = mongoose.model 'Notification'
 ObjectId = mongoose.Types.ObjectId
 
 ################################################################################
-################################################################################
-# The Schema
+## User Schema #################################################################
 
 UserSchema = new mongoose.Schema {
 	name:			String
 	username: 		String
-	tags:			Array
 
-	notifiable:		{ type: Boolean, default: true }
-	lastUpdate:		{ type: Date, default: Date(0) }
+	lastAccess:		Date
 	firstAccess: 	Date
-	
+
 	facebookId:		String
 	accessToken:	String
 
@@ -48,21 +45,34 @@ UserSchema = new mongoose.Schema {
 		email: 		String
 		city: 		''
 		avatarUrl: 	''
+		badges: 		[]
 	},
 
-	badges: 		[]
+	# I don't know what to do with these (2-mar-14)
+	lastUpdate:		{ type: Date, default: Date(0) }
+	notifiable:		{ type: Boolean, default: true }
+	tags:			Array
 	followingTags: 	[]
+
 }, { id: true } # default
 
-# Virtuals
 UserSchema.virtual('avatarUrl').get ->
 	'https://graph.facebook.com/'+@facebookId+'/picture'
 
 UserSchema.virtual('profileUrl').get ->
 	'/p/'+@username
 
+
 ################################################################################
-## related to Following
+# Mongoose Hooks ###############################################################
+
+# UserSchema.pre 'save', (next) ->
+# 	@dateSent ?= new Date()
+# 	next()
+
+
+################################################################################
+## related to Following ########################################################
 
 UserSchema.methods.getFollowers = (cb) -> # Add opts to prevent getting all?
 	Follow.find {followee: @}, (err, docs) ->
@@ -92,7 +102,7 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 	assert user instanceof User, 'Passed argument not a user document'
 	if ''+user.id is ''+@.id
 		return cb(true)
-		
+
 	Follow.findOne {follower:@, followee:user},
 		(err, doc) =>
 			unless doc

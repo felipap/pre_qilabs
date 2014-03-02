@@ -33,7 +33,6 @@ module.exports = function(grunt) {
 			}
 		},
 
-		// Higher-lever configuration
 		watch: {
 			options: {
 				// livereload: true,
@@ -60,7 +59,7 @@ module.exports = function(grunt) {
 			coffee: {
 				files: ['**/*.coffee'],
 				tasks: ['coffee'],
-				options: { spawn: false },
+				options: { spawn: true },
 			},
 		},
 

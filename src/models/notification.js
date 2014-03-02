@@ -1,10 +1,12 @@
-var MsgTemplates, Notification, NotificationSchema, Types, async, mongoose, notifyUser, _;
+var AssertArgs, MsgTemplates, Notification, NotificationSchema, Types, assert, async, mongoose, notifyUser, old, _;
 
 mongoose = require('mongoose');
 
 async = require('async');
 
 _ = require('underscore');
+
+assert = require('assert');
 
 NotificationSchema = new mongoose.Schema({
   agent: {
@@ -83,8 +85,31 @@ NotificationSchema.pre('save', function(next) {
   return next();
 });
 
-notifyUser = function(recpObj, agentObj, data, cb) {
-  var note;
+AssertArgs = function(args) {
+  return function(func) {
+    return func;
+  };
+};
+
+old = NotificationSchema.statics.find;
+
+NotificationSchema.statics.find = function() {
+  console.log('oooooeeee', arguments);
+  return old.apply(this, arguments);
+};
+
+notifyUser = AssertArgs({
+  ismodel: 'User'
+}, {
+  ismodel: 'User'
+}, {
+  has: ['url', 'type']
+})(function(recpObj, agentObj, data, cb) {
+  var User, note;
+  User = mongoose.model('User');
+  assert(recpObj instanceof User && agentObj instanceof User, "Invalid arguments. recpObj and agentObj must be instances of the User Schema.");
+  assert(data.type, "Invalid arguments. data.type and data.url must be provided.");
+  assert(data.type && data.url, "Invalid arguments. data.type and data.url must be provided.");
   note = new Notification({
     agent: agentObj,
     agentName: agentObj.name,
@@ -95,11 +120,9 @@ notifyUser = function(recpObj, agentObj, data, cb) {
   return note.save(function(err, doc) {
     return typeof cb === "function" ? cb(err, doc) : void 0;
   });
-};
+});
 
 NotificationSchema.statics.Trigger = function(agentObj, type) {
-  var User;
-  User = mongoose.model('User');
   switch (type) {
     case Types.PostComment:
       return function(commentObj, parentPostObj, cb) {
@@ -132,7 +155,7 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
         }
         return notifyUser(followeeObj, followerObj, {
           type: Types.NewFollower,
-          url: followerObj.path
+          url: followerObj.profileUrl
         }, cb);
       };
   }

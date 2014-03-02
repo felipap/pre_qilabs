@@ -9,6 +9,7 @@
 mongoose = require 'mongoose'
 async = require 'async'
 _ = require 'underscore'
+assert = require 'assert'
 
 NotificationSchema = new mongoose.Schema {
 	agent:		 	{ type:mongoose.Schema.ObjectId, ref:'User', required:true }
@@ -60,20 +61,41 @@ NotificationSchema.pre 'save', (next) ->
 ################################################################################
 # Statics ######################################################################
 
-notifyUser = (recpObj, agentObj, data, cb) -> # (sign, data, cb)
-	# assert
-	note = new Notification {
-		agent: agentObj
-		agentName: agentObj.name
-		recipient: recpObj
-		type: data.type
-		url: data.url
-	}
-	note.save (err, doc) ->
-		cb?(err,doc)
+# User = mongoose.model 'User'
+
+AssertArgs = (args) ->
+	return (func) ->
+		return func
+
+old = NotificationSchema.statics.find
+NotificationSchema.statics.find = () ->
+	console.log('oooooeeee', arguments)
+	return old.apply(@, arguments)
+
+notifyUser =
+	AssertArgs({ismodel:'User'},{ismodel:'User'},{has:['url','type']}) \
+		(recpObj, agentObj, data, cb) ->
+			User = mongoose.model 'User'
+
+			# Assert arguments.
+			assert recpObj instanceof User and agentObj instanceof User,
+				"Invalid arguments. recpObj and agentObj must be instances of the User Schema."
+			assert data.type,
+				"Invalid arguments. data.type and data.url must be provided."
+			assert data.type and data.url,
+				"Invalid arguments. data.type and data.url must be provided."
+
+			note = new Notification {
+				agent: agentObj
+				agentName: agentObj.name
+				recipient: recpObj
+				type: data.type
+				url: data.url
+			}
+			note.save (err, doc) ->
+				cb?(err,doc)
 
 NotificationSchema.statics.Trigger = (agentObj, type) ->
-	User = mongoose.model 'User'
 
 	switch type
 		when Types.PostComment
@@ -98,7 +120,7 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 				cb ?= ->
 				notifyUser followeeObj, followerObj, {
 					type: Types.NewFollower
-					url: followerObj.path
+					url: followerObj.profileUrl
 				}, cb
 
 
