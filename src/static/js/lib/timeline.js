@@ -383,36 +383,13 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			item: PostItem,
 			list: PostList,
 			listView: PostListView,
+			postView: PostWrapperView,
 		};
 	})();
 
 
 	// Central functionality of the app.
 	var WorkspaceRouter = Backbone.Router.extend({
-
-		routes: {
-			'posts/:postId':
-				 function (postId) {
-					console.log('post');
-					this.postList = new Post.list();
-					this.postListView = new Post.listView({collection: this.postList});
-					this.postList.add(conf.postData)
-					this.postListView.$el.appendTo($('#postsPlacement'));
-				},
-			'labs/:labId':
-				function (labId) {
-					console.log('labs', this);
-					
-					if (!window.conf.postsRoot) return;
-
-					this.postList = new Post.list([], {url:'/api/labs/'+labId+'/posts'});
-					React.renderComponent(Post.listView({collection: this.postList}),
-						document.getElementById('postsPlacement'));
-					this.postList.fetch({reset:true});
-				},
-			'p/:profileId':	'main',
-			'':  'main'
-		},
 		
 		initialize: function () {
 			console.log('initialized')
@@ -424,15 +401,34 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			}, 500));
 		},
 
-		main: function () {
-			console.log('main', this);
-			
-			if (!window.conf.postsRoot) return;
-			this.postList = new Post.list([], {url:window.conf.postsRoot});
+		routes: {
+			'posts/:postId':
+				 function (postId) {
+				 	this.postItem = new Post.item(window.conf.postData);
+				 	React.renderComponent(Post.postView({model:this.postItem}),
+				 		document.getElementById('postsPlacement'));
+				},
+			'labs/:labId':
+				function (labId) {					
+					this.renderList('/api/labs/'+labId+'/posts');
+				},
+			'p/:profileId':
+				function () {
+					this.renderList(window.conf.postsRoot);
+				},
+			'':
+				function () {
+					this.renderList('/api/me/timeline/posts');
+				},
+		},
+
+		renderList: function (url) {
+			this.postList = new Post.list([], {url:url});
 			React.renderComponent(Post.listView({collection:this.postList}),
 				document.getElementById('postsPlacement'));
 			this.postList.fetch({reset:true});
 		},
+
 	});
 
 	return {
