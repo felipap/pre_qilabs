@@ -1,6 +1,8 @@
-var FollowSchema, mongoose;
+var FollowSchema, Inbox, mongoose;
 
 mongoose = require('mongoose');
+
+Inbox = mongoose.model('Inbox');
 
 FollowSchema = new mongoose.Schema({
   dateBegin: {
@@ -15,6 +17,16 @@ FollowSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     index: 1
   }
+});
+
+FollowSchema.pre('remove', function(next) {
+  return Inbox.remove({
+    recipient: this.follower,
+    author: this.followee
+  }, function() {
+    console.log("Inbox removed on unfollow. Args:", arguments);
+    return next();
+  });
 });
 
 FollowSchema.pre('save', function(next) {

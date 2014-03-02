@@ -91,7 +91,9 @@ notifyUser = function(recpObj, agentObj, data, cb) {
     type: data.type,
     url: data.url
   });
-  return note.save(cb);
+  return note.save(function(err, doc) {
+    return typeof cb === "function" ? cb(err, doc) : void 0;
+  });
 };
 
 NotificationSchema.statics.Trigger = function(agentObj, type) {
@@ -99,9 +101,9 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
   User = mongoose.model('User');
   switch (type) {
     case Types.PostComment:
-      return function(commentObj) {
+      return function(commentObj, parentPostObj, cb) {
         var parentPostAuthorId;
-        parentPostAuthorId = commentObj.parentPost.author;
+        parentPostAuthorId = parentPostObj.author;
         return User.findOne({
           _id: parentPostAuthorId
         }, function(err, parentPostAuthor) {
@@ -109,7 +111,10 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
             return notifyUser(parentPostAuthor, agentObj, {
               type: Types.PostComment,
               url: commentObj.path
-            });
+            }, cb);
+          } else {
+            console.warn("err: " + err + " or parentPostAuthor (id:" + parentPostAuthorId + ") not found");
+            return cb(true);
           }
         });
       };

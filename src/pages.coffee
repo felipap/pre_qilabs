@@ -80,7 +80,6 @@ module.exports = {
 					Group.findOne {slug: req.params.slug},
 						HandleErrors(res, (group) ->
 							group.genGroupProfile (err, groupProfile) -> # groupProfile?
-								# console.log(groupProfile)
 								res.render 'pages/lab',
 									group: groupProfile
 						)
@@ -113,10 +112,12 @@ module.exports = {
 				return unless postId = req.paramToObjectId('postId')
 				req.user.findAndPopulatePost {_id: postId},
 					(HandleErrors res, (post) ->
-						console.log('post:', post)
-						res.render 'pages/post.html', {
-							post: post,
-						}
+						if post
+							res.render 'pages/post.html', {
+								post: post,
+							}
+						else
+							res.render404()
 					)
 		}
 		children: {

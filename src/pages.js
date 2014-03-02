@@ -144,10 +144,13 @@ module.exports = {
         return req.user.findAndPopulatePost({
           _id: postId
         }, HandleErrors(res, function(post) {
-          console.log('post:', post);
-          return res.render('pages/post.html', {
-            post: post
-          });
+          if (post) {
+            return res.render('pages/post.html', {
+              post: post
+            });
+          } else {
+            return res.render404();
+          }
         }));
       }
     },

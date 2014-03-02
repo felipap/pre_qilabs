@@ -5,13 +5,15 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, User, UserSchema, async, fillInPostComments, mongoose, _;
+var Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, User, UserSchema, assert, async, fillInPostComments, mongoose, _;
 
 mongoose = require('mongoose');
 
 _ = require('underscore');
 
 async = require('async');
+
+assert = require('assert');
 
 Inbox = mongoose.model('Inbox');
 
@@ -112,7 +114,7 @@ UserSchema.methods.countFollowees = function(cb) {
 };
 
 UserSchema.methods.doesFollowUser = function(user, cb) {
-  console.assert(user instanceof User, 'Passed argument not a user document');
+  assert(user instanceof User, 'Passed argument not a user document');
   return Follow.findOne({
     followee: user.id,
     follower: this.id
@@ -122,7 +124,7 @@ UserSchema.methods.doesFollowUser = function(user, cb) {
 };
 
 UserSchema.methods.dofollowUser = function(user, cb) {
-  console.assert(user instanceof User, 'Passed argument not a user document');
+  assert(user instanceof User, 'Passed argument not a user document');
   return Follow.findOne({
     follower: this,
     followee: user
@@ -141,7 +143,7 @@ UserSchema.methods.dofollowUser = function(user, cb) {
 };
 
 UserSchema.methods.unfollowUser = function(user, cb) {
-  console.assert(user instanceof User, 'Passed argument not a user document');
+  assert(user instanceof User, 'Passed argument not a user document');
   return Follow.findOne({
     follower: this,
     followee: user
@@ -150,13 +152,9 @@ UserSchema.methods.unfollowUser = function(user, cb) {
       if (err) {
         return cb(err);
       }
-      doc.remove(cb);
-      return Inbox.remove({
-        recipient: _this,
-        author: user
-      }, function() {
-        return console.log("inbox removed?", arguments);
-      });
+      if (doc) {
+        return doc.remove(cb);
+      }
     };
   })(this));
 };
@@ -173,6 +171,7 @@ HandleLimit = function(func) {
 
 fillInPostComments = function(docs, cb) {
   var post, results;
+  assert(docs, "Can't fill invalid post(s) document.");
   if (docs instanceof Array) {
     results = [];
     return async.forEach(_.filter(docs, function(i) {
@@ -352,7 +351,7 @@ UserSchema.methods.createGroup = function(data, cb) {
 };
 
 UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
-  console.assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
+  assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
   return Group.Membership.findOne({
     group: group,
     member: this
@@ -393,7 +392,7 @@ UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
 };
 
 UserSchema.methods.removeUserFromGroup = function(member, group, type, cb) {
-  console.assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
+  assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
   return Group.Membership.find({
     group: group,
     member: this
@@ -436,7 +435,7 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
   });
   comment.save(cb);
   if ('' + parentPost.author !== this.id) {
-    return Notification.Trigger(this, Notification.Types.PostComment)(comment);
+    return Notification.Trigger(this, Notification.Types.PostComment)(comment, parentPost, function() {});
   }
 };
 
@@ -479,7 +478,13 @@ UserSchema.methods.createPost = function(data, cb) {
 
 UserSchema.methods.findAndPopulatePost = function(args, cb) {
   return Post.findOne(args).populate('author').populate('group').exec(function(err, doc) {
-    return fillInPostComments(doc, cb);
+    if (err) {
+      return cb(err);
+    } else if (doc) {
+      return fillInPostComments(doc, cb);
+    } else {
+      return cb(false, null);
+    }
   });
 };
 
@@ -525,25 +530,10 @@ UserSchema.methods.genProfile = function(cb) {
   })(this));
 };
 
-UserSchema.methods.notifyMe = function(args, cb) {
-  var note;
-  note = new Notification({
-    recipient: this,
-    msgTemplate: args.msgTemplate,
-    agents: [this],
-    url: args.url,
-    type: args.type
-  });
-  return note.save(function(err, doc) {
-    console.log('note to user', err, doc);
-    return typeof cb === "function" ? cb(err, doc) : void 0;
-  });
-};
-
 UserSchema.methods.getNotifications = function(cb) {
   return Notification.find({
     recipient: this
-  }, cb);
+  }).limit(10).sort('-dateSent').exec(cb);
 };
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate');

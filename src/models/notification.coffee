@@ -67,8 +67,8 @@ notifyUser = (recpObj, agentObj, data, cb) -> # (sign, data, cb)
 		type: data.type
 		url: data.url
 	}
-	
-	note.save cb
+	note.save (err, doc) ->
+		cb?(err,doc)
 
 NotificationSchema.statics.Trigger = (agentObj, type) ->
 	# if agentObj
@@ -76,18 +76,20 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 
 	switch type
 		when Types.PostComment
-			return (commentObj) ->
-				parentPostAuthorId = commentObj.parentPost.author 
+			return (commentObj, parentPostObj, cb) ->
+				parentPostAuthorId = parentPostObj.author 
 				# Find author of parent post and notify him.
 				User.findOne {_id: parentPostAuthorId}, (err, parentPostAuthor) ->
 					if parentPostAuthor and not err
 						notifyUser parentPostAuthor, agentObj, {
 							type: Types.PostComment
 							url: commentObj.path
-						}
+						}, cb
+					else
+						console.warn("err: #{err} or parentPostAuthor (id:#{parentPostAuthorId}) not found")
+						cb(true)
 		when Types.NewFollower
 			return () ->
-
 
 
 NotificationSchema.statics.Types = Types

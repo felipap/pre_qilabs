@@ -16,6 +16,7 @@ GUIDELINES for development:
 mongoose = require 'mongoose'
 _ = require 'underscore'
 async = require 'async'
+assert = require 'assert'
 
 Inbox 	= mongoose.model 'Inbox'
 Follow 	= mongoose.model 'Follow'
@@ -82,13 +83,13 @@ UserSchema.methods.countFollowees = (cb) ->
 	Follow.count {follower: @}, cb
 
 UserSchema.methods.doesFollowUser = (user, cb) ->
-	console.assert(user instanceof User, 'Passed argument not a user document')
+	assert user instanceof User, 'Passed argument not a user document'
 	Follow.findOne {followee:user.id, follower:@id}, (err, doc) -> cb(err, !!doc)
 
 #### Actions
 
 UserSchema.methods.dofollowUser = (user, cb) ->
-	console.assert(user instanceof User, 'Passed argument not a user document')
+	assert user instanceof User, 'Passed argument not a user document'
 	Follow.findOne {follower:@, followee:user},
 		(err, doc) =>
 			unless doc
@@ -100,13 +101,11 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 			cb(err, !!doc)
 
 UserSchema.methods.unfollowUser = (user, cb) ->
-	console.assert(user instanceof User, 'Passed argument not a user document')
+	assert user instanceof User, 'Passed argument not a user document'
 	Follow.findOne { follower:@, followee:user },
 		(err, doc) =>
 			return cb(err) if err
-			doc.remove cb
-			Inbox.remove { recipient:@, author:user }, () ->
-				console.log("inbox removed?", arguments)
+			if doc then doc.remove cb
 
 ################################################################################
 ## related to fetching Timelines and Inboxes
@@ -117,6 +116,8 @@ HandleLimit = (func) ->
 		func(err,docs)
 
 fillInPostComments = (docs, cb) ->
+	assert docs, "Can't fill invalid post(s) document." 
+
 	if docs instanceof Array
 		results = []
 		async.forEach _.filter(docs, (i) -> i), (post, done) ->
@@ -255,7 +256,7 @@ UserSchema.methods.createGroup = (data, cb) ->
 			cb(err, group)
 
 UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
-	console.assert _.all([member, group, type, cb]),
+	assert _.all([member, group, type, cb]),
 		"Wrong number of arguments supplied to User.addUserToGroup"
 	# First check for user's own priviledges
 	Group.Membership.findOne {group: group, member: @}, (err, mship) ->
@@ -278,7 +279,7 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 				mem.save (err) -> cb(err, mem)
 
 UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
-	console.assert _.all([member, group, type, cb]),
+	assert _.all([member, group, type, cb]),
 		"Wrong number of arguments supplied to User.addUserToGroup"
 	# First check for user's own priviledges
 	Group.Membership.find {group: group, member: @}, (err, mship) ->
@@ -309,15 +310,7 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 	comment.save cb
 
 	if ''+parentPost.author isnt @id
-		Notification.Trigger(@, Notification.Types.PostComment)(comment)
-
-		# User.findOne {_id: parentPost.author}, (err, parentPostAuthor) =>
-		# 	if parentPostAuthor and not err
-		# 		parentPostAuthor.notifyMe({
-		# 			type: Notification.Types.PostComment
-		# 			msgTemplate: "#{@.name} comentou na sua publicação"
-		# 			url: comment.path
-		# 		})
+		Notification.Trigger(@, Notification.Types.PostComment)(comment, parentPost, ->)
 
 ###
 Create a post object and fan out through inboxes.
@@ -357,7 +350,12 @@ UserSchema.methods.findAndPopulatePost = (args, cb) ->
 		.populate 'author'
 		.populate 'group'
 		.exec (err, doc) ->
-			fillInPostComments(doc, cb)
+			if err
+				cb(err)
+			else if doc
+				fillInPostComments(doc, cb)
+			else
+				cb(false,null)
 
 ################################################################################
 ## related to the generation of profiles
@@ -392,20 +390,12 @@ UserSchema.methods.genProfile = (cb) ->
 ################################################################################
 ## related to the notification
 
-UserSchema.methods.notifyMe = (args, cb) ->
-	note = new Notification {
-		recipient: @
-		msgTemplate: args.msgTemplate
-		agents: [@]
-		url: args.url
-		type: args.type
-	}
-	note.save (err, doc) ->
-		console.log('note to user', err, doc)
-		cb?(err, doc)
-
 UserSchema.methods.getNotifications = (cb) ->
-	Notification.find { recipient:@ }, cb
+	Notification
+		.find { recipient:@ }
+		.limit(10)
+		.sort '-dateSent'
+		.exec cb
 
 UserSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
