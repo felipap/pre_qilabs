@@ -32,14 +32,14 @@ NotificationSchema = new mongoose.Schema {
 Types =
 	PostComment: 'PostComment'
 	PostAnswer: 'PostAnswer'
+	PostAnswer: 'PostAnswer'
+	NewFollower: 'NewFollower'
 	UpvotedAnswer: 'UpvotedAnswer'
 	SharedPost: 'SharedPost'
 
 MsgTemplates = 
 	PostComment: '<%= agentName %> comentou na sua publicação'
-	PostAnswer: 'PostAnswer'
-	UpvotedAnswer: 'UpvotedAnswer'
-	SharedPost: 'SharedPost'	
+	NewFollower: '<%= agentName %> começou a te seguir'
 
 ################################################################################
 # Virtuals #####################################################################
@@ -47,7 +47,8 @@ MsgTemplates =
 NotificationSchema.virtual('msg').get ->
 	if MsgTemplates[@type]
 		return _.template(MsgTemplates[@type], @)
-	return "Notificação"
+	console.warn "No template found for notification of type"+@type
+	return "Notificação "+@type
 
 ################################################################################
 # Mongoose Hooks ###############################################################
@@ -60,6 +61,7 @@ NotificationSchema.pre 'save', (next) ->
 # Statics ######################################################################
 
 notifyUser = (recpObj, agentObj, data, cb) -> # (sign, data, cb)
+	# assert
 	note = new Notification {
 		agent: agentObj
 		agentName: agentObj.name
@@ -76,6 +78,7 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 	switch type
 		when Types.PostComment
 			return (commentObj, parentPostObj, cb) ->
+				cb ?= ->
 				if ''+parentPostObj.author is ''+agentObj.id
 					return cb(false)
 				parentPostAuthorId = parentPostObj.author
@@ -90,7 +93,13 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 						console.warn("err: #{err} or parentPostAuthor (id:#{parentPostAuthorId}) not found")
 						cb(true)
 		when Types.NewFollower
-			return () ->
+			return (followerObj, followeeObj, cb) ->
+				# assert
+				cb ?= ->
+				notifyUser followeeObj, followerObj, {
+					type: Types.NewFollower
+					url: followerObj.path
+				}, cb
 
 
 NotificationSchema.statics.Types = Types

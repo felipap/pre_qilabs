@@ -142,14 +142,14 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				};
 
 				return (
-					<div className="commentWrapper">
+					<div className="commentWrapper" id="{comment.id}">
 						<div className="mediaUser">
 							<a href={comment.author.profileUrl}>
 								<div className="mediaUserAvatar" style={mediaUserAvatarStyle} title={comment.author.username}>
 								</div>
 							</a>
 						</div>
-						<div className={(comment.author.id==='{{ user.id }}')?'msgBody editable':'msgBody'}>
+						<div className={(window.user && comment.author.id===window.user.id)?'msgBody editable':'msgBody'}>
 							{comment.data.unescapedBody}
 							{(window.user && window.user.id === comment.author.id)?
 								<div className="optionBtns">

@@ -90,6 +90,9 @@ UserSchema.methods.doesFollowUser = (user, cb) ->
 
 UserSchema.methods.dofollowUser = (user, cb) ->
 	assert user instanceof User, 'Passed argument not a user document'
+	if ''+user.id is ''+@.id
+		return cb(true)
+		
 	Follow.findOne {follower:@, followee:user},
 		(err, doc) =>
 			unless doc
@@ -99,6 +102,8 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 				}
 				doc.save()
 			cb(err, !!doc)
+
+	Notification.Trigger(@, Notification.Types.NewFollower)(@, user, ->)
 
 UserSchema.methods.unfollowUser = (user, cb) ->
 	assert user instanceof User, 'Passed argument not a user document'

@@ -125,7 +125,10 @@ UserSchema.methods.doesFollowUser = function(user, cb) {
 
 UserSchema.methods.dofollowUser = function(user, cb) {
   assert(user instanceof User, 'Passed argument not a user document');
-  return Follow.findOne({
+  if ('' + user.id === '' + this.id) {
+    return cb(true);
+  }
+  Follow.findOne({
     follower: this,
     followee: user
   }, (function(_this) {
@@ -140,6 +143,7 @@ UserSchema.methods.dofollowUser = function(user, cb) {
       return cb(err, !!doc);
     };
   })(this));
+  return Notification.Trigger(this, Notification.Types.NewFollower)(this, user, function() {});
 };
 
 UserSchema.methods.unfollowUser = function(user, cb) {

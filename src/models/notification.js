@@ -57,22 +57,23 @@ NotificationSchema = new mongoose.Schema({
 Types = {
   PostComment: 'PostComment',
   PostAnswer: 'PostAnswer',
+  PostAnswer: 'PostAnswer',
+  NewFollower: 'NewFollower',
   UpvotedAnswer: 'UpvotedAnswer',
   SharedPost: 'SharedPost'
 };
 
 MsgTemplates = {
   PostComment: '<%= agentName %> comentou na sua publicação',
-  PostAnswer: 'PostAnswer',
-  UpvotedAnswer: 'UpvotedAnswer',
-  SharedPost: 'SharedPost'
+  NewFollower: '<%= agentName %> começou a te seguir'
 };
 
 NotificationSchema.virtual('msg').get(function() {
   if (MsgTemplates[this.type]) {
     return _.template(MsgTemplates[this.type], this);
   }
-  return "Notificação";
+  console.warn("No template found for notification of type" + this.type);
+  return "Notificação " + this.type;
 });
 
 NotificationSchema.pre('save', function(next) {
@@ -103,6 +104,9 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
     case Types.PostComment:
       return function(commentObj, parentPostObj, cb) {
         var parentPostAuthorId;
+        if (cb == null) {
+          cb = function() {};
+        }
         if ('' + parentPostObj.author === '' + agentObj.id) {
           return cb(false);
         }
@@ -122,7 +126,15 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
         });
       };
     case Types.NewFollower:
-      return function() {};
+      return function(followerObj, followeeObj, cb) {
+        if (cb == null) {
+          cb = function() {};
+        }
+        return notifyUser(followeeObj, followerObj, {
+          type: Types.NewFollower,
+          url: followerObj.path
+        }, cb);
+      };
   }
 };
 
