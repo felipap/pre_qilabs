@@ -3,8 +3,7 @@
 {% import '../macros/user.html' as userMacros %}
 
 {% block head %}
-	{% parent %}
-
+{% parent %}
 	{% if user %}
 		<script>window.user = {id: '{{user.id}}', avatarUrl: '{{user.avatarUrl}}'}</script>
 	{% else %}

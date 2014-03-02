@@ -74,21 +74,23 @@ define(['jquery'], function ($) {
 		if (!this[0]) return;
 
 		var anchor = this[0].hash || '#'+this[0].dataset.hash,
-			dialogEl = $(anchor),
+			$dialogEl = $(anchor),
 			hideUrl = !!this.data('hide-url');
 
 		this.click(function (evt) {
 			evt.preventDefault();
-			dialogEl.addClass('active');
+			$dialogEl.addClass('active');
 			if (!hideUrl)
 				history.pushState({}, '', anchor)
 		});
 
-		dialogEl.find('[data-action=close-dialog]').click(function (evt) {
+		$dialogEl.find('[data-action=close-dialog]').click(function (evt) {
 			evt.preventDefault();
-			dialogEl.removeClass('active');
+			console.log('clicked');
+			$dialogEl.removeClass('active');
 			if (!hideUrl)
 				location.hash = '';
+			return false;
 		});
 	};
 });

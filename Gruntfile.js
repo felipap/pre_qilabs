@@ -105,6 +105,18 @@ module.exports = function(grunt) {
 					optimize: 'none',
 					preserveLicenseComments: false,
 				}
+			},
+			panel: {
+				options: {
+					logLevel: 2,
+					name: 'panel',
+					baseUrl: 'src/static/js/',
+					mainConfigFile: 'src/static/js/build.js',
+					out: 'src/static/js/panel.min.js',
+					generateSourceMaps: true,
+					optimize: 'none',
+					preserveLicenseComments: false,
+				}
 			}
 		},
 
