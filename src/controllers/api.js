@@ -163,6 +163,26 @@ module.exports = {
                 });
               }));
             }));
+          },
+          post: function(req, res) {
+            var groupId;
+            if (!(groupId = req.paramToObjectId('id'))) {
+              return;
+            }
+            return req.user.createPost({
+              groupId: groupId,
+              content: {
+                title: 'My conquest!' + Math.floor(Math.random() * 100),
+                body: req.body.content.body
+              }
+            }, HandleErrors(res, function(doc) {
+              return doc.populate('author', function(err, doc) {
+                return res.endJson({
+                  error: false,
+                  data: doc
+                });
+              });
+            }));
           }
         },
         ':id/addUser/:userId': {
@@ -196,36 +216,6 @@ module.exports = {
     },
     'posts': {
       permissions: [required.login],
-      post: function(req, res) {
-        var e, groupId;
-        if (req.body.groupId) {
-          try {
-            groupId = new ObjectId.fromString(req.body.groupId);
-          } catch (_error) {
-            e = _error;
-            return res.endJson({
-              error: true,
-              name: 'InvalidId'
-            });
-          }
-        } else {
-          groupId = null;
-        }
-        return req.user.createPost({
-          groupId: groupId,
-          content: {
-            title: 'My conquest!' + Math.floor(Math.random() * 100),
-            body: req.body.content.body
-          }
-        }, HandleErrors(res, function(doc) {
-          return doc.populate('author', function(err, doc) {
-            return res.endJson({
-              error: false,
-              data: doc
-            });
-          });
-        }));
-      },
       children: {
         '/:id': {
           methods: {
@@ -423,6 +413,22 @@ module.exports = {
           }
         },
         'timeline/posts': {
+          post: function(req, res) {
+            return req.user.createPost({
+              groupId: null,
+              content: {
+                title: 'My conquest!' + Math.floor(Math.random() * 100),
+                body: req.body.content.body
+              }
+            }, HandleErrors(res, function(doc) {
+              return doc.populate('author', function(err, doc) {
+                return res.endJson({
+                  error: false,
+                  data: doc
+                });
+              });
+            }));
+          },
           get: function(req, res) {
             return req.user.getTimeline({
               limit: 10,

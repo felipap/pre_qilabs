@@ -124,7 +124,18 @@ module.exports = {
 									}
 								)
 						)
-				}
+					post: (req, res) ->
+						return unless groupId = req.paramToObjectId('id')
+						req.user.createPost {
+							groupId: groupId
+							content:
+								title: 'My conquest!'+Math.floor(Math.random()*100)
+								body: req.body.content.body
+						}, HandleErrors res, (doc) ->
+							doc.populate 'author', (err, doc) ->
+								res.endJson {error:false, data:doc}
+
+						}
 				':id/addUser/:userId': {
 					get: (req, res) ->
 						return unless id = req.paramToObjectId('id')
@@ -145,22 +156,6 @@ module.exports = {
 				}
 		'posts':
 			permissions: [required.login],
-			post: (req, res) ->
-				if req.body.groupId
-					try
-						groupId = new ObjectId.fromString(req.body.groupId)
-					catch e
-						return res.endJson(error:true, name:'InvalidId')
-				else
-					groupId = null
-				req.user.createPost {
-					groupId: groupId
-					content:
-						title: 'My conquest!'+Math.floor(Math.random()*100)
-						body: req.body.content.body
-				}, HandleErrors res, (doc) ->
-					doc.populate 'author', (err, doc) ->
-						res.endJson {error:false, data:doc}
 			children: {
 				'/:id': {
 					methods: {
@@ -308,6 +303,16 @@ module.exports = {
 					}
 				}
 				'timeline/posts': {
+					post: (req, res) ->
+						req.user.createPost {
+							groupId: null
+							content:
+								title: 'My conquest!'+Math.floor(Math.random()*100)
+								body: req.body.content.body
+						}, HandleErrors res, (doc) ->
+							doc.populate 'author', (err, doc) ->
+								res.endJson {error:false, data:doc}
+
 					get: (req, res) ->
 							req.user.getTimeline {limit:10, skip:5*parseInt(req.query.page)},
 								(err, docs) ->

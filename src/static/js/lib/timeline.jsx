@@ -66,6 +66,40 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			},
 		})
 
+		var PostItem = GenericPostItem.extend({
+			initialize: function () {
+				this.commentList = new CommentList(this.get('comments'));
+				this.commentList.postItem = this.postItem;
+				// if (this.get('hasComments')) {
+				// 	this.commentList.fetch({reset:true});
+				// }
+			},
+		});
+
+		var PostList = Backbone.Collection.extend({
+			model: PostItem,
+			page: 0,
+
+			constructor: function (models, options) {
+				Backbone.Collection.apply(this, arguments);
+				this.url = options.url || app.postsRoot || '/api/me/timeline/posts';
+			},
+			comparator: function (i) {
+				return -1*new Date(i.get('dateCreated'));
+			},
+			parse: function (response, options) {
+				this.page = response.page;
+				var data = Backbone.Collection.prototype.parse.call(this, response.data, options);
+				// Filter for non-null results.
+				return _.filter(data, function (i) { return !!i; });
+			},
+			tryFetchMore: function () {
+				if (this.page === -1)
+					return;
+				this.fetch({data: {page:this.page+1}, remove:false});
+			},
+		});
+
 		var CommentItem = GenericPostItem.extend({});
 
 		var CommentList = Backbone.Collection.extend({
@@ -88,6 +122,9 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				this.fetch({data: {endDate:this.endDate}, remove:false});
 			},
 		});
+		
+		/************************************************************************************/
+		/************************************************************************************/
 
 		var CommentView = React.createClass({
 			render: function () {
@@ -175,7 +212,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			},
 		})
 
-		var CommentListView = React.createClass({			
+		var CommentListView = React.createClass({
 			componentWillMount: function () {
 				var update = function () {
 					this.forceUpdate(function(){});
@@ -198,15 +235,8 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			},
 		});
 
-		var PostItem = GenericPostItem.extend({
-			initialize: function () {
-				this.commentList = new CommentList(this.get('comments'));
-				this.commentList.postItem = this.postItem;
-				// if (this.get('hasComments')) {
-				// 	this.commentList.fetch({reset:true});
-				// }
-			},
-		});
+		/************************************************************************************/
+		/************************************************************************************/
 
 		var PlainPostView = React.createClass({
 
@@ -286,7 +316,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 
 		var PostWrapperView = React.createClass({
 			render: function () {
-				console.log('oi?', this)
 				return (
 					<div className="postWrapper">
 						<PlainPostView model={this.props.model} />
@@ -297,28 +326,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 			}
 		});
 
-		var PostList = Backbone.Collection.extend({
-			model: PostItem,
-			url: function () {
-				return app.postsRoot;
-			},
-			page: 0,
-			comparator: function (i) {
-				return -1*new Date(i.get('dateCreated'));
-			},
-			parse: function (response, options) {
-				this.page = response.page;
-				var data = Backbone.Collection.prototype.parse.call(this, response.data, options);
-				// Filter for non-null results.
-				return _.filter(data, function (i) { return !!i; });
-			},
-			tryFetchMore: function () {
-				if (this.page === -1)
-					return;
-				this.fetch({data: {page:this.page+1}, remove:false});
-			},
-		});
-
 		var PostForm = React.createClass({
 			handleSubmit: function (evt) {
 				var body = this.refs.postBody.getDOMNode().value.trim();
@@ -326,11 +333,10 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 					return false;
 				}
 				$.ajax({
-					type: 'post', dataType: 'json', url: '/api/posts',
+					type: 'post', dataType: 'json', url: this.props.postUrl,
 					data: { content: { body: body }, groupId: window.groupId }
 				}).done(function(response) {
 					app.postList.add(new Post.item(response.data));
-					console.log('data', response.data);
 				});
 				this.refs.postBody.getDOMNode().value = '';
 
@@ -352,7 +358,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				return {};
 			},
 			componentWillMount: function () {
-				console.log('this', this.props.collection)
 				function update () {
 					this.forceUpdate(function(){});
 				}
@@ -367,7 +372,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				});
 				return (
 					<div className="postListWrapper">
-						<PostForm />
+						<PostForm postUrl={this.props.collection.url}/>
 						{postNodes}
 					</div>
 				);
@@ -396,15 +401,14 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 				},
 			'labs/:labId':
 				function (labId) {
-					if (!window.conf.postsRoot) {
-						return;
-					}
-					this.postsRoot = window.conf.postsRoot;
-					this.labId = window.conf.labId;
-					this.postList = new Post.list();
-					this.postListView = new Post.listView({collection: this.postList});
+					console.log('labs', this);
+					
+					if (!window.conf.postsRoot) return;
+
+					this.postList = new Post.list([], {url:'/api/labs/'+labId+'/posts'});
+					React.renderComponent(Post.listView({collection: this.postList}),
+						document.getElementById('postsPlacement'));
 					this.postList.fetch({reset:true});
-					this.postListView.$el.appendTo($('#postsPlacement'));
 				},
 			'p/:profileId':	'main',
 			'':  'main'
@@ -422,18 +426,11 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 
 		main: function () {
 			console.log('main', this);
-			if (!window.conf.postsRoot) {
-				return;
-			}
-			this.postsRoot = window.conf.postsRoot;
-			this.postList = new Post.list();
-
-			var ListView = Post.listView;
-			var postList = this.postList;
-
-			React.renderComponent(<ListView collection={postList} />, document.getElementById('postsPlacement'));
-
-			// this.postListView = new Post.listView({collection: this.postList});
+			
+			if (!window.conf.postsRoot) return;
+			this.postList = new Post.list([], {url:window.conf.postsRoot});
+			React.renderComponent(Post.listView({collection:this.postList}),
+				document.getElementById('postsPlacement'));
 			this.postList.fetch({reset:true});
 		},
 	});
