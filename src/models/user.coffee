@@ -309,8 +309,7 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 	}
 	comment.save cb
 
-	if ''+parentPost.author isnt @id
-		Notification.Trigger(@, Notification.Types.PostComment)(comment, parentPost, ->)
+	Notification.Trigger(@, Notification.Types.PostComment)(comment, parentPost, ->)
 
 ###
 Create a post object and fan out through inboxes.

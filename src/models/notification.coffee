@@ -71,13 +71,14 @@ notifyUser = (recpObj, agentObj, data, cb) -> # (sign, data, cb)
 		cb?(err,doc)
 
 NotificationSchema.statics.Trigger = (agentObj, type) ->
-	# if agentObj
 	User = mongoose.model 'User'
 
 	switch type
 		when Types.PostComment
 			return (commentObj, parentPostObj, cb) ->
-				parentPostAuthorId = parentPostObj.author 
+				if ''+parentPostObj.author is ''+agentObj.id
+					return cb(false)
+				parentPostAuthorId = parentPostObj.author
 				# Find author of parent post and notify him.
 				User.findOne {_id: parentPostAuthorId}, (err, parentPostAuthor) ->
 					if parentPostAuthor and not err

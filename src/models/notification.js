@@ -103,6 +103,9 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
     case Types.PostComment:
       return function(commentObj, parentPostObj, cb) {
         var parentPostAuthorId;
+        if ('' + parentPostObj.author === '' + agentObj.id) {
+          return cb(false);
+        }
         parentPostAuthorId = parentPostObj.author;
         return User.findOne({
           _id: parentPostAuthorId

@@ -434,9 +434,7 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
     postType: Post.PostTypes.Comment
   });
   comment.save(cb);
-  if ('' + parentPost.author !== this.id) {
-    return Notification.Trigger(this, Notification.Types.PostComment)(comment, parentPost, function() {});
-  }
+  return Notification.Trigger(this, Notification.Types.PostComment)(comment, parentPost, function() {});
 };
 
 
