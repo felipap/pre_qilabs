@@ -48,7 +48,9 @@ PostSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    tags: Array
+    tags: {
+      type: Array
+    }
   }
 }, {
   toObject: {
@@ -84,7 +86,6 @@ PostSchema.virtual('data.unescapedBody').get(function() {
 });
 
 PostSchema.pre('remove', function(next) {
-  console.log('removing comments after removing this');
   next();
   return Post.find({
     parentPost: this

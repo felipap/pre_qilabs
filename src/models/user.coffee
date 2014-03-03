@@ -350,7 +350,6 @@ UserSchema.methods.createPost = (data, cb) ->
 		# Make separate job for this.
 		# Iter through followers and fill inboxes.
 		@getFollowers (err, followers) =>
-			console.log('porra', err, followers)
 			Inbox.fillInboxes({
 				recipients: [@].concat(followers),
 				resource: post,

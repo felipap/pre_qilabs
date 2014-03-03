@@ -1,4 +1,11 @@
 
+/*
+** common.js
+** Copyright QILabs.org
+** BSD License
+** by @f03lipe
+*/
+
 // Present in all built javascript.
 
 // Avoid `console` errors in browsers that lack a console.
@@ -22,46 +29,14 @@
 	}
 }());
 
-define(['jquery','underscore','bootstrap','plugins'], function ($, _) {
-
-	if (window.loggedUser) {
-		$.ajax({
-			url: '/api/me/notifications',
-			type: 'get',
-			dataType: 'json',
-		}).done(function (data) {
-			var $bell = $("[data-action=show-notifications]");
-			var notes = data.data;
-			console.log(data)
-			var notSeen = _.filter(notes, function(i){return !i.seen;});
-			$bell.find('#count').html(notSeen.length || '');
-			var html = '<@ for (var i=0; i<notifications.length; i++) { var note = notifications[i]; @><li>'+
-			'<a onClick="readNotification(\'<@= note.id @>\', \'<@= note.url @>\')" href="<@= note.url @>"> <@= note.msg @> </li> <@}@>';
-			$bell.popover({
-				title: 'Suas Notificações',
-				placement: 'bottom',
-				container: 'body',
-				content: _.template(html, {notifications:notes}),
-				html: true,
-				// trigger: 'click'
-			});
-		});
-
-		window.readNotification = function (id, url) {
-			setTimeout(function () {
-				window.location.href = url;	
-			}, 1500)
-			$.ajax({
-				url: '/api/me/notifications/'+id,
-				data: {see: true},
-				type: 'get',
-				datatType: 'json',
-			}).done(function (data) {
-				window.location.href = url;
-			});
-			return false;
-		}
-	}
+define([
+	'jquery',
+	'underscore',
+	'plugins',
+	'vendor/bootstrap/dropdown',
+	'vendor/bootstrap/tooltip',
+	'lib/components/bell',
+	], function ($, _) {
 
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
 		var href = this.dataset['ajaxPostHref'],
@@ -110,7 +85,7 @@ define(['jquery','underscore','bootstrap','plugins'], function ($, _) {
 	});
 
 	$(function () {
-		$("[data-toggle=popover]").popover();
+		// $("[data-toggle=popover]").popover();
 		$("body").tooltip({selector:'[data-toggle=tooltip]'});
 		$("[data-toggle=dialog]").xdialog();
 

@@ -36,6 +36,7 @@ module.exports = function(grunt) {
 		watch: {
 			options: {
 				// livereload: true,
+				// interrupt: true,
 				atBegin: true,
 			},
 			// Beware of the infinite loop
@@ -89,7 +90,7 @@ module.exports = function(grunt) {
 					mainConfigFile: 'src/static/js/build.js',
 					out: 'src/static/js/app.min.js',
 					generateSourceMaps: true,
-					optimize: 'none',
+					optimize: 'uglify2',
 					preserveLicenseComments: false,
 				}
 			},
@@ -101,7 +102,7 @@ module.exports = function(grunt) {
 					mainConfigFile: 'src/static/js/build.js',
 					out: 'src/static/js/common.min.js',
 					generateSourceMaps: true,
-					optimize: 'none',
+					optimize: 'uglify2',
 					preserveLicenseComments: false,
 				}
 			},

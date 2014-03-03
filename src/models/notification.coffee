@@ -88,6 +88,7 @@ notifyUser =
 				recipient: recpObj
 				type: data.type
 				url: data.url
+				thumbnailUrl: data.thumbnailUrl or agentObj.avatarUrl
 			}
 			note.save (err, doc) ->
 				cb?(err,doc)

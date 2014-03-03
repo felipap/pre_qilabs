@@ -471,7 +471,6 @@ UserSchema.methods.createPost = function(data, cb) {
         return;
       }
       return _this.getFollowers(function(err, followers) {
-        console.log('porra', err, followers);
         return Inbox.fillInboxes({
           recipients: [_this].concat(followers),
           resource: post,

@@ -51,7 +51,7 @@
 		</div>
 	</div>
 	
-	{% if app.env == "development" %}
+	{% if app.env == "devselopment" %}
 		<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 		<script>
 			require(["{{ getMediaUrl('js','build.js') }}"], function () {

@@ -10,9 +10,9 @@ hookedModel = require './lib/hookedModel'
 Inbox = mongoose.model 'Inbox'
 
 Types = 
-	Comment: 'Comment' 			# Comment
-	Answer: 'Answer' 			# Answer
-	PlainPost: 'PlainPost'		# Default
+	Comment: 'Comment' 			
+	Answer: 'Answer' 		
+	PlainPost: 'PlainPost'	# Default
 
 ################################################################################
 ## Schema ######################################################################
@@ -29,7 +29,7 @@ PostSchema = new mongoose.Schema {
 	data: {
 		title:		{ type: String, required: false }
 		body:		{ type: String, required: true }
-		tags:		Array
+		tags:		{ type: Array }
 	},
 }, {
 	toObject:	{ virtuals: true }
@@ -60,7 +60,6 @@ PostSchema.virtual('data.unescapedBody').get ->
 ## Middlewares #################################################################
 
 PostSchema.pre 'remove', (next) ->
-	console.log 'removing comments after removing this'
 	next()
 	Post.find { parentPost: @ }, (err, docs) ->
 		docs.forEach (doc) ->

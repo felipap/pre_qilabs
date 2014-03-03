@@ -115,7 +115,8 @@ notifyUser = AssertArgs({
     agentName: agentObj.name,
     recipient: recpObj,
     type: data.type,
-    url: data.url
+    url: data.url,
+    thumbnailUrl: data.thumbnailUrl || agentObj.avatarUrl
   });
   return note.save(function(err, doc) {
     return typeof cb === "function" ? cb(err, doc) : void 0;

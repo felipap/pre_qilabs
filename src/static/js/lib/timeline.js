@@ -22,15 +22,7 @@ window.calcTimeFrom = function (arg) {
 	}
 };
 
-crypto
-
 define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, Backbone, _, React, Showdown) {
-
-	_.templateSettings = {
-		interpolate: /\<\@\=(.+?)\@\>/gim,
-		evaluate: /\<\@([\s\S]+?)\@\>/gim,
-		escape: /\<\@\-(.+?)\@\>/gim
-	};
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
