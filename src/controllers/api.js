@@ -151,16 +151,24 @@ module.exports = {
             return Group.findOne({
               _id: id
             }, HandleErrResult(res)(function(group) {
-              return req.user.getLabPosts({
-                limit: 3,
-                skip: 5 * parseInt(req.query.page)
-              }, group, HandleErrResult(res)(function(docs) {
-                var page;
-                page = (!docs[0] && -1) || parseInt(req.query.page) || 0;
+              var opts;
+              opts = {
+                limit: 10
+              };
+              if (parseInt(req.query.page)) {
+                opts.maxDate = parseInt(req.query.maxDate);
+              }
+              return req.user.getLabPosts(opts, group, HandleErrResult(res)(function(docs) {
+                var minDate;
+                if (docs.length === opts.limit) {
+                  minDate = docs[docs.length - 1].dateCreated.valueOf();
+                } else {
+                  minDate = -1;
+                }
                 return res.endJson({
                   data: docs,
                   error: false,
-                  page: page
+                  page: minDate
                 });
               }));
             }));
@@ -445,7 +453,7 @@ module.exports = {
             }
             return req.user.getTimeline(opts, HandleErrResult(res)(function(docs) {
               var minDate;
-              if (docs.length === 10) {
+              if (docs.length === opts.limit) {
                 minDate = docs[docs.length - 1].dateCreated.valueOf();
               } else {
                 minDate = -1;

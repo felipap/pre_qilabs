@@ -337,9 +337,15 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
 };
 
 UserSchema.methods.getLabPosts = function(opts, group, cb) {
+  if (!opts.maxDate) {
+    opts.maxDate = Date.now();
+  }
   return Post.find({
     group: group,
-    parentPost: null
+    parentPost: null,
+    dateCreated: {
+      $lt: opts.maxDate
+    }
   }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
     return fillInPostComments(docs, cb);
   });

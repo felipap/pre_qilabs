@@ -252,9 +252,12 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 
 # This is here because of authentication concerns
 UserSchema.methods.getLabPosts = (opts, group, cb) ->
+	if not opts.maxDate
+		opts.maxDate = Date.now()
+
 	Post
-		.find {group:group, parentPost:null}
-		.limit opts.limit or 10 
+		.find {group:group, parentPost:null, dateCreated:{$lt:opts.maxDate}}
+		.limit opts.limit or 10
 		.skip opts.skip or 0
 		.populate 'author'
 		.exec (err, docs) ->

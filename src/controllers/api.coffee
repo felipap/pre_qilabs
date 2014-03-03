@@ -113,13 +113,23 @@ module.exports = {
 						return unless id = req.paramToObjectId('id')
 						Group.findOne {_id: id},
 							HandleErrResult(res) (group) ->
-								req.user.getLabPosts {limit:3, skip:5*parseInt(req.query.page)}, group,
+
+								opts = {limit:10}
+								if parseInt(req.query.page)
+									opts.maxDate = parseInt(req.query.maxDate)
+
+								req.user.getLabPosts opts, group,
 									HandleErrResult(res) (docs) ->
-										page = (not docs[0] and -1) or parseInt(req.query.page) or 0
+
+										if docs.length is opts.limit
+											minDate = docs[docs.length-1].dateCreated.valueOf()
+										else
+											minDate = -1
+								
 										res.endJson {
-											data: 	docs
-											error: 	false
-											page: 	page
+											data: docs
+											error:false
+											page: minDate
 										}
 					post: (req, res) ->
 						return unless groupId = req.paramToObjectId('id')
@@ -302,14 +312,18 @@ module.exports = {
 
 					get: (req, res) ->
 							opts = { limit:10 }
+							
 							if parseInt(req.query.maxDate)
-								opts.maxDate = parseInt(req.query.maxDate) 
+								opts.maxDate = parseInt(req.query.maxDate)
+
 							req.user.getTimeline opts,
 								HandleErrResult(res) (docs) ->
-									if docs.length is 10
+							
+									if docs.length is opts.limit
 										minDate = docs[docs.length-1].dateCreated.valueOf()
 									else
 										minDate = -1
+							
 									res.endJson {
 										minDate: minDate
 										data: docs
