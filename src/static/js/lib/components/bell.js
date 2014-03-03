@@ -34,17 +34,18 @@ define([
 		var Notification = React.createClass({displayName: 'Notification',
 			handleClick: function () {
 				var self = this;
-				// setTimeout(function () {
-				// 	window.location.href = self.props.data.url;	
-				// }, 1500)
-				$.ajax({
-					url: '/api/me/notifications/'+this.props.data.id,
-					data: {see: true},
-					type: 'get',
-					datatType: 'json',
-				}).done(function (data) {
-					window.location.href = self.props.data.url;
-				});
+				if (self.props.data.seen) {
+					window.location.href = self.props.data.url;	
+				} else {
+					$.ajax({
+						url: '/api/me/notifications/'+this.props.data.id,
+						data: {see: true},
+						type: 'get',
+						datatType: 'json',
+					}).done(function (data) {
+						window.location.href = self.props.data.url;
+					});
+				}
 			},
 			render: function () {
 				

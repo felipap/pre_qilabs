@@ -436,18 +436,26 @@ module.exports = {
             }));
           },
           get: function(req, res) {
-            return req.user.getTimeline({
-              limit: 10,
-              skip: 5 * parseInt(req.query.page)
-            }, function(err, docs) {
-              var page;
-              page = (!docs[0] && -1) || parseInt(req.query.page) || 0;
+            var opts;
+            opts = {
+              limit: 10
+            };
+            if (parseInt(req.query.maxDate)) {
+              opts.maxDate = parseInt(req.query.maxDate);
+            }
+            return req.user.getTimeline(opts, HandleErrResult(res)(function(docs) {
+              var minDate;
+              if (docs.length === 10) {
+                minDate = docs[docs.length - 1].dateCreated.valueOf();
+              } else {
+                minDate = -1;
+              }
               return res.endJson({
-                page: page,
+                minDate: minDate,
                 data: docs,
                 error: false
               });
-            });
+            }));
           }
         },
         'leave': {

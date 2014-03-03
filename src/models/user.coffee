@@ -165,8 +165,10 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 
 	opts = _.extend({
 		limit: 10,
-		skip: 0,
 	}, _opts)
+
+	if not opts.maxDate
+		opts.maxDate = Date.now()
 
 	###
 	# Merge inboxes posts with those from followed users but that preceed "followship".
@@ -207,11 +209,10 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 
 	# Get inboxed posts.
 	Inbox
-		.find {recipient: @id, type:Inbox.Types.Post}
+		.find { recipient:@id, type:Inbox.Types.Post, dateSent:{ $lt:opts.maxDate }}
 		.sort '-dateSent'
 		.populate 'resource'
 		.limit opts.limit
-		.skip opts.skip
 		.exec HandleLimit((err, docs) =>
 			return cb(err) if err
 			# Pluck resources from inbox docs. Remove undefineds and nulls.
@@ -225,7 +226,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			if posts.length is opts.limit
 				# There are at least opts.limit inboxed posts. 
 				# Then limit non-inboxed posts to be younger than oldest post here.
-				oldestPostDate = posts[-1].dateCreated
+				oldestPostDate = posts[posts.length-1].dateCreated
 			else
 				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
 				oldestPostDate = new Date(0)
@@ -406,7 +407,7 @@ UserSchema.methods.genProfile = (cb) ->
 UserSchema.methods.getNotifications = (cb) ->
 	Notification
 		.find { recipient:@ }
-		.limit(10)
+		.limit(6)
 		.sort '-dateSent'
 		.exec cb
 

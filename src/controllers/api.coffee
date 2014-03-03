@@ -301,12 +301,17 @@ module.exports = {
 								res.endJson {error:false, data:doc}
 
 					get: (req, res) ->
-							req.user.getTimeline {limit:10, skip:5*parseInt(req.query.page)},
-								(err, docs) ->
-									page = (not docs[0] and -1) or parseInt(req.query.page) or 0
-									# console.log('Fetched timeline:', docs)
+							opts = { limit:10 }
+							if parseInt(req.query.maxDate)
+								opts.maxDate = parseInt(req.query.maxDate) 
+							req.user.getTimeline opts,
+								HandleErrResult(res) (docs) ->
+									if docs.length is 10
+										minDate = docs[docs.length-1].dateCreated.valueOf()
+									else
+										minDate = -1
 									res.endJson {
-										page: page
+										minDate: minDate
 										data: docs
 										error: false
 									}

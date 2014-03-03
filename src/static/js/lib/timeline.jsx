@@ -72,7 +72,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 		var PostList = Backbone.Collection.extend({
 			model: PostItem,
-			page: 0,
 
 			constructor: function (models, options) {
 				Backbone.Collection.apply(this, arguments);
@@ -82,15 +81,16 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				return -1*new Date(i.get('dateCreated'));
 			},
 			parse: function (response, options) {
-				this.page = response.page;
+				this.minDate = response.minDate;
 				var data = Backbone.Collection.prototype.parse.call(this, response.data, options);
 				// Filter for non-null results.
 				return _.filter(data, function (i) { return !!i; });
 			},
 			tryFetchMore: function () {
-				if (this.page === -1)
+				if (this.minDate <= 0)
 					return;
-				this.fetch({data: {page:this.page+1}, remove:false});
+				console.log('try fetch more')
+				this.fetch({data: {maxDate:this.minDate+1}, remove:false});
 			},
 		});
 
@@ -385,8 +385,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			console.log('initialized')
 			window.app = this;
 			$('#globalContainer').scroll(_.throttle(function() {
-				if ($('#postsPlacement').height()-
-					($(window).height()+$('#posts-col').scrollTop())< 200)
+				if ($('#posts-col').outerHeight()- $('#globalContainer').scrollTop()-256<400)
 					app.postList.tryFetchMore();
 			}, 500));
 		},

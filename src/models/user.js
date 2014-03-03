@@ -231,9 +231,11 @@ fillInPostComments = function(docs, cb) {
 UserSchema.methods.getTimeline = function(_opts, cb) {
   var addNonInboxedPosts, opts;
   opts = _.extend({
-    limit: 10,
-    skip: 0
+    limit: 10
   }, _opts);
+  if (!opts.maxDate) {
+    opts.maxDate = Date.now();
+  }
 
   /*
   	 * Merge inboxes posts with those from followed users but that preceed "followship".
@@ -292,8 +294,11 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
   })(this);
   return Inbox.find({
     recipient: this.id,
-    type: Inbox.Types.Post
-  }).sort('-dateSent').populate('resource').limit(opts.limit).skip(opts.skip).exec(HandleLimit((function(_this) {
+    type: Inbox.Types.Post,
+    dateSent: {
+      $lt: opts.maxDate
+    }
+  }).sort('-dateSent').populate('resource').limit(opts.limit).exec(HandleLimit((function(_this) {
     return function(err, docs) {
       var oldestPostDate, posts;
       if (err) {
@@ -309,7 +314,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
       			 * posts are created.
        */
       if (posts.length === opts.limit) {
-        oldestPostDate = posts[-1].dateCreated;
+        oldestPostDate = posts[posts.length - 1].dateCreated;
       } else {
         oldestPostDate = new Date(0);
       }
@@ -539,7 +544,7 @@ UserSchema.methods.genProfile = function(cb) {
 UserSchema.methods.getNotifications = function(cb) {
   return Notification.find({
     recipient: this
-  }).limit(10).sort('-dateSent').exec(cb);
+  }).limit(6).sort('-dateSent').exec(cb);
 };
 
 module.exports = User = hookedModel("User", UserSchema);

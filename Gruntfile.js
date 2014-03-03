@@ -40,13 +40,18 @@ module.exports = function(grunt) {
 				atBegin: true,
 			},
 			// Beware of the infinite loop
-			scripts_common: {
-				files: ['src/static/js/lib/common.js','src/static/js/lib/plugins.js','src/static/js/lib/timeline.js'],
-				tasks: ['requirejs'],
+			coffee: {
+				files: ['**/*.coffee'],
+				tasks: ['coffee'],
+				options: { spawn: true },
 			},
 			scripts_app: {
 				files: ['src/static/js/lib/app.js'],
-				tasks: ['requirejs'],
+				tasks: ['requirejs:app'],
+			},
+			scripts_common: {
+				files: ['src/static/js/lib/common.js','src/static/js/lib/plugins.js','src/static/js/lib/timeline.js'],
+				tasks: ['requirejs:common'],
 			},
 			react: {
 				files: ['src/static/js/**/*.jsx'],
@@ -56,11 +61,6 @@ module.exports = function(grunt) {
 				files: ['src/static/less/**/*.less'],
 				tasks: ['less'],
 				options: { spawn: false },				
-			},
-			coffee: {
-				files: ['**/*.coffee'],
-				tasks: ['coffee'],
-				options: { spawn: true },
 			},
 		},
 
