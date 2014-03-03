@@ -33,11 +33,11 @@ NotificationSchema = new mongoose.Schema {
 	recipient:	 	{ type:mongoose.Schema.ObjectId, ref:'User', required:true, index:1 }
 	type:			{ type:String, required:true }
 	seen:			{ type:Boolean, default:false }
-
-	group:			{ type:mongoose.Schema.ObjectId, ref:'Group', required:false }
 	url:			{ type:String }
 	dateSent:		{ type:Date, index:true }
 	
+	group:			{ type:mongoose.Schema.ObjectId, ref:'Group', required:false }
+	resources:		[{ type: mongoose.Schema.ObjectId }] # used to delete when resources go down
 	thumbnailUrl:	{ type:String, required:false}
 }, {
 	toObject:	{ virtuals: true }
@@ -93,6 +93,7 @@ notifyUser =
 				cb?(err,doc)
 
 NotificationSchema.statics.Trigger = (agentObj, type) ->
+	User = mongoose.model 'User'
 
 	switch type
 		when Types.PostComment

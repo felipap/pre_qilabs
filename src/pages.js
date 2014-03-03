@@ -1,4 +1,4 @@
-var Group, HandleErrors, Inbox, Post, Subscriber, Tag, User, mongoose, required;
+var Group, HandleErrResult, Inbox, Post, Subscriber, Tag, User, mongoose, required;
 
 mongoose = require('mongoose');
 
@@ -16,19 +16,17 @@ Group = mongoose.model('Group');
 
 Subscriber = mongoose.model('Subscriber');
 
-HandleErrors = function(res, cb) {
-  console.assert(typeof cb === 'function');
-  return function(err, result) {
-    if (err) {
-      console.log('err handled:', err);
-      return res.render404({
-        error: true
-      });
-    } else if (!result) {
-      return res.render404(404);
-    } else {
-      return cb(result);
-    }
+HandleErrResult = function(res) {
+  return function(cb) {
+    return function(err, result) {
+      if (err) {
+        return res.render404();
+      } else if (!result) {
+        return res.render404();
+      } else {
+        return cb.apply(cb, [].splice.call(arguments, 1));
+      }
+    };
   };
 };
 
@@ -97,7 +95,7 @@ module.exports = {
           }
           return Group.findOne({
             slug: req.params.slug
-          }, HandleErrors(res, function(group) {
+          }, HandleErrResult(res)(function(group) {
             return group.genGroupProfile(function(err, groupProfile) {
               return res.render('pages/lab', {
                 group: groupProfile
@@ -117,7 +115,7 @@ module.exports = {
         }
         return User.findOne({
           username: req.params.username
-        }, HandleErrors(res, function(user2) {
+        }, HandleErrResult(res)(function(user2) {
           return user2.genProfile(function(err, profile) {
             if (err || !profile) {
               return res.render404();
@@ -141,15 +139,17 @@ module.exports = {
         if (!(postId = req.paramToObjectId('postId'))) {
           return;
         }
-        return req.user.findAndPopulatePost({
+        return Post.find({
           _id: postId
-        }, HandleErrors(res, function(post) {
-          if (post) {
-            return res.render('pages/post.html', {
-              post: post
-            });
+        }, HandleErrResult(res)(function(post) {
+          if (post.parentObj) {
+            return res.redirect(post.path);
           } else {
-            return res.render404();
+            return req.user.populatePost(post, function(err, stuffedPost) {
+              return res.render('pages/post.html', {
+                post: stuffedPost
+              });
+            });
           }
         }));
       }

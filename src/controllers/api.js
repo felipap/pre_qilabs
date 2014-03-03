@@ -14,7 +14,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, HandleErrResult, HandleErrors, Inbox, Notification, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
+var Follow, Group, HandleErrResult, Inbox, Notification, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -40,24 +40,6 @@ Follow = mongoose.model('Follow');
 Subscriber = mongoose.model('Subscriber');
 
 Notification = mongoose.model('Notification');
-
-HandleErrors = function(res, cb) {
-  console.assert(arguments.length === 2 && typeof cb === 'function', "Invalid arguments to HandleErrors");
-  return function(err, result) {
-    if (err) {
-      return res.status(400).endJson({
-        error: true
-      });
-    } else if (!result) {
-      return res.status(404).endJson({
-        error: true,
-        name: 404
-      });
-    } else {
-      return cb.apply(cb, [].splice.call(arguments, 1));
-    }
-  };
-};
 
 HandleErrResult = function(res) {
   return function(cb) {
@@ -168,11 +150,11 @@ module.exports = {
             }
             return Group.findOne({
               _id: id
-            }, HandleErrors(res, function(group) {
+            }, HandleErrResult(res)(function(group) {
               return req.user.getLabPosts({
                 limit: 3,
                 skip: 5 * parseInt(req.query.page)
-              }, group, HandleErrors(res, function(docs) {
+              }, group, HandleErrResult(res)(function(docs) {
                 var page;
                 page = (!docs[0] && -1) || parseInt(req.query.page) || 0;
                 return res.endJson({
@@ -194,7 +176,7 @@ module.exports = {
                 title: 'My conquest!' + Math.floor(Math.random() * 100),
                 body: req.body.content.body
               }
-            }, HandleErrors(res, function(doc) {
+            }, HandleErrResult(res)(function(doc) {
               return doc.populate('author', function(err, doc) {
                 return res.endJson({
                   error: false,
@@ -215,10 +197,10 @@ module.exports = {
             }
             return Group.findOne({
               _id: id
-            }, HandleErrors(res, function(group) {
+            }, HandleErrResult(res)(function(group) {
               return User.findOne({
                 _id: userId
-              }, HandleErrors(res, function(user) {
+              }, HandleErrResult(res)(function(user) {
                 var type;
                 type = Group.Membership.Types.Member;
                 return req.user.addUserToGroup(user, group, type, function(err, membership) {
@@ -269,7 +251,7 @@ module.exports = {
               return Post.findOne({
                 _id: postId,
                 author: req.user
-              }, HandleErrors(res, function(doc) {
+              }, HandleErrResult(res)(function(doc) {
                 Inbox.remove({
                   resource: doc
                 }, function(err, num) {});
@@ -286,8 +268,8 @@ module.exports = {
                   if (!(postId = req.paramToObjectId('id'))) {
                     return;
                   }
-                  return Post.findById(postId).populate('author').exec(HandleErrors(res, function(post) {
-                    return post.getComments(HandleErrors(res, function(comments) {
+                  return Post.findById(postId).populate('author').exec(HandleErrResult(res)(function(post) {
+                    return post.getComments(HandleErrResult(res)(function(comments) {
                       return res.endJson({
                         data: comments,
                         error: false,
@@ -306,10 +288,10 @@ module.exports = {
                       body: req.body.content.body
                     }
                   };
-                  return Post.findById(postId, HandleErrors(res, (function(_this) {
+                  return Post.findById(postId, HandleErrResult(res)((function(_this) {
                     return function(parentPost) {
-                      return req.user.commentToPost(parentPost, data, HandleErrors(res, function(doc) {
-                        return doc.populate('author', HandleErrors(res, function(doc) {
+                      return req.user.commentToPost(parentPost, data, HandleErrResult(res)(function(doc) {
+                        return doc.populate('author', HandleErrResult(res)(function(doc) {
                           return res.endJson({
                             error: false,
                             data: doc
@@ -338,7 +320,7 @@ module.exports = {
                 return User.getPostsFromUser(userId, {
                   limit: 3,
                   skip: 5 * parseInt(req.query.page)
-                }, HandleErrors(res, function(docs) {
+                }, HandleErrResult(res)(function(docs) {
                   return res.endJson({
                     data: docs,
                     error: false,
@@ -359,13 +341,13 @@ module.exports = {
                 }
                 return User.findOne({
                   _id: userId
-                }, HandleErrors(res, (function(user) {
+                }, HandleErrResult(res)(function(user) {
                   return req.user.dofollowUser(user, function(err, done) {
                     return res.endJson({
                       error: !!err
                     });
                   });
-                })));
+                }));
               }
             ]
           }
@@ -444,7 +426,7 @@ module.exports = {
                 title: 'My conquest!' + Math.floor(Math.random() * 100),
                 body: req.body.content.body
               }
-            }, HandleErrors(res, function(doc) {
+            }, HandleErrResult(res)(function(doc) {
               return doc.populate('author', function(err, doc) {
                 return res.endJson({
                   error: false,

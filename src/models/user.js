@@ -178,14 +178,15 @@ HandleLimit = function(func) {
 
 fillInPostComments = function(docs, cb) {
   var post, results;
-  assert(docs, "Can't fill invalid post(s) document.");
+  assert(docs, "Can't fill comments of invalid post(s) document.");
   if (docs instanceof Array) {
     results = [];
     return async.forEach(_.filter(docs, function(i) {
       return i;
     }), function(post, done) {
       return Post.find({
-        parentPost: post
+        parentPost: post,
+        type: Post.Types.Comment
       }).populate('author').exec(function(err, comments) {
         if (post.toObject) {
           results.push(_.extend({}, post.toObject(), {
@@ -206,7 +207,8 @@ fillInPostComments = function(docs, cb) {
     console.log('second option');
     post = docs;
     return Post.find({
-      parentPost: post
+      parentPost: post,
+      type: Post.Types.Comment
     }).populate('author').exec(function(err, comments) {
       if (post.toObject) {
         return cb(err, _.extend({}, post.toObject(), {
@@ -438,7 +440,7 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
       body: data.content.body
     },
     parentPost: parentPost,
-    postType: Post.PostTypes.Comment
+    type: Post.Types.Comment
   });
   comment.save(cb);
   return Notification.Trigger(this, Notification.Types.PostComment)(comment, parentPost, function() {});
@@ -481,7 +483,7 @@ UserSchema.methods.createPost = function(data, cb) {
   })(this));
 };
 
-UserSchema.methods.findAndPopulatePost = function(args, cb) {
+UserSchema.methods.populatePost = function(args, cb) {
   return Post.findOne(args).populate('author').populate('group').exec(function(err, doc) {
     if (err) {
       return cb(err);

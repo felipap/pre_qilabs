@@ -1,4 +1,4 @@
-var Inbox, Post, PostSchema, PostTypes, hookedModel, mongoose, urlify;
+var Inbox, Post, PostSchema, Types, hookedModel, mongoose, urlify;
 
 mongoose = require('mongoose');
 
@@ -6,7 +6,7 @@ hookedModel = require('./lib/hookedModel');
 
 Inbox = mongoose.model('Inbox');
 
-PostTypes = {
+Types = {
   Comment: 'Comment',
   Answer: 'Answer',
   PlainPost: 'PlainPost'
@@ -27,7 +27,7 @@ PostSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    "default": PostTypes.PlainPost,
+    "default": Types.PlainPost,
     required: true
   },
   parentPost: {
@@ -80,7 +80,7 @@ urlify = function(text) {
 };
 
 PostSchema.virtual('data.unescapedBody').get(function() {
-  return urlify(this.data.body);
+  return urlify(this.data.body || '');
 });
 
 PostSchema.pre('remove', function(next) {
@@ -111,7 +111,7 @@ PostSchema.methods.getComments = function(cb) {
   });
 };
 
-PostSchema.statics.PostTypes = PostTypes;
+PostSchema.statics.Types = Types;
 
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate');
 

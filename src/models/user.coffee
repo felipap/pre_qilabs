@@ -131,12 +131,12 @@ HandleLimit = (func) ->
 		func(err,docs)
 
 fillInPostComments = (docs, cb) ->
-	assert docs, "Can't fill invalid post(s) document." 
+	assert docs, "Can't fill comments of invalid post(s) document." 
 
 	if docs instanceof Array
 		results = []
 		async.forEach _.filter(docs, (i) -> i), (post, done) ->
-				Post.find {parentPost: post}
+				Post.find {parentPost: post, type:Post.Types.Comment}
 					.populate 'author'
 					.exec (err, comments) ->
 						if post.toObject
@@ -150,7 +150,7 @@ fillInPostComments = (docs, cb) ->
 	else
 		console.log 'second option'
 		post = docs
-		Post.find {parentPost: post}
+		Post.find {parentPost: post, type:Post.Types.Comment}
 		.populate 'author'
 		.exec (err, comments) ->
 			if post.toObject
@@ -320,7 +320,7 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 			body: data.content.body
 		}
 		parentPost: parentPost
-		postType: Post.PostTypes.Comment
+		type: Post.Types.Comment
 	}
 	comment.save cb
 
@@ -358,7 +358,7 @@ UserSchema.methods.createPost = (data, cb) ->
 				author: @id
 			}, () -> )
 
-UserSchema.methods.findAndPopulatePost = (args, cb) ->
+UserSchema.methods.populatePost = (args, cb) ->
 	Post
 		.findOne args
 		.populate 'author'

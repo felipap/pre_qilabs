@@ -9,7 +9,7 @@ hookedModel = require './lib/hookedModel'
 
 Inbox = mongoose.model 'Inbox'
 
-PostTypes = 
+Types = 
 	Comment: 'Comment' 			# Comment
 	Answer: 'Answer' 			# Answer
 	PlainPost: 'PlainPost'		# Default
@@ -21,7 +21,7 @@ PostSchema = new mongoose.Schema {
 	author:			{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
 	group:			{ type: mongoose.Schema.ObjectId, ref: 'Group' }
 	dateCreated:	{ type: Date }
-	type: 			{ type: String, default: PostTypes.PlainPost, required: true }
+	type: 			{ type: String, default: Types.PlainPost, required: true }
 
 	parentPost: 	{ type: mongoose.Schema.ObjectId, ref: 'Post', index: 1 }
 	points:			{ type: Number, default: 0 }
@@ -54,7 +54,7 @@ urlify = (text) ->
 	    return "<a href=\"#{url}\">#{url}</a>"
 
 PostSchema.virtual('data.unescapedBody').get ->
-	urlify(@data.body)
+	urlify(@data.body or '')
 
 ################################################################################
 ## Middlewares #################################################################
@@ -83,7 +83,7 @@ PostSchema.methods.getComments = (cb) ->
 ################################################################################
 ## Statics #####################################################################
 
-PostSchema.statics.PostTypes = PostTypes
+PostSchema.statics.Types = Types
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
 module.exports = Post = hookedModel "Post", PostSchema

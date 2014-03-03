@@ -47,11 +47,6 @@ NotificationSchema = new mongoose.Schema({
     type: Boolean,
     "default": false
   },
-  group: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Group',
-    required: false
-  },
   url: {
     type: String
   },
@@ -59,6 +54,16 @@ NotificationSchema = new mongoose.Schema({
     type: Date,
     index: true
   },
+  group: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Group',
+    required: false
+  },
+  resources: [
+    {
+      type: mongoose.Schema.ObjectId
+    }
+  ],
   thumbnailUrl: {
     type: String,
     required: false
@@ -118,6 +123,8 @@ notifyUser = AssertArgs({
 });
 
 NotificationSchema.statics.Trigger = function(agentObj, type) {
+  var User;
+  User = mongoose.model('User');
   switch (type) {
     case Types.PostComment:
       return function(commentObj, parentPostObj, cb) {

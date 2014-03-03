@@ -14,16 +14,15 @@ Group 	= mongoose.model 'Group'
 
 Subscriber = mongoose.model 'Subscriber'
 
-HandleErrors = (res, cb) ->
-	console.assert typeof cb is 'function'
-	return (err, result) ->
-		if err
-			console.log('err handled:', err)
-			res.render404(error:true)
-		else if not result
-			res.render404(404)
-		else
-			cb(result)
+HandleErrResult = (res) ->
+	(cb) ->
+		(err, result) ->
+			if err
+				res.render404()
+			else if not result
+				res.render404()
+			else
+				cb.apply(cb, [].splice.call(arguments,1))
 
 
 module.exports = {
@@ -78,11 +77,10 @@ module.exports = {
 					unless req.params.slug
 						return res.render404()
 					Group.findOne {slug: req.params.slug},
-						HandleErrors(res, (group) ->
+						HandleErrResult(res) (group) ->
 							group.genGroupProfile (err, groupProfile) -> # groupProfile?
 								res.render 'pages/lab',
 									group: groupProfile
-						)
 			}
 		}
 
@@ -93,7 +91,7 @@ module.exports = {
 				unless req.params.username
 					return res.render404()
 				User.findOne {username: req.params.username},
-					HandleErrors(res, (user2) ->
+					HandleErrResult(res) (user2) ->
 						user2.genProfile (err, profile) ->
 							if err or not profile
 								# req.logMe "err generating profile", err
@@ -102,7 +100,6 @@ module.exports = {
 								res.render 'pages/profile', 
 									profile: profile
 									follows: bool
-					)
 		}
 
 	'/posts/:postId':
@@ -110,15 +107,16 @@ module.exports = {
 		methods: {
 			get: (req, res) ->
 				return unless postId = req.paramToObjectId('postId')
-				req.user.findAndPopulatePost {_id: postId},
-					(HandleErrors res, (post) ->
-						if post
+				Post.find { _id:postId }, HandleErrResult(res) (post) ->
+					if post.parentObj
+						# Our post is actually a comment/answer, so redirect user to the
+						# comment actual path (which is its parent's).
+						res.redirect(post.path)
+					else
+						req.user.populatePost post, (err, stuffedPost) ->
 							res.render 'pages/post.html', {
-								post: post,
+								post: stuffedPost,
 							}
-						else
-							res.render404()
-					)
 		}
 		children: {
 			'/edit':

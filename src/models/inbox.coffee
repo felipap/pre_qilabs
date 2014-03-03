@@ -25,11 +25,11 @@ Types =
 ## Schema ######################################################################
 
 InboxSchema = new mongoose.Schema {
-	dateSent:		{ type: Date, index: true }
-	recipient:	 	{ type: mongoose.Schema.ObjectId, index: true, required: true }
-	author:			{ type: mongoose.Schema.ObjectId, index: true, ref: 'User', required: true }
-	resource:		{ type: mongoose.Schema.ObjectId, ref: 'Post', required: true }
-	type: 			{ type: String, required: true }
+	dateSent:	{ type: Date, index: true }
+	recipient:	{ type: mongoose.Schema.ObjectId, index: true, required: true }
+	author:		{ type: mongoose.Schema.ObjectId, index: true, ref: 'User', required: true }
+	resource:	{ type: mongoose.Schema.ObjectId, ref: 'Post', required: true }
+	type: 		{ type: String, required: true }
 }
 
 ################################################################################

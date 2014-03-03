@@ -37,17 +37,6 @@ Follow = mongoose.model 'Follow'
 Subscriber = mongoose.model 'Subscriber'
 Notification = mongoose.model 'Notification'
 
-HandleErrors = (res, cb) ->
-	console.assert arguments.length is 2 and
-		typeof cb is 'function', "Invalid arguments to HandleErrors"
-	return (err, result) ->
-		if err
-			res.status(400).endJson(error:true)
-		else if not result
-			res.status(404).endJson(error:true, name:404)
-		else
-			cb.apply(cb, [].splice.call(arguments,1))
-
 HandleErrResult = (res) ->
 	(cb) ->
 		(err, result) ->
@@ -122,18 +111,16 @@ module.exports = {
 				':id/posts': {
 					get: (req, res) ->
 						return unless id = req.paramToObjectId('id')
-						Group.findOne {_id: id}, HandleErrors(res, (group) ->
-							req.user.getLabPosts {limit:3, skip:5*parseInt(req.query.page)},
-								group,
-								HandleErrors(res, (docs) ->
-									page = (not docs[0] and -1) or parseInt(req.query.page) or 0
-									res.endJson {
-										data: 	docs
-										error: 	false
-										page: 	page
-									}
-								)
-						)
+						Group.findOne {_id: id},
+							HandleErrResult(res) (group) ->
+								req.user.getLabPosts {limit:3, skip:5*parseInt(req.query.page)}, group,
+									HandleErrResult(res) (docs) ->
+										page = (not docs[0] and -1) or parseInt(req.query.page) or 0
+										res.endJson {
+											data: 	docs
+											error: 	false
+											page: 	page
+										}
 					post: (req, res) ->
 						return unless groupId = req.paramToObjectId('id')
 						req.user.createPost {
@@ -141,7 +128,7 @@ module.exports = {
 							content:
 								title: 'My conquest!'+Math.floor(Math.random()*100)
 								body: req.body.content.body
-						}, HandleErrors res, (doc) ->
+						}, HandleErrResult(res) (doc) ->
 							doc.populate 'author', (err, doc) ->
 								res.endJson {error:false, data:doc}
 
@@ -150,8 +137,8 @@ module.exports = {
 					get: (req, res) ->
 						return unless id = req.paramToObjectId('id')
 						return unless userId = req.paramToObjectId('userId')
-						Group.findOne {_id: id}, HandleErrors(res, (group) ->
-							User.findOne {_id: userId}, HandleErrors(res, (user) ->
+						Group.findOne {_id: id}, HandleErrResult(res) (group) ->
+							User.findOne {_id: userId}, HandleErrResult(res) (user) ->
 								type = Group.Membership.Types.Member
 								req.user.addUserToGroup(user, group, type,
 									(err, membership) ->
@@ -161,8 +148,6 @@ module.exports = {
 											membership: membership
 										}
 								)
-							)
-						)
 				}
 		'posts':
 			permissions: [required.login],
@@ -185,11 +170,10 @@ module.exports = {
 						delete: (req, res) ->
 								return if not postId = req.paramToObjectId('id')
 								Post.findOne {_id: postId, author: req.user},
-									HandleErrors(res, (doc) ->
+									HandleErrResult(res) (doc) ->
 										Inbox.remove { resource: doc }, (err, num) ->
 										doc.remove()
 										res.endJson doc
-									)
 					},
 					children: {
 						'/comments': {
@@ -198,15 +182,13 @@ module.exports = {
 									return if not postId = req.paramToObjectId('id')
 									Post.findById postId
 										.populate 'author'
-										.exec HandleErrors(res, (post) ->
-											post.getComments HandleErrors(res, (comments) ->
+										.exec HandleErrResult(res) (post) ->
+											post.getComments HandleErrResult(res) (comments) ->
 												res.endJson {
 													data: comments
 													error: false
 													page: -1 # sending all
 												}
-											)
-										)
 								post: 
 									(req, res) ->
 										return if not postId = req.paramToObjectId('id')
@@ -216,18 +198,15 @@ module.exports = {
 											}
 										}
 										Post.findById(postId,
-											HandleErrors(res, (parentPost) =>
+											HandleErrResult(res) (parentPost) =>
 												req.user.commentToPost(parentPost,
 													data,
-													HandleErrors(res, (doc) ->
+													HandleErrResult(res) (doc) ->
 														doc.populate('author',
-															HandleErrors(res, (doc) ->
+															HandleErrResult(res) (doc) ->
 																res.endJson(error:false, data:doc)
-															)
 														)
-													)
 												)
-											)
 										)
 							}
 						},
@@ -244,14 +223,12 @@ module.exports = {
 								# req.logMe("fetched board of user #{req.params.userId}")
 								User.getPostsFromUser userId,
 									{limit:3, skip:5*parseInt(req.query.page)},
-									HandleErrors(res,
-										(docs) ->
+									HandleErrResult(res) (docs) ->
 											res.endJson {
 												data: docs 
 												error: false
 												page: parseInt(req.query.page)
 											}
-									)
 						],
 					}
 				},
@@ -260,12 +237,11 @@ module.exports = {
 						post: [required.login,
 							(req, res) ->
 								return unless userId = req.paramToObjectId('userId')
-								User.findOne {_id: userId}, HandleErrors res, ((user) ->
+								User.findOne {_id: userId}, HandleErrResult(res) (user) ->
 									req.user.dofollowUser user, (err, done) ->
 										res.endJson {
 											error: !!err,
 										}
-									)
 						],
 					}
 				},
@@ -320,7 +296,7 @@ module.exports = {
 							content:
 								title: 'My conquest!'+Math.floor(Math.random()*100)
 								body: req.body.content.body
-						}, HandleErrors res, (doc) ->
+						}, HandleErrResult(res) (doc) ->
 							doc.populate 'author', (err, doc) ->
 								res.endJson {error:false, data:doc}
 
