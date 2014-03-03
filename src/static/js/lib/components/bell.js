@@ -32,15 +32,37 @@ define([
 
 
 		var Notification = React.createClass({displayName: 'Notification',
+			handleClick: function () {
+				var self = this;
+				// setTimeout(function () {
+				// 	window.location.href = self.props.data.url;	
+				// }, 1500)
+				$.ajax({
+					url: '/api/me/notifications/'+this.props.data.id,
+					data: {see: true},
+					type: 'get',
+					datatType: 'json',
+				}).done(function (data) {
+					window.location.href = self.props.data.url;
+				});
+			},
 			render: function () {
 				
 				var html = '<% for (var i=0; i<notifications.length; i++) { var note = notifications[i]; %><li>'+
 				'<a onClick="readNotification(\'<%= note.id %>\', \'<%= note.url %>\')" href="<%= note.url %>"> <%= note.msg %> </li> <%}%>';
+
+				var thumbnailStyle = {
+					backgroundImage: 'url('+this.props.data.thumbnailUrl+')',
+				};
 				
 				return (
-					React.DOM.li(null, 
-						React.DOM.a(null, this.props.data.msg)
-					)					
+					React.DOM.li( {className:"notificationItem", onClick:this.handleClick}, 
+						this.props.data.thumbnailUrl?
+						React.DOM.div( {className:"thumbnail", style:thumbnailStyle}):undefined,
+						React.DOM.div( {class:"notificationItemBody"}, 
+							React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.data.msgHtml}} )
+						)
+					)
 				);
 			},
 		});
@@ -53,7 +75,7 @@ define([
 					);
 				});
 				return (
-					React.DOM.div(null, 
+					React.DOM.div( {className:"notificationList"}, 
 						notifications
 					)
 				);
@@ -108,21 +130,6 @@ define([
 
 		React.renderComponent(Bell(null ),
 			document.getElementById('bellPlacement'));
-
-		window.readNotification = function (id, url) {
-			setTimeout(function () {
-				window.location.href = url;	
-			}, 1500)
-			$.ajax({
-				url: '/api/me/notifications/'+id,
-				data: {see: true},
-				type: 'get',
-				datatType: 'json',
-			}).done(function (data) {
-				window.location.href = url;
-			});
-			return false;
-		}
 	}
 
 });

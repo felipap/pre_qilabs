@@ -1,4 +1,4 @@
-var AssertArgs, MsgTemplates, Notification, NotificationSchema, Types, assert, async, hookedModel, mongoose, notifyUser, _;
+var AssertArgs, MsgHtmlTemplates, MsgTemplates, Notification, NotificationSchema, Types, assert, async, hookedModel, mongoose, notifyUser, _;
 
 mongoose = require('mongoose');
 
@@ -20,8 +20,13 @@ Types = {
 };
 
 MsgTemplates = {
-  PostComment: '<%= agentName %> comentou na sua publicação',
-  NewFollower: '<%= agentName %> começou a te seguir'
+  PostComment: '<%= agentName %> comentou na sua publicação.',
+  NewFollower: '<%= agentName %> começou a te seguir.'
+};
+
+MsgHtmlTemplates = {
+  PostComment: '<strong><%= agentName %></strong> comentou na sua publicação.',
+  NewFollower: '<strong><%= agentName %></strong> começou a te seguir.'
 };
 
 NotificationSchema = new mongoose.Schema({
@@ -82,6 +87,16 @@ NotificationSchema.virtual('msg').get(function() {
     return _.template(MsgTemplates[this.type], this);
   }
   console.warn("No template found for notification of type" + this.type);
+  return "Notificação " + this.type;
+});
+
+NotificationSchema.virtual('msgHtml').get(function() {
+  if (MsgHtmlTemplates[this.type]) {
+    return _.template(MsgHtmlTemplates[this.type], this);
+  } else if (MsgTemplates[this.type]) {
+    return _.template(MsgTemplates[this.type], this);
+  }
+  console.warn("No html template found for notification of type" + this.type);
   return "Notificação " + this.type;
 });
 

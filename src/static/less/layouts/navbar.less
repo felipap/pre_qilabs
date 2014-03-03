@@ -185,3 +185,40 @@ nav.bar {
 		.high-xbtn;
 	}
 }
+
+.notificationList {
+	margin: -10px -15px;
+	.rounded(5px);
+	overflow: hidden;
+
+	.notificationItem {
+		list-style: none;
+		display: table;
+		width: 100%;
+		cursor: pointer;
+		color: #444;
+
+		padding: 7px 10px;
+		font-size: 12px;
+
+		&:hover {
+			background: #EFEFEF;
+		}
+
+		&:not(:last-child) {
+			border-bottom: 1px solid #DDD;
+		}
+		
+		.notificationItemBody {
+		}
+
+		.thumbnail {
+			.rounded(3px);
+			float: left;
+			margin-right: 10px;
+			width: 30px;
+			height: 30px;
+			.background-size(cover);
+		}
+	}
+}

@@ -32,15 +32,37 @@ define([
 
 
 		var Notification = React.createClass({
+			handleClick: function () {
+				var self = this;
+				// setTimeout(function () {
+				// 	window.location.href = self.props.data.url;	
+				// }, 1500)
+				$.ajax({
+					url: '/api/me/notifications/'+this.props.data.id,
+					data: {see: true},
+					type: 'get',
+					datatType: 'json',
+				}).done(function (data) {
+					window.location.href = self.props.data.url;
+				});
+			},
 			render: function () {
 				
 				var html = '<% for (var i=0; i<notifications.length; i++) { var note = notifications[i]; %><li>'+
 				'<a onClick="readNotification(\'<%= note.id %>\', \'<%= note.url %>\')" href="<%= note.url %>"> <%= note.msg %> </li> <%}%>';
+
+				var thumbnailStyle = {
+					backgroundImage: 'url('+this.props.data.thumbnailUrl+')',
+				};
 				
 				return (
-					<li>
-						<a>{this.props.data.msg}</a>
-					</li>					
+					<li className="notificationItem" onClick={this.handleClick}>
+						{this.props.data.thumbnailUrl?
+						<div className="thumbnail" style={thumbnailStyle}></div>:undefined}
+						<div class="notificationItemBody">
+							<span dangerouslySetInnerHTML={{__html: this.props.data.msgHtml}} />
+						</div>
+					</li>
 				);
 			},
 		});
@@ -53,7 +75,7 @@ define([
 					);
 				});
 				return (
-					<div>
+					<div className="notificationList">
 						{notifications}
 					</div>
 				);
@@ -108,21 +130,6 @@ define([
 
 		React.renderComponent(<Bell />,
 			document.getElementById('bellPlacement'));
-
-		window.readNotification = function (id, url) {
-			setTimeout(function () {
-				window.location.href = url;	
-			}, 1500)
-			$.ajax({
-				url: '/api/me/notifications/'+id,
-				data: {see: true},
-				type: 'get',
-				datatType: 'json',
-			}).done(function (data) {
-				window.location.href = url;
-			});
-			return false;
-		}
 	}
 
 });

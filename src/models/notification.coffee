@@ -21,8 +21,12 @@ Types =
 	SharedPost: 'SharedPost'
 
 MsgTemplates = 
-	PostComment: '<%= agentName %> comentou na sua publicação'
-	NewFollower: '<%= agentName %> começou a te seguir'
+	PostComment: '<%= agentName %> comentou na sua publicação.'
+	NewFollower: '<%= agentName %> começou a te seguir.'
+
+MsgHtmlTemplates = 
+	PostComment: '<strong><%= agentName %></strong> comentou na sua publicação.'
+	NewFollower: '<strong><%= agentName %></strong> começou a te seguir.'
 
 ################################################################################
 ## Schema ######################################################################
@@ -51,6 +55,14 @@ NotificationSchema.virtual('msg').get ->
 	if MsgTemplates[@type]
 		return _.template(MsgTemplates[@type], @)
 	console.warn "No template found for notification of type"+@type
+	return "Notificação "+@type
+
+NotificationSchema.virtual('msgHtml').get ->
+	if MsgHtmlTemplates[@type]
+		return _.template(MsgHtmlTemplates[@type], @)
+	else if MsgTemplates[@type]
+		return _.template(MsgTemplates[@type], @)
+	console.warn "No html template found for notification of type"+@type
 	return "Notificação "+@type
 
 ################################################################################
