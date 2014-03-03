@@ -66,6 +66,19 @@ UserSchema.virtual('profileUrl').get(function() {
   return '/p/' + this.username;
 });
 
+UserSchema.pre('remove', function(next) {
+  return Follow.remove({
+    followee: this
+  }, function(err, docs) {
+    return Group.Membership.remove({
+      member: this
+    }, function(err, docs) {
+      console.log('removing membership of ' + docs);
+      return next();
+    });
+  });
+});
+
 UserSchema.methods.getFollowers = function(cb) {
   return Follow.find({
     followee: this
