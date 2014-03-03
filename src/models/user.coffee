@@ -180,14 +180,16 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			.find { follower:@, dateBegin:{$gt:minDate} }
 			.exec (err, follows) =>
 				return cb(err) if err
-				# Get posts from these users created before "followship" and after minDate.
+				# Get posts from these users created before "followship" or maxDate
+				# (whichever is older) and after minDate.
 				async.mapLimit follows, 5, ((follow, done) =>
+					ltDate = Math.min(follow.dateBegin, opts.maxDate) 
 					Post
 						.find {
 							author: follow.followee,
 							group: null,
 							parentPost: null,
-							dateCreated: {$lt:follow.dateBegin, $gt:minDate}
+							dateCreated: {$lt:ltDate, $gt:minDate}
 						}
 						.limit opts.limit
 						.exec done

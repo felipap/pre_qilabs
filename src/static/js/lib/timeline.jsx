@@ -385,7 +385,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			console.log('initialized')
 			window.app = this;
 			$('#globalContainer').scroll(_.throttle(function() {
-				if ($('#posts-col').outerHeight()- $('#globalContainer').scrollTop()-256<400)
+				if (($('#results-col').outerHeight()-$('#globalContainer').scrollTop()-256)<400)
 					app.postList.tryFetchMore();
 			}, 500));
 		},
