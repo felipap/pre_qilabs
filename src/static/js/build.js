@@ -12,6 +12,7 @@ requirejs.config({
 		'backbone': 	'vendor/backbone-1.0.0.min',
 		'react': 		'vendor/react-0.9.0.min',
 		'react.backbone':'vendor/react.backbone',
+		'showdown': 	'vendor/showdown.min'
 	},
 	shim: {
 		'underscore': { exports: '_' },

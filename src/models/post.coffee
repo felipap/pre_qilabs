@@ -54,7 +54,7 @@ urlify = (text) ->
 	    return "<a href=\"#{url}\">#{url}</a>"
 
 PostSchema.virtual('data.unescapedBody').get ->
-	urlify(@data.body or '')
+	urlify(@data.body)
 
 ################################################################################
 ## Middlewares #################################################################

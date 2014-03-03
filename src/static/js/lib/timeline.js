@@ -22,7 +22,9 @@ window.calcTimeFrom = function (arg) {
 	}
 };
 
-define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function ($, Backbone, _, React) {
+crypto
+
+define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, Backbone, _, React, Showdown) {
 
 	_.templateSettings = {
 		interpolate: /\<\@\=(.+?)\@\>/gim,
@@ -261,7 +263,9 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 					this.props.model.on('delete');
 				}
 
-				// var raw = this.props.children.toString();
+				// var converter = new Showdown.converter();
+				// var rawMarkup = converter.makeHtml(post.data.body);
+				var rawMarkup = post.data.unescapedBody;
 
 				return (
 					React.DOM.div( {className:"opMessage"}, 
@@ -286,19 +290,13 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 
 							(window.user && post.author.id === window.user.id)?
 								React.DOM.div( {className:"optionBtns"}, 
-									React.DOM.button(
-										{onClick:onClickTrash,
-										'data-action':"remove-post",
-										'data-toggle':"tooltip",
-										'data-placement':"bottom",
+									React.DOM.button(	{onClick:onClickTrash,
+										'data-action':"remove-post", 'data-toggle':"tooltip", 'data-placement':"bottom",
 										title:"Remover Post"}, 
 										React.DOM.i( {className:"icon-trash"})
 									),
-									React.DOM.button(
-										{onClick:onClickEdit,
-										'data-action':"edit-post",
-										'data-toggle':"tooltip",
-										'data-placement':"bottom",
+									React.DOM.button(	{onClick:onClickEdit,
+										'data-action':"edit-post", 'data-toggle':"tooltip", 'data-placement':"bottom",
 										title:"Editar Post"}, 
 										React.DOM.i( {className:"icon-edit"})
 									)
@@ -307,7 +305,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 						),
 						React.DOM.div( {className:"msgBody"}, 
 							React.DOM.div( {className:"arrow"}),
-							post.data.unescapedBody
+							React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
 						)
 					)
 				);

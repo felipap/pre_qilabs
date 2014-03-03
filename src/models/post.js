@@ -80,7 +80,7 @@ urlify = function(text) {
 };
 
 PostSchema.virtual('data.unescapedBody').get(function() {
-  return urlify(this.data.body || '');
+  return urlify(this.data.body);
 });
 
 PostSchema.pre('remove', function(next) {

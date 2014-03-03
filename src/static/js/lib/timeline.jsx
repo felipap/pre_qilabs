@@ -22,7 +22,9 @@ window.calcTimeFrom = function (arg) {
 	}
 };
 
-define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function ($, Backbone, _, React) {
+crypto
+
+define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, Backbone, _, React, Showdown) {
 
 	_.templateSettings = {
 		interpolate: /\<\@\=(.+?)\@\>/gim,
@@ -261,7 +263,9 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 					this.props.model.on('delete');
 				}
 
-				// var raw = this.props.children.toString();
+				// var converter = new Showdown.converter();
+				// var rawMarkup = converter.makeHtml(post.data.body);
+				var rawMarkup = post.data.unescapedBody;
 
 				return (
 					<div className="opMessage">
@@ -286,19 +290,13 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 
 							{(window.user && post.author.id === window.user.id)?
 								<div className="optionBtns">
-									<button
-										onClick={onClickTrash}
-										data-action="remove-post"
-										data-toggle="tooltip"
-										data-placement="bottom"
+									<button	onClick={onClickTrash}
+										data-action="remove-post" data-toggle="tooltip" data-placement="bottom"
 										title="Remover Post">
 										<i className="icon-trash"></i>
 									</button>
-									<button
-										onClick={onClickEdit}
-										data-action="edit-post"
-										data-toggle="tooltip"
-										data-placement="bottom"
+									<button	onClick={onClickEdit}
+										data-action="edit-post" data-toggle="tooltip" data-placement="bottom"
 										title="Editar Post">
 										<i className="icon-edit"></i>
 									</button>
@@ -307,7 +305,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'react.backbone'], function
 						</div>
 						<div className="msgBody">
 							<div className="arrow"></div>
-							{post.data.unescapedBody}
+							<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
 						</div>
 					</div>
 				);
