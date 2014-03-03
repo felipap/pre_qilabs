@@ -68,9 +68,10 @@ UserSchema.virtual('profileUrl').get ->
 ## Middlewares #################################################################
 
 UserSchema.pre 'remove', (next) ->
-	Follow.remove {followee:@}, (err, docs) ->
-		Group.Membership.remove {member:@}, (err, docs)->
-			console.log 'removing membership of '+docs
+	Follow.remove {followee:@}, (err, docs) =>
+		console.log "removing #{err} #{docs} followers of #{@.username}"
+		Group.Membership.remove {member:@}, (err, docs)=>
+			console.log "removing #{err} #{docs} memberships of #{@.username}"
 			next()
 
 ################################################################################

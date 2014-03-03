@@ -69,14 +69,17 @@ UserSchema.virtual('profileUrl').get(function() {
 UserSchema.pre('remove', function(next) {
   return Follow.remove({
     followee: this
-  }, function(err, docs) {
-    return Group.Membership.remove({
-      member: this
-    }, function(err, docs) {
-      console.log('removing membership of ' + docs);
-      return next();
-    });
-  });
+  }, (function(_this) {
+    return function(err, docs) {
+      console.log("removing " + err + " " + docs + " followers of " + _this.username);
+      return Group.Membership.remove({
+        member: _this
+      }, function(err, docs) {
+        console.log("removing " + err + " " + docs + " memberships of " + _this.username);
+        return next();
+      });
+    };
+  })(this));
 });
 
 UserSchema.methods.getFollowers = function(cb) {

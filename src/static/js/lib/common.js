@@ -37,9 +37,7 @@ define([
 	'vendor/bootstrap/tooltip',
 	'lib/components/bell',
 	], function ($, _) {
-
-	console.log('before')
-
+		
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
 		var href = this.dataset['ajaxPostHref'],
 			redirect = this.dataset['redirectHref'];

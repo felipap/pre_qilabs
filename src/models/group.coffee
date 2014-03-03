@@ -81,13 +81,16 @@ GroupSchema.methods.addUser = (user, type, cb) ->
 
 GroupSchema.methods.genGroupProfile = (cb) ->
 	Membership
-		.find {group: @}
+		.find { group: @ }
 		.populate 'member'
+		.limit 20
 		.exec (err, docs) =>
+			# Filter for non-member-less memberships, just in case
+			docs = _.filter(docs, (i) -> i.member)
 			cb(err, _.extend({}, @toObject(), {
 				memberships: {
 					count: docs.length
-					docs: docs.splice(0,20)
+					docs: docs
 				}
 			}))
 
