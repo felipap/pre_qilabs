@@ -3,13 +3,29 @@
 # Copyright QILabs.org
 # by @f03lipe
 
-################################################################################
-################################################################################
-
 mongoose = require 'mongoose'
 async = require 'async'
 _ = require 'underscore'
 assert = require 'assert'
+
+hookedModel = require './lib/hookedModel'
+
+# Think internationalization!
+
+Types =
+	PostComment: 'PostComment'
+	PostAnswer: 'PostAnswer'
+	PostAnswer: 'PostAnswer'
+	NewFollower: 'NewFollower'
+	UpvotedAnswer: 'UpvotedAnswer'
+	SharedPost: 'SharedPost'
+
+MsgTemplates = 
+	PostComment: '<%= agentName %> comentou na sua publicação'
+	NewFollower: '<%= agentName %> começou a te seguir'
+
+################################################################################
+## Schema ######################################################################
 
 NotificationSchema = new mongoose.Schema {
 	agent:		 	{ type:mongoose.Schema.ObjectId, ref:'User', required:true }
@@ -28,22 +44,8 @@ NotificationSchema = new mongoose.Schema {
 	toJSON: 	{ virtuals: true }
 }
 
-# Think internationalization!
-
-Types =
-	PostComment: 'PostComment'
-	PostAnswer: 'PostAnswer'
-	PostAnswer: 'PostAnswer'
-	NewFollower: 'NewFollower'
-	UpvotedAnswer: 'UpvotedAnswer'
-	SharedPost: 'SharedPost'
-
-MsgTemplates = 
-	PostComment: '<%= agentName %> comentou na sua publicação'
-	NewFollower: '<%= agentName %> começou a te seguir'
-
 ################################################################################
-# Virtuals #####################################################################
+## Virtuals ####################################################################
 
 NotificationSchema.virtual('msg').get ->
 	if MsgTemplates[@type]
@@ -52,25 +54,20 @@ NotificationSchema.virtual('msg').get ->
 	return "Notificação "+@type
 
 ################################################################################
-# Mongoose Hooks ###############################################################
+## Middlewares #################################################################
 
 NotificationSchema.pre 'save', (next) ->
 	@dateSent ?= new Date()
 	next()
 
 ################################################################################
-# Statics ######################################################################
+## Statics #####################################################################
 
 # User = mongoose.model 'User'
 
 AssertArgs = (args) ->
 	return (func) ->
 		return func
-
-old = NotificationSchema.statics.find
-NotificationSchema.statics.find = () ->
-	console.log('oooooeeee', arguments)
-	return old.apply(@, arguments)
 
 notifyUser =
 	AssertArgs({ismodel:'User'},{ismodel:'User'},{has:['url','type']}) \
@@ -126,4 +123,4 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 
 NotificationSchema.statics.Types = Types
 
-module.exports = Notification = mongoose.model "Notification", NotificationSchema
+module.exports = Notification = hookedModel "Notification", NotificationSchema

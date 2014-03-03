@@ -1,6 +1,8 @@
-var Inbox, Post, PostSchema, PostTypes, mongoose, urlify;
+var Inbox, Post, PostSchema, PostTypes, hookedModel, mongoose, urlify;
 
 mongoose = require('mongoose');
+
+hookedModel = require('./lib/hookedModel');
 
 Inbox = mongoose.model('Inbox');
 
@@ -113,4 +115,4 @@ PostSchema.statics.PostTypes = PostTypes;
 
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate');
 
-module.exports = Post = mongoose.model("Post", PostSchema);
+module.exports = Post = hookedModel("Post", PostSchema);

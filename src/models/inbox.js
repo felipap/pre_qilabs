@@ -5,11 +5,13 @@ TODO:
 - and fan-out read for non-active users.
 See http://blog.mongodb.org/post/65612078649
  */
-var Inbox, InboxSchema, Types, async, mongoose;
+var Inbox, InboxSchema, Types, async, hookedModel, mongoose;
 
 mongoose = require('mongoose');
 
 async = require('async');
+
+hookedModel = require('./lib/hookedModel');
 
 Types = {
   Post: 'Post'
@@ -42,6 +44,13 @@ InboxSchema = new mongoose.Schema({
   }
 });
 
+InboxSchema.pre('save', function(next) {
+  if (this.dateSent == null) {
+    this.dateSent = new Date();
+  }
+  return next();
+});
+
 InboxSchema.statics.getFromUser = function(user, opts, cb) {
   if (cb == null) {
     cb = opts;
@@ -70,11 +79,4 @@ InboxSchema.statics.fillInboxes = function(opts, cb) {
 
 InboxSchema.statics.Types = Types;
 
-InboxSchema.pre('save', function(next) {
-  if (this.dateSent == null) {
-    this.dateSent = new Date();
-  }
-  return next();
-});
-
-module.exports = Inbox = mongoose.model("Inbox", InboxSchema);
+module.exports = Inbox = hookedModel("Inbox", InboxSchema);

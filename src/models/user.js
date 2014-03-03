@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, User, UserSchema, assert, async, fillInPostComments, mongoose, _;
+var Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, User, UserSchema, assert, async, fillInPostComments, hookedModel, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -14,6 +14,8 @@ _ = require('underscore');
 async = require('async');
 
 assert = require('assert');
+
+hookedModel = require('./lib/hookedModel');
 
 Inbox = mongoose.model('Inbox');
 
@@ -539,6 +541,4 @@ UserSchema.methods.getNotifications = function(cb) {
   }).limit(10).sort('-dateSent').exec(cb);
 };
 
-UserSchema.statics.findOrCreate = require('./lib/findOrCreate');
-
-module.exports = User = mongoose.model("User", UserSchema);
+module.exports = User = hookedModel("User", UserSchema);

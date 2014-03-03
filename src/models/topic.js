@@ -14,7 +14,7 @@ Topics:
 - Estágio
 - Simulações ONU
  */
-var TopicSchema, api, authTypes, blog, blog_url, checkFollowed, descTable, findOrCreate, getDescription, getLabel, memjs, mongoose, recursify, toCamel, transTable, _,
+var TopicSchema, api, authTypes, blog, blog_url, checkFollowed, descTable, findOrCreate, getDescription, getLabel, hookedModel, memjs, mongoose, recursify, toCamel, transTable, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -22,6 +22,8 @@ mongoose = require('mongoose');
 memjs = require('memjs');
 
 _ = require('underscore');
+
+hookedModel = require('./lib/hookedModel');
 
 findOrCreate = require('./lib/findOrCreate');
 
@@ -36,8 +38,6 @@ TopicSchema = new mongoose.Schema({
   description: '',
   tagColor: ''
 });
-
-TopicSchema.methods = {};
 
 transTable = {
   'estagio': 'Estágio',
@@ -184,4 +184,4 @@ TopicSchema.statics.recursify = recursify;
 
 TopicSchema.statics.checkFollowed = checkFollowed;
 
-module.exports = mongoose.model("Topic", TopicSchema);
+module.exports = hookedModel("Topic", TopicSchema);

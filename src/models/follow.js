@@ -1,6 +1,8 @@
-var FollowSchema, Inbox, mongoose;
+var FollowSchema, Inbox, hookedModel, mongoose;
 
 mongoose = require('mongoose');
+
+hookedModel = require('./lib/hookedModel');
 
 Inbox = mongoose.model('Inbox');
 
@@ -36,4 +38,4 @@ FollowSchema.pre('save', function(next) {
   return next();
 });
 
-module.exports = mongoose.model("Follow", FollowSchema);
+module.exports = hookedModel("Follow", FollowSchema);

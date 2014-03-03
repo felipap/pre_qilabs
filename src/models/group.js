@@ -2,11 +2,13 @@
 /*
 Membership is accessible at Group.Membership
  */
-var GroupSchema, Membership, MembershipSchema, MembershipTypes, Permissions, Types, mongoose, _;
+var GroupSchema, Membership, MembershipSchema, MembershipTypes, Permissions, Types, hookedModel, mongoose, _;
 
 mongoose = require('mongoose');
 
 _ = require('underscore');
+
+hookedModel = require('./lib/hookedModel');
 
 Types = {
   StudyGroup: 'StudyGroup'
@@ -15,6 +17,11 @@ Types = {
 Permissions = {
   Public: 'Public',
   Private: 'Private'
+};
+
+MembershipTypes = {
+  Moderator: 'Moderator',
+  Member: 'Member'
 };
 
 GroupSchema = new mongoose.Schema({
@@ -36,11 +43,6 @@ GroupSchema = new mongoose.Schema({
 }, {
   id: true
 });
-
-MembershipTypes = {
-  Moderator: 'Moderator',
-  Member: 'Member'
-};
 
 MembershipSchema = new mongoose.Schema({
   joinDate: Date,
@@ -120,4 +122,4 @@ GroupSchema.statics.findOrCreate = require('./lib/findOrCreate');
 
 GroupSchema.statics.Membership = Membership = mongoose.model("Membership", MembershipSchema);
 
-module.exports = mongoose.model("Group", GroupSchema);
+module.exports = hookedModel("Group", GroupSchema);

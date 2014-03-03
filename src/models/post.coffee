@@ -3,10 +3,9 @@
 # Copyright QILabs.org
 # by @f03lipe
 
-################################################################################
-################################################################################
-
 mongoose = require 'mongoose'
+
+hookedModel = require './lib/hookedModel'
 
 Inbox = mongoose.model 'Inbox'
 
@@ -14,6 +13,9 @@ PostTypes =
 	Comment: 'Comment' 			# Comment
 	Answer: 'Answer' 			# Answer
 	PlainPost: 'PlainPost'		# Default
+
+################################################################################
+## Schema ######################################################################
 
 PostSchema = new mongoose.Schema {
 	author:			{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
@@ -34,7 +36,9 @@ PostSchema = new mongoose.Schema {
 	toJSON: 	{ virtuals: true }
 }
 
-# Virtuals
+################################################################################
+## Virtuals ####################################################################
+
 PostSchema.virtual('path').get ->
 	if @parentPost
 		"/posts/"+@parentPost+"#"+@id
@@ -52,6 +56,9 @@ urlify = (text) ->
 PostSchema.virtual('data.unescapedBody').get ->
 	urlify(@data.body)
 
+################################################################################
+## Middlewares #################################################################
+
 PostSchema.pre 'remove', (next) ->
 	console.log 'removing comments after removing this'
 	next()
@@ -63,6 +70,9 @@ PostSchema.pre 'save', (next) ->
 	@dateCreated ?= new Date
 	next()
 
+################################################################################
+## Methods #####################################################################
+
 PostSchema.methods.getComments = (cb) ->
 	Post.find { parentPost: @id }
 		.populate 'author'
@@ -70,10 +80,10 @@ PostSchema.methods.getComments = (cb) ->
 			console.log('comment docs:', docs)
 			cb(err, docs)
 
+################################################################################
+## Statics #####################################################################
+
 PostSchema.statics.PostTypes = PostTypes
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
-################################################################################
-################################################################################
-
-module.exports = Post = mongoose.model "Post", PostSchema
+module.exports = Post = hookedModel "Post", PostSchema

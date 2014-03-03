@@ -12,6 +12,7 @@ Membership is accessible at Group.Membership
 
 mongoose = require 'mongoose'
 _ = require 'underscore'
+hookedModel = require './lib/hookedModel'
 
 Types =
 	StudyGroup: 'StudyGroup'
@@ -20,7 +21,13 @@ Permissions =
 	Public: 'Public'
 	Private: 'Private'
 
-# Schema
+MembershipTypes =
+	Moderator: 	'Moderator'
+	Member:		'Member'
+
+################################################################################
+## Schemas #####################################################################
+
 GroupSchema = new mongoose.Schema {
 	slug: 				String
 	creationDate: 		Date
@@ -33,10 +40,6 @@ GroupSchema = new mongoose.Schema {
 	permissions: 		{ type: String, default: Permissions.Private }
 }, { id: true } # default
 
-MembershipTypes =
-	Moderator: 	'Moderator'
-	Member:		'Member'
-
 MembershipSchema = new mongoose.Schema {
 	joinDate: 	Date,
 	type: 		{ type: String, required: true }
@@ -44,8 +47,14 @@ MembershipSchema = new mongoose.Schema {
 	group: 		{ type: mongoose.Schema.ObjectId, index: 1, ref: 'Group' }
 }
 
+################################################################################
+## Virtuals ####################################################################
+
 GroupSchema.virtual('path').get ->
 	'/labs/'+@slug
+
+################################################################################
+## Middlewares #################################################################
 
 GroupSchema.pre 'save', (next) ->
 	@slug ?= ''+@id
@@ -58,7 +67,9 @@ MembershipSchema.pre 'save', (next) ->
 	@joinDate ?= new Date
 	next()
 
-# Methods
+################################################################################
+## Methods #####################################################################
+
 GroupSchema.methods.addUser = (user, type, cb) ->
 	cb ?= type
 	membership = new Membership {
@@ -80,6 +91,9 @@ GroupSchema.methods.genGroupProfile = (cb) ->
 				}
 			}))
 
+################################################################################
+## Statics #####################################################################
+
 MembershipSchema.statics.Types = MembershipTypes
 
 GroupSchema.statics.Types = Types
@@ -87,4 +101,4 @@ GroupSchema.statics.Permissions = Permissions
 GroupSchema.statics.findOrCreate = require('./lib/findOrCreate')
 GroupSchema.statics.Membership = Membership = mongoose.model "Membership", MembershipSchema
 
-module.exports = mongoose.model "Group", GroupSchema
+module.exports = hookedModel "Group", GroupSchema

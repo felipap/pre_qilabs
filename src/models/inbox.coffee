@@ -16,8 +16,13 @@ See http://blog.mongodb.org/post/65612078649
 mongoose = require 'mongoose'
 async 	 = require 'async'
 
+hookedModel = require './lib/hookedModel'
+
 Types =
 	Post: 'Post'
+
+################################################################################
+## Schema ######################################################################
 
 InboxSchema = new mongoose.Schema {
 	dateSent:		{ type: Date, index: true }
@@ -26,6 +31,16 @@ InboxSchema = new mongoose.Schema {
 	resource:		{ type: mongoose.Schema.ObjectId, ref: 'Post', required: true }
 	type: 			{ type: String, required: true }
 }
+
+################################################################################
+## Middlewares #################################################################
+
+InboxSchema.pre 'save', (next) ->
+	@dateSent ?= new Date()
+	next()
+
+################################################################################
+## Statics #####################################################################
 
 InboxSchema.statics.getFromUser = (user, opts, cb) ->
 	cb ?= opts
@@ -53,8 +68,4 @@ InboxSchema.statics.fillInboxes = (opts, cb) ->
 
 InboxSchema.statics.Types = Types
 
-InboxSchema.pre 'save', (next) ->
-	@dateSent ?= new Date()
-	next()
-
-module.exports = Inbox = mongoose.model "Inbox", InboxSchema
+module.exports = Inbox = hookedModel "Inbox", InboxSchema

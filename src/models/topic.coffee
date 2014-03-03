@@ -1,6 +1,6 @@
 
 # src/models/topic
-# for QILabs.org
+# Copyright QILabs.org
 # by @f03lipe
 
 ###
@@ -26,12 +26,16 @@ mongoose = require 'mongoose'
 memjs = require 'memjs'
 _ = require 'underscore'
 
+hookedModel = require './lib/hookedModel'
+
 findOrCreate = require('./lib/findOrCreate')
 api = require('./../api')
 
 authTypes = []
 
-# Schema
+################################################################################
+## Topic Schema ################################################################
+
 TopicSchema = new mongoose.Schema {
 		name:			''
 		slug: 			''
@@ -39,12 +43,6 @@ TopicSchema = new mongoose.Schema {
 		description:	''
 		tagColor:		''
 	}
-
-# Virtuals
-
-# Methods
-TopicSchema.methods = {}
-
 
 transTable = {
 	'estagio': 'Estágio',
@@ -161,4 +159,4 @@ TopicSchema.statics.getDescription = getDescription
 TopicSchema.statics.recursify = recursify
 TopicSchema.statics.checkFollowed = checkFollowed
 
-module.exports = mongoose.model "Topic", TopicSchema
+module.exports = hookedModel "Topic", TopicSchema

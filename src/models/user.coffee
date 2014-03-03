@@ -10,13 +10,12 @@ GUIDELINES for development:
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
 ###
 
-################################################################################
-################################################################################
-
 mongoose = require 'mongoose'
 _ = require 'underscore'
 async = require 'async'
 assert = require 'assert'
+
+hookedModel = require './lib/hookedModel'
 
 Inbox 	= mongoose.model 'Inbox'
 Follow 	= mongoose.model 'Follow'
@@ -27,7 +26,7 @@ Notification = mongoose.model 'Notification'
 ObjectId = mongoose.Types.ObjectId
 
 ################################################################################
-## User Schema #################################################################
+## Schema ######################################################################
 
 UserSchema = new mongoose.Schema {
 	name:			String
@@ -56,20 +55,21 @@ UserSchema = new mongoose.Schema {
 
 }, { id: true } # default
 
+################################################################################
+## Virtuals ####################################################################
+
 UserSchema.virtual('avatarUrl').get ->
 	'https://graph.facebook.com/'+@facebookId+'/picture'
 
 UserSchema.virtual('profileUrl').get ->
 	'/p/'+@username
 
-
 ################################################################################
-# Mongoose Hooks ###############################################################
+## Middlewares #################################################################
 
 # UserSchema.pre 'save', (next) ->
 # 	@dateSent ?= new Date()
 # 	next()
-
 
 ################################################################################
 ## related to Following ########################################################
@@ -123,7 +123,7 @@ UserSchema.methods.unfollowUser = (user, cb) ->
 			if doc then doc.remove cb
 
 ################################################################################
-## related to fetching Timelines and Inboxes
+## related to fetching Timelines and Inboxes ###################################
 
 HandleLimit = (func) ->
 	return (err, _docs) ->
@@ -247,7 +247,7 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 			fillInPostComments(docs, cb)
 
 ################################################################################
-## related to Groups
+## related to Groups ###########################################################
 
 # This is here because of authentication concerns
 UserSchema.methods.getLabPosts = (opts, group, cb) ->
@@ -306,7 +306,7 @@ UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 			return cb(err, mem) if err
 
 ################################################################################
-## related to the Posting
+## related to the Posting ######################################################
 
 ###
 Create a post object with type comment.
@@ -372,7 +372,7 @@ UserSchema.methods.findAndPopulatePost = (args, cb) ->
 				cb(false,null)
 
 ################################################################################
-## related to the generation of profiles
+## related to the generation of profiles #######################################
 
 ###
 Generate stuffed profile for the controller.
@@ -402,7 +402,7 @@ UserSchema.methods.genProfile = (cb) ->
 					cb(err1 or err2 or err3, profile)
 
 ################################################################################
-## related to the notification
+## related to the notification #################################################
 
 UserSchema.methods.getNotifications = (cb) ->
 	Notification
@@ -411,6 +411,4 @@ UserSchema.methods.getNotifications = (cb) ->
 		.sort '-dateSent'
 		.exec cb
 
-UserSchema.statics.findOrCreate = require('./lib/findOrCreate')
-
-module.exports = User = mongoose.model "User", UserSchema
+module.exports = User = hookedModel "User", UserSchema

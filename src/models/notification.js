@@ -1,4 +1,4 @@
-var AssertArgs, MsgTemplates, Notification, NotificationSchema, Types, assert, async, mongoose, notifyUser, old, _;
+var AssertArgs, MsgTemplates, Notification, NotificationSchema, Types, assert, async, hookedModel, mongoose, notifyUser, _;
 
 mongoose = require('mongoose');
 
@@ -7,6 +7,22 @@ async = require('async');
 _ = require('underscore');
 
 assert = require('assert');
+
+hookedModel = require('./lib/hookedModel');
+
+Types = {
+  PostComment: 'PostComment',
+  PostAnswer: 'PostAnswer',
+  PostAnswer: 'PostAnswer',
+  NewFollower: 'NewFollower',
+  UpvotedAnswer: 'UpvotedAnswer',
+  SharedPost: 'SharedPost'
+};
+
+MsgTemplates = {
+  PostComment: '<%= agentName %> comentou na sua publicação',
+  NewFollower: '<%= agentName %> começou a te seguir'
+};
 
 NotificationSchema = new mongoose.Schema({
   agent: {
@@ -56,20 +72,6 @@ NotificationSchema = new mongoose.Schema({
   }
 });
 
-Types = {
-  PostComment: 'PostComment',
-  PostAnswer: 'PostAnswer',
-  PostAnswer: 'PostAnswer',
-  NewFollower: 'NewFollower',
-  UpvotedAnswer: 'UpvotedAnswer',
-  SharedPost: 'SharedPost'
-};
-
-MsgTemplates = {
-  PostComment: '<%= agentName %> comentou na sua publicação',
-  NewFollower: '<%= agentName %> começou a te seguir'
-};
-
 NotificationSchema.virtual('msg').get(function() {
   if (MsgTemplates[this.type]) {
     return _.template(MsgTemplates[this.type], this);
@@ -89,13 +91,6 @@ AssertArgs = function(args) {
   return function(func) {
     return func;
   };
-};
-
-old = NotificationSchema.statics.find;
-
-NotificationSchema.statics.find = function() {
-  console.log('oooooeeee', arguments);
-  return old.apply(this, arguments);
 };
 
 notifyUser = AssertArgs({
@@ -163,4 +158,4 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
 
 NotificationSchema.statics.Types = Types;
 
-module.exports = Notification = mongoose.model("Notification", NotificationSchema);
+module.exports = Notification = hookedModel("Notification", NotificationSchema);

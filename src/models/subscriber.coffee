@@ -1,6 +1,6 @@
 
 # src/models/subscriber
-# for QILabs.org
+# Copyright QILabs.org
 # by @f03lipe
 
 mongoose = require 'mongoose'
