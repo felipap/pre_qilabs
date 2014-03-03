@@ -1,6 +1,7 @@
 
-// apps.js
-// for meavisa.org, by @f03lipe
+// app.js
+// Copyright QILabs.org
+// by @f03lipe
 
 // This is the main server script.
 // Set up everything.

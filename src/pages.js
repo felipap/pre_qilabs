@@ -96,11 +96,11 @@ module.exports = {
           return Group.findOne({
             slug: req.params.slug
           }, HandleErrResult(res)(function(group) {
-            return group.genGroupProfile(function(err, groupProfile) {
+            return group.genGroupProfile(HandleErrResult(res)(function(groupProfile) {
               return res.render('pages/lab', {
                 group: groupProfile
               });
-            });
+            }));
           }));
         }
       }

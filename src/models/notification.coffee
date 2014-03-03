@@ -10,8 +10,6 @@ assert = require 'assert'
 
 hookedModel = require './lib/hookedModel'
 
-# Think internationalization!
-
 Types =
 	PostComment: 'PostComment'
 	PostAnswer: 'PostAnswer'
@@ -19,6 +17,8 @@ Types =
 	NewFollower: 'NewFollower'
 	UpvotedAnswer: 'UpvotedAnswer'
 	SharedPost: 'SharedPost'
+
+# Think internationalization!
 
 MsgTemplates = 
 	PostComment: '<%= agentName %> comentou na sua publicação.'
@@ -77,9 +77,12 @@ NotificationSchema.pre 'save', (next) ->
 
 # User = mongoose.model 'User'
 
-AssertArgs = (args) ->
+AssertArgs = (constraints) ->
 	return (func) ->
-		return func
+		return () =>
+			for c, i in constraints
+				c
+			return func.apply(this, arguments)
 
 notifyUser =
 	AssertArgs({ismodel:'User'},{ismodel:'User'},{has:['url','type']}) \

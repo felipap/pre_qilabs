@@ -107,9 +107,18 @@ NotificationSchema.pre('save', function(next) {
   return next();
 });
 
-AssertArgs = function(args) {
+AssertArgs = function(constraints) {
   return function(func) {
-    return func;
+    return (function(_this) {
+      return function() {
+        var c, i, _i, _len;
+        for (i = _i = 0, _len = constraints.length; _i < _len; i = ++_i) {
+          c = constraints[i];
+          c;
+        }
+        return func.apply(_this, arguments);
+      };
+    })(this);
   };
 };
 
