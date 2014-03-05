@@ -61,6 +61,8 @@ module.exports = {
 		name: 'panel'
 		methods: {
 			get: [required.login, (req, res) ->
+				console.log req.app.routes
+				console.log req.app.locals.urls
 				res.render 'pages/panel', {}
 			]
 		}

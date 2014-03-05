@@ -15,8 +15,8 @@
 
 		<meta property="og:title" content="QI Labs" />
 		<meta property="og:type" content="website" />
-		<meta property="og:url" content="http://www.meavisa.org/" />
-		<meta property="og:image" content="http://meavisa.herokuapp.com/static/img/logo.png" />
+		<meta property="og:url" content="http://www.qilabs.org/" />
+		<meta property="og:image" content="http://qilabs.herokuapp.com/static/img/logo.png" />
 		<meta property="og:site_name" content="QI Labs" />
 		<meta property="og:description" content="" />
 
@@ -35,13 +35,11 @@
 	{% else %}
 		{% set jsViewFile=getMediaUrl('build/app/views/common') %}
 	{% endif %}
-	{% if app.env == "deveslopment" %}
+	{% if true || app.env === 'development' %}
 		<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 		<script>
 			require(["{{ getMediaUrl('js/config.js') }}"], function () {
-				require(['views.'{{requireView}}], function (App) {
-
-				});
+				require(['views.{{requireView}}'], function (App) {});
 			});
 		</script>
 	{% else %}

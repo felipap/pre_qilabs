@@ -1,4 +1,5 @@
 {% extends '../stdbody.html' %}
+{% set requireView="panel" %}
 
 {% block head %}
 	{% parent %}
@@ -57,12 +58,6 @@
 
 	{% include '../layouts/footer.html' %}
 
-	<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
-	<script>
-		require(["{{ getMediaUrl('js','build.js') }}"], function () {
-			require(["common"], function () {});
-		});
-	</script>
 </body>
 
 {% endblock %}

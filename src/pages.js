@@ -73,6 +73,8 @@ module.exports = {
     methods: {
       get: [
         required.login, function(req, res) {
+          console.log(req.app.routes);
+          console.log(req.app.locals.urls);
           return res.render('pages/panel', {});
         }
       ]

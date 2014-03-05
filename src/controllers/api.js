@@ -196,7 +196,7 @@ module.exports = {
         },
         ':labId/addUser/:userId': {
           name: 'ApiLabAddUser',
-          get: function(req, res) {
+          post: function(req, res) {
             var labId, userId;
             if (!(labId = req.paramToObjectId('labId'))) {
               return;

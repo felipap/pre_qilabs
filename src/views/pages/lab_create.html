@@ -1,4 +1,5 @@
 {% extends '../sidebared.html' %}
+{% set requireView="lab" %}
 
 {% block head %}
 	{% parent %}
@@ -9,10 +10,10 @@
 
 {% block mainContent %}
 	<form method="post" action="/api/labs">
-		<h3>Crie um Laborátório</h3>
+		<h3>Crie um Lab</h3>
 		<input type="text" name="name" placeholder="O Nome para o seu laboratório" />
 		<br>
-		<input type="checkbox" name="" placeholder="" value="public_lab" /> <label>Gropo Público</label>
+		<input type="checkbox" name="" placeholder="" value="public_lab" /> <label>Grupo Público</label>
 		<br>
 		<input type="checkbox" placeholder="" value="allow_events" /> <label>Permitir Eventos</label>
 		<br>

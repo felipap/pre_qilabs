@@ -144,7 +144,7 @@ module.exports = {
 						}
 				':labId/addUser/:userId': {
 					name: 'ApiLabAddUser'
-					get: (req, res) ->
+					post: (req, res) ->
 						return unless labId = req.paramToObjectId('labId')
 						return unless userId = req.paramToObjectId('userId')
 						Group.findOne {_id: labId}, HandleErrResult(res) (group) ->

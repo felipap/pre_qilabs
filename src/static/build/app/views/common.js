@@ -1,4 +1,2 @@
-
-require(['common'], function (common) {
-
-});
+require(["common"],function(){});
+//# sourceMappingURL=common.js.map

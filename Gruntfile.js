@@ -58,24 +58,8 @@ module.exports = function(grunt) {
 			},
 			// Require.js
 			scripts_lab: {
-				files: ['src/static/js/lib/app/lab.js'],
-				tasks: ['requirejs:lab'],
-			},
-			scripts_panel: {
-				files: ['src/static/js/lib/app/panel.js'],
-				tasks: ['requirejs:panel'],
-			},
-			scripts_profile: {
-				files: ['src/static/js/lib/app/profile.js'],
-				tasks: ['requirejs:profile'],
-			},
-			scripts_timeline: {
-				files: ['src/static/js/lib/app/timeline.js'],
-				tasks: ['requirejs:timeline'],
-			},
-			scripts_common: {
-				files: ['src/static/js/lib/common.js','src/static/js/lib/plugins.js','src/static/js/lib/app/timeline.js'],
-				tasks: ['requirejs:common'],
+				files: ['src/static/js/app/**/*'],
+				tasks: ['requirejs'],
 			},
 		},
 
@@ -99,7 +83,7 @@ module.exports = function(grunt) {
 			options: {
 				logLevel: 0,
 				generateSourceMaps: true,
-				optimize: 'none',
+				optimize: 'uglify2',
 				preserveLicenseComments: false,
 				mainConfigFile: 'src/static/js/config.js',
 				baseUrl: 'src/static/js',
@@ -118,12 +102,6 @@ module.exports = function(grunt) {
 					]
 				}
 			}
-			// common: {
-			// 	options: {
-			// 		name: 'lib/common',
-			// 		out: 'src/static/js/common.min.js',
-			// 	}
-			// },
 		},
 
 		react: {

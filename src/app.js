@@ -170,7 +170,7 @@ app.locals({
 				// console.log (a)
 				return a
 			} else {
-				return name;
+				return url;
 			}
 
 		} else {
