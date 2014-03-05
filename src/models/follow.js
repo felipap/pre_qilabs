@@ -1,10 +1,12 @@
-var FollowSchema, Inbox, hookedModel, mongoose;
+var FollowSchema, Inbox, Notification, hookedModel, mongoose;
 
 mongoose = require('mongoose');
 
 hookedModel = require('./lib/hookedModel');
 
 Inbox = mongoose.model('Inbox');
+
+Notification = mongoose.model('Notification');
 
 FollowSchema = new mongoose.Schema({
   dateBegin: {
@@ -25,8 +27,17 @@ FollowSchema.pre('remove', function(next) {
   return Inbox.remove({
     recipient: this.follower,
     author: this.followee
-  }, function() {
-    console.log("Inbox removed on unfollow. Args:", arguments);
+  }, function(err, result) {
+    console.log("Removing " + err + " " + result + " inboxes on unfollow.");
+    return next();
+  });
+});
+
+FollowSchema.pre('remove', function(next) {
+  return Notification.remove({
+    recipient: this
+  }, function(err, result) {
+    console.log("Removing " + err + " " + result + " notifications on unfollow.");
     return next();
   });
 });

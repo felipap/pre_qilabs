@@ -13,7 +13,7 @@ GUIDELINES for development:
 - Never pass request parameters or data to schema methods, always validate
   before. Use res.paramToObjectId to get create ids:
   `(req, res) -> return unless userId = res.paramToObjectId('userId'); ...`
-- Prefer no not handle creation/modification of documents. Leave those to
+- Prefer no not handle creation/modification of docmuents. Leave those to
   schemas statics and methods.
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove

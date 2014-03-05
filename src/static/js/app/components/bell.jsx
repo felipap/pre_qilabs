@@ -4,8 +4,8 @@ define([
 	'jquery',
 	'underscore',
 	'react',
-	'vendor/bootstrap/tooltip',
-	'vendor/bootstrap/popover',
+	'bootstrap.popover',
+	'bootstrap.tooltip',
 	], function ($, _, React) {
 
 	$.extend($.fn.popover.Constructor.DEFAULTS, {react: false});

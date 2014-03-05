@@ -7,6 +7,7 @@ mongoose = require 'mongoose'
 hookedModel = require './lib/hookedModel'
 
 Inbox = mongoose.model 'Inbox'
+Notification = mongoose.model 'Notification'
 
 ################################################################################
 ## Follow Schema ###############################################################
@@ -22,9 +23,15 @@ FollowSchema = new mongoose.Schema {
 
 # Remove inboxes on unfollow
 FollowSchema.pre 'remove', (next) ->
-	Inbox.remove { recipient:@follower, author:@followee }, () ->
-		console.log("Inbox removed on unfollow. Args:", arguments)
+	Inbox.remove { recipient:@follower, author:@followee }, (err, result) ->
+		console.log "Removing #{err} #{result} inboxes on unfollow."
 		next()
+
+FollowSchema.pre 'remove', (next) ->
+	Notification.remove { recipient:@ }, (err, result) ->
+		console.log "Removing #{err} #{result} notifications on unfollow."
+		next()
+
 
 FollowSchema.pre 'save', (next) ->
 	@dateBegin ?= new Date

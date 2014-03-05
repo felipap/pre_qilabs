@@ -16,7 +16,7 @@ requirejs.config({
 		// 'app.mural':		'app/app/mural',
 		// Components
 		'components.bell':		'app/components/bell',
-		'components.timeline': 	'app/components/timeline',
+		'components.timeline':	'app/components/timeline',
 		// Vendor
 		'jquery':			'vendor/jquery-2.0.3.min',
 		'bootstrap':		'vendor/bootstrap-3.0.0.min',
@@ -24,9 +24,15 @@ requirejs.config({
 		'backbone':			'vendor/backbone-1.0.0.min',
 		'react':			'vendor/react-0.9.0',
 		'react.backbone':	'vendor/react.backbone',
-		'showdown':			'vendor/showdown.min'
+		'showdown':			'vendor/showdown.min',
+		'bootstrap.tooltip':'vendor/bootstrap/tooltip',
+		'bootstrap.dropdown':'vendor/bootstrap/dropdown',
+		'bootstrap.popover':'vendor/bootstrap/popover',
 	},
 	shim: {
+		'bootstrap.tooltip': { deps: ['jquery'] },
+		'bootstrap.dropdown': { deps: ['jquery'] },
+		'bootstrap.popover': { deps: ['jquery'] },
 		'underscore': { exports: '_' },
 		'bootstrap' : { deps: ['jquery'] },
 		'backbone'	: { exports: 'Backbone', deps: ['underscore', 'jquery']},

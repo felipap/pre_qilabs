@@ -22,7 +22,8 @@ window.calcTimeFrom = function (arg) {
 	}
 };
 
-define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, Backbone, _, React, Showdown) {
+define(['jquery', 'backbone', 'underscore', 'react', 'showdown'],
+	function ($, Backbone, _, React, Showdown) {
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {

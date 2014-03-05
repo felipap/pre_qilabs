@@ -48,8 +48,8 @@ define([
 	'jquery',
 	'underscore',
 	'plugins',
-	'vendor/bootstrap/dropdown',
-	'vendor/bootstrap/tooltip',
+	'bootstrap.dropdown',
+	'bootstrap.tooltip',
 	'components.bell',
 	], function ($, _) {
 		
