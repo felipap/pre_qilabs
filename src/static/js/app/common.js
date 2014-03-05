@@ -29,6 +29,21 @@
 	}
 }());
 
+window.calcTimeFrom = function (arg) {
+	var now = new Date(),
+		then = new Date(arg),
+		diff = now-then;
+	if (diff < 1000*60) {
+		return 'agora'; 'há '+Math.floor(diff/1000)+'s';
+	} else if (diff < 1000*60*60) {
+		return 'há '+Math.floor(diff/1000/60)+'min';
+	} else if (diff < 1000*60*60*30) { // até 30 horas
+		return 'há '+Math.floor(diff/1000/60/60)+'h';
+	} else {
+		return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
+	}
+};
+
 define([
 	'jquery',
 	'underscore',

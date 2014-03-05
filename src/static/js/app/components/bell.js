@@ -48,20 +48,18 @@ define([
 				}
 			},
 			render: function () {
-				
-				var html = '<% for (var i=0; i<notifications.length; i++) { var note = notifications[i]; %><li>'+
-				'<a onClick="readNotification(\'<%= note.id %>\', \'<%= note.url %>\')" href="<%= note.url %>"> <%= note.msg %> </li> <%}%>';
-
 				var thumbnailStyle = {
 					backgroundImage: 'url('+this.props.data.thumbnailUrl+')',
 				};
+				var date = window.calcTimeFrom(this.props.data.dateSent);
 				
 				return (
 					React.DOM.li( {className:"notificationItem", onClick:this.handleClick}, 
 						this.props.data.thumbnailUrl?
 						React.DOM.div( {className:"thumbnail", style:thumbnailStyle}):undefined,
 						React.DOM.div( {class:"notificationItemBody"}, 
-							React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.data.msgHtml}} )
+							React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.data.msgHtml}} ),
+							React.DOM.span(null,  " ", React.DOM.em(null, date))
 						)
 					)
 				);

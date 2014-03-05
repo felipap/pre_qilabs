@@ -56,11 +56,11 @@ module.exports = function(grunt) {
 				tasks: ['less'],
 				options: { spawn: false },				
 			},
-			// Require.js
-			scripts_lab: {
-				files: ['src/static/js/app/**/*'],
-				tasks: ['requirejs'],
-			},
+			// // Require.js
+			// scripts_lab: {
+			// 	files: ['src/static/js/app/**/*'],
+			// 	tasks: ['requirejs'],
+			// },
 		},
 
 		nodemon: {
@@ -107,9 +107,9 @@ module.exports = function(grunt) {
 		react: {
 			files: {
 				expand: true,
-				cwd: 'src/static/js/lib',
+				cwd: 'src/static/js/app',
 				src: ['**/*.jsx'],
-				dest: 'src/static/js/lib',
+				dest: 'src/static/js/app',
 				ext: '.js'
 			}
 		},

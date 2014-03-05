@@ -48,13 +48,10 @@ define([
 				}
 			},
 			render: function () {
-				
-				var html = '<% for (var i=0; i<notifications.length; i++) { var note = notifications[i]; %><li>'+
-				'<a onClick="readNotification(\'<%= note.id %>\', \'<%= note.url %>\')" href="<%= note.url %>"> <%= note.msg %> </li> <%}%>';
-
 				var thumbnailStyle = {
 					backgroundImage: 'url('+this.props.data.thumbnailUrl+')',
 				};
+				var date = window.calcTimeFrom(this.props.data.dateSent);
 				
 				return (
 					<li className="notificationItem" onClick={this.handleClick}>
@@ -62,6 +59,7 @@ define([
 						<div className="thumbnail" style={thumbnailStyle}></div>:undefined}
 						<div class="notificationItemBody">
 							<span dangerouslySetInnerHTML={{__html: this.props.data.msgHtml}} />
+						<span><em>{date}</em></span>
 						</div>
 					</li>
 				);
