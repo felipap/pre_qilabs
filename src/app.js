@@ -19,6 +19,7 @@ var _
 // Utils
 ,	pathLib = require('path')
 ,	fsLib 	= require('fs')
+,	_ 		= require('underscore')
 // Configuration
 ,	mongoose = require('./config/mongoose.js') // Set-up mongoose
 ;
@@ -29,7 +30,7 @@ require('./config/passport.js')();
 
 /*
 ** Template engines and static files. **/
-app.engine('html', swig.renderFile)
+app.engine('html', swig.renderFile);
 app.set('view engine', 'html'); 			// make '.html' the default
 app.set('views', app.config.viewsRoot); 	// set views for error and 404 pages
 app.set('view cache', false);
@@ -144,26 +145,38 @@ app.use(expressWinston.errorLogger({
 // app.use(express.logger());
 
 app.locals({
-	// process: {},
+	poc: 'poc',
 	tags: {},
 	errors: {},
 	version_label: "alpha",
 	version_str: 'versão 0.5, alpha',
-	getPageUrl: function (name) { // (name, args... to fill pageurl if known)
+	getPageUrl: function (name, args) { // (name, args... to fill pageurl if known)
 		if (typeof app.locals.urls[name] !== 'undefined') {
 			/* Fill in arguments to url passed in arguments. */
-			var args = Array.prototype.slice.call(arguments, 1),
-				url = app.locals.urls[name],
+			var url = app.locals.urls[name],
 				regex = /:[\w_]+/g;
-			// This doesn't account for optional arguments! TODO
-			if ((url.match(regex) || []).length !== args.length)
-				throw "Wrong number of arguments to getPageUrl.";
-			return url.replace(regex, function (occ) {
-				return args.pop();
-			});
+			/* This doesn't account for optional arguments! TODO */
+			if ((url.match(regex) || []).length !== _.size(args))
+				throw "Wrong number of keys to getPageUrl.";
+
+			if (args) {
+				console.log(args)
+				var a = url.replace(regex, function (occ) {
+					var argName = occ.slice(1,occ.length);
+					if (!(argName in args))
+						throw "Invalid argument "+argName+" to url '"+url+"'' getPageUrl. ";
+					return args[occ.slice(1,occ.length)];
+				});
+				// console.log (a)
+				return a
+			} else {
+				return name;
+			}
+
 		} else {
-			// if (typeof app.locals.urls[name] === 'undefined')
-			// 	throw "Page named "+name+" was referenced but doesn't exist."
+			if (app.get('env') !== 'production') {
+				throw "Page named "+name+" was referenced but doesn't exist.";
+			}
 			return "#";
 		}
 	},

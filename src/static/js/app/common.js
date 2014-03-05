@@ -35,7 +35,7 @@ define([
 	'plugins',
 	'vendor/bootstrap/dropdown',
 	'vendor/bootstrap/tooltip',
-	'lib/components/bell',
+	'components.bell',
 	], function ($, _) {
 		
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {

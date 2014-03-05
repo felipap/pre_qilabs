@@ -78,7 +78,6 @@ module.exports = {
 						return res.render404()
 					Group.findOne {slug: req.params.slug},
 						HandleErrResult(res) (group) ->
-							console.log('group', group)
 							group.genGroupProfile HandleErrResult(res) (groupProfile) -> # groupProfile?
 								console.log('groupProfile', groupProfile)
 								res.render 'pages/lab',

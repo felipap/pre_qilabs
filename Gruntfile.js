@@ -39,28 +39,43 @@ module.exports = function(grunt) {
 				// interrupt: true,
 				atBegin: true,
 			},
-			// Beware of the infinite loop
+			// CoffeeScript
 			coffee: {
 				files: ['**/*.coffee'],
 				tasks: ['coffee'],
 				options: { spawn: true },
 			},
-			scripts_app: {
-				files: ['src/static/js/lib/app.js'],
-				tasks: ['requirejs:app'],
-			},
-			scripts_common: {
-				files: ['src/static/js/lib/common.js','src/static/js/lib/plugins.js','src/static/js/lib/timeline.js'],
-				tasks: ['requirejs:common'],
-			},
+			// React.js
 			react: {
 				files: ['src/static/js/**/*.jsx'],
 				tasks: ['react'],
 			},
+			// Less
 			css: {
 				files: ['src/static/less/**/*.less'],
 				tasks: ['less'],
 				options: { spawn: false },				
+			},
+			// Require.js
+			scripts_lab: {
+				files: ['src/static/js/lib/app/lab.js'],
+				tasks: ['requirejs:lab'],
+			},
+			scripts_panel: {
+				files: ['src/static/js/lib/app/panel.js'],
+				tasks: ['requirejs:panel'],
+			},
+			scripts_profile: {
+				files: ['src/static/js/lib/app/profile.js'],
+				tasks: ['requirejs:profile'],
+			},
+			scripts_timeline: {
+				files: ['src/static/js/lib/app/timeline.js'],
+				tasks: ['requirejs:timeline'],
+			},
+			scripts_common: {
+				files: ['src/static/js/lib/common.js','src/static/js/lib/plugins.js','src/static/js/lib/app/timeline.js'],
+				tasks: ['requirejs:common'],
 			},
 		},
 
@@ -80,32 +95,35 @@ module.exports = function(grunt) {
 				}
 			},
 		},
-
 		requirejs: {
-			app: {
-				options: {
-					logLevel: 2,
-					name: 'app',
-					baseUrl: 'src/static/js/',
-					mainConfigFile: 'src/static/js/build.js',
-					out: 'src/static/js/app.min.js',
-					generateSourceMaps: true,
-					optimize: 'uglify2',
-					preserveLicenseComments: false,
-				}
+			options: {
+				logLevel: 0,
+				generateSourceMaps: true,
+				optimize: 'none',
+				preserveLicenseComments: false,
+				mainConfigFile: 'src/static/js/config.js',
+				baseUrl: 'src/static/js',
 			},
-			common: {
+			production: {
 				options: {
-					logLevel: 2,
-					name: 'common',
-					baseUrl: 'src/static/js/',
-					mainConfigFile: 'src/static/js/build.js',
-					out: 'src/static/js/common.min.js',
-					generateSourceMaps: true,
-					optimize: 'uglify2',
-					preserveLicenseComments: false,
+					removeCombined: true,
+					modules: [
+						{name: 'app/views/panel'},
+						{name: 'app/views/timeline'},
+						{name: 'app/views/lab'},
+						{name: 'app/views/profile'},
+						// {name: 'app/views/panel'},
+						// {name: 'app/views/guide'},
+						// {name: 'app/views/mural'},
+					]
 				}
-			},
+			}
+			// common: {
+			// 	options: {
+			// 		name: 'lib/common',
+			// 		out: 'src/static/js/common.min.js',
+			// 	}
+			// },
 		},
 
 		react: {
@@ -136,6 +154,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-requirejs');
 	grunt.loadNpmTasks('grunt-nodemon');
 	grunt.loadNpmTasks('grunt-react');
+
+	// grunt.registerTask('production', 'lint requirejs:production');
+	// grunt.registerTask('development', 'lint requirejs:development');
+
 
 	// 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
 	grunt.registerTask('serve', ['nodemon']);

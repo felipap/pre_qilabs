@@ -141,13 +141,13 @@ module.exports = {
 						}, HandleErrResult(res) (doc) ->
 							doc.populate 'author', (err, doc) ->
 								res.endJson {error:false, data:doc}
-
 						}
-				':id/addUser/:userId': {
+				':labId/addUser/:userId': {
+					name: 'ApiLabAddUser'
 					get: (req, res) ->
-						return unless id = req.paramToObjectId('id')
+						return unless labId = req.paramToObjectId('labId')
 						return unless userId = req.paramToObjectId('userId')
-						Group.findOne {_id: id}, HandleErrResult(res) (group) ->
+						Group.findOne {_id: labId}, HandleErrResult(res) (group) ->
 							User.findOne {_id: userId}, HandleErrResult(res) (user) ->
 								type = Group.Membership.Types.Member
 								req.user.addUserToGroup(user, group, type,

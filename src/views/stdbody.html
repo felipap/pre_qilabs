@@ -26,6 +26,26 @@
 		{% block templates %}{% endblock %}
 		<script>_flash_msgs={{ JSON.stringify(messages) }}</script>
 </head>
-{% block body %}
-{% endblock %}
+<body>
+	{% block body %}
+	{% endblock %}
+
+	{% if requireView %}
+		{% set jsViewFile=getMediaUrl('build/app/views/'+requireView) %}
+	{% else %}
+		{% set jsViewFile=getMediaUrl('build/app/views/common') %}
+	{% endif %}
+	{% if app.env == "deveslopment" %}
+		<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+		<script>
+			require(["{{ getMediaUrl('js/config.js') }}"], function () {
+				require(['views.'{{requireView}}], function (App) {
+
+				});
+			});
+		</script>
+	{% else %}
+		<script data-main="{{ jsViewFile }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+	{% endif %}
+<body>
 <html>

@@ -1,4 +1,5 @@
 {% extends '../sidebared.html' %}
+{% set requireView="timeline" %}
 
 {% import '../macros/user.html' as userMacros %}
 
@@ -30,7 +31,7 @@
 			{% endfor %}
 		</ul>
 	</div>
-
+	
 	<div class="box tags">
 		<div class="head">
 			Grupos: {{ user.groups.length }}
@@ -41,8 +42,6 @@
 			{% endfor %}
 		</ul>
 	</div>
-
-	{% include '../layouts/footer.html' %}
 {% endblock %}
 
 {% block mainContent %}

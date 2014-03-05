@@ -194,17 +194,18 @@ module.exports = {
             }));
           }
         },
-        ':id/addUser/:userId': {
+        ':labId/addUser/:userId': {
+          name: 'ApiLabAddUser',
           get: function(req, res) {
-            var id, userId;
-            if (!(id = req.paramToObjectId('id'))) {
+            var labId, userId;
+            if (!(labId = req.paramToObjectId('labId'))) {
               return;
             }
             if (!(userId = req.paramToObjectId('userId'))) {
               return;
             }
             return Group.findOne({
-              _id: id
+              _id: labId
             }, HandleErrResult(res)(function(group) {
               return User.findOne({
                 _id: userId

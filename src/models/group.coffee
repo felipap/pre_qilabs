@@ -38,7 +38,7 @@ GroupSchema = new mongoose.Schema {
 		description: 	String
 	}
 	permissions: 		{ type: String, default: Permissions.Private }
-}, { id: true } # default
+}
 
 MembershipSchema = new mongoose.Schema {
 	joinDate: 	Date,
@@ -87,7 +87,7 @@ GroupSchema.methods.genGroupProfile = (cb) ->
 		.exec (err, docs) =>
 			# Filter for non-member-less memberships, just in case
 			docs = _.filter(docs, (i) -> i.member)
-			cb(err, _.extend({}, @toObject(), {
+			cb(err, _.extend({}, @toJSON(), {
 				memberships: {
 					count: docs.length
 					docs: docs

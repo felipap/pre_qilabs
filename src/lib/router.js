@@ -18,6 +18,11 @@
 ** });
 */
 
+function absPathToUrlName (url) {
+	// var parts = url.match(/($(\/)?|\/)[\w_]+/gi)
+	return url.split('/').join('_');
+}
+
 module.exports = function Router (app) {
 
 	var joinPath = require('path').join.bind(require('path'));
@@ -55,7 +60,7 @@ module.exports = function Router (app) {
 			// Join with parent's path to get abspath.
 			var abspath = joinPath(parentPath, relpath);
 			// Name is self-assigned or path with dashed instead of slashes.
-			var name = childs[relpath].name || abspath.replace('/','_');
+			var name = childs[relpath].name || absPathToUrlName(abspath);
 			// Permissions are parent's + child's ones 
 			var newPermissions = permissions.concat(childs[relpath].permissions || []);
 			routePath(abspath, name, childs[relpath], newPermissions);

@@ -58,7 +58,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			url: function () {
 				return this.get('apiPath');
 			},
-		})
+		});
 
 		var PostItem = GenericPostItem.extend({
 			initialize: function () {
@@ -120,7 +120,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		/************************************************************************************/
 		/************************************************************************************/
 
-		var CommentView = React.createClass({displayName: 'CommentView',
+		var CommentView = React.createClass({
 			render: function () {
 				var comment = this.props.model.attributes;
 				var self = this;
@@ -136,32 +136,32 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				};
 
 				return (
-					React.DOM.div( {className:"commentWrapper", id:comment.id}, 
-						React.DOM.div( {className:"mediaUser"}, 
-							React.DOM.a( {href:comment.author.profileUrl}, 
-								React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle, title:comment.author.username}
-								)
-							)
-						),
-						React.DOM.div( {className:(window.user && comment.author.id===window.user.id)?'msgBody editable':'msgBody'}, 
-							comment.data.unescapedBody,
-							(window.user && window.user.id === comment.author.id)?
-								React.DOM.div( {className:"optionBtns"}, 
-									React.DOM.button( {'data-action':"remove-post", onClick:onClickTrash, 'data-toggle':"tooltip", title:"Remover Comentário", 'data-placement':"bottom"}, 
-										React.DOM.i( {className:"icon-trash"})
-									)
-								)
-							:undefined
-						),
-						React.DOM.a( {href:comment.path, 'data-time-count':1*new Date(comment.dateCreated)}, 
-							window.calcTimeFrom(comment.dateCreated)
-						)
-					)
+					<div className="commentWrapper" id={comment.id}>
+						<div className="mediaUser">
+							<a href={comment.author.profileUrl}>
+								<div className="mediaUserAvatar" style={mediaUserAvatarStyle} title={comment.author.username}>
+								</div>
+							</a>
+						</div>
+						<div className={(window.user && comment.author.id===window.user.id)?'msgBody editable':'msgBody'}>
+							{comment.data.unescapedBody}
+							{(window.user && window.user.id === comment.author.id)?
+								<div className="optionBtns">
+									<button data-action="remove-post" onClick={onClickTrash} data-toggle="tooltip" title="Remover Comentário" data-placement="bottom">
+										<i className="icon-trash"></i>
+									</button>
+								</div>
+							:undefined}
+						</div>
+						<a href={comment.path} data-time-count={1*new Date(comment.dateCreated)}>
+							{window.calcTimeFrom(comment.dateCreated)}
+						</a>
+					</div>
 				);
 			},
 		});
 
-		var CommentInputView = React.createClass({displayName: 'CommentInputView',
+		var CommentInputView = React.createClass({
 
 			handleSubmit: function (evt) {
 				evt.preventDefault();
@@ -183,30 +183,30 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 			render: function () {
 				if (!window.user)
-					return (React.DOM.div(null));
+					return (<div></div>);
 
 				var mediaUserAvatarStyle = {
 					background: 'url('+window.user.avatarUrl+')',
 				};
 
 				return (
-					React.DOM.div( {className:"commentInputSection"}, 
-						React.DOM.form( {className:"formPostComment", onSubmit:this.handleSubmit}, 
-							React.DOM.div( {className:"mediaUser"}, 
-								React.DOM.a( {href:window.user.profileUrl}, 
-									React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle}
-									)
-								)
-							),
-							React.DOM.input( {className:"commentInput", ref:"input", type:"text", placeholder:"Comente esse post..."} ),
-							React.DOM.button( {'data-action':"send-comment"}, "Enviar")
-						)
-					)
+					<div className="commentInputSection">
+						<form className="formPostComment" onSubmit={this.handleSubmit}>
+							<div className="mediaUser">
+								<a href={window.user.profileUrl}>
+									<div className="mediaUserAvatar" style={mediaUserAvatarStyle}>
+									</div>
+								</a>
+							</div>
+							<input className="commentInput" ref="input" type="text" placeholder="Comente esse post..." />
+							<button data-action="send-comment">Enviar</button>
+						</form>
+					</div>
 				);
 			},
 		})
 
-		var CommentListView = React.createClass({displayName: 'CommentListView',
+		var CommentListView = React.createClass({
 			componentWillMount: function () {
 				var update = function () {
 					this.forceUpdate(function(){});
@@ -217,14 +217,14 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			render: function () {
 				var commentNodes = this.props.collection.map(function (comment) {
 					return (
-						CommentView( {model:comment} ) 
+						<CommentView model={comment} /> 
 					);
 				});
 
 				return (
-					React.DOM.div( {className:"commentListWrapper"}, 
-						commentNodes
-					)
+					<div className="commentListWrapper">
+						{commentNodes}
+					</div>
 				);
 			},
 		});
@@ -232,7 +232,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		/************************************************************************************/
 		/************************************************************************************/
 
-		var PlainPostView = React.createClass({displayName: 'PlainPostView',
+		var PlainPostView = React.createClass({
 
 			render: function () {
 				var post = this.props.model.attributes;
@@ -260,63 +260,63 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				var rawMarkup = post.data.unescapedBody;
 
 				return (
-					React.DOM.div( {className:"opMessage"}, 
-						React.DOM.div( {className:"msgHeader"}, 
-							React.DOM.div( {className:"mediaUser"}, 
-								React.DOM.a( {href:post.author.profileUrl}, 
-									React.DOM.div( {className:"mediaUserAvatar", style:mediaUserStyle})
-								)
-							),
-							React.DOM.div( {className:"headline"}, 
-								React.DOM.a( {href:post.author.profileUrl, className:"authorUsername"}, 
-									post.author.name
-								), 
-								"disse:"
-							),
+					<div className="opMessage">
+						<div className="msgHeader">
+							<div className="mediaUser">
+								<a href={post.author.profileUrl}>
+									<div className="mediaUserAvatar" style={mediaUserStyle}></div>
+								</a>
+							</div>
+							<div className="headline">
+								<a href={post.author.profileUrl} className="authorUsername">
+									{post.author.name}
+								</a> 
+								disse:
+							</div>
 							
-							React.DOM.a( {href:post.path}, 
-								React.DOM.time( {'data-time-count':1*new Date(post.dateCreated)}, 
-									window.calcTimeFrom(post.dateCreated)
-								)
-							),
+							<a href={post.path}>
+								<time data-time-count={1*new Date(post.dateCreated)}>
+									{window.calcTimeFrom(post.dateCreated)}
+								</time>
+							</a>
 
-							(window.user && post.author.id === window.user.id)?
-								React.DOM.div( {className:"optionBtns"}, 
-									React.DOM.button(	{onClick:onClickTrash,
-										'data-action':"remove-post", 'data-toggle':"tooltip", 'data-placement':"bottom",
-										title:"Remover Post"}, 
-										React.DOM.i( {className:"icon-trash"})
-									),
-									React.DOM.button(	{onClick:onClickEdit,
-										'data-action':"edit-post", 'data-toggle':"tooltip", 'data-placement':"bottom",
-										title:"Editar Post"}, 
-										React.DOM.i( {className:"icon-edit"})
-									)
-								)
-								:undefined
-						),
-						React.DOM.div( {className:"msgBody"}, 
-							React.DOM.div( {className:"arrow"}),
-							React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
-						)
-					)
+							{(window.user && post.author.id === window.user.id)?
+								<div className="optionBtns">
+									<button	onClick={onClickTrash}
+										data-action="remove-post" data-toggle="tooltip" data-placement="bottom"
+										title="Remover Post">
+										<i className="icon-trash"></i>
+									</button>
+									<button	onClick={onClickEdit}
+										data-action="edit-post" data-toggle="tooltip" data-placement="bottom"
+										title="Editar Post">
+										<i className="icon-edit"></i>
+									</button>
+								</div>
+								:undefined}
+						</div>
+						<div className="msgBody">
+							<div className="arrow"></div>
+							<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+						</div>
+					</div>
 				);
 			}
 		});
 
-		var PostWrapperView = React.createClass({displayName: 'PostWrapperView',
+		var PostWrapperView = React.createClass({
 			render: function () {
 				return (
-					React.DOM.div( {className:"postWrapper"}, 
-						PlainPostView( {model:this.props.model} ),
-						CommentListView( {collection:this.props.model.commentList} ),
-						CommentInputView( {model:this.props.model} )
-					)
+					<div className="postWrapper">
+						<PlainPostView model={this.props.model} />
+						<CommentListView collection={this.props.model.commentList} />
+						<CommentInputView model={this.props.model} />
+					</div>
 				);
 			}
 		});
 
-		var PostForm = React.createClass({displayName: 'PostForm',
+		var PostForm = React.createClass({
 			handleSubmit: function (evt) {
 				var body = this.refs.postBody.getDOMNode().value.trim();
 				if (!body) {
@@ -334,16 +334,16 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 			render: function () {
 				return (
-					React.DOM.form( {className:"postInputForm", onSubmit:this.handleSubmit}, 
-						React.DOM.h2(null, "Enviar uma msg para o seus seguidores"),
-						React.DOM.textarea( {placeholder:"Escreva uma mensagem aqui", ref:"postBody"}),
-						React.DOM.button( {'data-action':"send-post", type:"submit"}, "Enviar Post")
-					)
+					<form className="postInputForm" onSubmit={this.handleSubmit}>
+						<h2>Enviar uma msg para o seus seguidores</h2>
+						<textarea placeholder="Escreva uma mensagem aqui" ref="postBody"></textarea>
+						<button data-action="send-post" type="submit">Enviar Post</button>
+					</form>
 				);
 			}
 		});
 
-		var PostListView = React.createClass({displayName: 'PostListView',
+		var PostListView = React.createClass({
 			getInitialState: function () {
 				return {};
 			},
@@ -357,14 +357,14 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			render: function () {
 				var postNodes = this.props.collection.map(function (post) {
 					return (
-						PostWrapperView( {model:post} )
+						<PostWrapperView model={post} />
 					);
 				});
 				return (
-					React.DOM.div( {className:"postListWrapper"}, 
-						PostForm( {postUrl:this.props.collection.url}),
-						postNodes
-					)
+					<div className="postListWrapper">
+						<PostForm postUrl={this.props.collection.url}/>
+						{postNodes}
+					</div>
 				);
 			},
 		});

@@ -1,4 +1,5 @@
 {% extends '../sidebared.html' %}
+{% set requireView="lab" %}
 
 {% import '../macros/user.html' as userMacros %}
 	
@@ -22,6 +23,8 @@
 			{% for membership in group.memberships.docs %}
 				<li>{{ userMacros.renderUser(membership.member) }}</li>
 			{% endfor %}
+			<input type="text" id="trust" />
+			<button onClick="onAddBtn" id="istilldidnt" data-ajax-post-href="{{ getPageUrl('ApiLabAddUser',{labId:group._id,userId:user.id}) }}" data-redirect-href="/">Add myself</button>
 		</ul>
 	</div>
 

@@ -40,8 +40,6 @@ GroupSchema = new mongoose.Schema({
     type: String,
     "default": Permissions.Private
   }
-}, {
-  id: true
 });
 
 MembershipSchema = new mongoose.Schema({
@@ -105,7 +103,7 @@ GroupSchema.methods.genGroupProfile = function(cb) {
       docs = _.filter(docs, function(i) {
         return i.member;
       });
-      return cb(err, _.extend({}, _this.toObject(), {
+      return cb(err, _.extend({}, _this.toJSON(), {
         memberships: {
           count: docs.length,
           docs: docs
