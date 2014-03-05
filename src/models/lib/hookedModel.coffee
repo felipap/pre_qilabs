@@ -8,6 +8,7 @@ mongoose = require 'mongoose'
 
 circumventionists = [
 	# 'update',
+	# 'remove',
 	'findByIdAndUpdate',
 	'findOneAndUpdate',
 	'findOneAndRemove',
@@ -15,8 +16,18 @@ circumventionists = [
 ]
 
 module.exports = (name, schema, collection, skipInit) ->
+
+	# Basic 
 	for smname in circumventionists
 		schema.statics[smname] = () ->
-			throw "Invalid static method call on hookedModel. Use document methods."
+			throw "Invalid static method call on hookedModel #{name}. Use document methods."
+
+	# Check if there are any hooks to remove. If so, remove .remove too. ... lol
+	hookedActions = (a[1][0] for a in schema.callQueue)
+	if 'remove' in hookedActions
+		schema.statics.remove = () ->
+			throw "The .remove static method has been disabled for the hookedModel
+			'#{name}' because it has middlewares tied to the 'remove' action. Remove
+			each document separately so that these middlewares can trigger"
 
 	mongoose.model name, schema, collection, skipInit

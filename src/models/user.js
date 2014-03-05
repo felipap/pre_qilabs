@@ -67,17 +67,67 @@ UserSchema.virtual('profileUrl').get(function() {
 });
 
 UserSchema.pre('remove', function(next) {
-  return Follow.remove({
-    followee: this
+  return Follow.find().or([
+    {
+      followee: this
+    }, {
+      follower: this
+    }
+  ]).exec((function(_this) {
+    return function(err, docs) {
+      var follow, _i, _len;
+      if (docs) {
+        for (_i = 0, _len = docs.length; _i < _len; _i++) {
+          follow = docs[_i];
+          follow.remove(function() {});
+        }
+      }
+      console.log("Removing " + err + " " + docs.length + " follows of " + _this.username);
+      return next();
+    };
+  })(this));
+});
+
+UserSchema.pre('remove', function(next) {
+  return Post.find({
+    author: this
   }, (function(_this) {
     return function(err, docs) {
-      console.log("removing " + err + " " + docs + " followers of " + _this.username);
-      return Group.Membership.remove({
-        member: _this
-      }, function(err, docs) {
-        console.log("removing " + err + " " + docs + " memberships of " + _this.username);
-        return next();
-      });
+      var doc, _i, _len;
+      if (docs) {
+        for (_i = 0, _len = docs.length; _i < _len; _i++) {
+          doc = docs[_i];
+          doc.remove(function() {});
+        }
+      }
+      console.log("Removing " + err + " " + docs.length + " posts of " + _this.username);
+      return next();
+    };
+  })(this));
+});
+
+UserSchema.pre('remove', function(next) {
+  return Notification.find().or([
+    {
+      agent: this
+    }, {
+      recipient: this
+    }
+  ]).remove((function(_this) {
+    return function(err, docs) {
+      console.log("Removing " + err + " " + docs + " notifications related to " + _this.username);
+      return next();
+    };
+  })(this));
+});
+
+UserSchema.pre('remove', function(next) {
+  return Group.Membership.remove({
+    member: this
+  }, (function(_this) {
+    return function(err, count) {
+      console.log("Removing " + err + " " + count + " memberships of " + _this.username);
+      return next();
     };
   })(this));
 });
@@ -216,7 +266,9 @@ fillInPostComments = function(docs, cb) {
         return done();
       });
     }, function(err) {
-      console.log('err', err);
+      if (err) {
+        console.log('Error in fillinpostcomments', err);
+      }
       return cb(err, results);
     });
   } else {

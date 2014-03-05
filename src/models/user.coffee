@@ -67,12 +67,37 @@ UserSchema.virtual('profileUrl').get ->
 ################################################################################
 ## Middlewares #################################################################
 
+# Must bind to user removal the deletion of:
+# - Follows (@=followee or @=follower)
+# - Notification (@=agent or @=recipient)
+# - Group.Membership (@=member)
+# - Post (@=author)
+
 UserSchema.pre 'remove', (next) ->
-	Follow.remove {followee:@}, (err, docs) =>
-		console.log "removing #{err} #{docs} followers of #{@.username}"
-		Group.Membership.remove {member:@}, (err, docs)=>
-			console.log "removing #{err} #{docs} memberships of #{@.username}"
-			next()
+	Follow.find().or([{followee:@}, {follower:@}]).exec (err, docs) =>
+		if docs
+			for follow in docs
+				follow.remove(() ->)
+		console.log "Removing #{err} #{docs.length} follows of #{@username}"
+		next()
+
+UserSchema.pre 'remove', (next) ->
+	Post.find {author:@}, (err, docs) =>
+		if docs
+			for doc in docs
+				doc.remove(() ->)
+		console.log "Removing #{err} #{docs.length} posts of #{@username}"
+		next()
+
+UserSchema.pre 'remove', (next) ->
+	Notification.find().or([{agent:@},{recipient:@}]).remove (err, docs) =>
+		console.log "Removing #{err} #{docs} notifications related to #{@username}"
+		next()
+
+UserSchema.pre 'remove', (next) ->
+	Group.Membership.remove {member:@}, (err, count) =>
+		console.log "Removing #{err} #{count} memberships of #{@username}"
+		next()
 
 ################################################################################
 ## related to Following ########################################################
@@ -148,7 +173,7 @@ fillInPostComments = (docs, cb) ->
 							results.push(_.extend({}, post, { comments:comments }))
 						done()
 			, (err) ->
-				console.log 'err', err
+				if err then console.log 'Error in fillinpostcomments', err
 				cb(err, results)
 	else
 		console.log 'second option'

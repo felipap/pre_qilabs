@@ -40,7 +40,7 @@ module.exports = {
           req.user.save();
           return req.user.genProfile(function(err, profile) {
             if (err) {
-              console.log('err:', err);
+              console.log('Serving /. err:', err);
             }
             return res.render('pages/timeline', {
               user_profile: profile
@@ -73,8 +73,6 @@ module.exports = {
     methods: {
       get: [
         required.login, function(req, res) {
-          console.log(req.app.routes);
-          console.log(req.app.locals.urls);
           return res.render('pages/panel', {});
         }
       ]

@@ -34,7 +34,7 @@ module.exports = {
 					req.user.lastUpdate = new Date()
 					req.user.save()
 					req.user.genProfile (err, profile) ->
-						if err then console.log 'err:', err
+						if err then console.log 'Serving /. err:', err
 						res.render 'pages/timeline',
 							user_profile: profile
 				else
@@ -61,8 +61,6 @@ module.exports = {
 		name: 'panel'
 		methods: {
 			get: [required.login, (req, res) ->
-				console.log req.app.routes
-				console.log req.app.locals.urls
 				res.render 'pages/panel', {}
 			]
 		}
