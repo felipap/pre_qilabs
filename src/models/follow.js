@@ -35,7 +35,9 @@ FollowSchema.pre('remove', function(next) {
 
 FollowSchema.pre('remove', function(next) {
   return Notification.remove({
-    recipient: this
+    type: Notification.Types.NewFollower,
+    agent: this.follower,
+    recipient: this.followee
   }, function(err, result) {
     console.log("Removing " + err + " " + result + " notifications on unfollow.");
     return next();

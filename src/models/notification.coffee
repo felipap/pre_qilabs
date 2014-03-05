@@ -13,7 +13,6 @@ hookedModel = require './lib/hookedModel'
 Types =
 	PostComment: 'PostComment'
 	PostAnswer: 'PostAnswer'
-	PostAnswer: 'PostAnswer'
 	NewFollower: 'NewFollower'
 	UpvotedAnswer: 'UpvotedAnswer'
 	SharedPost: 'SharedPost'
@@ -132,10 +131,18 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 			return (followerObj, followeeObj, cb) ->
 				# assert
 				cb ?= ->
-				notifyUser followeeObj, followerObj, {
-					type: Types.NewFollower
-					url: followerObj.profileUrl
-				}, cb
+				# Find and delete older notifications from the same follower.
+				Notification.findOne {
+					type:Types.NewFollower,
+					agent:followerObj,
+					recipient:followeeObj
+					}, (err, doc) ->
+						if doc #
+							doc.remove(()->)
+						notifyUser followeeObj, followerObj, {
+							type: Types.NewFollower
+							url: followerObj.profileUrl
+						}, cb						
 
 
 NotificationSchema.statics.Types = Types

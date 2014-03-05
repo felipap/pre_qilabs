@@ -13,7 +13,6 @@ hookedModel = require('./lib/hookedModel');
 Types = {
   PostComment: 'PostComment',
   PostAnswer: 'PostAnswer',
-  PostAnswer: 'PostAnswer',
   NewFollower: 'NewFollower',
   UpvotedAnswer: 'UpvotedAnswer',
   SharedPost: 'SharedPost'
@@ -180,10 +179,19 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
         if (cb == null) {
           cb = function() {};
         }
-        return notifyUser(followeeObj, followerObj, {
+        return Notification.findOne({
           type: Types.NewFollower,
-          url: followerObj.profileUrl
-        }, cb);
+          agent: followerObj,
+          recipient: followeeObj
+        }, function(err, doc) {
+          if (doc) {
+            doc.remove(function() {});
+          }
+          return notifyUser(followeeObj, followerObj, {
+            type: Types.NewFollower,
+            url: followerObj.profileUrl
+          }, cb);
+        });
       };
   }
 };

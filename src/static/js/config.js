@@ -17,7 +17,7 @@ requirejs.config({
 		// Components
 		'components.bell':		'app/components/bell',
 		'components.timeline':	'app/components/timeline',
-		// Vendor
+		// Third-party
 		'jquery':			'vendor/jquery-2.0.3.min',
 		'bootstrap':		'vendor/bootstrap-3.0.0.min',
 		'underscore':		'vendor/underscore-1.5.1.min',

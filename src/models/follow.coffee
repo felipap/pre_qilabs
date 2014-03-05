@@ -27,8 +27,13 @@ FollowSchema.pre 'remove', (next) ->
 		console.log "Removing #{err} #{result} inboxes on unfollow."
 		next()
 
+# Remove follow notifications on unfollow
 FollowSchema.pre 'remove', (next) ->
-	Notification.remove { recipient:@ }, (err, result) ->
+	Notification.remove {
+		type:Notification.Types.NewFollower,
+		agent:@follower,
+		recipient:@followee,
+	}, (err, result) ->
 		console.log "Removing #{err} #{result} notifications on unfollow."
 		next()
 
