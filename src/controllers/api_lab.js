@@ -91,14 +91,14 @@ module.exports = {
             return res.endJson({
               data: docs,
               error: false,
-              page: minDate
+              minDate: minDate
             });
           }));
         }));
       },
       post: function(req, res) {
         var groupId;
-        if (!(groupId = req.paramToObjectId('id'))) {
+        if (!(groupId = req.paramToObjectId('labId'))) {
           return;
         }
         return req.user.createPost({

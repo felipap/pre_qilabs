@@ -4,7 +4,7 @@ module.exports = function(err, req, res, next) {
 		user: req.user,
 	});
 	
-	if (req.app.get('env') === 'development') {
+	if (false && req.app.get('env') === 'development') {
 
 	} else {
 		if (err.status) res.statusCode = err.status;

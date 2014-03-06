@@ -76,12 +76,12 @@ module.exports = {
 								res.endJson {
 									data: docs
 									error:false
-									page: minDate
+									minDate: minDate
 								}
 							)
 					)
 			post: (req, res) ->
-				return unless groupId = req.paramToObjectId('id')
+				return unless groupId = req.paramToObjectId('labId')
 				req.user.createPost {
 					groupId: groupId
 					content:
