@@ -395,6 +395,5 @@ module.exports = {
 							res.redirect('/')
 				},
 			}
-
 	}
 }

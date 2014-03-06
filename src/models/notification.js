@@ -127,7 +127,7 @@ notifyUser = function(recpObj, agentObj, data, cb) {
     agentName: agentObj.name,
     recipient: recpObj,
     type: data.type,
-    url: data.url0,
+    url: data.url,
     thumbnailUrl: data.thumbnailUrl || agentObj.avatarUrl
   });
   if (data.resources) {

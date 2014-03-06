@@ -86,7 +86,7 @@ notifyUser = (recpObj, agentObj, data, cb) ->
 		agentName: agentObj.name
 		recipient: recpObj
 		type: data.type
-		url: data.url0
+		url: data.url
 		thumbnailUrl: data.thumbnailUrl or agentObj.avatarUrl
 	}
 	if data.resources then note.resources = data.resources 

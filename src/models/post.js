@@ -17,7 +17,8 @@ Notification = mongoose.model('Notification');
 Types = {
   Comment: 'Comment',
   Answer: 'Answer',
-  PlainPost: 'PlainPost'
+  PlainPost: 'PlainPost',
+  VideoPost: 'VideoPost'
 };
 
 PostSchema = new mongoose.Schema({

@@ -17,6 +17,8 @@ Types =
 	Comment: 'Comment' 			
 	Answer: 'Answer' 		
 	PlainPost: 'PlainPost'	# Default
+	VideoPost: 'VideoPost'
+	# Notification: 'Notification'
 
 ################################################################################
 ## Schema ######################################################################

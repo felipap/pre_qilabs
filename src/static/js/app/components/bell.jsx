@@ -96,7 +96,12 @@ define([
 					}
 				});
 
+				this.getNotifications();
+			},
+			getNotifications: function () {
+				console.log('getting them');
 				// Get notification data.
+				var self = this;
 				$.ajax({
 					url: '/api/me/notifications',
 					type: 'get',
@@ -111,6 +116,8 @@ define([
 						container: 'body',
 						trigger: 'manual'
 					});
+				}).always(function () {
+					setTimeout(self.getNotifications, 10000);
 				});
 			},
 			onClickBell: function () {
