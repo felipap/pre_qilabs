@@ -4,6 +4,9 @@
 # by @f03lipe
 
 mongoose = require 'mongoose'
+assert = require 'assert'
+_ = require 'underscore'
+async = require 'async'
 
 hookedModel = require './lib/hookedModel'
 
@@ -79,8 +82,47 @@ PostSchema.methods.getComments = (cb) ->
 			console.log('comment docs:', docs)
 			cb(err, docs)
 
+
+PostSchema.methods.stuff = (cb) ->
+	@.populate 'author', (err, doc) ->
+		if err
+			cb(err)
+		else if doc
+			Post.fillInComments(doc, cb)
+		else
+			cb(false,null)
+
+
 ################################################################################
 ## Statics #####################################################################
+
+PostSchema.statics.fillInComments = (docs, cb) ->
+	assert docs, "Can't fill comments of invalid post(s) document." 
+
+	if docs instanceof Array
+		results = []
+		async.forEach _.filter(docs, (i) -> i), (post, done) ->
+				Post.find {parentPost: post, type:Post.Types.Comment}
+					.populate 'author'
+					.exec (err, comments) ->
+						if post.toObject
+							results.push(_.extend({}, post.toObject(), { comments:comments }))
+						else
+							results.push(_.extend({}, post, { comments:comments }))
+						done()
+			, (err) ->
+				if err then console.log 'Error in fillinpostcomments', err
+				cb(err, results)
+	else
+		console.log 'second option'
+		post = docs
+		Post.find {parentPost: post, type:Post.Types.Comment}
+		.populate 'author'
+		.exec (err, comments) ->
+			if post.toObject
+				cb(err, _.extend({}, post.toObject(), { comments:comments }))
+			else
+				cb(err, _.extend({}, post, { comments:comments }))
 
 PostSchema.statics.Types = Types
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate')

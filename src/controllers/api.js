@@ -66,28 +66,84 @@ module.exports = {
       permissions: [required.isMe],
       methods: {
         get: function(req, res) {
-          return User.find({}, function(err, users) {
+          console.log(req.query);
+          if (req.query.user != null) {
+            return User.find({}, function(err, users) {
+              return res.endJson({
+                users: users
+              });
+            });
+          } else if (req.query.inbox != null) {
+            return Inbox.find({}, function(err, inboxs) {
+              return res.endJson({
+                inboxs: inboxs
+              });
+            });
+          } else if (req.query.group != null) {
+            return Group.find({}, function(err, groups) {
+              return res.endJson({
+                group: groups
+              });
+            });
+          } else if (req.query.notification != null) {
+            return Notification.find({}, function(err, notifics) {
+              return res.endJson({
+                notifics: notifics
+              });
+            });
+          } else if (req.query.membership != null) {
+            return Group.Membership.find({}, function(err, membership) {
+              return res.endJson({
+                membership: membership
+              });
+            });
+          } else if (req.query.post != null) {
             return Post.find({}, function(err, posts) {
-              return Inbox.find({}, function(err, inboxs) {
-                return Subscriber.find({}, function(err, subscribers) {
-                  return Follow.find({}, function(err, follows) {
-                    return Notification.find({}, function(err, notifics) {
-                      return Group.find({}, function(err, groups) {
-                        return Group.Membership.find({}, function(err, membership) {
-                          var obj;
-                          obj = {
-                            ip: req.ip,
-                            group: groups,
-                            inboxs: inboxs,
-                            notifics: notifics,
-                            membership: membership,
-                            session: req.session,
-                            users: users,
-                            posts: posts,
-                            follows: follows,
-                            subscribers: subscribers
-                          };
-                          return res.endJson(obj);
+              return res.endJson({
+                posts: posts
+              });
+            });
+          } else if (req.query.follow != null) {
+            return Follow.find({}, function(err, follows) {
+              return res.endJson({
+                follows: follows
+              });
+            });
+          } else if (req.query.subscriber != null) {
+            return Subscriber.find({}, function(err, subscribers) {
+              return res.endJson({
+                subscribers: subscribers
+              });
+            });
+          } else if (req.query.session != null) {
+            return res.endJson({
+              ip: req.ip,
+              session: req.session
+            });
+          } else {
+            return User.find({}, function(err, users) {
+              return Post.find({}, function(err, posts) {
+                return Inbox.find({}, function(err, inboxs) {
+                  return Subscriber.find({}, function(err, subscribers) {
+                    return Follow.find({}, function(err, follows) {
+                      return Notification.find({}, function(err, notifics) {
+                        return Group.find({}, function(err, groups) {
+                          return Group.Membership.find({}, function(err, membership) {
+                            var obj;
+                            obj = {
+                              ip: req.ip,
+                              group: groups,
+                              inboxs: inboxs,
+                              notifics: notifics,
+                              membership: membership,
+                              session: req.session,
+                              users: users,
+                              posts: posts,
+                              follows: follows,
+                              subscribers: subscribers
+                            };
+                            return res.endJson(obj);
+                          });
                         });
                       });
                     });
@@ -95,7 +151,7 @@ module.exports = {
                 });
               });
             });
-          });
+          }
         }
       }
     },
@@ -407,7 +463,7 @@ module.exports = {
             }));
           },
           children: {
-            ':id': {
+            ':id/access': {
               get: function(req, res) {
                 var nId;
                 if (!(nId = req.paramToObjectId('id'))) {
@@ -417,7 +473,26 @@ module.exports = {
                   recipient: req.user.id,
                   _id: nId
                 }, {
+                  accessed: true,
                   seen: true
+                }, {
+                  multi: false
+                }, function(err) {
+                  return res.endJson({
+                    error: !!err
+                  });
+                });
+              }
+            },
+            'seen': {
+              post: function(req, res) {
+                res.end();
+                return Notification.update({
+                  recipient: req.user.id
+                }, {
+                  seen: true
+                }, {
+                  multi: true
                 }, function(err) {
                   return res.endJson({
                     error: !!err

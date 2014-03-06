@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, User, UserSchema, assert, async, fillInPostComments, hookedModel, mongoose, _;
+var Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, User, UserSchema, assert, async, hookedModel, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -242,55 +242,6 @@ HandleLimit = function(func) {
   };
 };
 
-fillInPostComments = function(docs, cb) {
-  var post, results;
-  assert(docs, "Can't fill comments of invalid post(s) document.");
-  if (docs instanceof Array) {
-    results = [];
-    return async.forEach(_.filter(docs, function(i) {
-      return i;
-    }), function(post, done) {
-      return Post.find({
-        parentPost: post,
-        type: Post.Types.Comment
-      }).populate('author').exec(function(err, comments) {
-        if (post.toObject) {
-          results.push(_.extend({}, post.toObject(), {
-            comments: comments
-          }));
-        } else {
-          results.push(_.extend({}, post, {
-            comments: comments
-          }));
-        }
-        return done();
-      });
-    }, function(err) {
-      if (err) {
-        console.log('Error in fillinpostcomments', err);
-      }
-      return cb(err, results);
-    });
-  } else {
-    console.log('second option');
-    post = docs;
-    return Post.find({
-      parentPost: post,
-      type: Post.Types.Comment
-    }).populate('author').exec(function(err, comments) {
-      if (post.toObject) {
-        return cb(err, _.extend({}, post.toObject(), {
-          comments: comments
-        }));
-      } else {
-        return cb(err, _.extend({}, post, {
-          comments: comments
-        }));
-      }
-    });
-  }
-};
-
 
 /*
  * Behold.
@@ -356,7 +307,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
             if (err) {
               return cb(err);
             }
-            return fillInPostComments(docs, cb);
+            return Post.fillInComments(docs, cb);
           };
         })(this));
       };
@@ -402,7 +353,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     if (err) {
       return cb(err);
     }
-    return fillInPostComments(docs, cb);
+    return Post.fillInComments(docs, cb);
   });
 };
 
@@ -417,7 +368,7 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
       $lt: opts.maxDate
     }
   }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
-    return fillInPostComments(docs, cb);
+    return Post.fillInComments(docs, cb);
   });
 };
 
@@ -561,18 +512,6 @@ UserSchema.methods.createPost = function(data, cb) {
       });
     };
   })(this));
-};
-
-UserSchema.methods.populatePost = function(args, cb) {
-  return Post.findOne(args).populate('author').populate('group').exec(function(err, doc) {
-    if (err) {
-      return cb(err);
-    } else if (doc) {
-      return fillInPostComments(doc, cb);
-    } else {
-      return cb(false, null);
-    }
-  });
 };
 
 

@@ -158,34 +158,6 @@ HandleLimit = (func) ->
 		docs = _.filter(_docs, (e) -> e)
 		func(err,docs)
 
-fillInPostComments = (docs, cb) ->
-	assert docs, "Can't fill comments of invalid post(s) document." 
-
-	if docs instanceof Array
-		results = []
-		async.forEach _.filter(docs, (i) -> i), (post, done) ->
-				Post.find {parentPost: post, type:Post.Types.Comment}
-					.populate 'author'
-					.exec (err, comments) ->
-						if post.toObject
-							results.push(_.extend({}, post.toObject(), { comments:comments }))
-						else
-							results.push(_.extend({}, post, { comments:comments }))
-						done()
-			, (err) ->
-				if err then console.log 'Error in fillinpostcomments', err
-				cb(err, results)
-	else
-		console.log 'second option'
-		post = docs
-		Post.find {parentPost: post, type:Post.Types.Comment}
-		.populate 'author'
-		.exec (err, comments) ->
-			if post.toObject
-				cb(err, _.extend({}, post.toObject(), { comments:comments }))
-			else
-				cb(err, _.extend({}, post, { comments:comments }))
-
 ###
 # Behold.
 ###
@@ -235,7 +207,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			User.populate all, {path: 'author'}, (err, docs) =>
 				return cb(err) if err
 				# Fill comments in all docs.
-				fillInPostComments(docs, cb)
+				Post.fillInComments(docs, cb)
 
 	# Get inboxed posts.
 	Inbox
@@ -275,7 +247,7 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.skip opts.skip or 0
 		.exec (err, docs) ->
 			return cb(err) if err
-			fillInPostComments(docs, cb)
+			Post.fillInComments(docs, cb)
 
 ################################################################################
 ## related to Groups ###########################################################
@@ -291,7 +263,7 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 		.skip opts.skip or 0
 		.populate 'author'
 		.exec (err, docs) ->
-			fillInPostComments(docs, cb)
+			Post.fillInComments(docs, cb)
 
 UserSchema.methods.createGroup = (data, cb) ->
 	group = new Group {
@@ -390,19 +362,6 @@ UserSchema.methods.createPost = (data, cb) ->
 				type: Inbox.Types.Post,
 				author: @id
 			}, () -> )
-
-UserSchema.methods.populatePost = (args, cb) ->
-	Post
-		.findOne args
-		.populate 'author'
-		.populate 'group'
-		.exec (err, doc) ->
-			if err
-				cb(err)
-			else if doc
-				fillInPostComments(doc, cb)
-			else
-				cb(false,null)
 
 ################################################################################
 ## related to the generation of profiles #######################################

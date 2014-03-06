@@ -108,16 +108,18 @@ module.exports = {
 		methods: {
 			get: (req, res) ->
 				return unless postId = req.paramToObjectId('postId')
-				Post.find { _id:postId }, HandleErrResult(res) (post) ->
+				Post.findOne { _id:postId }, HandleErrResult(res)((post) ->
 					if post.parentObj
 						# Our post is actually a comment/answer, so redirect user to the
 						# comment actual path (which is its parent's).
+						console.log 'redirecting', post.path
 						res.redirect(post.path)
 					else
-						req.user.populatePost post, (err, stuffedPost) ->
+						post.stuff (err, stuffedPost) ->
 							res.render 'pages/post.html', {
 								post: stuffedPost,
 							}
+					)
 		}
 		children: {
 			'/edit':

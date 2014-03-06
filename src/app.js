@@ -74,7 +74,6 @@ app.use(passport.session());
 /** END of a SHOULD_NOT_TOUCH_ZONE ------------------------------------------**/
 /**--------------------------------------------------------------------------**/
 
-
 app.use(require('./config/middlewares/flash_messages.js'));
 app.use(require('./config/middlewares/local_user.js'));
 

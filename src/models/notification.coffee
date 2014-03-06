@@ -34,10 +34,11 @@ NotificationSchema = new mongoose.Schema {
 	agent:		 	{ type:mongoose.Schema.ObjectId, ref:'User', required:true }
 	agentName:	 	{ type:String }
 	recipient:	 	{ type:mongoose.Schema.ObjectId, ref:'User', required:true, index:1 }
+	dateSent:		{ type:Date, index:1 }
 	type:			{ type:String, required:true }
 	seen:			{ type:Boolean, default:false }
+	accessed:		{ type:Boolean, default:false }
 	url:			{ type:String }
-	dateSent:		{ type:Date, index:true }
 	
 	group:			{ type:mongoose.Schema.ObjectId, ref:'Group', required:false }
 	resources:		[{ type: mongoose.Schema.ObjectId }] # used to delete when resources go down

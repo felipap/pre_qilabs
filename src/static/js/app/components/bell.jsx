@@ -4,8 +4,8 @@ define([
 	'jquery',
 	'underscore',
 	'react',
-	'bootstrap.popover',
 	'bootstrap.tooltip',
+	'bootstrap.popover',
 	], function ($, _, React) {
 
 	$.extend($.fn.popover.Constructor.DEFAULTS, {react: false});
@@ -30,7 +30,6 @@ define([
 
 	if (window.user) {
 
-
 		var Notification = React.createClass({
 			handleClick: function () {
 				var self = this;
@@ -38,7 +37,7 @@ define([
 					window.location.href = self.props.data.url;	
 				} else {
 					$.ajax({
-						url: '/api/me/notifications/'+this.props.data.id,
+						url: '/api/me/notifications/'+this.props.data.id+'/access',
 						data: {see: true},
 						type: 'get',
 						datatType: 'json',
@@ -54,12 +53,13 @@ define([
 				var date = window.calcTimeFrom(this.props.data.dateSent);
 				
 				return (
-					<li className="notificationItem" onClick={this.handleClick}>
+					<li className="notificationItem" data-seen={this.props.data.seen} data-accessed={this.props.data.accessed}
+					onClick={this.handleClick}>
 						{this.props.data.thumbnailUrl?
 						<div className="thumbnail" style={thumbnailStyle}></div>:undefined}
-						<div class="notificationItemBody">
+						<div className="notificationItemBody">
 							<span dangerouslySetInnerHTML={{__html: this.props.data.msgHtml}} />
-							<span> <em>{date}</em></span>
+						<span><em>{date}</em></span>
 						</div>
 					</li>
 				);
@@ -83,8 +83,11 @@ define([
 
 		var Bell = React.createClass({
 			componentWillMount: function () {
+				this.seen = false;
+
 				var self = this;
 
+				// Hide popover when mouse-click happens outside it.
 				$(document).mouseup(function (e) {
 					var container = $(self.refs.button.getDOMNode());
 					if (!container.is(e.target) && container.has(e.target).length === 0
@@ -93,12 +96,12 @@ define([
 					}
 				});
 
+				// Get notification data.
 				$.ajax({
 					url: '/api/me/notifications',
 					type: 'get',
 					dataType: 'json',
 				}).done(function (response) {
-					
 					var notSeen = _.filter(response.data, function(i){return !i.seen;});
 					self.refs.nCount.getDOMNode().innerHTML = notSeen.length || '';
 					$(self.refs.button.getDOMNode()).popover({
@@ -111,7 +114,19 @@ define([
 				});
 			},
 			onClickBell: function () {
-				$(this.refs.button.getDOMNode()).popover('toggle');
+				var button = $(this.refs.button.getDOMNode());
+				if (!this.seen) {
+					this.seen = true;
+					$.post('/api/me/notifications/seen');
+					this.refs.nCount.getDOMNode().innerHTML = '';
+				}
+
+				if (button.data('bs.popover') &&
+					button.data('bs.popover').tip().hasClass('in')) { // already visible
+					button.popover('hide');
+				} else {
+					button.popover('show');
+				}
 			},
 			render: function () {
 				return (

@@ -43,6 +43,10 @@ NotificationSchema = new mongoose.Schema({
     required: true,
     index: 1
   },
+  dateSent: {
+    type: Date,
+    index: 1
+  },
   type: {
     type: String,
     required: true
@@ -51,12 +55,12 @@ NotificationSchema = new mongoose.Schema({
     type: Boolean,
     "default": false
   },
+  accessed: {
+    type: Boolean,
+    "default": false
+  },
   url: {
     type: String
-  },
-  dateSent: {
-    type: Date,
-    index: true
   },
   group: {
     type: mongoose.Schema.ObjectId,

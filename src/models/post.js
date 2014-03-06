@@ -1,6 +1,12 @@
-var Inbox, Post, PostSchema, Types, hookedModel, mongoose, urlify;
+var Inbox, Post, PostSchema, Types, assert, async, hookedModel, mongoose, urlify, _;
 
 mongoose = require('mongoose');
+
+assert = require('assert');
+
+_ = require('underscore');
+
+async = require('async');
 
 hookedModel = require('./lib/hookedModel');
 
@@ -110,6 +116,67 @@ PostSchema.methods.getComments = function(cb) {
     console.log('comment docs:', docs);
     return cb(err, docs);
   });
+};
+
+PostSchema.methods.stuff = function(cb) {
+  return this.populate('author', function(err, doc) {
+    if (err) {
+      return cb(err);
+    } else if (doc) {
+      return Post.fillInComments(doc, cb);
+    } else {
+      return cb(false, null);
+    }
+  });
+};
+
+PostSchema.statics.fillInComments = function(docs, cb) {
+  var post, results;
+  assert(docs, "Can't fill comments of invalid post(s) document.");
+  if (docs instanceof Array) {
+    results = [];
+    return async.forEach(_.filter(docs, function(i) {
+      return i;
+    }), function(post, done) {
+      return Post.find({
+        parentPost: post,
+        type: Post.Types.Comment
+      }).populate('author').exec(function(err, comments) {
+        if (post.toObject) {
+          results.push(_.extend({}, post.toObject(), {
+            comments: comments
+          }));
+        } else {
+          results.push(_.extend({}, post, {
+            comments: comments
+          }));
+        }
+        return done();
+      });
+    }, function(err) {
+      if (err) {
+        console.log('Error in fillinpostcomments', err);
+      }
+      return cb(err, results);
+    });
+  } else {
+    console.log('second option');
+    post = docs;
+    return Post.find({
+      parentPost: post,
+      type: Post.Types.Comment
+    }).populate('author').exec(function(err, comments) {
+      if (post.toObject) {
+        return cb(err, _.extend({}, post.toObject(), {
+          comments: comments
+        }));
+      } else {
+        return cb(err, _.extend({}, post, {
+          comments: comments
+        }));
+      }
+    });
+  }
 };
 
 PostSchema.statics.Types = Types;

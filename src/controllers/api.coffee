@@ -55,26 +55,54 @@ module.exports = {
 			methods: {
 				get: (req, res) ->
 					# This be ugly but me don't care.
-					User.find {}, (err, users) ->
+					console.log req.query
+					if req.query.user?
+						User.find {}, (err, users) ->
+							res.endJson { users:users }
+					else if req.query.inbox?
+						Inbox.find {}, (err, inboxs) ->
+							res.endJson { inboxs:inboxs } 
+					else if req.query.group?
+						Group.find {}, (err, groups) ->
+							res.endJson { group:groups } 
+					else if req.query.notification?
+						Notification.find {}, (err, notifics) ->
+							res.endJson { notifics:notifics } 
+					else if req.query.membership?
+						Group.Membership.find {}, (err, membership) ->
+							res.endJson { membership:membership } 
+					else if req.query.post?
 						Post.find {}, (err, posts) ->
-							Inbox.find {}, (err, inboxs) ->
-								Subscriber.find {}, (err, subscribers) ->
-									Follow.find {}, (err, follows) ->
-										Notification.find {}, (err, notifics) ->
-											Group.find {}, (err, groups) ->
-												Group.Membership.find {}, (err, membership) ->
-													obj =
-														ip: req.ip
-														group: groups
-														inboxs: inboxs
-														notifics: notifics
-														membership: membership
-														session: req.session
-														users: users
-														posts: posts
-														follows: follows
-														subscribers: subscribers
-													res.endJson obj
+							res.endJson { posts:posts } 
+					else if req.query.follow?
+						Follow.find {}, (err, follows) ->
+							res.endJson { follows:follows } 
+					else if req.query.subscriber?
+						Subscriber.find {}, (err, subscribers) ->
+							res.endJson { subscribers:subscribers }
+					else if req.query.session?
+						res.endJson { ip: req.ip, session: req.session } 
+					else
+							User.find {}, (err, users) ->
+								Post.find {}, (err, posts) ->
+									Inbox.find {}, (err, inboxs) ->
+										Subscriber.find {}, (err, subscribers) ->
+											Follow.find {}, (err, follows) ->
+												Notification.find {}, (err, notifics) ->
+													Group.find {}, (err, groups) ->
+														Group.Membership.find {}, (err, membership) ->
+															obj =
+																ip: req.ip
+																group: groups
+																inboxs: inboxs
+																notifics: notifics
+																membership: membership
+																session: req.session
+																users: users
+																posts: posts
+																follows: follows
+																subscribers: subscribers
+															res.endJson obj
 			}
 		'testers':
 			permissions: [required.logout]
@@ -112,14 +140,14 @@ module.exports = {
 					get: (req, res) ->
 						return unless id = req.paramToObjectId('id')
 						Group.findOne {_id: id},
-							HandleErrResult(res) (group) ->
+							HandleErrResult(res)((group) ->
 
 								opts = {limit:10}
 								if parseInt(req.query.page)
 									opts.maxDate = parseInt(req.query.maxDate)
 
 								req.user.getLabPosts opts, group,
-									HandleErrResult(res) (docs) ->
+									HandleErrResult(res)((docs) ->
 
 										if docs.length is opts.limit
 											minDate = docs[docs.length-1].dateCreated.valueOf()
@@ -131,6 +159,8 @@ module.exports = {
 											error:false
 											page: minDate
 										}
+									)
+							)
 					post: (req, res) ->
 						return unless groupId = req.paramToObjectId('id')
 						req.user.createPost {
@@ -138,17 +168,18 @@ module.exports = {
 							content:
 								title: 'My conquest!'+Math.floor(Math.random()*100)
 								body: req.body.content.body
-						}, HandleErrResult(res) (doc) ->
+						}, HandleErrResult(res)((doc) ->
 							doc.populate 'author', (err, doc) ->
 								res.endJson {error:false, data:doc}
+							)
 						}
 				':labId/addUser/:userId': {
 					name: 'ApiLabAddUser'
 					post: (req, res) ->
 						return unless labId = req.paramToObjectId('labId')
 						return unless userId = req.paramToObjectId('userId')
-						Group.findOne {_id: labId}, HandleErrResult(res) (group) ->
-							User.findOne {_id: userId}, HandleErrResult(res) (user) ->
+						Group.findOne {_id: labId}, HandleErrResult(res)((group) ->
+							User.findOne {_id: userId}, HandleErrResult(res)((user) ->
 								type = Group.Membership.Types.Member
 								req.user.addUserToGroup(user, group, type,
 									(err, membership) ->
@@ -158,6 +189,8 @@ module.exports = {
 											membership: membership
 										}
 								)
+							)
+						)
 				}
 		'posts':
 			permissions: [required.login],
@@ -172,18 +205,20 @@ module.exports = {
 									# If needed to fill response with comments:
 									Post.find {parentPost: doc}
 										.populate 'author'
-										.exec HandleErrResult(res) (docs) ->
+										.exec HandleErrResult(res)((docs) ->
 											res.endJson _.extend({}, doc.toObject(), { comments: docs })
+										)
 						post: (req, res) ->
 								return if not postId = req.paramToObjectId('id')
 								# For security, handle each option
 						delete: (req, res) ->
 								return if not postId = req.paramToObjectId('id')
 								Post.findOne {_id: postId, author: req.user},
-									HandleErrResult(res) (doc) ->
+									HandleErrResult(res)((doc) ->
 										Inbox.remove { resource: doc }, (err, num) ->
 										doc.remove()
 										res.endJson doc
+									)
 					},
 					children: {
 						'/comments': {
@@ -192,13 +227,15 @@ module.exports = {
 									return if not postId = req.paramToObjectId('id')
 									Post.findById postId
 										.populate 'author'
-										.exec HandleErrResult(res) (post) ->
-											post.getComments HandleErrResult(res) (comments) ->
+										.exec HandleErrResult(res)((post) ->
+											post.getComments HandleErrResult(res)((comments) ->
 												res.endJson {
 													data: comments
 													error: false
 													page: -1 # sending all
 												}
+											)
+										)
 								post: 
 									(req, res) ->
 										return if not postId = req.paramToObjectId('id')
@@ -208,15 +245,17 @@ module.exports = {
 											}
 										}
 										Post.findById(postId,
-											HandleErrResult(res) (parentPost) =>
+											HandleErrResult(res)((parentPost) =>
 												req.user.commentToPost(parentPost,
 													data,
-													HandleErrResult(res) (doc) ->
+													HandleErrResult(res)((doc) ->
 														doc.populate('author',
 															HandleErrResult(res) (doc) ->
 																res.endJson(error:false, data:doc)
 														)
+													)
 												)
+											)
 										)
 							}
 						},
@@ -233,12 +272,13 @@ module.exports = {
 								# req.logMe("fetched board of user #{req.params.userId}")
 								User.getPostsFromUser userId,
 									{limit:3, skip:5*parseInt(req.query.page)},
-									HandleErrResult(res) (docs) ->
-											res.endJson {
-												data: docs 
-												error: false
-												page: parseInt(req.query.page)
-											}
+									HandleErrResult(res)((docs) ->
+										res.endJson {
+											data: docs 
+											error: false
+											page: parseInt(req.query.page)
+										}
+									)
 						],
 					}
 				},
@@ -247,11 +287,12 @@ module.exports = {
 						post: [required.login,
 							(req, res) ->
 								return unless userId = req.paramToObjectId('userId')
-								User.findOne {_id: userId}, HandleErrResult(res) (user) ->
+								User.findOne {_id: userId}, HandleErrResult(res)((user) ->
 									req.user.dofollowUser user, (err, done) ->
 										res.endJson {
 											error: !!err,
 										}
+								)
 						],
 					}
 				},
@@ -287,13 +328,21 @@ module.exports = {
 									data: notes
 									error: false
 								}
-							,
 					children: {
-						':id':
+						':id/access':
 							get: (req, res) ->
 								return unless nId = req.paramToObjectId('id')
 								Notification.update { recipient: req.user.id, _id: nId },
-									{ seen: true }, (err) ->
+									{ accessed: true, seen: true }, { multi:false }, (err) ->
+										res.endJson {
+											error: !!err
+										}
+						'seen':
+							post: (req, res) ->
+								# console.log('ok')
+								res.end()
+								Notification.update { recipient: req.user.id },
+									{ seen:true }, { multi:true }, (err) ->
 										res.endJson {
 											error: !!err
 										}
@@ -306,9 +355,10 @@ module.exports = {
 							content:
 								title: 'My conquest!'+Math.floor(Math.random()*100)
 								body: req.body.content.body
-						}, HandleErrResult(res) (doc) ->
+						}, HandleErrResult(res)((doc) ->
 							doc.populate 'author', (err, doc) ->
 								res.endJson {error:false, data:doc}
+						)
 
 					get: (req, res) ->
 							opts = { limit:10 }
@@ -317,8 +367,7 @@ module.exports = {
 								opts.maxDate = parseInt(req.query.maxDate)
 
 							req.user.getTimeline opts,
-								HandleErrResult(res) (docs) ->
-							
+								HandleErrResult(res)((docs) ->
 									if docs.length is opts.limit
 										minDate = docs[docs.length-1].dateCreated.valueOf()
 									else
@@ -329,6 +378,7 @@ module.exports = {
 										data: docs
 										error: false
 									}
+								)
 				},
 				'leave': {
 					name: 'user_quit'

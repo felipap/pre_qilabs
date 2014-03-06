@@ -202,9 +202,17 @@ nav.bar {
 
 		padding: 7px 10px;
 		font-size: 12px;
+	
+		&[data-seen=false][data-accessed=false] {
+			background: #EFEFFF;
+		}
+
+		&[data-seen=true] {
+			background: #F9FAFF;
+		}
 
 		&:hover {
-			background: #EFEFEF;
+			background: #F0F0FF !important;
 		}
 
 		&:not(:last-child) {

@@ -1,6 +1,6 @@
 
 requirejs.config({
-	dir: 	'../build',
+	dir: 	'../build-js',
 	baseUrl:'/static/js', // Override this inside grunt. Must be '.' for r.js.
 
 	paths: {
@@ -32,7 +32,7 @@ requirejs.config({
 	shim: {
 		'bootstrap.tooltip': { deps: ['jquery'] },
 		'bootstrap.dropdown': { deps: ['jquery'] },
-		'bootstrap.popover': { deps: ['jquery'] },
+		'bootstrap.popover': { deps: ['jquery', 'bootstrap.tooltip'] },
 		'underscore': { exports: '_' },
 		'bootstrap' : { deps: ['jquery'] },
 		'backbone'	: { exports: 'Backbone', deps: ['underscore', 'jquery']},

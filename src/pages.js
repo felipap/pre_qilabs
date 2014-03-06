@@ -140,13 +140,14 @@ module.exports = {
         if (!(postId = req.paramToObjectId('postId'))) {
           return;
         }
-        return Post.find({
+        return Post.findOne({
           _id: postId
         }, HandleErrResult(res)(function(post) {
           if (post.parentObj) {
+            console.log('redirecting', post.path);
             return res.redirect(post.path);
           } else {
-            return req.user.populatePost(post, function(err, stuffedPost) {
+            return post.stuff(function(err, stuffedPost) {
               return res.render('pages/post.html', {
                 post: stuffedPost
               });
