@@ -140,7 +140,6 @@ app.use(expressWinston.errorLogger({
 }));
 /**--------------------------------------------------------------------------**/
 
-
 // app.use(express.logger());
 
 app.locals({
@@ -208,12 +207,7 @@ app.locals({
 	},
 });
 
-if (app.get('env') === 'production') {
-	app.use(require('./config/middlewares/handle_500.js'));
-} else {
-	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-	app.locals.pretty = false;
-}
+app.use(require('./config/middlewares/handle_500.js'));
 
 // Pass pages through router.js
 require('./lib/router.js')(app)(require('./pages.js'));

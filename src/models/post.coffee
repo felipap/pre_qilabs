@@ -14,11 +14,13 @@ Inbox = mongoose.model 'Inbox'
 Notification = mongoose.model 'Notification'
 
 Types = 
-	Comment: 'Comment' 			
-	Answer: 'Answer' 		
-	PlainPost: 'PlainPost'	# Default
+	Comment: 'Comment'
+	Answer: 'Answer'
+	PlainPost: 'PlainPost'
+
 	VideoPost: 'VideoPost'
-	# Notification: 'Notification'
+	Notification: 'Notification'
+	# QuizPost: 'QuizPost'
 
 ################################################################################
 ## Schema ######################################################################

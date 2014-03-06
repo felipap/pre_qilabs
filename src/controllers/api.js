@@ -9,7 +9,7 @@ GUIDELINES for development:
 - Never pass request parameters or data to schema methods, always validate
   before. Use res.paramToObjectId to get create ids:
   `(req, res) -> return unless userId = res.paramToObjectId('userId'); ...`
-- Prefer no not handle creation/modification of docmuents. Leave those to
+- Prefer no not handle creation/modification of documents. Leave those to
   schemas statics and methods.
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
@@ -179,107 +179,7 @@ module.exports = {
         }
       }
     },
-    'labs': {
-      permissions: [required.login],
-      post: function(req, res) {
-        return req.user.createGroup({
-          profile: {
-            name: req.body.name
-          }
-        }, function(err, doc) {
-          if (err) {
-            req.flash('err', err);
-            if (err) {
-              res.redirect('/labs/create');
-            }
-            return;
-          }
-          return res.redirect('/labs/' + doc.id);
-        });
-      },
-      children: {
-        ':id/posts': {
-          get: function(req, res) {
-            var id;
-            if (!(id = req.paramToObjectId('id'))) {
-              return;
-            }
-            return Group.findOne({
-              _id: id
-            }, HandleErrResult(res)(function(group) {
-              var opts;
-              opts = {
-                limit: 10
-              };
-              if (parseInt(req.query.page)) {
-                opts.maxDate = parseInt(req.query.maxDate);
-              }
-              return req.user.getLabPosts(opts, group, HandleErrResult(res)(function(docs) {
-                var minDate;
-                if (docs.length === opts.limit) {
-                  minDate = docs[docs.length - 1].dateCreated.valueOf();
-                } else {
-                  minDate = -1;
-                }
-                return res.endJson({
-                  data: docs,
-                  error: false,
-                  page: minDate
-                });
-              }));
-            }));
-          },
-          post: function(req, res) {
-            var groupId;
-            if (!(groupId = req.paramToObjectId('id'))) {
-              return;
-            }
-            return req.user.createPost({
-              groupId: groupId,
-              content: {
-                title: 'My conquest!' + Math.floor(Math.random() * 100),
-                body: req.body.content.body
-              }
-            }, HandleErrResult(res)(function(doc) {
-              return doc.populate('author', function(err, doc) {
-                return res.endJson({
-                  error: false,
-                  data: doc
-                });
-              });
-            }));
-          }
-        },
-        ':labId/addUser/:userId': {
-          name: 'ApiLabAddUser',
-          post: function(req, res) {
-            var labId, userId;
-            if (!(labId = req.paramToObjectId('labId'))) {
-              return;
-            }
-            if (!(userId = req.paramToObjectId('userId'))) {
-              return;
-            }
-            return Group.findOne({
-              _id: labId
-            }, HandleErrResult(res)(function(group) {
-              return User.findOne({
-                _id: userId
-              }, HandleErrResult(res)(function(user) {
-                var type;
-                type = Group.Membership.Types.Member;
-                return req.user.addUserToGroup(user, group, type, function(err, membership) {
-                  return res.endJson({
-                    error: !!err,
-                    membership: membership
-                  });
-                });
-              }));
-            }));
-          }
-        }
-      }
-    },
+    'labs': require('./api_lab'),
     'posts': {
       permissions: [required.login],
       children: {

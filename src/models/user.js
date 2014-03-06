@@ -248,7 +248,7 @@ HandleLimit = function(func) {
  */
 
 UserSchema.methods.getTimeline = function(_opts, cb) {
-  var addNonInboxedPosts, opts;
+  var mergeNonInboxedPosts, opts;
   opts = _.extend({
     limit: 10
   }, _opts);
@@ -260,7 +260,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
   	 * Merge inboxes posts with those from followed users but that preceed "followship".
   	 * Limit search to those posts made after @minDate.
    */
-  addNonInboxedPosts = (function(_this) {
+  mergeNonInboxedPosts = (function(_this) {
     return function(minDate, ips) {
       var onGetNonInboxedPosts;
       Follow.find({
@@ -339,7 +339,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
       } else {
         oldestPostDate = new Date(0);
       }
-      return addNonInboxedPosts(oldestPostDate, posts);
+      return mergeNonInboxedPosts(oldestPostDate, posts);
     };
   })(this)));
 };

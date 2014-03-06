@@ -31,7 +31,7 @@ MembershipTypes =
 GroupSchema = new mongoose.Schema {
 	slug: 				String
 	creationDate: 		Date
-	affiliation: 		'' 			# institution, project, NGOs etc (/????)
+	# affiliation: 		'' 			# institution, project, NGOs etc (/????)
 	type: 				String
 	profile: {
 		name:			{ type: String, required: true }

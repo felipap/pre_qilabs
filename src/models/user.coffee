@@ -174,7 +174,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 	# Merge inboxes posts with those from followed users but that preceed "followship".
 	# Limit search to those posts made after @minDate.
 	###
-	addNonInboxedPosts = (minDate, ips) => # ips => Inboxed PostS
+	mergeNonInboxedPosts = (minDate, ips) => # ips => Inboxed PostS
 		# Get all "followships" created after @minDate.
 		Follow
 			.find { follower:@, dateBegin:{$gt:minDate} }
@@ -233,7 +233,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
 				oldestPostDate = new Date(0)
 			# try
-			addNonInboxedPosts(oldestPostDate, posts)
+			mergeNonInboxedPosts(oldestPostDate, posts)
 			# catch e
 			# 	cb(e)
 		)

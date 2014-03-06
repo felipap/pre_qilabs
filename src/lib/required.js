@@ -34,5 +34,32 @@ module.exports = {
 		} else {
 			next();
 		}
+	},
+	labs: {
+		userCanAccess: function (labIdParam) {
+			return function (req, res, next) {
+				if (!req.user) {
+					// return res.status(403).redirect('/');
+					return next({error:true, name:"NotLogged"});
+				}
+				var mongoose = require('mongoose');
+				var User = mongoose.model('User'),
+					Group = mongoose.model('Group');
+				// Get labId object.
+				try {
+					var labId =
+						new mongoose.Types.ObjectId.fromString(req.params[labIdParam]);
+				} catch (e) {
+					return next({error:true, name:"InvalidId"});
+				}
+				Group.Membership.findOne({ member:req.user, group:labId },
+					function (err, doc) {
+						if (err || !doc) {
+							return next({error:true, name:"Forbidden"});
+						}
+						next();
+					});
+			}
+		},
 	}
 }

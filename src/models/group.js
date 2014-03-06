@@ -27,7 +27,6 @@ MembershipTypes = {
 GroupSchema = new mongoose.Schema({
   slug: String,
   creationDate: Date,
-  affiliation: '',
   type: String,
   profile: {
     name: {

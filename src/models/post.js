@@ -18,7 +18,8 @@ Types = {
   Comment: 'Comment',
   Answer: 'Answer',
   PlainPost: 'PlainPost',
-  VideoPost: 'VideoPost'
+  VideoPost: 'VideoPost',
+  Notification: 'Notification'
 };
 
 PostSchema = new mongoose.Schema({

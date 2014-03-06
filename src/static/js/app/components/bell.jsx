@@ -84,7 +84,6 @@ define([
 		var Bell = React.createClass({
 			componentWillMount: function () {
 				this.seen = false;
-
 				var self = this;
 
 				// Hide popover when mouse-click happens outside it.
@@ -99,7 +98,6 @@ define([
 				this.getNotifications();
 			},
 			getNotifications: function () {
-				console.log('getting them');
 				// Get notification data.
 				var self = this;
 				$.ajax({
@@ -109,6 +107,9 @@ define([
 				}).done(function (response) {
 					var notSeen = _.filter(response.data, function(i){return !i.seen;});
 					self.refs.nCount.getDOMNode().innerHTML = notSeen.length || '';
+					if (notSeen.length) {
+						this.seen = false;
+					}
 					$(self.refs.button.getDOMNode()).popover({
 						react: true,
 						content: <NotificationList data={response.data}/>,
@@ -117,7 +118,7 @@ define([
 						trigger: 'manual'
 					});
 				}).always(function () {
-					setTimeout(self.getNotifications, 10000);
+					setTimeout(self.getNotifications, 5*60*1000);
 				});
 			},
 			onClickBell: function () {

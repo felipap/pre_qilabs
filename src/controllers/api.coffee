@@ -13,14 +13,11 @@ GUIDELINES for development:
 - Never pass request parameters or data to schema methods, always validate
   before. Use res.paramToObjectId to get create ids:
   `(req, res) -> return unless userId = res.paramToObjectId('userId'); ...`
-- Prefer no not handle creation/modification of docmuents. Leave those to
+- Prefer no not handle creation/modification of documents. Leave those to
   schemas statics and methods.
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
 ###
-
-################################################################################
-################################################################################
 
 mongoose = require 'mongoose'
 _ = require 'underscore'
@@ -121,77 +118,7 @@ module.exports = {
 						else
 							req.flash('info', 'Sucesso! Entraremos em contato. \o/ &nbsp;')
 						res.redirect('/')
-		'labs':
-			permissions: [required.login],
-			post: (req, res) ->
-				req.user.createGroup {
-						profile: {
-							name: req.body.name
-						}
-					}, (err, doc) ->
-						if err
-							req.flash('err', err)
-							res.redirect('/labs/create') if err
-							return
-						res.redirect('/labs/'+doc.id)
-
-			children:
-				':id/posts': {
-					get: (req, res) ->
-						return unless id = req.paramToObjectId('id')
-						Group.findOne {_id: id},
-							HandleErrResult(res)((group) ->
-
-								opts = {limit:10}
-								if parseInt(req.query.page)
-									opts.maxDate = parseInt(req.query.maxDate)
-
-								req.user.getLabPosts opts, group,
-									HandleErrResult(res)((docs) ->
-
-										if docs.length is opts.limit
-											minDate = docs[docs.length-1].dateCreated.valueOf()
-										else
-											minDate = -1
-								
-										res.endJson {
-											data: docs
-											error:false
-											page: minDate
-										}
-									)
-							)
-					post: (req, res) ->
-						return unless groupId = req.paramToObjectId('id')
-						req.user.createPost {
-							groupId: groupId
-							content:
-								title: 'My conquest!'+Math.floor(Math.random()*100)
-								body: req.body.content.body
-						}, HandleErrResult(res)((doc) ->
-							doc.populate 'author', (err, doc) ->
-								res.endJson {error:false, data:doc}
-							)
-						}
-				':labId/addUser/:userId': {
-					name: 'ApiLabAddUser'
-					post: (req, res) ->
-						return unless labId = req.paramToObjectId('labId')
-						return unless userId = req.paramToObjectId('userId')
-						Group.findOne {_id: labId}, HandleErrResult(res)((group) ->
-							User.findOne {_id: userId}, HandleErrResult(res)((user) ->
-								type = Group.Membership.Types.Member
-								req.user.addUserToGroup(user, group, type,
-									(err, membership) ->
-										# console.log('what?', err, membership)
-										res.endJson {
-											error: !!err,
-											membership: membership
-										}
-								)
-							)
-						)
-				}
+		'labs': require './api_lab'
 		'posts':
 			permissions: [required.login],
 			children: {
@@ -313,21 +240,22 @@ module.exports = {
 		'me':
 			permissions: [required.login],
 			post: (req, res) ->
-					if 'off' is req.query.notifiable
-						req.user.notifiable = off
-						req.user.save()
-					else if 'on' in req.query.notifiable
-						req.user.notifiable = on
-						req.user.save()
-					res.end()
+				if 'off' is req.query.notifiable
+					req.user.notifiable = off
+					req.user.save()
+				else if 'on' in req.query.notifiable
+					req.user.notifiable = on
+					req.user.save()
+				res.end()
 			children: {
 				'notifications': {
 					get: (req, res) ->
-						req.user.getNotifications HandleErrResult(req) (notes) ->
-								res.endJson {
-									data: notes
-									error: false
-								}
+						req.user.getNotifications HandleErrResult(req)((notes) ->
+							res.endJson {
+								data: notes
+								error: false
+							}
+						)
 					children: {
 						':id/access':
 							get: (req, res) ->
@@ -379,7 +307,7 @@ module.exports = {
 										error: false
 									}
 								)
-				},
+				}
 				'leave': {
 					name: 'user_quit'
 					post: (req, res) -> # Deletes user account.
@@ -387,13 +315,13 @@ module.exports = {
 								if err then throw err
 								req.logout()
 								res.redirect('/')
-				},
+				}
 				'logout': {
 					name: 'logout',
 					post: (req, res) ->
 							req.logout()
 							res.redirect('/')
-				},
+				}
 			}
 	}
 }

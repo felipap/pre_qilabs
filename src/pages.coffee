@@ -66,13 +66,14 @@ module.exports = {
 		}
 
 	'/labs':
-		permissions: [required.login]
+		permissions: [required.login],
 		children: {
 			'create':
 				methods:
 					get: (req, res) ->
 						res.render 'pages/lab_create'
 			':slug': {
+				permissions: [required.labs.userCanAccess('slug')],
 				get: (req, res) ->
 					unless req.params.slug
 						return res.render404()
