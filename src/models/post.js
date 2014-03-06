@@ -1,4 +1,4 @@
-var Inbox, Post, PostSchema, Types, assert, async, hookedModel, mongoose, urlify, _;
+var Inbox, Notification, Post, PostSchema, Types, assert, async, hookedModel, mongoose, urlify, _;
 
 mongoose = require('mongoose');
 
@@ -11,6 +11,8 @@ async = require('async');
 hookedModel = require('./lib/hookedModel');
 
 Inbox = mongoose.model('Inbox');
+
+Notification = mongoose.model('Notification');
 
 Types = {
   Comment: 'Comment',
@@ -102,6 +104,20 @@ PostSchema.pre('remove', function(next) {
   });
 });
 
+PostSchema.pre('remove', function(next) {
+  next();
+  return Notification.find({
+    resources: this
+  }, (function(_this) {
+    return function(err, docs) {
+      console.log("Removing " + err + " " + docs.length + " notifications of post " + _this.id);
+      return docs.forEach(function(doc) {
+        return doc.remove();
+      });
+    };
+  })(this));
+});
+
 PostSchema.pre('save', function(next) {
   if (this.dateCreated == null) {
     this.dateCreated = new Date;
@@ -113,7 +129,6 @@ PostSchema.methods.getComments = function(cb) {
   return Post.find({
     parentPost: this.id
   }).populate('author').exec(function(err, docs) {
-    console.log('comment docs:', docs);
     return cb(err, docs);
   });
 };

@@ -11,6 +11,7 @@ async = require 'async'
 hookedModel = require './lib/hookedModel'
 
 Inbox = mongoose.model 'Inbox'
+Notification = mongoose.model 'Notification'
 
 Types = 
 	Comment: 'Comment' 			
@@ -68,6 +69,13 @@ PostSchema.pre 'remove', (next) ->
 		docs.forEach (doc) ->
 			doc.remove()
 
+PostSchema.pre 'remove', (next) ->
+	next()
+	Notification.find { resources: @ }, (err, docs) =>
+		console.log "Removing #{err} #{docs.length} notifications of post #{@id}"
+		docs.forEach (doc) ->
+			doc.remove()
+
 PostSchema.pre 'save', (next) ->
 	@dateCreated ?= new Date
 	next()
@@ -79,7 +87,6 @@ PostSchema.methods.getComments = (cb) ->
 	Post.find { parentPost: @id }
 		.populate 'author'
 		.exec (err, docs) ->
-			console.log('comment docs:', docs)
 			cb(err, docs)
 
 

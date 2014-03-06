@@ -178,7 +178,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 					console.log('response', response);
 					self.props.model.commentList.add(new CommentItem(response.data));
 				});
-				console.log('ooo')
 			},
 
 			render: function () {

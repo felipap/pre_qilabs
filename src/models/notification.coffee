@@ -77,36 +77,66 @@ NotificationSchema.pre 'save', (next) ->
 
 # User = mongoose.model 'User'
 
-AssertArgs = (constraints) ->
-	return (func) ->
-		return () =>
-			for c, i in constraints
-				c
-			return func.apply(this, arguments)
+assertArgs = (allAssertions..., args) ->
+	assertParam = (el, assertions) ->
+		assertIsModel = (expected, value) ->
+			# Try to turn expected value into model.
+			if expected.schema and expected.schema instanceof mongoose.Schema 
+				# Expect a model
+				model = expected
+			else if typeof expected is 'string'
+				# Expect a string of the model's name
+				model = mongoose.model(expected)
+			else
+				return "Invalid expected value for assertion of type 'ismodel': #{expected}"
+			# Do it.
+			if value instanceof model
+				return false
+			return "Argument '#{value}'' doesn't match Assert {ismodel:#{expected}}"
+		assertContains = (expected, value) ->
+			if expected instanceof Array
+				keys = expected
+			else if typeof expected is 'string'
+				keys = [expected]
+			else
+				return "Invalid expected value for assertion of type 'contains': #{expected}"
+			for key in keys
+				unless key of value
+					return "Argument '#{value}' doesn't match Assert {contains:#{expected}}" 
+			return false
 
-notifyUser =
-	AssertArgs({ismodel:'User'},{ismodel:'User'},{has:['url','type']}) \
-		(recpObj, agentObj, data, cb) ->
-			User = mongoose.model 'User'
+		for type, ans of assertions
+			switch type
+				when 'ismodel' then err = assertIsModel(ans, el)
+				when 'contains' then err = assertContains(ans, el)
+				else
+					return "Invalid assertion of type #{type}"
+			if err then return err
+		return null
+	
+	callback = args[args.length-1]
+	for paramAssertions, index in allAssertions
+		err = assertParam(args[index], paramAssertions)
+		if err
+			console.warn "AssertLib error on index #{index}:", err
+			return callback({error:true,msg:err})
 
-			# Assert arguments.
-			assert recpObj instanceof User and agentObj instanceof User,
-				"Invalid arguments. recpObj and agentObj must be instances of the User Schema."
-			assert data.type,
-				"Invalid arguments. data.type and data.url must be provided."
-			assert data.type and data.url,
-				"Invalid arguments. data.type and data.url must be provided."
+notifyUser = (recpObj, agentObj, data, cb) ->
+	assertArgs({ismodel:'User'},{ismodel:'User'},{contains:['url','type']}, arguments)
+	
+	User = mongoose.model 'User'
 
-			note = new Notification {
-				agent: agentObj
-				agentName: agentObj.name
-				recipient: recpObj
-				type: data.type
-				url: data.url
-				thumbnailUrl: data.thumbnailUrl or agentObj.avatarUrl
-			}
-			note.save (err, doc) ->
-				cb?(err,doc)
+	note = new Notification {
+		agent: agentObj
+		agentName: agentObj.name
+		recipient: recpObj
+		type: data.type
+		url: data.url0
+		thumbnailUrl: data.thumbnailUrl or agentObj.avatarUrl
+	}
+	if data.resources then note.resources = data.resources 
+	note.save (err, doc) ->
+		cb?(err,doc)
 
 NotificationSchema.statics.Trigger = (agentObj, type) ->
 	User = mongoose.model 'User'
@@ -124,6 +154,7 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 						notifyUser parentPostAuthor, agentObj, {
 							type: Types.PostComment
 							url: commentObj.path
+							resources: [parentPostObj.id, commentObj.id]
 						}, cb
 					else
 						console.warn("err: #{err} or parentPostAuthor (id:#{parentPostAuthorId}) not found")
@@ -143,7 +174,8 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 						notifyUser followeeObj, followerObj, {
 							type: Types.NewFollower
 							url: followerObj.profileUrl
-						}, cb						
+							# resources: []
+						}, cb		
 
 
 NotificationSchema.statics.Types = Types
