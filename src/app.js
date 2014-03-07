@@ -207,15 +207,9 @@ app.locals({
 	},
 });
 
-app.use(require('./config/middlewares/handle_500.js'));
-
-// Pass pages through router.js
-require('./lib/router.js')(app)(require('./pages.js'));
-
-// Handle 404
-app.get('*', function (req, res) {
-	res.render('pages/404');
-});
+app.use(require('./config/middlewares/handle_500.js')); // Handle 500 before routes
+require('./lib/router.js')(app)(require('./pages.js')); // Pass routes through router.js
+// app.use(require('./config/middlewares/handle_404.js')); // Handle 404 after routes
 
 /******************************************************************************/
 /* BEGINNING of a DO_NO_TOUCH_ZONE ********************************************/

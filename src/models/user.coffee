@@ -53,7 +53,10 @@ UserSchema = new mongoose.Schema {
 	tags:			Array
 	followingTags: 	[]
 
-}, { id: true } # default
+}, {
+	toObject:	{ virtuals: true }
+	toJSON: 	{ virtuals: true }
+}
 
 ################################################################################
 ## Virtuals ####################################################################

@@ -122,14 +122,12 @@ module.exports = {
       name: 'ApiLabAddUser',
       post: function(req, res) {
         var labId, userId;
-        console.log('internet only 2');
         if (!(labId = req.paramToObjectId('labId'))) {
           return;
         }
         if (!(userId = req.paramToObjectId('userId'))) {
           return;
         }
-        console.log('internet only');
         return Group.findOne({
           _id: labId
         }, HandleErrResult(res)(function(group) {

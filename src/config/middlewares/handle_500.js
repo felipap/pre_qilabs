@@ -1,42 +1,35 @@
 module.exports = function(err, req, res, next) {
 	console.error('Error stack:', err);
-	res.render('pages/500', {
-		user: req.user,
-	});
-	
-	if (false && req.app.get('env') === 'development') {
 
+	if (err.status)
+		res.status(err.status);
+	if (res.statusCode < 400)
+		res.status(500);
+	if (req.app.get('env') != 'test')
+		console.error(err.stack);
+
+	var accept = req.headers.accept || '';
+
+	if (req.app.get('env') === 'production') {
+		res.render('pages/500', {
+			user: req.user,
+		});
 	} else {
-		if (err.status) res.statusCode = err.status;
-		if (res.statusCode < 400) res.statusCode = 500;
-		if ('test' != env) console.error(err.stack);
-		var accept = req.headers.accept || '';
-		// html
+		
 		if (~accept.indexOf('html')) {
-			fs.readFile(__dirname + '/../public/style.css', 'utf8', function(e, style){
-				fs.readFile(__dirname + '/../public/error.html', 'utf8', function(e, html){
-					var stack = (err.stack || '')
-						.split('\n').slice(1)
-						.map(function(v){ return '<li>' + v + '</li>'; }).join('');
-						html = html
-							.replace('{style}', style)
-							.replace('{stack}', stack)
-							.replace('{title}', exports.title)
-							.replace('{statusCode}', res.statusCode)
-							.replace(/\{error\}/g, utils.escape(err.toString()));
-						res.setHeader('Content-Type', 'text/html; charset=utf-8');
-						res.end(html);
-				});
+			res.render('pages/500', {
+				user: req.user,
+				error_code: res.statusCode,
+				error_msg: err,
+				error_stack: (err.stack || '').split('\n').slice(1),
 			});
-		// json
 		} else if (~accept.indexOf('json')) {
 			var error = { message: err.message, stack: err.stack };
 			for (var prop in err) error[prop] = err[prop];
 			var json = JSON.stringify({ error: error });
 			res.setHeader('Content-Type', 'application/json');
 			res.end(json);
-		// plain text
-		} else {
+		} else { // plain text
 			res.writeHead(res.statusCode, { 'Content-Type': 'text/plain' });
 			res.end(err.stack);
 		}

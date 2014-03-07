@@ -39,7 +39,7 @@ HandleErrResult = (res) ->
 			else
 				cb.apply(cb, [].splice.call(arguments,1))
 
-# Starts at /api/labs
+# Starts at /api/labs 
 module.exports = {
 	permissions: [required.login],
 	post: (req, res) ->
@@ -96,10 +96,8 @@ module.exports = {
 			permissions: [required.labs.userCanAccess('labId')],
 			name: 'ApiLabAddUser'
 			post: (req, res) ->
-				console.log 'internet only 2'
 				return unless labId = req.paramToObjectId('labId')
 				return unless userId = req.paramToObjectId('userId')
-				console.log 'internet only'
 				Group.findOne {_id: labId}, HandleErrResult(res)((group) ->
 					User.findOne {_id: userId}, HandleErrResult(res)((user) ->
 						type = Group.Membership.Types.Member

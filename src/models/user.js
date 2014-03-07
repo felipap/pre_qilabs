@@ -55,7 +55,12 @@ UserSchema = new mongoose.Schema({
   tags: Array,
   followingTags: []
 }, {
-  id: true
+  toObject: {
+    virtuals: true
+  },
+  toJSON: {
+    virtuals: true
+  }
 });
 
 UserSchema.virtual('avatarUrl').get(function() {
