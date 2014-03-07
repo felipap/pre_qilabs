@@ -184,46 +184,44 @@ module.exports = {
       permissions: [required.login],
       children: {
         '/:id': {
-          methods: {
-            get: function(req, res) {
-              var postId;
-              if (!(postId = req.paramToObjectId('id'))) {
-                return;
-              }
-              return Post.findOne({
-                _id: postId
-              }, HandleErrResult(res)(function(doc) {
-                return Post.find({
-                  parentPost: doc
-                }).populate('author').exec(HandleErrResult(res)(function(docs) {
-                  return res.endJson(_.extend({}, doc.toObject(), {
-                    comments: docs
-                  }));
-                }));
-              }));
-            },
-            post: function(req, res) {
-              var postId;
-              if (!(postId = req.paramToObjectId('id'))) {
-
-              }
-            },
-            "delete": function(req, res) {
-              var postId;
-              if (!(postId = req.paramToObjectId('id'))) {
-                return;
-              }
-              return Post.findOne({
-                _id: postId,
-                author: req.user
-              }, HandleErrResult(res)(function(doc) {
-                Inbox.remove({
-                  resource: doc
-                }, function(err, num) {});
-                doc.remove();
-                return res.endJson(doc);
-              }));
+          get: function(req, res) {
+            var postId;
+            if (!(postId = req.paramToObjectId('id'))) {
+              return;
             }
+            console.log('oi?');
+            return Post.findOne({
+              _id: postId
+            }, HandleErrResult(res)(function(doc) {
+              return doc.fillComments(function(err, object) {
+                return res.endJson({
+                  error: false,
+                  data: object
+                });
+              });
+            }));
+          },
+          post: function(req, res) {
+            var postId;
+            if (!(postId = req.paramToObjectId('id'))) {
+
+            }
+          },
+          "delete": function(req, res) {
+            var postId;
+            if (!(postId = req.paramToObjectId('id'))) {
+              return;
+            }
+            return Post.findOne({
+              _id: postId,
+              author: req.user
+            }, HandleErrResult(res)(function(doc) {
+              Inbox.remove({
+                resource: doc
+              }, function(err, num) {});
+              doc.remove();
+              return res.endJson(doc);
+            }));
           },
           children: {
             '/comments': {

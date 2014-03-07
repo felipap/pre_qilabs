@@ -217,7 +217,8 @@ UserSchema.methods.dofollowUser = function(user, cb) {
       return cb(err, !!doc);
     };
   })(this));
-  return Notification.Trigger(this, Notification.Types.NewFollower)(this, user, function() {});
+  Notification.Trigger(this, Notification.Types.NewFollower)(this, user, function() {});
+  return Post.Trigger(this, Notification.Types.NewFollower)(this, user, function() {});
 };
 
 UserSchema.methods.unfollowUser = function(user, cb) {

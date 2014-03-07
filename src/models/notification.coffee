@@ -130,7 +130,7 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 							type: Types.NewFollower
 							url: followerObj.profileUrl
 							# resources: []
-						}, cb		
+						}, cb
 
 
 NotificationSchema.statics.Types = Types

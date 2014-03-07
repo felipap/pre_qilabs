@@ -1,4 +1,4 @@
-var Inbox, Notification, Post, PostSchema, Types, assert, async, hookedModel, mongoose, urlify, _;
+var Inbox, Notification, Post, PostSchema, Types, assert, assertArgs, async, hookedModel, mongoose, notifyUser, urlify, _;
 
 mongoose = require('mongoose');
 
@@ -7,6 +7,8 @@ assert = require('assert');
 _ = require('underscore');
 
 async = require('async');
+
+assertArgs = require('./lib/assertArgs');
 
 hookedModel = require('./lib/hookedModel');
 
@@ -140,60 +142,110 @@ PostSchema.methods.stuff = function(cb) {
     if (err) {
       return cb(err);
     } else if (doc) {
-      return Post.fillInComments(doc, cb);
+      return doc.fillComments(cb);
     } else {
       return cb(false, null);
     }
   });
 };
 
-PostSchema.statics.fillInComments = function(docs, cb) {
-  var post, results;
-  assert(docs, "Can't fill comments of invalid post(s) document.");
-  if (docs instanceof Array) {
-    results = [];
-    return async.forEach(_.filter(docs, function(i) {
-      return i;
-    }), function(post, done) {
-      return Post.find({
-        parentPost: post,
-        type: Post.Types.Comment
-      }).populate('author').exec(function(err, comments) {
-        if (post.toObject) {
-          results.push(_.extend({}, post.toObject(), {
-            comments: comments
-          }));
-        } else {
-          results.push(_.extend({}, post, {
-            comments: comments
-          }));
+PostSchema.methods.fillComments = function(cb) {
+  var _ref;
+  if ((_ref = this.type) !== 'PlainPost' && _ref !== 'Answer') {
+    cb(false, this.toJSON());
+  }
+  return Post.find({
+    parentPost: this,
+    type: Post.Types.Comment
+  }).populate('author').exec((function(_this) {
+    return function(err, comments) {
+      return cb(err, _.extend({}, _this.toJSON(), {
+        comments: comments
+      }));
+    };
+  })(this));
+};
+
+notifyUser = function(recpObj, agentObj, data, cb) {
+  var User, note;
+  assertArgs({
+    ismodel: 'User'
+  }, {
+    ismodel: 'User'
+  }, {
+    contains: ['url', 'type']
+  }, arguments);
+  User = mongoose.model('User');
+  note = new Post({
+    agent: agentObj,
+    agentName: agentObj.name,
+    recipient: recpObj,
+    type: data.type,
+    url: data.url,
+    thumbnailUrl: data.thumbnailUrl || agentObj.avatarUrl
+  });
+  if (data.resources) {
+    note.resources = data.resources;
+  }
+  return note.save(function(err, doc) {
+    return typeof cb === "function" ? cb(err, doc) : void 0;
+  });
+};
+
+PostSchema.statics.Trigger = function(agentObj, type) {
+  var User;
+  User = mongoose.model('User');
+  switch (type) {
+    case Types.NewFollower:
+      return function(followerObj, followeeObj, cb) {
+        if (cb == null) {
+          cb = function() {};
         }
-        return done();
-      });
-    }, function(err) {
-      if (err) {
-        console.log('Error in fillinpostcomments', err);
-      }
-      return cb(err, results);
-    });
-  } else {
-    console.log('second option');
-    post = docs;
+        return Post.findOne({
+          type: Types.NewFollower,
+          agent: followerObj,
+          recipient: followeeObj
+        }, function(err, doc) {
+          if (doc) {
+            doc.remove(function() {});
+          }
+          return notifyUser(followeeObj, followerObj, {
+            type: Types.NewFollower,
+            url: followerObj.profileUrl
+          }, cb);
+        });
+      };
+  }
+};
+
+PostSchema.statics.fillInComments = function(docs, cb) {
+  var results;
+  assert(docs, "Can't fill comments of invalid post(s) document.");
+  results = [];
+  return async.forEach(_.filter(docs, function(i) {
+    return i;
+  }), function(post, done) {
     return Post.find({
       parentPost: post,
       type: Post.Types.Comment
     }).populate('author').exec(function(err, comments) {
       if (post.toObject) {
-        return cb(err, _.extend({}, post.toObject(), {
+        results.push(_.extend({}, post.toObject(), {
           comments: comments
         }));
       } else {
-        return cb(err, _.extend({}, post, {
+        results.push(_.extend({}, post, {
           comments: comments
         }));
       }
+      return done();
     });
-  }
+  }, function(err) {
+    if (err) {
+      console.log('Error in fillinpostcomments', err);
+    }
+    return cb(err, results);
+  });
 };
 
 PostSchema.statics.Types = Types;

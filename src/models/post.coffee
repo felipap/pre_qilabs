@@ -8,6 +8,7 @@ assert = require 'assert'
 _ = require 'underscore'
 async = require 'async'
 
+assertArgs = require './lib/assertArgs'
 hookedModel = require './lib/hookedModel'
 
 Inbox = mongoose.model 'Inbox'
@@ -99,41 +100,76 @@ PostSchema.methods.stuff = (cb) ->
 		if err
 			cb(err)
 		else if doc
-			Post.fillInComments(doc, cb)
+			doc.fillComments(cb)
 		else
 			cb(false,null)
 
+PostSchema.methods.fillComments = (cb) ->
+	if @type not in ['PlainPost', 'Answer']
+		cb(false, @toJSON())
+
+	Post.find {parentPost:@, type:Post.Types.Comment}
+	.populate 'author'
+	.exec (err, comments) =>
+		cb(err, _.extend({}, @toJSON(), { comments:comments }))
 
 ################################################################################
 ## Statics #####################################################################
 
+notifyUser = (recpObj, agentObj, data, cb) ->
+	assertArgs({ismodel:'User'},{ismodel:'User'},{contains:['url','type']}, arguments)
+	
+	User = mongoose.model 'User'
+
+	note = new Post {
+		agent: agentObj
+		agentName: agentObj.name
+		recipient: recpObj
+		type: data.type
+		url: data.url
+		thumbnailUrl: data.thumbnailUrl or agentObj.avatarUrl
+	}
+	if data.resources then note.resources = data.resources 
+	note.save (err, doc) ->
+		cb?(err,doc)
+
+PostSchema.statics.Trigger = (agentObj, type) ->
+	User = mongoose.model 'User'
+
+	switch type
+		when Types.NewFollower
+			return (followerObj, followeeObj, cb) ->
+				# assert
+				cb ?= ->
+				# Find and delete older notifications from the same follower.
+				Post.findOne {
+					type:Types.NewFollower,
+					agent:followerObj,
+					recipient:followeeObj
+					}, (err, doc) ->
+						if doc #
+							doc.remove(()->)
+						notifyUser followeeObj, followerObj, {
+							type: Types.NewFollower
+							url: followerObj.profileUrl
+							# resources: []
+						}, cb
+
 PostSchema.statics.fillInComments = (docs, cb) ->
 	assert docs, "Can't fill comments of invalid post(s) document." 
-
-	if docs instanceof Array
-		results = []
-		async.forEach _.filter(docs, (i) -> i), (post, done) ->
-				Post.find {parentPost: post, type:Post.Types.Comment}
-					.populate 'author'
-					.exec (err, comments) ->
-						if post.toObject
-							results.push(_.extend({}, post.toObject(), { comments:comments }))
-						else
-							results.push(_.extend({}, post, { comments:comments }))
-						done()
-			, (err) ->
-				if err then console.log 'Error in fillinpostcomments', err
-				cb(err, results)
-	else
-		console.log 'second option'
-		post = docs
-		Post.find {parentPost: post, type:Post.Types.Comment}
-		.populate 'author'
-		.exec (err, comments) ->
-			if post.toObject
-				cb(err, _.extend({}, post.toObject(), { comments:comments }))
-			else
-				cb(err, _.extend({}, post, { comments:comments }))
+	results = []
+	async.forEach _.filter(docs, (i) -> i), (post, done) ->
+			Post.find {parentPost: post, type:Post.Types.Comment}
+				.populate 'author'
+				.exec (err, comments) ->
+					if post.toObject
+						results.push(_.extend({}, post.toObject(), { comments:comments }))
+					else
+						results.push(_.extend({}, post, { comments:comments }))
+					done()
+		, (err) ->
+			if err then console.log 'Error in fillinpostcomments', err
+			cb(err, results)
 
 PostSchema.statics.Types = Types
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate')

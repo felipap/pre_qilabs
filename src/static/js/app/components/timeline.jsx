@@ -117,8 +117,9 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 		
-		/************************************************************************************/
-		/************************************************************************************/
+		/********************************************************************************/
+		/********************************************************************************/
+		/* React.js views */
 
 		var CommentView = React.createClass({
 			render: function () {
@@ -228,34 +229,46 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 
+		var CommentSectionView = React.createClass({
+
+			render: function () {
+				return (
+					<div>
+						<CommentListView collection={this.props.model.commentList} />
+						{
+							window.user?
+							<CommentInputView model={this.props.model} />
+							:null
+						}
+					</div>
+				);
+			},
+		});
+
 		/************************************************************************************/
 		/************************************************************************************/
 
+		var EditablePost = {
+
+			onClickEdit: function () {
+			},
+
+			onClickTrash: function () {
+				if (confirm('Tem certeza que deseja excluir essa postagem?')) {
+					self.props.model.destroy();
+				}
+			},
+
+		};
+
 		var PlainPostView = React.createClass({
+			mixins: [EditablePost],
 
 			render: function () {
 				var post = this.props.model.attributes;
-				var self = this;
-
 				var mediaUserStyle = {
 					background: 'url('+post.author.avatarUrl+')',
 				};
-
-				function onClickTrash () {
-					if (confirm('Tem certeza que deseja excluir essa postagem?')) {
-						self.props.model.destroy();
-					}
-				}
-
-				function onClickEdit () {
-				}
-
-				function componentWillMount () {
-					this.props.model.on('delete');
-				}
-
-				// var converter = new Showdown.converter();
-				// var rawMarkup = converter.makeHtml(post.data.body);
 				var rawMarkup = post.data.unescapedBody;
 
 				return (
@@ -281,14 +294,12 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 							{(window.user && post.author.id === window.user.id)?
 								<div className="optionBtns">
-									<button	onClick={onClickTrash}
-										data-action="remove-post" data-toggle="tooltip" data-placement="bottom"
-										title="Remover Post">
+									<button	onClick={this.onClickTrash} title="Remover Post"
+										data-action="remove-post" data-toggle="tooltip" data-placement="bottom">
 										<i className="icon-trash"></i>
 									</button>
-									<button	onClick={onClickEdit}
-										data-action="edit-post" data-toggle="tooltip" data-placement="bottom"
-										title="Editar Post">
+									<button	onClick={this.onClickEdit} title="Editar Post"
+										data-action="edit-post" data-toggle="tooltip" data-placement="bottom">
 										<i className="icon-edit"></i>
 									</button>
 								</div>
@@ -300,19 +311,24 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 						</div>
 					</div>
 				);
-			}
+			},
 		});
 
 		var PostWrapperView = React.createClass({
 			render: function () {
+				var postType = this.props.model.get('type');
+				console.log(this.props.model.attributes)
 				return (
 					<div className="postWrapper">
 						<PlainPostView model={this.props.model} />
-						<CommentListView collection={this.props.model.commentList} />
-						<CommentInputView model={this.props.model} />
+						{
+							(postType==='PlainPost'||postType==='Answer')?
+							<CommentSectionView model={this.props.model} />
+							:null
+						}
 					</div>
 				);
-			}
+			},
 		});
 
 		var PostForm = React.createClass({
@@ -392,6 +408,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		routes: {
 			'posts/:postId':
 				 function (postId) {
+				 	console.log(window.conf.postData)
 				 	this.postItem = new Post.item(window.conf.postData);
 				 	React.renderComponent(Post.postView({model:this.postItem}),
 				 		document.getElementById('postsPlacement'));

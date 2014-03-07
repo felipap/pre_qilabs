@@ -117,8 +117,9 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 		
-		/************************************************************************************/
-		/************************************************************************************/
+		/********************************************************************************/
+		/********************************************************************************/
+		/* React.js views */
 
 		var CommentView = React.createClass({displayName: 'CommentView',
 			render: function () {
@@ -228,34 +229,46 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 
+		var CommentSectionView = React.createClass({displayName: 'CommentSectionView',
+
+			render: function () {
+				return (
+					React.DOM.div(null, 
+						CommentListView( {collection:this.props.model.commentList} ),
+						
+							window.user?
+							CommentInputView( {model:this.props.model} )
+							:null
+						
+					)
+				);
+			},
+		});
+
 		/************************************************************************************/
 		/************************************************************************************/
 
+		var EditablePost = {
+
+			onClickEdit: function () {
+			},
+
+			onClickTrash: function () {
+				if (confirm('Tem certeza que deseja excluir essa postagem?')) {
+					self.props.model.destroy();
+				}
+			},
+
+		};
+
 		var PlainPostView = React.createClass({displayName: 'PlainPostView',
+			mixins: [EditablePost],
 
 			render: function () {
 				var post = this.props.model.attributes;
-				var self = this;
-
 				var mediaUserStyle = {
 					background: 'url('+post.author.avatarUrl+')',
 				};
-
-				function onClickTrash () {
-					if (confirm('Tem certeza que deseja excluir essa postagem?')) {
-						self.props.model.destroy();
-					}
-				}
-
-				function onClickEdit () {
-				}
-
-				function componentWillMount () {
-					this.props.model.on('delete');
-				}
-
-				// var converter = new Showdown.converter();
-				// var rawMarkup = converter.makeHtml(post.data.body);
 				var rawMarkup = post.data.unescapedBody;
 
 				return (
@@ -281,14 +294,12 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 							(window.user && post.author.id === window.user.id)?
 								React.DOM.div( {className:"optionBtns"}, 
-									React.DOM.button(	{onClick:onClickTrash,
-										'data-action':"remove-post", 'data-toggle':"tooltip", 'data-placement':"bottom",
-										title:"Remover Post"}, 
+									React.DOM.button(	{onClick:this.onClickTrash, title:"Remover Post",
+										'data-action':"remove-post", 'data-toggle':"tooltip", 'data-placement':"bottom"}, 
 										React.DOM.i( {className:"icon-trash"})
 									),
-									React.DOM.button(	{onClick:onClickEdit,
-										'data-action':"edit-post", 'data-toggle':"tooltip", 'data-placement':"bottom",
-										title:"Editar Post"}, 
+									React.DOM.button(	{onClick:this.onClickEdit, title:"Editar Post",
+										'data-action':"edit-post", 'data-toggle':"tooltip", 'data-placement':"bottom"}, 
 										React.DOM.i( {className:"icon-edit"})
 									)
 								)
@@ -300,19 +311,24 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 						)
 					)
 				);
-			}
+			},
 		});
 
 		var PostWrapperView = React.createClass({displayName: 'PostWrapperView',
 			render: function () {
+				var postType = this.props.model.get('type');
+				console.log(this.props.model.attributes)
 				return (
 					React.DOM.div( {className:"postWrapper"}, 
 						PlainPostView( {model:this.props.model} ),
-						CommentListView( {collection:this.props.model.commentList} ),
-						CommentInputView( {model:this.props.model} )
+						
+							(postType==='PlainPost'||postType==='Answer')?
+							CommentSectionView( {model:this.props.model} )
+							:null
+						
 					)
 				);
-			}
+			},
 		});
 
 		var PostForm = React.createClass({displayName: 'PostForm',
@@ -392,6 +408,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		routes: {
 			'posts/:postId':
 				 function (postId) {
+				 	console.log(window.conf.postData)
 				 	this.postItem = new Post.item(window.conf.postData);
 				 	React.renderComponent(Post.postView({model:this.postItem}),
 				 		document.getElementById('postsPlacement'));

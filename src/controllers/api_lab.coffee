@@ -90,7 +90,7 @@ module.exports = {
 				}, HandleErrResult(res)((doc) ->
 					doc.populate 'author', (err, doc) ->
 						res.endJson {error:false, data:doc}
-					)
+				)
 		}
 		':labId/addUser/:userId': {
 			permissions: [required.labs.userCanAccess('labId')],

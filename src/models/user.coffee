@@ -145,6 +145,7 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 			cb(err, !!doc)
 
 	Notification.Trigger(@, Notification.Types.NewFollower)(@, user, ->)
+	Post.Trigger(@, Notification.Types.NewFollower)(@, user, ->)
 
 UserSchema.methods.unfollowUser = (user, cb) ->
 	assert user instanceof User, 'Passed argument not a user document'
