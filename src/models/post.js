@@ -42,15 +42,6 @@ PostSchema = new mongoose.Schema({
     "default": Types.PlainPost,
     required: true
   },
-  parentPost: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Post',
-    index: 1
-  },
-  points: {
-    type: Number,
-    "default": 0
-  },
   data: {
     title: {
       type: String,
@@ -218,7 +209,7 @@ PostSchema.statics.Trigger = function(agentObj, type) {
   }
 };
 
-PostSchema.statics.fillInComments = function(docs, cb) {
+PostSchema.statics.fillComments = function(docs, cb) {
   var results;
   assert(docs, "Can't fill comments of invalid post(s) document.");
   results = [];

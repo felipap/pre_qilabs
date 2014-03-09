@@ -211,7 +211,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			User.populate all, {path: 'author'}, (err, docs) =>
 				return cb(err) if err
 				# Fill comments in all docs.
-				Post.fillInComments(docs, cb)
+				Post.fillComments(docs, cb)
 
 	# Get inboxed posts.
 	Inbox
@@ -251,7 +251,7 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.skip opts.skip or 0
 		.exec (err, docs) ->
 			return cb(err) if err
-			Post.fillInComments(docs, cb)
+			Post.fillComments(docs, cb)
 
 ################################################################################
 ## related to Groups ###########################################################
@@ -267,7 +267,7 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 		.skip opts.skip or 0
 		.populate 'author'
 		.exec (err, docs) ->
-			Post.fillInComments(docs, cb)
+			Post.fillComments(docs, cb)
 
 UserSchema.methods.createGroup = (data, cb) ->
 	group = new Group {

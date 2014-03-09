@@ -261,7 +261,25 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 		};
 
-		var PlainPostView = React.createClass({displayName: 'PlainPostView',
+		var NotificationView = React.createClass({displayName: 'NotificationView',
+
+			render: function () {
+				var post = this.props.model.attributes;
+				var mediaUserStyle = {
+					background: 'url('+post.author.avatarUrl+')',
+				};
+				var rawMarkup = post.data.body;
+
+				return (
+					React.DOM.div( {className:"noteMessage"}, 
+						rawMarkup
+					)
+				);
+			},
+
+		});
+
+		var PostView = React.createClass({displayName: 'PostView',
 			mixins: [EditablePost],
 
 			render: function () {
@@ -317,10 +335,13 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		var PostWrapperView = React.createClass({displayName: 'PostWrapperView',
 			render: function () {
 				var postType = this.props.model.get('type');
-				console.log(this.props.model.attributes)
 				return (
 					React.DOM.div( {className:"postWrapper"}, 
-						PlainPostView( {model:this.props.model} ),
+						
+							(postType==='Notification')?
+							NotificationView( {model:this.props.model} )
+							:PostView( {model:this.props.model} ),
+						
 						
 							(postType==='PlainPost'||postType==='Answer')?
 							CommentSectionView( {model:this.props.model} )
@@ -358,7 +379,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			}
 		});
 
-		var PostListView = React.createClass({displayName: 'PostListView',
+		var TimelineView = React.createClass({displayName: 'TimelineView',
 			getInitialState: function () {
 				return {};
 			},
@@ -387,7 +408,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		return {
 			item: PostItem,
 			list: PostList,
-			listView: PostListView,
+			timelineView: TimelineView,
 			postView: PostWrapperView,
 		};
 	})();
@@ -408,7 +429,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		routes: {
 			'posts/:postId':
 				 function (postId) {
-				 	console.log(window.conf.postData)
 				 	this.postItem = new Post.item(window.conf.postData);
 				 	React.renderComponent(Post.postView({model:this.postItem}),
 				 		document.getElementById('postsPlacement'));
@@ -429,7 +449,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 		renderList: function (url) {
 			this.postList = new Post.list([], {url:url});
-			React.renderComponent(Post.listView({collection:this.postList}),
+			React.renderComponent(Post.timelineView({collection:this.postList}),
 				document.getElementById('postsPlacement'));
 			this.postList.fetch({reset:true});
 		},

@@ -313,7 +313,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
             if (err) {
               return cb(err);
             }
-            return Post.fillInComments(docs, cb);
+            return Post.fillComments(docs, cb);
           };
         })(this));
       };
@@ -359,7 +359,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     if (err) {
       return cb(err);
     }
-    return Post.fillInComments(docs, cb);
+    return Post.fillComments(docs, cb);
   });
 };
 
@@ -374,7 +374,7 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
       $lt: opts.maxDate
     }
   }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
-    return Post.fillInComments(docs, cb);
+    return Post.fillComments(docs, cb);
   });
 };
 

@@ -209,7 +209,7 @@ app.locals({
 
 app.use(require('./config/middlewares/handle_500.js')); // Handle 500 before routes
 require('./lib/router.js')(app)(require('./pages.js')); // Pass routes through router.js
-// app.use(require('./config/middlewares/handle_404.js')); // Handle 404 after routes
+app.use(require('./config/middlewares/handle_404.js')); // Handle 404 after routes
 
 /******************************************************************************/
 /* BEGINNING of a DO_NO_TOUCH_ZONE ********************************************/

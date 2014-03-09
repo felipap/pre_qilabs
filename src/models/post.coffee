@@ -31,9 +31,6 @@ PostSchema = new mongoose.Schema {
 	group:			{ type: mongoose.Schema.ObjectId, ref: 'Group' }
 	dateCreated:	{ type: Date }
 	type: 			{ type: String, default: Types.PlainPost, required: true }
-
-	parentPost: 	{ type: mongoose.Schema.ObjectId, ref: 'Post', index: 1 }
-	points:			{ type: Number, default: 0 }
 	
 	data: {
 		title:		{ type: String, required: false }
@@ -93,7 +90,6 @@ PostSchema.methods.getComments = (cb) ->
 		.populate 'author'
 		.exec (err, docs) ->
 			cb(err, docs)
-
 
 PostSchema.methods.stuff = (cb) ->
 	@.populate 'author', (err, doc) ->
@@ -155,7 +151,7 @@ PostSchema.statics.Trigger = (agentObj, type) ->
 							# resources: []
 						}, cb
 
-PostSchema.statics.fillInComments = (docs, cb) ->
+PostSchema.statics.fillComments = (docs, cb) ->
 	assert docs, "Can't fill comments of invalid post(s) document." 
 	results = []
 	async.forEach _.filter(docs, (i) -> i), (post, done) ->
