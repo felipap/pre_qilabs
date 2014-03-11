@@ -1,4 +1,4 @@
-var Inbox, Notification, ObjectId, Post, PostSchema, Types, assert, assertArgs, async, hookedModel, mongoose, notifyUser, urlify, _;
+var Inbox, Notification, ObjectId, Post, PostSchema, Types, assert, assertArgs, async, mongoose, notifyUser, urlify, _;
 
 mongoose = require('mongoose');
 
@@ -9,8 +9,6 @@ _ = require('underscore');
 async = require('async');
 
 assertArgs = require('./lib/assertArgs');
-
-hookedModel = require('./lib/hookedModel');
 
 Inbox = mongoose.model('Inbox');
 
@@ -247,4 +245,6 @@ PostSchema.statics.Types = Types;
 
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate');
 
-module.exports = Post = hookedModel("Post", PostSchema);
+PostSchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Post = mongoose.model("Post", PostSchema);

@@ -9,7 +9,6 @@ _ = require 'underscore'
 assert = require 'assert'
 
 assertArgs = require './lib/assertArgs'
-hookedModel = require './lib/hookedModel'
 
 Types =
 	PostComment: 'PostComment'
@@ -77,7 +76,7 @@ NotificationSchema.pre 'save', (next) ->
 ## Statics #####################################################################
 
 notifyUser = (recpObj, agentObj, data, cb) ->
-	assertArgs({ismodel:'User'},{ismodel:'User'},{contains:['url','type']}, arguments)
+	assertArgs({$ismodel:'User'},{$ismodel:'User'},{$contains:['url','type']}, arguments)
 	
 	User = mongoose.model 'User'
 
@@ -135,4 +134,6 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 
 NotificationSchema.statics.Types = Types
 
-module.exports = Notification = hookedModel "Notification", NotificationSchema
+NotificationSchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Notification = mongoose.model "Notification", NotificationSchema

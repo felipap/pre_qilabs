@@ -13,7 +13,7 @@ builtins =
 		test: (expected, value) ->
 			if value instanceof Function
 				return false
-			return "Argument '#{value}'' doesn't match Assert {ismodel:#{expected}}"
+			return "Argument '#{value}'' doesn't match 'iscallable'"
 
 	$ismodel:
 		test: (expected, value) ->
@@ -25,7 +25,7 @@ builtins =
 				# Expect a string of the model's name
 				model = mongoose.model(expected)
 			else
-				return "Invalid expected value for assertion of type 'ismodel': #{expected}"
+				return "Invalid expected value for assertion of type '$ismodel': #{expected}"
 			# Do it.
 			if value instanceof model
 				return false
@@ -41,31 +41,34 @@ builtins =
 				return "Invalid expected value for assertion of type 'contains': #{expected}"
 			for key in keys
 				unless key of value
-					return "Argument '#{value}' doesn't match Assert {contains:#{expected}}" 
+					return "Argument '#{value}' doesn't match Assert {$contains:#{expected}}" 
 			return false
 
 module.exports = assertArgs = (allAssertions..., args) ->
 	
 	assertParam = (assertionArg, functionArg) ->
 
-		for type, ans of assertionArg
-			if type of builtins
-				err = builtins[type].test(ans, el)
-				if err then return err
+		for akey, avalue of assertionArg
+			if akey[0] is '$' and akey of builtins
+					err = builtins[akey].test(avalue, functionArg)
+					if err then return err
+			else if functionArg.hasOwnProperty[akey]
+				return assertParam(avalue, functionArg[akey])
 			else
-				if process.env.NODE_ENV is 'production'
-					return "Invalid assertion of type #{type}"
-				else
-					throw "Invalid assertion of type #{type}"
+				return "Invalid assertion of type #{akey}"
 		return null
 	
 	# Expect last function argument to be the callback.
 	callback = args[args.length-1]
 	unless callback instanceof Function
-		throw "AssertLib error. Last element in function arguments passed insn't callable."
+		throw "AssertLib error. Last element in the function arguments passed insn't callable."
 
 	for paramAssertions, index in allAssertions
-		err = assertParam(args[index], paramAssertions)
+		err = assertParam(paramAssertions, args[index])
 		if err
-			console.warn "AssertLib error on index #{index}:", err
-			return callback({error:true,msg:err})
+			if process.env.NODE_ENV is 'production'
+				console.warn "AssertLib error on index #{index}:", err
+				return callback({error:true,msg:err})
+			else
+				console.trace()
+				throw "AssertLib error on index #{index}:"+err+args.callee.name

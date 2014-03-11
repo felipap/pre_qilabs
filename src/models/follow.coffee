@@ -4,7 +4,6 @@
 # by @f03lipe
 
 mongoose = require 'mongoose'
-hookedModel = require './lib/hookedModel'
 
 Inbox = mongoose.model 'Inbox'
 Notification = mongoose.model 'Notification'
@@ -42,4 +41,6 @@ FollowSchema.pre 'save', (next) ->
 	@dateBegin ?= new Date
 	next()
 
-module.exports = hookedModel "Follow", FollowSchema
+FollowSchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Follow = mongoose.model "Follow", FollowSchema

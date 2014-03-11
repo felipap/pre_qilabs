@@ -5,13 +5,11 @@ TODO:
 - and fan-out read for non-active users.
 See http://blog.mongodb.org/post/65612078649
  */
-var Inbox, InboxSchema, Types, assertArgs, async, hookedModel, mongoose;
+var Inbox, InboxSchema, Types, assertArgs, async, mongoose;
 
 mongoose = require('mongoose');
 
 async = require('async');
-
-hookedModel = require('./lib/hookedModel');
 
 assertArgs = require('./lib/assertArgs');
 
@@ -73,4 +71,6 @@ InboxSchema.statics.fillInboxes = function(opts, cb) {
 
 InboxSchema.statics.Types = Types;
 
-module.exports = Inbox = hookedModel("Inbox", InboxSchema);
+InboxSchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Inbox = mongoose.model("Inbox", InboxSchema);

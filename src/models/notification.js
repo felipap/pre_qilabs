@@ -1,4 +1,4 @@
-var MsgHtmlTemplates, MsgTemplates, Notification, NotificationSchema, Types, assert, assertArgs, async, hookedModel, mongoose, notifyUser, _;
+var MsgHtmlTemplates, MsgTemplates, Notification, NotificationSchema, Types, assert, assertArgs, async, mongoose, notifyUser, _;
 
 mongoose = require('mongoose');
 
@@ -9,8 +9,6 @@ _ = require('underscore');
 assert = require('assert');
 
 assertArgs = require('./lib/assertArgs');
-
-hookedModel = require('./lib/hookedModel');
 
 Types = {
   PostComment: 'PostComment',
@@ -115,11 +113,11 @@ NotificationSchema.pre('save', function(next) {
 notifyUser = function(recpObj, agentObj, data, cb) {
   var User, note;
   assertArgs({
-    ismodel: 'User'
+    $ismodel: 'User'
   }, {
-    ismodel: 'User'
+    $ismodel: 'User'
   }, {
-    contains: ['url', 'type']
+    $contains: ['url', 'type']
   }, arguments);
   User = mongoose.model('User');
   note = new Notification({
@@ -191,4 +189,6 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
 
 NotificationSchema.statics.Types = Types;
 
-module.exports = Notification = hookedModel("Notification", NotificationSchema);
+NotificationSchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Notification = mongoose.model("Notification", NotificationSchema);

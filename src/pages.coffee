@@ -4,6 +4,8 @@
 # BSD License
 
 mongoose = require 'mongoose'
+util = require 'util'
+
 required = require './lib/required'
 
 Post 	= mongoose.model 'Post'
@@ -13,6 +15,7 @@ User 	= mongoose.model 'User'
 Group 	= mongoose.model 'Group'
 
 Subscriber = mongoose.model 'Subscriber'
+
 
 HandleErrResult = (res) ->
 	(cb) ->
@@ -30,6 +33,7 @@ module.exports = {
 		name: 'index'
 		methods: {
 			get: (req, res) ->
+				util.inspect(req, { colors: true })
 				if req.user
 					req.user.lastUpdate = new Date()
 					req.user.save()

@@ -9,7 +9,6 @@ _ = require 'underscore'
 async = require 'async'
 
 assertArgs = require './lib/assertArgs'
-hookedModel = require './lib/hookedModel'
 
 Inbox = mongoose.model 'Inbox'
 Notification = mongoose.model 'Notification'
@@ -171,4 +170,6 @@ PostSchema.statics.fillComments = (docs, cb) ->
 PostSchema.statics.Types = Types
 PostSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
-module.exports = Post = hookedModel "Post", PostSchema
+PostSchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Post = mongoose.model "Post", PostSchema

@@ -12,7 +12,6 @@ Membership is accessible at Group.Membership
 
 mongoose = require 'mongoose'
 _ = require 'underscore'
-hookedModel = require './lib/hookedModel'
 
 Types =
 	StudyGroup: 'StudyGroup'
@@ -104,4 +103,6 @@ GroupSchema.statics.Permissions = Permissions
 GroupSchema.statics.findOrCreate = require('./lib/findOrCreate')
 GroupSchema.statics.Membership = Membership = mongoose.model "Membership", MembershipSchema
 
-module.exports = hookedModel "Group", GroupSchema
+GroupSchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Group = mongoose.model "Group", GroupSchema

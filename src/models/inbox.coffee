@@ -16,7 +16,6 @@ See http://blog.mongodb.org/post/65612078649
 mongoose = require 'mongoose'
 async 	 = require 'async'
 
-hookedModel = require './lib/hookedModel'
 assertArgs = require './lib/assertArgs'
 
 Types =
@@ -71,4 +70,6 @@ InboxSchema.statics.fillInboxes = (opts, cb) ->
 
 InboxSchema.statics.Types = Types
 
-module.exports = Inbox = hookedModel "Inbox", InboxSchema
+InboxSchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Inbox = mongoose.model "Inbox", InboxSchema

@@ -30,7 +30,7 @@
     "grunt-react": "^0.7.0"
   },
   "dependencies": {
-    "mongoose": "~3.6.20",
+    "mongoose": "^3.7.4",
     "express": "3.3.4",
     "tumblr": "0.1.1",
     "ejs": "0.8.3",

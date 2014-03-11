@@ -15,8 +15,6 @@ _ = require 'underscore'
 async = require 'async'
 assert = require 'assert'
 
-hookedModel = require './lib/hookedModel'
-
 Inbox 	= mongoose.model 'Inbox'
 Follow 	= mongoose.model 'Follow'
 Activity 	= mongoose.model 'Activity'
@@ -453,4 +451,6 @@ UserSchema.methods.getNotifications = (cb) ->
 		.sort '-dateSent'
 		.exec cb
 
-module.exports = User = hookedModel "User", UserSchema
+UserSchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = User = mongoose.model "User", UserSchema

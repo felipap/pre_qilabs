@@ -26,8 +26,6 @@ mongoose = require 'mongoose'
 memjs = require 'memjs'
 _ = require 'underscore'
 
-hookedModel = require './lib/hookedModel'
-
 findOrCreate = require('./lib/findOrCreate')
 api = require('./../api')
 
@@ -159,4 +157,6 @@ TopicSchema.statics.getDescription = getDescription
 TopicSchema.statics.recursify = recursify
 TopicSchema.statics.checkFollowed = checkFollowed
 
-module.exports = hookedModel "Topic", TopicSchema
+TopicSchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Topic = mongoose.model "Topic", TopicSchema

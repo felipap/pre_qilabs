@@ -1,6 +1,8 @@
-var Group, HandleErrResult, Inbox, Post, Subscriber, Tag, User, mongoose, required;
+var Group, HandleErrResult, Inbox, Post, Subscriber, Tag, User, mongoose, required, util;
 
 mongoose = require('mongoose');
+
+util = require('util');
 
 required = require('./lib/required');
 
@@ -35,6 +37,9 @@ module.exports = {
     name: 'index',
     methods: {
       get: function(req, res) {
+        util.inspect(req, {
+          colors: true
+        });
         if (req.user) {
           req.user.lastUpdate = new Date();
           req.user.save();

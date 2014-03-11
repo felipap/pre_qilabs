@@ -1,4 +1,4 @@
-var Activity, ActivitySchema, Notification, ObjectId, Types, assert, assertArgs, async, createAndDistributeActivity, hookedModel, mongoose, _;
+var Activity, ActivitySchema, Notification, ObjectId, Types, assert, assertArgs, async, createAndDistributeActivity, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -10,8 +10,6 @@ async = require('async');
 
 assertArgs = require('./lib/assertArgs');
 
-hookedModel = require('./lib/hookedModel');
-
 Notification = mongoose.model('Notification');
 
 ObjectId = mongoose.Schema.ObjectId;
@@ -22,10 +20,9 @@ Types = {
 };
 
 ActivitySchema = new mongoose.Schema({
-  recipient: {
+  actor: {
     type: ObjectId,
-    indexed: 1,
-    required: false
+    ref: 'User'
   },
   group: {
     type: ObjectId,
@@ -38,12 +35,11 @@ ActivitySchema = new mongoose.Schema({
     "default": Types.PlainActivity,
     required: true
   },
-  dateCreated: {
+  published: {
     type: Date
   },
-  actpr: {
-    type: ObjectId,
-    ref: 'User'
+  updated: {
+    type: Date
   },
   resources: [
     {
@@ -154,4 +150,6 @@ ActivitySchema.statics.Trigger = function(agentObj, type) {
 
 ActivitySchema.statics.Types = Types;
 
-module.exports = Activity = hookedModel("Activity", ActivitySchema);
+ActivitySchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Activity = mongoose.model("Activity", ActivitySchema);

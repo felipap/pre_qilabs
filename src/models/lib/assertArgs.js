@@ -9,7 +9,7 @@ builtins = {
       if (value instanceof Function) {
         return false;
       }
-      return "Argument '" + value + "'' doesn't match Assert {ismodel:" + expected + "}";
+      return "Argument '" + value + "'' doesn't match 'iscallable'";
     }
   },
   $ismodel: {
@@ -20,7 +20,7 @@ builtins = {
       } else if (typeof expected === 'string') {
         model = mongoose.model(expected);
       } else {
-        return "Invalid expected value for assertion of type 'ismodel': " + expected;
+        return "Invalid expected value for assertion of type '$ismodel': " + expected;
       }
       if (value instanceof model) {
         return false;
@@ -41,7 +41,7 @@ builtins = {
       for (_i = 0, _len = keys.length; _i < _len; _i++) {
         key = keys[_i];
         if (!(key in value)) {
-          return "Argument '" + value + "' doesn't match Assert {contains:" + expected + "}";
+          return "Argument '" + value + "' doesn't match Assert {$contains:" + expected + "}";
         }
       }
       return false;
@@ -53,37 +53,40 @@ module.exports = assertArgs = function() {
   var allAssertions, args, assertParam, callback, err, index, paramAssertions, _i, _j, _len;
   allAssertions = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), args = arguments[_i++];
   assertParam = function(assertionArg, functionArg) {
-    var ans, err, type;
-    for (type in assertionArg) {
-      ans = assertionArg[type];
-      if (type in builtins) {
-        err = builtins[type].test(ans, el);
+    var akey, avalue, err;
+    for (akey in assertionArg) {
+      avalue = assertionArg[akey];
+      if (akey[0] === '$' && akey in builtins) {
+        err = builtins[akey].test(avalue, functionArg);
         if (err) {
           return err;
         }
+      } else if (functionArg.hasOwnProperty[akey]) {
+        return assertParam(avalue, functionArg[akey]);
       } else {
-        if (process.env.NODE_ENV === 'production') {
-          return "Invalid assertion of type " + type;
-        } else {
-          throw "Invalid assertion of type " + type;
-        }
+        return "Invalid assertion of type " + akey;
       }
     }
     return null;
   };
   callback = args[args.length - 1];
   if (!(callback instanceof Function)) {
-    throw "AssertLib error. Last element in function arguments passed insn't callable.";
+    throw "AssertLib error. Last element in the function arguments passed insn't callable.";
   }
   for (index = _j = 0, _len = allAssertions.length; _j < _len; index = ++_j) {
     paramAssertions = allAssertions[index];
-    err = assertParam(args[index], paramAssertions);
+    err = assertParam(paramAssertions, args[index]);
     if (err) {
-      console.warn("AssertLib error on index " + index + ":", err);
-      return callback({
-        error: true,
-        msg: err
-      });
+      if (process.env.NODE_ENV === 'production') {
+        console.warn("AssertLib error on index " + index + ":", err);
+        return callback({
+          error: true,
+          msg: err
+        });
+      } else {
+        console.trace();
+        throw ("AssertLib error on index " + index + ":") + err + args.callee.name;
+      }
     }
   }
 };

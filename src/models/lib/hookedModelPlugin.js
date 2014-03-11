@@ -5,12 +5,12 @@ mongoose = require('mongoose');
 
 circumventionists = ['findByIdAndUpdate', 'findOneAndUpdate', 'findOneAndRemove', 'findByIdAndUpdate'];
 
-module.exports = function(name, schema, collection, skipInit) {
+module.exports = function(schema, options) {
   var a, hookedActions, smname, _i, _len;
   for (_i = 0, _len = circumventionists.length; _i < _len; _i++) {
     smname = circumventionists[_i];
     schema.statics[smname] = function() {
-      throw "Invalid static method call on hookedModel " + name + ". Use document methods.";
+      throw "Invalid static method call on hookedModel " + schema + ". Use document methods.";
     };
   }
   hookedActions = (function() {
@@ -24,9 +24,8 @@ module.exports = function(name, schema, collection, skipInit) {
     return _results;
   })();
   if (__indexOf.call(hookedActions, 'remove') >= 0) {
-    schema.statics.remove = function() {
-      throw "The .remove static method has been disabled for the hookedModel '" + name + "' because it has middlewares tied to the 'remove' action. Remove each document separately so that these middlewares can trigger";
+    return schema.statics.remove = function() {
+      throw "The .remove static method has been disabled for the hookedModel because it has middlewares tied to the 'remove' action. Remove each document separately so that these middlewares can trigger";
     };
   }
-  return mongoose.model(name, schema, collection, skipInit);
 };

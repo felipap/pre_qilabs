@@ -3,13 +3,14 @@
 # Copyright QILabs.org
 # by @f03lipe
 
+# See http://activitystrea.ms/specs/json/1.0/
+
 mongoose = require 'mongoose'
 assert = require 'assert'
 _ = require 'underscore'
 async = require 'async'
 
 assertArgs = require './lib/assertArgs'
-hookedModel = require './lib/hookedModel'
 
 Notification = mongoose.model 'Notification'
 ObjectId = mongoose.Schema.ObjectId
@@ -22,13 +23,15 @@ Types =
 ## Schema ######################################################################
 
 ActivitySchema = new mongoose.Schema {
-	recipient: 		{ type: ObjectId, indexed: 1, required: false }
+	actor:			{ type: ObjectId, ref: 'User' }
+
 	group:			{ type: ObjectId, ref: 'Group', indexed: 1, required: false }
 	# event: 			{ type: ObjectId, ref: 'Event', required: false }
 	type: 			{ type: String, default: Types.PlainActivity, required: true }
-	dateCreated:	{ type: Date }
+	published:		{ type: Date }
+	updated:		{ type: Date }
 
-	actpr:			{ type: ObjectId, ref: 'User' }
+
 	resources:     [{
 		label:	{ type: String, required: true }
 		type:	{ type: String, required: true }
@@ -140,4 +143,6 @@ ActivitySchema.statics.Trigger = (agentObj, type) ->
 
 ActivitySchema.statics.Types = Types
 
-module.exports = Activity = hookedModel "Activity", ActivitySchema
+ActivitySchema.plugin(require('./lib/hookedModelPlugin'));
+
+module.exports = Activity = mongoose.model "Activity", ActivitySchema
