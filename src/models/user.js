@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, User, UserSchema, assert, async, mongoose, _;
+var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, Resource, User, UserSchema, assert, async, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -15,15 +15,17 @@ async = require('async');
 
 assert = require('assert');
 
+Resource = mongoose.model('Resource');
+
 Inbox = mongoose.model('Inbox');
 
 Follow = mongoose.model('Follow');
 
-Activity = mongoose.model('Activity');
-
-Post = mongoose.model('Post');
+Post = Resource.model('Post');
 
 Group = mongoose.model('Group');
+
+Activity = mongoose.model('Activity');
 
 Notification = mongoose.model('Notification');
 
@@ -354,13 +356,13 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
   })(this);
   return Inbox.find({
     recipient: this.id,
-    type: Inbox.Types.Post,
     dateSent: {
       $lt: opts.maxDate
     }
   }).sort('-dateSent').populate('resource').limit(opts.limit).exec(HandleLimit((function(_this) {
     return function(err, docs) {
       var oldestPostDate, posts;
+      console.log('docs', docs);
       if (err) {
         return cb(err);
       }
@@ -526,13 +528,14 @@ Create a post object and fan out through inboxes.
  */
 
 UserSchema.methods.createPost = function(data, cb) {
-  var post;
+  var post, _ref;
   post = new Post({
     author: this.id,
     data: {
       title: data.content.title,
       body: data.content.body
-    }
+    },
+    type: ((_ref = Post.Types) != null ? _ref.PlainPost : void 0) || 'PlainPost'
   });
   if (data.groupId) {
     post.group = data.groupId;
@@ -541,13 +544,16 @@ UserSchema.methods.createPost = function(data, cb) {
     return function(err, post) {
       console.log('post save:', err, post);
       cb(err, post);
+      if (err) {
+        return;
+      }
       if (post.group) {
         return;
       }
       return _this.getPopulatedFollowers(function(err, followers) {
         return Inbox.fillInboxes({
           recipients: [_this].concat(followers),
-          resource: post,
+          resource: post.id,
           type: Inbox.Types.Post,
           author: _this.id
         }, function() {});

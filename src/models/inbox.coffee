@@ -15,7 +15,6 @@ See http://blog.mongodb.org/post/65612078649
 
 mongoose = require 'mongoose'
 async 	 = require 'async'
-
 assertArgs = require './lib/assertArgs'
 
 Types =
@@ -26,9 +25,9 @@ Types =
 
 InboxSchema = new mongoose.Schema {
 	dateSent:	{ type: Date, indexed: 1 }
-	recipient:	{ type: mongoose.Schema.ObjectId, indexed: 1, required: true }
+	recipient:	{ type: mongoose.Schema.ObjectId, ref: 'User', indexed: 1, required: true }
 	author:		{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
-	resource:	{ type: mongoose.Schema.ObjectId, required: true }
+	resource:	{ type: mongoose.Schema.ObjectId, ref: 'Resource', required: true }
 	type: 		{ type: String, required: true }
 }
 
@@ -50,7 +49,7 @@ InboxSchema.pre 'save', (next) ->
 # 		.exec(cb)
 
 InboxSchema.statics.fillInboxes = (opts, cb) ->
-	assertArgs({$contains:['recipients']})
+	assertArgs({$contains:['recipients']}, arguments)
 
 	console.assert opts and cb and opts.recipients instanceof Array and opts.resource and
 		opts.type, "Get your programming straight."
@@ -58,7 +57,7 @@ InboxSchema.statics.fillInboxes = (opts, cb) ->
 	if not opts.recipients.length
 		return cb(false, [])
 
-	async.mapLimit(opts.recipients, 5, ((rec, done) ->
+	async.mapLimit(opts.recipients, 5, ((rec, done) =>
 		inbox = new Inbox {
 			resource: opts.resource
 			type: opts.type
@@ -70,6 +69,6 @@ InboxSchema.statics.fillInboxes = (opts, cb) ->
 
 InboxSchema.statics.Types = Types
 
-InboxSchema.plugin(require('./lib/hookedModelPlugin'));
+InboxSchema.plugin(require('./lib/hookedModelPlugin'))
 
 module.exports = Inbox = mongoose.model "Inbox", InboxSchema

@@ -8,8 +8,9 @@ util = require 'util'
 
 required = require './lib/required'
 
-Post 	= mongoose.model 'Post'
-Inbox 	= mongoose.model 'Inbox'
+Resource = mongoose.model 'Resource'
+
+Post 	= Resource.model 'Post'
 Tag 	= mongoose.model 'Tag'
 User 	= mongoose.model 'User'
 Group 	= mongoose.model 'Group'
@@ -42,12 +43,7 @@ module.exports = {
 						res.render 'pages/timeline',
 							user_profile: profile
 				else
-					res.render 'pages/frontpage'	
-			post: (req, res) ->
-				# Redirect from frame inside Facebook
-				res.end('<html><head></head><body><script type="text/javascript">'+
-						'window.top.location="http://meavisa.herokuapp.com"</script>'+
-						'</body></html>')
+					res.render 'pages/frontpage'
 		}
 
 	'/feed':

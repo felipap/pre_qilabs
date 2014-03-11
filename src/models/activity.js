@@ -1,4 +1,4 @@
-var Activity, ActivitySchema, Notification, ObjectId, Types, assert, assertArgs, async, createAndDistributeActivity, mongoose, _;
+var Activity, ActivitySchema, Notification, ObjectId, Resource, Types, assert, assertArgs, async, createAndDistributeActivity, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -9,6 +9,8 @@ _ = require('underscore');
 async = require('async');
 
 assertArgs = require('./lib/assertArgs');
+
+Resource = mongoose.model('Resource');
 
 Notification = mongoose.model('Notification');
 

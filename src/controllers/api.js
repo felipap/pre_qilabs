@@ -14,7 +14,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Activity, Follow, Group, HandleErrResult, Inbox, Notification, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
+var Activity, Follow, Group, HandleErrResult, Inbox, Notification, ObjectId, Post, Resource, Subscriber, Tag, User, mongoose, required, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -25,9 +25,11 @@ ObjectId = mongoose.Types.ObjectId;
 
 required = require('../lib/required.js');
 
+Resource = mongoose.model('Resource');
+
 User = mongoose.model('User');
 
-Post = mongoose.model('Post');
+Post = Resource.model('Post');
 
 Tag = mongoose.model('Tag');
 
@@ -76,8 +78,9 @@ module.exports = {
               });
             });
           } else if (req.query.inbox != null) {
-            return Inbox.find({}, function(err, inboxs) {
+            return Inbox.find({}).populate('resource').exec(function(err, inboxs) {
               return res.endJson({
+                err: err,
                 inboxs: inboxs
               });
             });
@@ -228,7 +231,7 @@ module.exports = {
               _id: postId,
               author: req.user
             }, HandleErrResult(res)(function(doc) {
-              Inbox.remove({
+              Inbod.remove({
                 resource: doc
               }, function(err, num) {});
               doc.remove();

@@ -61,7 +61,8 @@ module.exports = assertArgs = (allAssertions..., args) ->
 	# Expect last function argument to be the callback.
 	callback = args[args.length-1]
 	unless callback instanceof Function
-		throw "AssertLib error. Last element in the function arguments passed insn't callable."
+		console.trace()
+		throw "AssertLib error. Last element in the function arguments passed isn't callable."
 
 	for paramAssertions, index in allAssertions
 		err = assertParam(paramAssertions, args[index])

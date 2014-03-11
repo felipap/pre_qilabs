@@ -7,12 +7,13 @@ mongoose = require 'mongoose'
 assert = require 'assert'
 _ = require 'underscore'
 async = require 'async'
-
 assertArgs = require './lib/assertArgs'
 
-Inbox = mongoose.model 'Inbox'
-Notification = mongoose.model 'Notification'
 ObjectId = mongoose.Schema.ObjectId
+
+Notification = mongoose.model 'Notification'
+Resource = mongoose.model 'Resource'
+
 
 Types = 
 	Comment: 'Comment'
@@ -168,8 +169,7 @@ PostSchema.statics.fillComments = (docs, cb) ->
 			cb(err, results)
 
 PostSchema.statics.Types = Types
-PostSchema.statics.findOrCreate = require('./lib/findOrCreate')
 
-PostSchema.plugin(require('./lib/hookedModelPlugin'));
+PostSchema.plugin(require('./lib/hookedModelPlugin'))
 
-module.exports = Post = mongoose.model "Post", PostSchema
+module.exports = Post = Resource.discriminator('Post', PostSchema)

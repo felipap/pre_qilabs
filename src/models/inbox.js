@@ -24,6 +24,7 @@ InboxSchema = new mongoose.Schema({
   },
   recipient: {
     type: mongoose.Schema.ObjectId,
+    ref: 'User',
     indexed: 1,
     required: true
   },
@@ -34,6 +35,7 @@ InboxSchema = new mongoose.Schema({
   },
   resource: {
     type: mongoose.Schema.ObjectId,
+    ref: 'Resource',
     required: true
   },
   type: {
@@ -52,21 +54,23 @@ InboxSchema.pre('save', function(next) {
 InboxSchema.statics.fillInboxes = function(opts, cb) {
   assertArgs({
     $contains: ['recipients']
-  });
+  }, arguments);
   console.assert(opts && cb && opts.recipients instanceof Array && opts.resource && opts.type, "Get your programming straight.");
   if (!opts.recipients.length) {
     return cb(false, []);
   }
-  return async.mapLimit(opts.recipients, 5, (function(rec, done) {
-    var inbox;
-    inbox = new Inbox({
-      resource: opts.resource,
-      type: opts.type,
-      author: opts.author,
-      recipient: rec
-    });
-    return inbox.save(done);
-  }), cb);
+  return async.mapLimit(opts.recipients, 5, ((function(_this) {
+    return function(rec, done) {
+      var inbox;
+      inbox = new Inbox({
+        resource: opts.resource,
+        type: opts.type,
+        author: opts.author,
+        recipient: rec
+      });
+      return inbox.save(done);
+    };
+  })(this)), cb);
 };
 
 InboxSchema.statics.Types = Types;

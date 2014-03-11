@@ -15,11 +15,12 @@ _ = require 'underscore'
 async = require 'async'
 assert = require 'assert'
 
+Resource = mongoose.model 'Resource'
 Inbox 	= mongoose.model 'Inbox'
 Follow 	= mongoose.model 'Follow'
-Activity 	= mongoose.model 'Activity'
-Post 	= mongoose.model 'Post'
+Post 	= Resource.model 'Post'
 Group 	= mongoose.model 'Group'
+Activity = mongoose.model 'Activity'
 Notification = mongoose.model 'Notification'
 
 ObjectId = mongoose.Types.ObjectId
@@ -259,11 +260,12 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 
 	# Get inboxed posts older than the maxDate determined by the user.
 	Inbox
-		.find { recipient:@id, type:Inbox.Types.Post, dateSent:{ $lt:opts.maxDate }}
+		.find { recipient:@id, dateSent:{ $lt:opts.maxDate }}
 		.sort '-dateSent'
 		.populate 'resource'
 		.limit opts.limit
 		.exec HandleLimit (err, docs) =>
+			console.log 'docs', docs
 			return cb(err) if err
 			# Pluck resources from inbox docs. Remove undefineds and nulls.
 			posts = _.pluck(docs, 'resource').filter((i)->i)
@@ -384,12 +386,14 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 Create a post object and fan out through inboxes.
 ###
 UserSchema.methods.createPost = (data, cb) ->
+
 	post = new Post {
 		author: @id
 		data: {
 			title: data.content.title
 			body: data.content.body
 		},
+		type: Post.Types?.PlainPost or 'PlainPost'
 	}
 	if data.groupId
 		post.group = data.groupId
@@ -399,6 +403,7 @@ UserSchema.methods.createPost = (data, cb) ->
 		# use asunc.parallel to run a job
 		# Callback now, what happens later doesn't concern the user.
 		cb(err, post)
+		if err then return
 		if post.group
 			return
 		# Make separate job for this.
@@ -406,7 +411,7 @@ UserSchema.methods.createPost = (data, cb) ->
 		@getPopulatedFollowers (err, followers) =>
 			Inbox.fillInboxes({
 				recipients: [@].concat(followers),
-				resource: post,
+				resource: post.id,
 				type: Inbox.Types.Post,
 				author: @id
 			}, () -> )

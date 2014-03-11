@@ -1,4 +1,4 @@
-var Group, HandleErrResult, Inbox, Post, Subscriber, Tag, User, mongoose, required, util;
+var Group, HandleErrResult, Post, Resource, Subscriber, Tag, User, mongoose, required, util;
 
 mongoose = require('mongoose');
 
@@ -6,9 +6,9 @@ util = require('util');
 
 required = require('./lib/required');
 
-Post = mongoose.model('Post');
+Resource = mongoose.model('Resource');
 
-Inbox = mongoose.model('Inbox');
+Post = Resource.model('Post');
 
 Tag = mongoose.model('Tag');
 
@@ -54,9 +54,6 @@ module.exports = {
         } else {
           return res.render('pages/frontpage');
         }
-      },
-      post: function(req, res) {
-        return res.end('<html><head></head><body><script type="text/javascript">' + 'window.top.location="http://meavisa.herokuapp.com"</script>' + '</body></html>');
       }
     }
   },

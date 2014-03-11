@@ -9,9 +9,9 @@ mongoose = require 'mongoose'
 assert = require 'assert'
 _ = require 'underscore'
 async = require 'async'
-
 assertArgs = require './lib/assertArgs'
 
+Resource = mongoose.model 'Resource'
 Notification = mongoose.model 'Notification'
 ObjectId = mongoose.Schema.ObjectId
 

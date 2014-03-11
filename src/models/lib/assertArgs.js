@@ -71,7 +71,8 @@ module.exports = assertArgs = function() {
   };
   callback = args[args.length - 1];
   if (!(callback instanceof Function)) {
-    throw "AssertLib error. Last element in the function arguments passed insn't callable.";
+    console.trace();
+    throw "AssertLib error. Last element in the function arguments passed isn't callable.";
   }
   for (index = _j = 0, _len = allAssertions.length; _j < _len; index = ++_j) {
     paramAssertions = allAssertions[index];

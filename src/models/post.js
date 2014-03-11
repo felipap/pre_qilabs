@@ -1,4 +1,4 @@
-var Inbox, Notification, ObjectId, Post, PostSchema, Types, assert, assertArgs, async, mongoose, notifyUser, urlify, _;
+var Notification, ObjectId, Post, PostSchema, Resource, Types, assert, assertArgs, async, mongoose, notifyUser, urlify, _;
 
 mongoose = require('mongoose');
 
@@ -10,11 +10,11 @@ async = require('async');
 
 assertArgs = require('./lib/assertArgs');
 
-Inbox = mongoose.model('Inbox');
+ObjectId = mongoose.Schema.ObjectId;
 
 Notification = mongoose.model('Notification');
 
-ObjectId = mongoose.Schema.ObjectId;
+Resource = mongoose.model('Resource');
 
 Types = {
   Comment: 'Comment',
@@ -243,8 +243,6 @@ PostSchema.statics.fillComments = function(docs, cb) {
 
 PostSchema.statics.Types = Types;
 
-PostSchema.statics.findOrCreate = require('./lib/findOrCreate');
-
 PostSchema.plugin(require('./lib/hookedModelPlugin'));
 
-module.exports = Post = mongoose.model("Post", PostSchema);
+module.exports = Post = Resource.discriminator('Post', PostSchema);

@@ -25,8 +25,10 @@ ObjectId = mongoose.Types.ObjectId
 
 required = require '../lib/required.js'
 
+Resource = mongoose.model 'Resource'
+
 User = mongoose.model 'User'
-Post = mongoose.model 'Post'
+Post = Resource.model 'Post'
 Tag  = mongoose.model 'Tag'
 Inbox = mongoose.model 'Inbox'
 Group = mongoose.model 'Group'
@@ -58,8 +60,10 @@ module.exports = {
 						User.find {}, (err, users) ->
 							res.endJson { users:users }
 					else if req.query.inbox?
-						Inbox.find {}, (err, inboxs) ->
-							res.endJson { inboxs:inboxs } 
+						Inbox.find {}
+							.populate 'resource'
+							.exec (err, inboxs) ->
+								res.endJson { err:err, inboxs:inboxs } 
 					else if req.query.group?
 						Group.find {}, (err, groups) ->
 							res.endJson { group:groups } 
@@ -147,7 +151,7 @@ module.exports = {
 							return if not postId = req.paramToObjectId('id')
 							Post.findOne {_id: postId, author: req.user},
 								HandleErrResult(res)((doc) ->
-									Inbox.remove { resource: doc }, (err, num) ->
+									Inbod.remove { resource: doc }, (err, num) ->
 									doc.remove()
 									res.endJson doc
 								)
