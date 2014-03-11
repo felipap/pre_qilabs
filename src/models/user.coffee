@@ -19,6 +19,7 @@ hookedModel = require './lib/hookedModel'
 
 Inbox 	= mongoose.model 'Inbox'
 Follow 	= mongoose.model 'Follow'
+Activity 	= mongoose.model 'Activity'
 Post 	= mongoose.model 'Post'
 Group 	= mongoose.model 'Group'
 Notification = mongoose.model 'Notification'
@@ -105,17 +106,44 @@ UserSchema.pre 'remove', (next) ->
 ################################################################################
 ## related to Following ########################################################
 
-UserSchema.methods.getFollowers = (cb) -> # Add opts to prevent getting all?
-	Follow.find {followee: @}, (err, docs) ->
-		return cb(err) if err
-		followers = _.filter(_.pluck(docs, 'follower'), (i) -> i)
-		User.find {_id: {$in:followers}}, cb
+# Get Follow documents where @ is followee.
+UserSchema.methods.getFollowsAsFollowee = (cb) ->
+	Follow.find {followee: @}, cb
 
-UserSchema.methods.getFollowing = (cb) -> # Add opts to prevent getting all?
-	Follow.find {follower: @}, (err, docs) ->
+# Get Follow documents where @ is follower.
+UserSchema.methods.getFollowsAsFollower = (cb) ->
+	Follow.find {follower: @}, cb
+
+#
+
+# Get documents of users that @ follows.
+UserSchema.methods.getPopulatedFollowers = (cb) -> # Add opts to prevent getting all?
+	@getFollowsAsFollowee (err, docs) ->
 		return cb(err) if err
-		followees = _.filter(_.pluck(docs, 'followee'), (i) -> i)
-		User.find {_id: {$in:followees}}, cb
+		User.populate docs, { path: 'follower' }, (err, popFollows) ->
+			cb(err, _.pluck(popFollows, 'follower'))
+
+# Get documents of users that follow @.
+UserSchema.methods.getPopulatedFollowing = (cb) -> # Add opts to prevent getting all?
+	@getFollowsAsFollower (err, docs) ->
+		return cb(err) if err
+		User.populate docs, { path: 'followee' }, (err, popFollows) ->
+			cb(err, _.pluck(popFollows, 'followee'))
+
+#
+
+# Get id of users that @ follows.
+UserSchema.methods.getFollowersIds = (cb) ->
+	@getFollowsAsFollowee (err, docs) ->
+		console.log docs, _.pluck(docs or [], 'follower')
+		cb(err, _.pluck(docs or [], 'follower'))
+
+# Get id of users that follow @.
+UserSchema.methods.getFollowingIds = (cb) ->
+	@getFollowsAsFollower (err, docs) ->
+		cb(err, _.pluck(docs or [], 'followee'))
+
+#### Stats
 
 UserSchema.methods.countFollowers = (cb) ->
 	Follow.count {followee: @}, cb
@@ -145,7 +173,7 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 			cb(err, !!doc)
 
 	Notification.Trigger(@, Notification.Types.NewFollower)(@, user, ->)
-	Post.Trigger(@, Notification.Types.NewFollower)(@, user, ->)
+	Activity.Trigger(@, Notification.Types.NewFollower)(@, user, ->)
 
 UserSchema.methods.unfollowUser = (user, cb) ->
 	assert user instanceof User, 'Passed argument not a user document'
@@ -173,6 +201,24 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 
 	if not opts.maxDate
 		opts.maxDate = Date.now()
+
+	###
+	###
+	mergePopulatedActivities = (minDate, maxDate, cb) => # ips => Inboxed PostS
+		console.log "lt #{maxDate} gt #{minDate}"
+
+		Activity
+			.find { recipient:@id, dateCreated:{ $lt:maxDate, $gt:minDate }}
+			.sort '-dataCreated'
+			.exec (err, docs) =>
+				console.log err, docs
+				Activity.populateResources docs, () ->
+					console.log arguments
+				# Activity.populateAllTypes docs, (err, popdocs) ->
+
+				# 	# Flatten lists. Remove undefined (from .limit queries).
+				# 	nips = _.flatten(_docs).filter((i)->i
+				# 	onGetNonInboxedPosts(err, nips)
 
 	###
 	# Merge inboxes posts with those from followed users but that preceed "followship".
@@ -206,20 +252,20 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			return cb(err) if err
 			
 			all = _.sortBy(nips.concat(ips), (p) -> p.dateCreated) # merge'n'sort by date
-			
+
 			# Populate author in all docs (nips and ips)
 			User.populate all, {path: 'author'}, (err, docs) =>
 				return cb(err) if err
 				# Fill comments in all docs.
 				Post.fillComments(docs, cb)
 
-	# Get inboxed posts.
+	# Get inboxed posts older than the maxDate determined by the user.
 	Inbox
 		.find { recipient:@id, type:Inbox.Types.Post, dateSent:{ $lt:opts.maxDate }}
 		.sort '-dateSent'
 		.populate 'resource'
 		.limit opts.limit
-		.exec HandleLimit((err, docs) =>
+		.exec HandleLimit (err, docs) =>
 			return cb(err) if err
 			# Pluck resources from inbox docs. Remove undefineds and nulls.
 			posts = _.pluck(docs, 'resource').filter((i)->i)
@@ -236,11 +282,11 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			else
 				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
 				oldestPostDate = new Date(0)
-			# try
-			mergeNonInboxedPosts(oldestPostDate, posts)
+			try
+				mergeNonInboxedPosts(oldestPostDate, posts)
+				mergePopulatedActivities(oldestPostDate, new Date())
 			# catch e
 			# 	cb(e)
-		)
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	Post
@@ -359,7 +405,7 @@ UserSchema.methods.createPost = (data, cb) ->
 			return
 		# Make separate job for this.
 		# Iter through followers and fill inboxes.
-		@getFollowers (err, followers) =>
+		@getPopulatedFollowers (err, followers) =>
 			Inbox.fillInboxes({
 				recipients: [@].concat(followers),
 				resource: post,
@@ -374,9 +420,9 @@ UserSchema.methods.createPost = (data, cb) ->
 Generate stuffed profile for the controller.
 ###
 UserSchema.methods.genProfile = (cb) ->
-	@getFollowers (err1, followers) =>
+	@getPopulatedFollowers (err1, followers) =>
 		if err1 then followers = null
-		@getFollowing (err2, following) =>
+		@getPopulatedFollowing (err2, following) =>
 			if err2 then following = null
 			Group.Membership
 				.find {member: @}

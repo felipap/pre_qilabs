@@ -14,7 +14,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, HandleErrResult, Inbox, Notification, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
+var Activity, Follow, Group, HandleErrResult, Inbox, Notification, ObjectId, Post, Subscriber, Tag, User, mongoose, required, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -36,6 +36,8 @@ Inbox = mongoose.model('Inbox');
 Group = mongoose.model('Group');
 
 Follow = mongoose.model('Follow');
+
+Activity = mongoose.model('Activity');
 
 Subscriber = mongoose.model('Subscriber');
 
@@ -115,11 +117,16 @@ module.exports = {
                 subscribers: subscribers
               });
             });
-          } else if (req.query.session != null) {
+          } else if (req.query.note != null) {
             return res.endJson({
+              notes: notes
+            });
+          } else if (req.query.session != null) {
+            res.endJson({
               ip: req.ip,
               session: req.session
             });
+            return Activity.find({}, function(err, notes) {});
           } else {
             return User.find({}, function(err, users) {
               return Post.find({}, function(err, posts) {
@@ -128,22 +135,27 @@ module.exports = {
                     return Follow.find({}, function(err, follows) {
                       return Notification.find({}, function(err, notifics) {
                         return Group.find({}, function(err, groups) {
-                          return Group.Membership.find({}, function(err, membership) {
+                          Group.Membership.find({}, function(err, memberships) {
                             var obj;
-                            obj = {
+                            return obj = {
                               ip: req.ip,
-                              group: groups,
+                              group: groups
+                            };
+                          });
+                          Activity.find({}, function(err, notes) {
+                            return {
                               inboxs: inboxs,
                               notifics: notifics,
-                              membership: membership,
+                              membership: memberships,
                               session: req.session,
                               users: users,
                               posts: posts,
                               follows: follows,
+                              notes: notes,
                               subscribers: subscribers
                             };
-                            return res.endJson(obj);
                           });
+                          return res.endJson(obj);
                         });
                       });
                     });

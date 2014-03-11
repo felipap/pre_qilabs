@@ -17,6 +17,7 @@ mongoose = require 'mongoose'
 async 	 = require 'async'
 
 hookedModel = require './lib/hookedModel'
+assertArgs = require './lib/assertArgs'
 
 Types =
 	Post: 'Post'
@@ -25,10 +26,10 @@ Types =
 ## Schema ######################################################################
 
 InboxSchema = new mongoose.Schema {
-	dateSent:	{ type: Date, index: true }
-	recipient:	{ type: mongoose.Schema.ObjectId, index: true, required: true }
-	author:		{ type: mongoose.Schema.ObjectId, index: true, ref: 'User', required: true }
-	resource:	{ type: mongoose.Schema.ObjectId, ref: 'Post', required: true }
+	dateSent:	{ type: Date, indexed: 1 }
+	recipient:	{ type: mongoose.Schema.ObjectId, indexed: 1, required: true }
+	author:		{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
+	resource:	{ type: mongoose.Schema.ObjectId, required: true }
 	type: 		{ type: String, required: true }
 }
 
@@ -42,14 +43,16 @@ InboxSchema.pre 'save', (next) ->
 ################################################################################
 ## Statics #####################################################################
 
-InboxSchema.statics.getFromUser = (user, opts, cb) ->
-	cb ?= opts
-	@
-		.find({author: user.id})
-		.sort('-dateSent')
-		.exec(cb)
+# InboxSchema.statics.getFromUser = (user, opts, cb) ->
+# 	cb ?= opts
+# 	@
+# 		.find({author: user.id})
+# 		.sort('-dateSent')
+# 		.exec(cb)
 
 InboxSchema.statics.fillInboxes = (opts, cb) ->
+	assertArgs({$contains:['recipients']})
+
 	console.assert opts and cb and opts.recipients instanceof Array and opts.resource and
 		opts.type, "Get your programming straight."
 

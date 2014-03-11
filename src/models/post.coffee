@@ -13,6 +13,7 @@ hookedModel = require './lib/hookedModel'
 
 Inbox = mongoose.model 'Inbox'
 Notification = mongoose.model 'Notification'
+ObjectId = mongoose.Schema.ObjectId
 
 Types = 
 	Comment: 'Comment'
@@ -27,10 +28,10 @@ Types =
 ## Schema ######################################################################
 
 PostSchema = new mongoose.Schema {
-	author:			{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
-	group:			{ type: mongoose.Schema.ObjectId, ref: 'Group' }
-	dateCreated:	{ type: Date }
-	type: 			{ type: String, default: Types.PlainPost, required: true }
+	author:			{ type: ObjectId, ref: 'User', required: true, indexed: 1 }
+	group:			{ type: ObjectId, ref: 'Group', required: false }
+	dateCreated:	{ type: Date, indexed: 1 }
+	type: 			{ type: String, required: true }
 	
 	data: {
 		title:		{ type: String, required: false }

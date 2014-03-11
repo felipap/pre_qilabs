@@ -1,4 +1,4 @@
-var Inbox, Notification, Post, PostSchema, Types, assert, assertArgs, async, hookedModel, mongoose, notifyUser, urlify, _;
+var Inbox, Notification, ObjectId, Post, PostSchema, Types, assert, assertArgs, async, hookedModel, mongoose, notifyUser, urlify, _;
 
 mongoose = require('mongoose');
 
@@ -16,6 +16,8 @@ Inbox = mongoose.model('Inbox');
 
 Notification = mongoose.model('Notification');
 
+ObjectId = mongoose.Schema.ObjectId;
+
 Types = {
   Comment: 'Comment',
   Answer: 'Answer',
@@ -26,20 +28,22 @@ Types = {
 
 PostSchema = new mongoose.Schema({
   author: {
-    type: mongoose.Schema.ObjectId,
+    type: ObjectId,
     ref: 'User',
-    required: true
+    required: true,
+    indexed: 1
   },
   group: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Group'
+    type: ObjectId,
+    ref: 'Group',
+    required: false
   },
   dateCreated: {
-    type: Date
+    type: Date,
+    indexed: 1
   },
   type: {
     type: String,
-    "default": Types.PlainPost,
     required: true
   },
   data: {

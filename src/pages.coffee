@@ -112,7 +112,7 @@ module.exports = {
 				Post.findOne { _id:postId }, HandleErrResult(res)((post) ->
 					if post.parentObj
 						# Our post is actually a comment/answer, so redirect user to the
-						# comment actual path (which is its parent's).
+						# comment's actual path (which is its parent's).
 						console.log 'redirecting', post.path
 						res.redirect(post.path)
 					else

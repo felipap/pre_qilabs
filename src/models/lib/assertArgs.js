@@ -1,14 +1,19 @@
-var assertArgs, mongoose,
+var assertArgs, builtins, mongoose,
   __slice = [].slice;
 
 mongoose = require('mongoose');
 
-assertArgs = function() {
-  var allAssertions, args, assertParam, callback, err, index, paramAssertions, _i, _j, _len;
-  allAssertions = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), args = arguments[_i++];
-  assertParam = function(el, assertions) {
-    var ans, assertContains, assertIsModel, err, type;
-    assertIsModel = function(expected, value) {
+builtins = {
+  $iscb: {
+    test: function(expected, value) {
+      if (value instanceof Function) {
+        return false;
+      }
+      return "Argument '" + value + "'' doesn't match Assert {ismodel:" + expected + "}";
+    }
+  },
+  $ismodel: {
+    test: function(expected, value) {
       var model;
       if (expected.schema && expected.schema instanceof mongoose.Schema) {
         model = expected;
@@ -21,9 +26,11 @@ assertArgs = function() {
         return false;
       }
       return "Argument '" + value + "'' doesn't match Assert {ismodel:" + expected + "}";
-    };
-    assertContains = function(expected, value) {
-      var key, keys, _j, _len;
+    }
+  },
+  $contains: {
+    test: function(expected, value) {
+      var key, keys, _i, _len;
       if (expected instanceof Array) {
         keys = expected;
       } else if (typeof expected === 'string') {
@@ -31,33 +38,43 @@ assertArgs = function() {
       } else {
         return "Invalid expected value for assertion of type 'contains': " + expected;
       }
-      for (_j = 0, _len = keys.length; _j < _len; _j++) {
-        key = keys[_j];
+      for (_i = 0, _len = keys.length; _i < _len; _i++) {
+        key = keys[_i];
         if (!(key in value)) {
           return "Argument '" + value + "' doesn't match Assert {contains:" + expected + "}";
         }
       }
       return false;
-    };
-    for (type in assertions) {
-      ans = assertions[type];
-      switch (type) {
-        case 'ismodel':
-          err = assertIsModel(ans, el);
-          break;
-        case 'contains':
-          err = assertContains(ans, el);
-          break;
-        default:
+    }
+  }
+};
+
+module.exports = assertArgs = function() {
+  var allAssertions, args, assertParam, callback, err, index, paramAssertions, _i, _j, _len;
+  allAssertions = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), args = arguments[_i++];
+  assertParam = function(assertionArg, functionArg) {
+    var ans, err, type;
+    for (type in assertionArg) {
+      ans = assertionArg[type];
+      if (type in builtins) {
+        err = builtins[type].test(ans, el);
+        if (err) {
+          return err;
+        }
+      } else {
+        if (process.env.NODE_ENV === 'production') {
           return "Invalid assertion of type " + type;
-      }
-      if (err) {
-        return err;
+        } else {
+          throw "Invalid assertion of type " + type;
+        }
       }
     }
     return null;
   };
   callback = args[args.length - 1];
+  if (!(callback instanceof Function)) {
+    throw "AssertLib error. Last element in function arguments passed insn't callable.";
+  }
   for (index = _j = 0, _len = allAssertions.length; _j < _len; index = ++_j) {
     paramAssertions = allAssertions[index];
     err = assertParam(args[index], paramAssertions);
@@ -70,5 +87,3 @@ assertArgs = function() {
     }
   }
 };
-
-module.exports = assertArgs;

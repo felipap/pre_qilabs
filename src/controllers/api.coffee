@@ -31,6 +31,7 @@ Tag  = mongoose.model 'Tag'
 Inbox = mongoose.model 'Inbox'
 Group = mongoose.model 'Group'
 Follow = mongoose.model 'Follow'
+Activity = mongoose.model 'Activity'
 Subscriber = mongoose.model 'Subscriber'
 Notification = mongoose.model 'Notification'
 
@@ -77,8 +78,11 @@ module.exports = {
 					else if req.query.subscriber?
 						Subscriber.find {}, (err, subscribers) ->
 							res.endJson { subscribers:subscribers }
+					else if req.query.note?
+							res.endJson { notes:notes }
 					else if req.query.session?
 						res.endJson { ip: req.ip, session: req.session } 
+						Activity.find {}, (err, notes) ->
 					else
 							User.find {}, (err, users) ->
 								Post.find {}, (err, posts) ->
@@ -87,19 +91,21 @@ module.exports = {
 											Follow.find {}, (err, follows) ->
 												Notification.find {}, (err, notifics) ->
 													Group.find {}, (err, groups) ->
-														Group.Membership.find {}, (err, membership) ->
-															obj =
-																ip: req.ip
-																group: groups
-																inboxs: inboxs
-																notifics: notifics
-																membership: membership
-																session: req.session
-																users: users
-																posts: posts
-																follows: follows
-																subscribers: subscribers
-															res.endJson obj
+														Group.Membership.find {}, (err, memberships) ->
+																obj =
+																	ip: req.ip
+																	group: groups
+															Activity.find {}, (err, notes) ->
+																	inboxs: inboxs
+																	notifics: notifics
+																	membership: memberships
+																	session: req.session
+																	users: users
+																	posts: posts
+																	follows: follows
+																	notes: notes
+																	subscribers: subscribers
+																res.endJson obj
 			}
 		'testers':
 			permissions: [required.logout]

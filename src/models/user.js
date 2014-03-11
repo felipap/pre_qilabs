@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, User, UserSchema, assert, async, hookedModel, mongoose, _;
+var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, User, UserSchema, assert, async, hookedModel, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -20,6 +20,8 @@ hookedModel = require('./lib/hookedModel');
 Inbox = mongoose.model('Inbox');
 
 Follow = mongoose.model('Follow');
+
+Activity = mongoose.model('Activity');
 
 Post = mongoose.model('Post');
 
@@ -137,41 +139,54 @@ UserSchema.pre('remove', function(next) {
   })(this));
 });
 
-UserSchema.methods.getFollowers = function(cb) {
+UserSchema.methods.getFollowsAsFollowee = function(cb) {
   return Follow.find({
     followee: this
-  }, function(err, docs) {
-    var followers;
+  }, cb);
+};
+
+UserSchema.methods.getFollowsAsFollower = function(cb) {
+  return Follow.find({
+    follower: this
+  }, cb);
+};
+
+UserSchema.methods.getPopulatedFollowers = function(cb) {
+  return this.getFollowsAsFollowee(function(err, docs) {
     if (err) {
       return cb(err);
     }
-    followers = _.filter(_.pluck(docs, 'follower'), function(i) {
-      return i;
+    return User.populate(docs, {
+      path: 'follower'
+    }, function(err, popFollows) {
+      return cb(err, _.pluck(popFollows, 'follower'));
     });
-    return User.find({
-      _id: {
-        $in: followers
-      }
-    }, cb);
   });
 };
 
-UserSchema.methods.getFollowing = function(cb) {
-  return Follow.find({
-    follower: this
-  }, function(err, docs) {
-    var followees;
+UserSchema.methods.getPopulatedFollowing = function(cb) {
+  return this.getFollowsAsFollower(function(err, docs) {
     if (err) {
       return cb(err);
     }
-    followees = _.filter(_.pluck(docs, 'followee'), function(i) {
-      return i;
+    return User.populate(docs, {
+      path: 'followee'
+    }, function(err, popFollows) {
+      return cb(err, _.pluck(popFollows, 'followee'));
     });
-    return User.find({
-      _id: {
-        $in: followees
-      }
-    }, cb);
+  });
+};
+
+UserSchema.methods.getFollowersIds = function(cb) {
+  return this.getFollowsAsFollowee(function(err, docs) {
+    console.log(docs, _.pluck(docs || [], 'follower'));
+    return cb(err, _.pluck(docs || [], 'follower'));
+  });
+};
+
+UserSchema.methods.getFollowingIds = function(cb) {
+  return this.getFollowsAsFollower(function(err, docs) {
+    return cb(err, _.pluck(docs || [], 'followee'));
   });
 };
 
@@ -218,7 +233,7 @@ UserSchema.methods.dofollowUser = function(user, cb) {
     };
   })(this));
   Notification.Trigger(this, Notification.Types.NewFollower)(this, user, function() {});
-  return Post.Trigger(this, Notification.Types.NewFollower)(this, user, function() {});
+  return Activity.Trigger(this, Notification.Types.NewFollower)(this, user, function() {});
 };
 
 UserSchema.methods.unfollowUser = function(user, cb) {
@@ -254,13 +269,33 @@ HandleLimit = function(func) {
  */
 
 UserSchema.methods.getTimeline = function(_opts, cb) {
-  var mergeNonInboxedPosts, opts;
+  var mergeNonInboxedPosts, mergePopulatedActivities, opts;
   opts = _.extend({
     limit: 10
   }, _opts);
   if (!opts.maxDate) {
     opts.maxDate = Date.now();
   }
+
+  /*
+   */
+  mergePopulatedActivities = (function(_this) {
+    return function(minDate, maxDate, cb) {
+      console.log("lt " + maxDate + " gt " + minDate);
+      return Activity.find({
+        recipient: _this.id,
+        dateCreated: {
+          $lt: maxDate,
+          $gt: minDate
+        }
+      }).sort('-dataCreated').exec(function(err, docs) {
+        console.log(err, docs);
+        return Activity.populateResources(docs, function() {
+          return console.log(arguments);
+        });
+      });
+    };
+  })(this);
 
   /*
   	 * Merge inboxes posts with those from followed users but that preceed "followship".
@@ -345,7 +380,10 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
       } else {
         oldestPostDate = new Date(0);
       }
-      return mergeNonInboxedPosts(oldestPostDate, posts);
+      try {
+        mergeNonInboxedPosts(oldestPostDate, posts);
+        return mergePopulatedActivities(oldestPostDate, new Date());
+      } catch (_error) {}
     };
   })(this)));
 };
@@ -508,7 +546,7 @@ UserSchema.methods.createPost = function(data, cb) {
       if (post.group) {
         return;
       }
-      return _this.getFollowers(function(err, followers) {
+      return _this.getPopulatedFollowers(function(err, followers) {
         return Inbox.fillInboxes({
           recipients: [_this].concat(followers),
           resource: post,
@@ -526,12 +564,12 @@ Generate stuffed profile for the controller.
  */
 
 UserSchema.methods.genProfile = function(cb) {
-  return this.getFollowers((function(_this) {
+  return this.getPopulatedFollowers((function(_this) {
     return function(err1, followers) {
       if (err1) {
         followers = null;
       }
-      return _this.getFollowing(function(err2, following) {
+      return _this.getPopulatedFollowing(function(err2, following) {
         if (err2) {
           following = null;
         }

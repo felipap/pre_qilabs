@@ -5,7 +5,7 @@ mongoose.connect(process.env.MONGOLAB_URI
 	|| 'mongodb://localhost/madb');
 
 // Keep user as last one.
-var models = ['inbox', 'notification', 'follow', 'post', 'subscriber', 'tag', 'topic', 'group', 'user'];
+var models = ['inbox', 'notification', 'follow', 'post', 'subscriber', 'tag', 'activity', 'topic', 'group', 'user'];
 for (var i=0; i<models.length; i++)
 	require('../models/'+models[i]);
 

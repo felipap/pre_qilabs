@@ -2,7 +2,7 @@ module.exports = {
   name: 'about',
   methods: {
     get: function(req, res) {
-      return res.render('pages/about');
+      return res.render('about_pages/about');
     }
   },
   children: {
@@ -10,7 +10,7 @@ module.exports = {
       name: 'team',
       methods: {
         get: function(req, res) {
-          return res.render('pages/about_team');
+          return res.render('about_pages/team');
         }
       }
     },
@@ -18,7 +18,7 @@ module.exports = {
       name: 'join_team',
       methods: {
         get: function(req, res) {
-          return res.render('pages/about_jointeam');
+          return res.render('about_pages/jointeam');
         }
       }
     }
