@@ -29,16 +29,6 @@ required = require '../lib/required.js'
 Group = mongoose.model 'Group'
 User = mongoose.model 'User'
 
-HandleErrResult = (res) ->
-	(cb) ->
-		(err, result) ->
-			if err
-				res.status(400).endJson(error:true)
-			else if not result
-				res.status(404).endJson(error:true, name:404)
-			else
-				cb.apply(cb, [].splice.call(arguments,1))
-
 # Starts at /api/labs 
 module.exports = {
 	permissions: [required.login],
@@ -59,14 +49,14 @@ module.exports = {
 			get: (req, res) ->
 				return unless labId = req.paramToObjectId('labId')
 				Group.findOne {_id: labId},
-					HandleErrResult(res)((group) ->
+					res.HandleErrResult((group) ->
 
 						opts = {limit:10}
 						if parseInt(req.query.page)
 							opts.maxDate = parseInt(req.query.maxDate)
 
 						req.user.getLabPosts opts, group,
-							HandleErrResult(res)((docs) ->
+							res.HandleErrResult((docs) ->
 
 								if docs.length is opts.limit
 									minDate = docs[docs.length-1].dateCreated.valueOf()
@@ -87,7 +77,7 @@ module.exports = {
 					content:
 						title: 'My conquest!'+Math.floor(Math.random()*100)
 						body: req.body.content.body
-				}, HandleErrResult(res)((doc) ->
+				}, res.HandleErrResult((doc) ->
 					doc.populate 'author', (err, doc) ->
 						res.endJson {error:false, data:doc}
 				)
@@ -98,8 +88,8 @@ module.exports = {
 			post: (req, res) ->
 				return unless labId = req.paramToObjectId('labId')
 				return unless userId = req.paramToObjectId('userId')
-				Group.findOne {_id: labId}, HandleErrResult(res)((group) ->
-					User.findOne {_id: userId}, HandleErrResult(res)((user) ->
+				Group.findOne {_id: labId}, res.HandleErrResult((group) ->
+					User.findOne {_id: userId}, res.HandleErrResult((user) ->
 						type = Group.Membership.Types.Member
 						req.user.addUserToGroup(user, group, type,
 							(err, membership) ->

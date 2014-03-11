@@ -91,9 +91,22 @@ app.use(function(req, res, next) {
 		}
 	};
 
+	res.handleErrResult = function (callback) {
+		var self = this;
+		return function (err, result) {
+			if (err) {
+				res.render404();
+			} else if (!result) {
+				res.render404();
+			} else {
+				callback.apply(self, [].splice.call(arguments,1));
+			}
+		}
+	};
+
 	req.paramToObjectId = function (param) {
 		try {
-			return new mongoose.Types.ObjectId.fromString(req.params[param])
+			return new mongoose.Types.ObjectId.createFromHexString(req.params[param])
 		} catch (e) {
 			res.status(400).endJson({error:true, name:'InvalidId'})
 			return false;
@@ -143,7 +156,6 @@ app.use(expressWinston.errorLogger({
 // app.use(express.logger());
 
 app.locals({
-	poc: 'poc',
 	tags: {},
 	errors: {},
 	version_label: "alpha",

@@ -17,18 +17,6 @@ Group 	= mongoose.model 'Group'
 
 Subscriber = mongoose.model 'Subscriber'
 
-
-HandleErrResult = (res) ->
-	(cb) ->
-		(err, result) ->
-			if err
-				res.render404()
-			else if not result
-				res.render404()
-			else
-				cb.apply(cb, [].splice.call(arguments,1))
-
-
 module.exports = {
 	'/':
 		name: 'index'
@@ -78,8 +66,8 @@ module.exports = {
 					unless req.params.slug
 						return res.render404()
 					Group.findOne {slug: req.params.slug},
-						HandleErrResult(res) (group) ->
-							group.genGroupProfile HandleErrResult(res) (groupProfile) -> # groupProfile?
+						res.handleErrResult (group) ->
+							group.genGroupProfile res.handleErrResult (groupProfile) -> # groupProfile?
 								console.log('groupProfile', groupProfile)
 								res.render 'pages/lab',
 									group: groupProfile
@@ -93,7 +81,7 @@ module.exports = {
 				unless req.params.username
 					return res.render404()
 				User.findOne {username: req.params.username},
-					HandleErrResult(res) (user2) ->
+					res.handleErrResult (user2) ->
 						user2.genProfile (err, profile) ->
 							if err or not profile
 								# req.logMe "err generating profile", err
@@ -109,7 +97,7 @@ module.exports = {
 		methods: {
 			get: (req, res) ->
 				return unless postId = req.paramToObjectId('postId')
-				Post.findOne { _id:postId }, HandleErrResult(res)((post) ->
+				Post.findOne { _id:postId }, res.handleErrResult((post) ->
 					if post.parentObj
 						# Our post is actually a comment/answer, so redirect user to the
 						# comment's actual path (which is its parent's).

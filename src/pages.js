@@ -1,4 +1,4 @@
-var Group, HandleErrResult, Post, Resource, Subscriber, Tag, User, mongoose, required, util;
+var Group, Post, Resource, Subscriber, Tag, User, mongoose, required, util;
 
 mongoose = require('mongoose');
 
@@ -17,20 +17,6 @@ User = mongoose.model('User');
 Group = mongoose.model('Group');
 
 Subscriber = mongoose.model('Subscriber');
-
-HandleErrResult = function(res) {
-  return function(cb) {
-    return function(err, result) {
-      if (err) {
-        return res.render404();
-      } else if (!result) {
-        return res.render404();
-      } else {
-        return cb.apply(cb, [].splice.call(arguments, 1));
-      }
-    };
-  };
-};
 
 module.exports = {
   '/': {
@@ -98,8 +84,8 @@ module.exports = {
           }
           return Group.findOne({
             slug: req.params.slug
-          }, HandleErrResult(res)(function(group) {
-            return group.genGroupProfile(HandleErrResult(res)(function(groupProfile) {
+          }, res.handleErrResult(function(group) {
+            return group.genGroupProfile(res.handleErrResult(function(groupProfile) {
               console.log('groupProfile', groupProfile);
               return res.render('pages/lab', {
                 group: groupProfile
@@ -119,7 +105,7 @@ module.exports = {
         }
         return User.findOne({
           username: req.params.username
-        }, HandleErrResult(res)(function(user2) {
+        }, res.handleErrResult(function(user2) {
           return user2.genProfile(function(err, profile) {
             if (err || !profile) {
               return res.render404();
@@ -145,7 +131,7 @@ module.exports = {
         }
         return Post.findOne({
           _id: postId
-        }, HandleErrResult(res)(function(post) {
+        }, res.handleErrResult(function(post) {
           if (post.parentObj) {
             console.log('redirecting', post.path);
             return res.redirect(post.path);
