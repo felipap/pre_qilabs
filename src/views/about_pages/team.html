@@ -1,0 +1,66 @@
+{% extends '../stdbody.html' %}
+
+{% block head %}
+	{% parent %}
+	<link rel="stylesheet" href="{{ getMediaUrl('css','about_pages.min.css') }}" />
+{% endblock %}
+
+{% block body %}
+
+<body class="" data-page="team">
+
+	{% include '../layouts/navbar.html' %} 
+	{%
+	set team = [
+		{
+			name: 'Felipe Aragão',
+			twitter: 'http://twitter.com/f03lipe',
+			desc: 'Fundador (programador)',
+			avatar: getMediaUrl('images','t','felipe.jpg'),
+		},
+		{
+			name: 'João Guio',
+			twitter: 'http://twitter.com/jonnyguio',
+			desc: 'Desenvolvedor',
+			avatar: getMediaUrl('images','t','viviane.jpg'),
+		},
+		{
+			name: 'Viviane Lobo',
+			desc: '',
+			avatar: getMediaUrl('images','t','michelle.jpg'),
+		},
+		{
+			name: 'Michelle Malher',
+			twitter: 'http://twitter.com/mimimalher',
+			desc: '',
+			avatar: getMediaUrl('images','t','viviane.jpg'),
+		},
+	]
+	%}
+
+	<section class="team">
+		<section>
+			<h1><strong>Equipe</strong></h1>
+
+			{% for gorgeous in team %}
+			
+			<li>
+				<div class="avatar">
+					<img width=100 src="<%= person.avatar %>" />
+				</div>
+				<div class="">
+				<h3>{{ gorgeous.name }}</h3>
+				<h3>{{ gorgeous.desc }}</h3>
+				{% if gorgeous.twitter %}
+					<a href="{{ gorgeous.twitter }}"><i class="icon-twitter icon-large"></i></a>
+				{% endif %}
+			</li>
+			{% endfor %}
+		</section>
+	</section>
+
+	{% include '../layouts/footer.html' %}
+
+</body>
+
+{% endblock %}
