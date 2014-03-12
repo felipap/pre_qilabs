@@ -63,6 +63,7 @@ module.exports = function Router (app) {
 			var name = childs[relpath].name || absPathToUrlName(abspath);
 			// Permissions are parent's + child's ones 
 			var newPermissions = permissions.concat(childs[relpath].permissions || []);
+			
 			routePath(abspath, name, childs[relpath], newPermissions);
 			routeChildren(abspath, childs[relpath].children, newPermissions);
 		}
@@ -71,8 +72,7 @@ module.exports = function Router (app) {
 	return function (object) {
 
 		for (var path in object) if (object.hasOwnProperty(path)) {
-			if (object[path].methods)
-				routePath(path, object[path].name, object[path].methods);
+			routePath(path, object[path].name || absPathToUrlName(path), object[path]);
 			routeChildren(path, object[path].children);
 		}
 	}

@@ -116,13 +116,6 @@ module.exports = {
 					get: (req, res) ->
 		}
 
-	'/404':
-		name: '404'
-		methods: {
-			get: (req, res) ->
-				res.render404()
-		}
-
 	'/sobre': 	require './controllers/about'
 	'/api': 	require './controllers/api'
 	'/auth': 	require './controllers/auth'

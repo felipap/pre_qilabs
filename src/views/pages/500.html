@@ -6,10 +6,12 @@
 		<h1>Ops! <span>:(</span></h1>
 		<h2>Estamos com problemas no servidor.</h2>
 
-		<h2><em>{{ error_code }}</em> {{ error_msg|json }}</h2>
-		<ul>
-			<small>{{ error_stack }}</small>
-		</ul>
+		{% if app.env === 'development' %}
+			<h2><em>{{ error_code }}</em> {{ error_msg|json }}</h2>
+			<ul>
+				<small>{{ error_stack }}</small>
+			</ul>
+		{% endif %}
 
 		<a href="/" class="btn0 inverted-btn">
 			Voltar para o site

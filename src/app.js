@@ -174,7 +174,7 @@ app.locals({
 				var a = url.replace(regex, function (occ) {
 					var argName = occ.slice(1,occ.length);
 					if (!(argName in args))
-						throw "Invalid argument "+argName+" to url '"+url+"'' getPageUrl. ";
+						throw "Invalid argument '"+argName+"' to url '"+url+"'' getPageUrl. ";
 					return args[occ.slice(1,occ.length)];
 				});
 				// console.log (a)
@@ -185,7 +185,7 @@ app.locals({
 
 		} else {
 			if (app.get('env') !== 'production') {
-				throw "Page named "+name+" was referenced but doesn't exist.";
+				throw "Page named '"+name+"' was referenced but doesn't exist.";
 			}
 			return "#";
 		}
