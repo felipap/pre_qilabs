@@ -48,16 +48,15 @@ InboxSchema.pre 'save', (next) ->
 # 		.sort('-dateSent')
 # 		.exec(cb)
 
-InboxSchema.statics.fillInboxes = (opts, cb) ->
-	assertArgs({$contains:['recipients']}, arguments)
+InboxSchema.statics.fillInboxes = (recipients, opts, cb) ->
+	# assertArgs($isarray:true, arguments)
 
-	console.assert opts and cb and opts.recipients instanceof Array and opts.resource and
-		opts.type, "Get your programming straight."
+	console.assert opts.resource and opts.type, "Get your programming straight."
 
-	if not opts.recipients.length
+	if not recipients.length
 		return cb(false, [])
 
-	async.mapLimit(opts.recipients, 5, ((rec, done) =>
+	async.mapLimit(recipients, 5, ((rec, done) =>
 		inbox = new Inbox {
 			resource: opts.resource
 			type: opts.type

@@ -3,41 +3,47 @@
 # Copyright QILabs.org
 # by @f03lipe
 
-# See http://activitystrea.ms/specs/json/1.0/
 
-mongoose = require 'mongoose'
 assert = require 'assert'
 _ = require 'underscore'
 async = require 'async'
+mongoose = require 'mongoose'
+
+ObjectId = mongoose.Schema.ObjectId
+
 assertArgs = require './lib/assertArgs'
 
 Resource = mongoose.model 'Resource'
+Inbox = mongoose.model 'Inbox'
 Notification = mongoose.model 'Notification'
-ObjectId = mongoose.Schema.ObjectId
 
 Types = 
 	PlainActivity: "PlainActivity"
 	NewFollower: "NewFollower"
 
+ContentHtmlTemplates = 
+	PostComment: '<strong><%= agentName %></strong> comentou na sua publicação.'
+	NewFollower: '<strong><%= agentName %></strong> começou a te seguir.'
+
 ################################################################################
 ## Schema ######################################################################
 
+# See http://activitystrea.ms/specs/json/1.0/
+
 ActivitySchema = new mongoose.Schema {
-	actor:			{ type: ObjectId, ref: 'User' }
+	actor:			{ type: ObjectId, ref: 'User', required: true }
+	icon: 			{ type: String }
+	object: 		{ type: ObjectId, ref: 'Resource' }
+	target: 		{ type: ObjectId, ref: 'Resource' }
 
-	group:			{ type: ObjectId, ref: 'Group', indexed: 1, required: false }
+	verb: 			{ type: String, default: Types.PlainActivity, required: true }
+
+	# group:			{ type: ObjectId, ref: 'Group', indexed: 1, required: false }
 	# event: 			{ type: ObjectId, ref: 'Event', required: false }
-	type: 			{ type: String, default: Types.PlainActivity, required: true }
-	published:		{ type: Date }
-	updated:		{ type: Date }
-
-	resources:     [{
-		label:	{ type: String, required: true }
-		type:	{ type: String, required: true }
-		object:	{ type: ObjectId, required: true }
-	}]
-
-	# tags:		   [{ type: ObjectId, ref: 'Tag' }
+	# tags:		   [{ type: ObjectId, ref: 'Tag' }]
+	
+	published:		{ type: Date, default: Date.now }
+	updated:		{ type: Date, default: Date.now }
 }, {
 	toObject:	{ virtuals: true }
 	toJSON: 	{ virtuals: true }
@@ -46,11 +52,21 @@ ActivitySchema = new mongoose.Schema {
 ################################################################################
 ## Virtuals ####################################################################
 
+ActivitySchema.virtual('content').get ->
+	if ContentHtmlTemplates[@type]
+		return _.template(ContentHtmlTemplates[@type], @)
+	console.warn "No html template found for activity of type"+@type
+	return "Notificação "+@type
+
+ActivitySchema.virtual('apiPath').get ->
+	'/api/activities/'+@id
+
 ################################################################################
 ## Middlewares #################################################################
 
 ActivitySchema.pre 'save', (next) ->
-	@dateCreated ?= new Date
+	@published ?= new Date
+	@updated ?= new Date
 	next()
 
 ################################################################################
@@ -86,57 +102,48 @@ ActivitySchema.pre 'save', (next) ->
 # 	), cb)
 
 createAndDistributeActivity = (agentObj, data, cb) ->
-	assertArgs({$ismodel:'User'},{$contains:['type']},{$iscb:true},arguments)
-	
-	agentObj.getFollowersIds (err, followers) ->
-		console.log 'followers', followers
+	assertArgs({$isModel:'User'},{$contains:['type']},'$isCb')
 
-		async.mapLimit followers, 5, ((rec, done) ->
-			note = new Activity {
-				agent: agentObj
-				recipient: rec
-				type: data.type
-			}
-			if data.resources then note.resources = data.resources
-			if data.url then note.url = data.url 
-			note.save(done)
-		), () ->
-			console.log arguments
+	activity = new Activity {
+		type: data.type
+		url: data.url
+		actor: data.actor
+		object: data.object
+		target: data.target
+	}
 
-ActivitySchema.statics.populateResources = (docs, cb) ->
-	Post = mongoose.model 'Post'
-	User = mongoose.model 'User'
-
-	Activity.find { 'resources.type': 'User' }
-		.populate { path: 'resources.object', model: 'User' }
-		.exec () ->
-	# User.populate docs, { path: 'resources.object', match: { 'resources.typ': 'User' } }, (err, pdoc) ->
-			console.log arguments
-
+	activity.save (err, doc) ->
+		if err then console.log err
+		agentObj.getFollowersIds (err, followers) ->
+			console.log 'followers', followers
+			Inbox.fillInboxes([agentObj].concat(followers), {
+				resource: data.resource,
+			})
 
 ActivitySchema.statics.Trigger = (agentObj, type) ->
 	User = mongoose.model 'User'
 
 	switch type
 		when Types.NewFollower
-			return (followerObj, followeeObj, cb) ->
-				# assert
-				cb ?= ->
+			return (opts, cb) ->
+				assertArgs({
+					follow:{$isModel:'Follow'},
+					followee:{$isModel:'User'},
+					follower:{$isModel:'User'}
+					}, '$isCb', arguments)
 				# Find and delete older notifications with the same follower and followee.
 				Activity.remove {
 					type: Types.NewFollower
-					agent: followerObj._id
-					resources: followeeObj._id
+					agent: opts.follower._id
+					resources: opts.followee._id
 				}, (err, count) ->
 					console.log 'err?', err, count
-					createAndDistributeActivity followerObj, {
+					createAndDistributeActivity opts.follower, {
 						type: Types.NewFollower
-						url: followerObj.profileUrl
-						resources: [{
-							label: 'followee',
-							type: 'User', 
-							object: followeeObj
-						}]
+						url: opts.follower.profileUrl
+						actor: opts.follower
+						object: opts.follow
+						target: opts.followee
 					}, cb
 
 ActivitySchema.statics.Types = Types

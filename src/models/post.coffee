@@ -114,7 +114,7 @@ PostSchema.methods.fillComments = (cb) ->
 ## Statics #####################################################################
 
 notifyUser = (recpObj, agentObj, data, cb) ->
-	assertArgs({ismodel:'User'},{ismodel:'User'},{contains:['url','type']}, arguments)
+	assertArgs({ismodel:'User'},{ismodel:'User'},{contains:['url','type']})
 	
 	User = mongoose.model 'User'
 

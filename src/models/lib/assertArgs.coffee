@@ -4,19 +4,25 @@
 
 # Sample usage:
 # notifyUser = (recpObj, agentObj, data, cb) ->
-# 	assertArgs({$ismodel:'User'},{$ismodel:'User'},{$contains:['url','type']}, arguments)
+# 	assertArgs({$ismodel:'User'},{$ismodel:'User'},{$contains:['url','type']})
 
 mongoose = require 'mongoose'
 
 builtins =
-	$iscb:
-		test: (expected, value) ->
+	$isA:
+		test: (value, expected) ->
+			if value instanceof expected
+				return false
+			return "Argument '#{value}'' doesn't match '$isa': #{expected}"
+
+	$isCb:
+		test: (value) ->
 			if value instanceof Function
 				return false
-			return "Argument '#{value}'' doesn't match 'iscallable'"
+			return "Argument '#{value}'' doesn't match 'isCb'"
 
-	$ismodel:
-		test: (expected, value) ->
+	$isModel:
+		test: (value, expected) ->
 			# Try to turn expected value into model.
 			if expected.schema and expected.schema instanceof mongoose.Schema 
 				# Expect a model
@@ -29,10 +35,12 @@ builtins =
 			# Do it.
 			if value instanceof model
 				return false
+			else if value instanceof mongoose.model('Resource') and value.__t is expected
+				return false
 			return "Argument '#{value}'' doesn't match Assert {ismodel:#{expected}}"
 
 	$contains:
-		test: (expected, value) ->
+		test: (value, expected) ->
 			if expected instanceof Array
 				keys = expected
 			else if typeof expected is 'string'
@@ -44,32 +52,40 @@ builtins =
 					return "Argument '#{value}' doesn't match Assert {$contains:#{expected}}" 
 			return false
 
-module.exports = assertArgs = (allAssertions..., args) ->
+module.exports = assertArgs = (asserts...) -> # (asserts...)
 	
-	assertParam = (assertionArg, functionArg) ->
+	assertParam = (param, functionArg) ->
 
-		for akey, avalue of assertionArg
+		# Support for unary tests like '$isCb'
+		if typeof param is 'string'
+			if param[0] is '$' and param of builtins
+				if builtins[param].test.length is 1
+					return err = builtins[param].test(functionArg)
+				return "Type '#{param}' takes a non-zero number of arguments"
+			return "Invalid assertion of type #{param}"
+
+		# Support for many tests. Eg: {$contains:['a','b'], 'a':'$isCb', 'b':{$isA:Array}}
+		for akey, avalue of param
 			if akey[0] is '$' and akey of builtins
-					err = builtins[akey].test(avalue, functionArg)
-					if err then return err
-			else if functionArg.hasOwnProperty[akey]
+				err = builtins[akey].test(functionArg, avalue)
+				if err then return err
+			else if functionArg.hasOwnProperty(akey)
 				return assertParam(avalue, functionArg[akey])
 			else
-				return "Invalid assertion of type #{akey}"
+				return "Invalid assertion of type #{akey} on value #{functionArg}"
 		return null
-	
-	# Expect last function argument to be the callback.
-	callback = args[args.length-1]
-	unless callback instanceof Function
-		console.trace()
-		throw "AssertLib error. Last element in the function arguments passed isn't callable."
 
-	for paramAssertions, index in allAssertions
+	if ''+asserts[asserts.length-1] is '[object Arguments]'
+		args = asserts.pop()
+	else
+		try
+			args = arguments.callee.caller.arguments
+		catch e
+			throw "Can't use assertArgs inside strictmode."
+
+
+	for paramAssertions, index in asserts
 		err = assertParam(paramAssertions, args[index])
 		if err
-			if process.env.NODE_ENV is 'production'
-				console.warn "AssertLib error on index #{index}:", err
-				return callback({error:true,msg:err})
-			else
-				console.trace()
-				throw "AssertLib error on index #{index}:"+err+args.callee.name
+			console.trace()
+			throw "AssertLib error on index #{index}: \"#{err}\"."

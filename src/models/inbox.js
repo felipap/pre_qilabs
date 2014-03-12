@@ -51,15 +51,12 @@ InboxSchema.pre('save', function(next) {
   return next();
 });
 
-InboxSchema.statics.fillInboxes = function(opts, cb) {
-  assertArgs({
-    $contains: ['recipients']
-  }, arguments);
-  console.assert(opts && cb && opts.recipients instanceof Array && opts.resource && opts.type, "Get your programming straight.");
-  if (!opts.recipients.length) {
+InboxSchema.statics.fillInboxes = function(recipients, opts, cb) {
+  console.assert(opts.resource && opts.type, "Get your programming straight.");
+  if (!recipients.length) {
     return cb(false, []);
   }
-  return async.mapLimit(opts.recipients, 5, ((function(_this) {
+  return async.mapLimit(recipients, 5, ((function(_this) {
     return function(rec, done) {
       var inbox;
       inbox = new Inbox({

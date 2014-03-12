@@ -1,6 +1,4 @@
-var Activity, ActivitySchema, Notification, ObjectId, Resource, Types, assert, assertArgs, async, createAndDistributeActivity, mongoose, _;
-
-mongoose = require('mongoose');
+var Activity, ActivitySchema, ContentHtmlTemplates, Inbox, Notification, ObjectId, Resource, Types, assert, assertArgs, async, createAndDistributeActivity, mongoose, _;
 
 assert = require('assert');
 
@@ -8,57 +6,58 @@ _ = require('underscore');
 
 async = require('async');
 
+mongoose = require('mongoose');
+
+ObjectId = mongoose.Schema.ObjectId;
+
 assertArgs = require('./lib/assertArgs');
 
 Resource = mongoose.model('Resource');
 
-Notification = mongoose.model('Notification');
+Inbox = mongoose.model('Inbox');
 
-ObjectId = mongoose.Schema.ObjectId;
+Notification = mongoose.model('Notification');
 
 Types = {
   PlainActivity: "PlainActivity",
   NewFollower: "NewFollower"
 };
 
+ContentHtmlTemplates = {
+  PostComment: '<strong><%= agentName %></strong> comentou na sua publicação.',
+  NewFollower: '<strong><%= agentName %></strong> começou a te seguir.'
+};
+
 ActivitySchema = new mongoose.Schema({
   actor: {
     type: ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: true
   },
-  group: {
+  icon: {
+    type: String
+  },
+  object: {
     type: ObjectId,
-    ref: 'Group',
-    indexed: 1,
-    required: false
+    ref: 'Resource'
   },
-  type: {
+  target: {
+    type: ObjectId,
+    ref: 'Resource'
+  },
+  verb: {
     type: String,
     "default": Types.PlainActivity,
     required: true
   },
   published: {
-    type: Date
+    type: Date,
+    "default": Date.now
   },
   updated: {
-    type: Date
-  },
-  resources: [
-    {
-      label: {
-        type: String,
-        required: true
-      },
-      type: {
-        type: String,
-        required: true
-      },
-      object: {
-        type: ObjectId,
-        required: true
-      }
-    }
-  ]
+    type: Date,
+    "default": Date.now
+  }
 }, {
   toObject: {
     virtuals: true
@@ -68,54 +67,52 @@ ActivitySchema = new mongoose.Schema({
   }
 });
 
+ActivitySchema.virtual('content').get(function() {
+  if (ContentHtmlTemplates[this.type]) {
+    return _.template(ContentHtmlTemplates[this.type], this);
+  }
+  console.warn("No html template found for activity of type" + this.type);
+  return "Notificação " + this.type;
+});
+
+ActivitySchema.virtual('apiPath').get(function() {
+  return '/api/activities/' + this.id;
+});
+
 ActivitySchema.pre('save', function(next) {
-  if (this.dateCreated == null) {
-    this.dateCreated = new Date;
+  if (this.published == null) {
+    this.published = new Date;
+  }
+  if (this.updated == null) {
+    this.updated = new Date;
   }
   return next();
 });
 
 createAndDistributeActivity = function(agentObj, data, cb) {
+  var activity;
   assertArgs({
-    $ismodel: 'User'
+    $isModel: 'User'
   }, {
     $contains: ['type']
-  }, {
-    $iscb: true
-  }, arguments);
-  return agentObj.getFollowersIds(function(err, followers) {
-    console.log('followers', followers);
-    return async.mapLimit(followers, 5, (function(rec, done) {
-      var note;
-      note = new Activity({
-        agent: agentObj,
-        recipient: rec,
-        type: data.type
-      });
-      if (data.resources) {
-        note.resources = data.resources;
-      }
-      if (data.url) {
-        note.url = data.url;
-      }
-      return note.save(done);
-    }), function() {
-      return console.log(arguments);
-    });
+  }, '$isCb');
+  activity = new Activity({
+    type: data.type,
+    url: data.url,
+    actor: data.actor,
+    object: data.object,
+    target: data.target
   });
-};
-
-ActivitySchema.statics.populateResources = function(docs, cb) {
-  var Post, User;
-  Post = mongoose.model('Post');
-  User = mongoose.model('User');
-  return Activity.find({
-    'resources.type': 'User'
-  }).populate({
-    path: 'resources.object',
-    model: 'User'
-  }).exec(function() {
-    return console.log(arguments);
+  return activity.save(function(err, doc) {
+    if (err) {
+      console.log(err);
+    }
+    return agentObj.getFollowersIds(function(err, followers) {
+      console.log('followers', followers);
+      return Inbox.fillInboxes([agentObj].concat(followers), {
+        resource: data.resource
+      });
+    });
   });
 };
 
@@ -124,26 +121,30 @@ ActivitySchema.statics.Trigger = function(agentObj, type) {
   User = mongoose.model('User');
   switch (type) {
     case Types.NewFollower:
-      return function(followerObj, followeeObj, cb) {
-        if (cb == null) {
-          cb = function() {};
-        }
+      return function(opts, cb) {
+        assertArgs({
+          follow: {
+            $isModel: 'Follow'
+          },
+          followee: {
+            $isModel: 'User'
+          },
+          follower: {
+            $isModel: 'User'
+          }
+        }, '$isCb', arguments);
         return Activity.remove({
           type: Types.NewFollower,
-          agent: followerObj._id,
-          resources: followeeObj._id
+          agent: opts.follower._id,
+          resources: opts.followee._id
         }, function(err, count) {
           console.log('err?', err, count);
-          return createAndDistributeActivity(followerObj, {
+          return createAndDistributeActivity(opts.follower, {
             type: Types.NewFollower,
-            url: followerObj.profileUrl,
-            resources: [
-              {
-                label: 'followee',
-                type: 'User',
-                object: followeeObj
-              }
-            ]
+            url: opts.follower.profileUrl,
+            actor: opts.follower,
+            object: opts.follow,
+            target: opts.followee
           }, cb);
         });
       };

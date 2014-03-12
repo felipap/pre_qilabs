@@ -227,7 +227,7 @@ UserSchema.methods.dofollowUser = function(user, cb) {
   if ('' + user.id === '' + this.id) {
     return cb(true);
   }
-  Follow.findOne({
+  return Follow.findOne({
     follower: this,
     followee: user
   }, (function(_this) {
@@ -239,11 +239,15 @@ UserSchema.methods.dofollowUser = function(user, cb) {
         });
         doc.save();
       }
-      return cb(err, !!doc);
+      cb(err, !!doc);
+      Notification.Trigger(_this, Notification.Types.NewFollower)(_this, user, function() {});
+      return Activity.Trigger(_this, Notification.Types.NewFollower)({
+        follow: doc,
+        follower: _this,
+        followee: user
+      }, function() {});
     };
   })(this));
-  Notification.Trigger(this, Notification.Types.NewFollower)(this, user, function() {});
-  return Activity.Trigger(this, Notification.Types.NewFollower)(this, user, function() {});
 };
 
 UserSchema.methods.unfollowUser = function(user, cb) {
@@ -561,8 +565,7 @@ UserSchema.methods.createPost = function(data, cb) {
         return;
       }
       return _this.getPopulatedFollowers(function(err, followers) {
-        return Inbox.fillInboxes({
-          recipients: [_this].concat(followers),
+        return Inbox.fillInboxes([_this].concat(followers), {
           resource: post.id,
           type: Inbox.Types.Post,
           author: _this.id

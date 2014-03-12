@@ -113,12 +113,12 @@ NotificationSchema.pre('save', function(next) {
 notifyUser = function(recpObj, agentObj, data, cb) {
   var User, note;
   assertArgs({
-    $ismodel: 'User'
+    $isModel: 'User'
   }, {
-    $ismodel: 'User'
+    $isModel: 'User'
   }, {
     $contains: ['url', 'type']
-  }, arguments);
+  }, '$isCb');
   User = mongoose.model('User');
   note = new Notification({
     agent: agentObj,

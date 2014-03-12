@@ -172,7 +172,7 @@ notifyUser = function(recpObj, agentObj, data, cb) {
     ismodel: 'User'
   }, {
     contains: ['url', 'type']
-  }, arguments);
+  });
   User = mongoose.model('User');
   note = new Post({
     agent: agentObj,

@@ -4,16 +4,24 @@ var assertArgs, builtins, mongoose,
 mongoose = require('mongoose');
 
 builtins = {
-  $iscb: {
-    test: function(expected, value) {
+  $isA: {
+    test: function(value, expected) {
+      if (value instanceof expected) {
+        return false;
+      }
+      return "Argument '" + value + "'' doesn't match '$isa': " + expected;
+    }
+  },
+  $isCb: {
+    test: function(value) {
       if (value instanceof Function) {
         return false;
       }
-      return "Argument '" + value + "'' doesn't match 'iscallable'";
+      return "Argument '" + value + "'' doesn't match 'isCb'";
     }
   },
-  $ismodel: {
-    test: function(expected, value) {
+  $isModel: {
+    test: function(value, expected) {
       var model;
       if (expected.schema && expected.schema instanceof mongoose.Schema) {
         model = expected;
@@ -24,12 +32,14 @@ builtins = {
       }
       if (value instanceof model) {
         return false;
+      } else if (value instanceof mongoose.model('Resource') && value.__t === expected) {
+        return false;
       }
       return "Argument '" + value + "'' doesn't match Assert {ismodel:" + expected + "}";
     }
   },
   $contains: {
-    test: function(expected, value) {
+    test: function(value, expected) {
       var key, keys, _i, _len;
       if (expected instanceof Array) {
         keys = expected;
@@ -50,44 +60,54 @@ builtins = {
 };
 
 module.exports = assertArgs = function() {
-  var allAssertions, args, assertParam, callback, err, index, paramAssertions, _i, _j, _len;
-  allAssertions = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), args = arguments[_i++];
-  assertParam = function(assertionArg, functionArg) {
+  var args, assertParam, asserts, e, err, index, paramAssertions, _i, _len, _results;
+  asserts = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+  assertParam = function(param, functionArg) {
     var akey, avalue, err;
-    for (akey in assertionArg) {
-      avalue = assertionArg[akey];
+    if (typeof param === 'string') {
+      if (param[0] === '$' && param in builtins) {
+        if (builtins[param].test.length === 1) {
+          return err = builtins[param].test(functionArg);
+        }
+        return "Type '" + param + "' takes a non-zero number of arguments";
+      }
+      return "Invalid assertion of type " + param;
+    }
+    for (akey in param) {
+      avalue = param[akey];
       if (akey[0] === '$' && akey in builtins) {
-        err = builtins[akey].test(avalue, functionArg);
+        err = builtins[akey].test(functionArg, avalue);
         if (err) {
           return err;
         }
-      } else if (functionArg.hasOwnProperty[akey]) {
+      } else if (functionArg.hasOwnProperty(akey)) {
         return assertParam(avalue, functionArg[akey]);
       } else {
-        return "Invalid assertion of type " + akey;
+        return "Invalid assertion of type " + akey + " on value " + functionArg;
       }
     }
     return null;
   };
-  callback = args[args.length - 1];
-  if (!(callback instanceof Function)) {
-    console.trace();
-    throw "AssertLib error. Last element in the function arguments passed isn't callable.";
-  }
-  for (index = _j = 0, _len = allAssertions.length; _j < _len; index = ++_j) {
-    paramAssertions = allAssertions[index];
-    err = assertParam(paramAssertions, args[index]);
-    if (err) {
-      if (process.env.NODE_ENV === 'production') {
-        console.warn("AssertLib error on index " + index + ":", err);
-        return callback({
-          error: true,
-          msg: err
-        });
-      } else {
-        console.trace();
-        throw ("AssertLib error on index " + index + ":") + err + args.callee.name;
-      }
+  if ('' + asserts[asserts.length - 1] === '[object Arguments]') {
+    args = asserts.pop();
+  } else {
+    try {
+      args = arguments.callee.caller["arguments"];
+    } catch (_error) {
+      e = _error;
+      throw "Can't use assertArgs inside strictmode.";
     }
   }
+  _results = [];
+  for (index = _i = 0, _len = asserts.length; _i < _len; index = ++_i) {
+    paramAssertions = asserts[index];
+    err = assertParam(paramAssertions, args[index]);
+    if (err) {
+      console.trace();
+      throw "AssertLib error on index " + index + ": \"" + err + "\".";
+    } else {
+      _results.push(void 0);
+    }
+  }
+  return _results;
 };

@@ -171,8 +171,12 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 				doc.save()
 			cb(err, !!doc)
 
-	Notification.Trigger(@, Notification.Types.NewFollower)(@, user, ->)
-	Activity.Trigger(@, Notification.Types.NewFollower)(@, user, ->)
+			Notification.Trigger(@, Notification.Types.NewFollower)(@, user, ->)
+			Activity.Trigger(@, Notification.Types.NewFollower)({
+				follow: doc,
+				follower: @,
+				followee: user
+			}, ->)
 
 UserSchema.methods.unfollowUser = (user, cb) ->
 	assert user instanceof User, 'Passed argument not a user document'
@@ -409,8 +413,7 @@ UserSchema.methods.createPost = (data, cb) ->
 		# Make separate job for this.
 		# Iter through followers and fill inboxes.
 		@getPopulatedFollowers (err, followers) =>
-			Inbox.fillInboxes({
-				recipients: [@].concat(followers),
+			Inbox.fillInboxes([@].concat(followers), {
 				resource: post.id,
 				type: Inbox.Types.Post,
 				author: @id
