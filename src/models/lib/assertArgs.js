@@ -6,8 +6,10 @@ mongoose = require('mongoose');
 builtins = {
   $isA: {
     test: function(value, expected) {
-      if (value instanceof expected) {
-        return false;
+      if (expected instanceof Function) {
+        if (value instanceof expected) {
+          return false;
+        }
       }
       return "Argument '" + value + "'' doesn't match '$isa': " + expected;
     }

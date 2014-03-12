@@ -14,7 +14,7 @@ function setUpPassport() {
 			callbackURL: "/auth/facebook/callback"
 		},
 		function (accessToken, refreshToken, profile, done) {
-			var User = require('mongoose').model('User');
+			var User = require('mongoose').model('Resource').model('User');
 
 			User.findOne({ facebookId: profile.id }, function (err, user) {
 				if (err)
@@ -63,7 +63,7 @@ function setUpPassport() {
 	});
 
 	passport.deserializeUser(function (id, done) {
-		var User = require('mongoose').model('User');
+		var User = require('mongoose').model('Resource').model('User');
 		User.findOne({_id: id}, function (err, user) {
 			return done(err, user);
 		});

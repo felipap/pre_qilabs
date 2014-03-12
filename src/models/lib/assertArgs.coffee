@@ -11,8 +11,9 @@ mongoose = require 'mongoose'
 builtins =
 	$isA:
 		test: (value, expected) ->
-			if value instanceof expected
-				return false
+			if expected instanceof Function 
+				if value instanceof expected
+					return false
 			return "Argument '#{value}'' doesn't match '$isa': #{expected}"
 
 	$isCb:
@@ -82,7 +83,6 @@ module.exports = assertArgs = (asserts...) -> # (asserts...)
 			args = arguments.callee.caller.arguments
 		catch e
 			throw "Can't use assertArgs inside strictmode."
-
 
 	for paramAssertions, index in asserts
 		err = assertParam(paramAssertions, args[index])

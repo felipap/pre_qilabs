@@ -27,7 +27,7 @@ Types = {
 PostSchema = new mongoose.Schema({
   author: {
     type: ObjectId,
-    ref: 'User',
+    ref: 'Resource',
     required: true,
     indexed: 1
   },
@@ -173,7 +173,7 @@ notifyUser = function(recpObj, agentObj, data, cb) {
   }, {
     contains: ['url', 'type']
   });
-  User = mongoose.model('User');
+  User = Resource.model('User');
   note = new Post({
     agent: agentObj,
     agentName: agentObj.name,
@@ -192,7 +192,7 @@ notifyUser = function(recpObj, agentObj, data, cb) {
 
 PostSchema.statics.Trigger = function(agentObj, type) {
   var User;
-  User = mongoose.model('User');
+  User = Resource.model('User');
   switch (type) {
     case Types.NewFollower:
       return function(followerObj, followeeObj, cb) {

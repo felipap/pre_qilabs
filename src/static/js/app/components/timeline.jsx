@@ -78,7 +78,10 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				this.url = options.url || app.postsRoot || '/api/me/timeline/posts';
 			},
 			comparator: function (i) {
-				return -1*new Date(i.get('dateCreated'));
+				if (i.get('__t') === 'Activity')
+					return -1*new Date(i.get('updated'));
+				else
+					return -1*new Date(i.get('dateCreated'));
 			},
 			parse: function (response, options) {
 				this.minDate = response.minDate;
@@ -267,18 +270,17 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 		};
 
-		var NotificationView = React.createClass({
+		var ActivityView = React.createClass({
 
 			render: function () {
+				console.log('oi')
 				var post = this.props.model.attributes;
 				var mediaUserStyle = {
-					background: 'url('+post.author.avatarUrl+')',
+					background: 'url('+post.actor.avatarUrl+')',
 				};
-				var rawMarkup = post.data.body;
-
 				return (
 					<div className="noteMessage">
-						{rawMarkup}
+						<span dangerouslySetInnerHTML={{__html: this.props.model.get('content')}} />
 					</div>
 				);
 			},
@@ -340,13 +342,14 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 		var PostWrapperView = React.createClass({
 			render: function () {
-				var postType = this.props.model.get('type');
+				var postType = this.props.model.get('__t');
+				console.log('type', postType, this.props.model.attributes)
 				return (
 					<div className="postWrapper">
 						{
-							(postType==='Notification')?
-							<NotificationView model={this.props.model} />
-							:<PostView model={this.props.model} />
+							(postType==='Post')?
+							<PostView model={this.props.model} />
+							:<ActivityView model={this.props.model} />
 						}
 						{
 							(postType==='PlainPost'||postType==='Answer')?

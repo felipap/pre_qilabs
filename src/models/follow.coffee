@@ -5,6 +5,8 @@
 
 mongoose = require 'mongoose'
 
+Resource = mongoose.model 'Resource'
+
 Inbox = mongoose.model 'Inbox'
 Notification = mongoose.model 'Notification'
 
@@ -43,4 +45,4 @@ FollowSchema.pre 'save', (next) ->
 
 FollowSchema.plugin(require('./lib/hookedModelPlugin'));
 
-module.exports = Follow = mongoose.model "Follow", FollowSchema
+module.exports = Follow = Resource.discriminator "Follow", FollowSchema

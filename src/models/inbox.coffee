@@ -26,9 +26,9 @@ Types =
 InboxSchema = new mongoose.Schema {
 	dateSent:	{ type: Date, indexed: 1 }
 	recipient:	{ type: mongoose.Schema.ObjectId, ref: 'User', indexed: 1, required: true }
-	author:		{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
 	resource:	{ type: mongoose.Schema.ObjectId, ref: 'Resource', required: true }
-	type: 		{ type: String, required: true }
+	# type: 		{ type: String, required: true }
+	# author:		{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
 }
 
 ################################################################################
@@ -44,14 +44,14 @@ InboxSchema.pre 'save', (next) ->
 # InboxSchema.statics.getFromUser = (user, opts, cb) ->
 # 	cb ?= opts
 # 	@
-# 		.find({author: user.id})
+		# .find({author: user.id})
 # 		.sort('-dateSent')
 # 		.exec(cb)
 
 InboxSchema.statics.fillInboxes = (recipients, opts, cb) ->
-	# assertArgs($isarray:true, arguments)
+	console.log recipients instanceof Array
 
-	console.assert opts.resource and opts.type, "Get your programming straight."
+	assertArgs({'$isA':Array}, {$contains:['resource']}, '$isCb')
 
 	if not recipients.length
 		return cb(false, [])
@@ -59,8 +59,8 @@ InboxSchema.statics.fillInboxes = (recipients, opts, cb) ->
 	async.mapLimit(recipients, 5, ((rec, done) =>
 		inbox = new Inbox {
 			resource: opts.resource
-			type: opts.type
-			author: opts.author
+			# type: opts.type
+			# author: opts.author
 			recipient: rec
 		}
 		inbox.save(done)

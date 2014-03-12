@@ -14,7 +14,6 @@ ObjectId = mongoose.Schema.ObjectId
 Notification = mongoose.model 'Notification'
 Resource = mongoose.model 'Resource'
 
-
 Types = 
 	Comment: 'Comment'
 	Answer: 'Answer'
@@ -27,7 +26,7 @@ Types =
 ## Schema ######################################################################
 
 PostSchema = new mongoose.Schema {
-	author:			{ type: ObjectId, ref: 'User', required: true, indexed: 1 }
+	author:			{ type: ObjectId, ref: 'Resource', required: true, indexed: 1 }
 	group:			{ type: ObjectId, ref: 'Group', required: false }
 	dateCreated:	{ type: Date, indexed: 1 }
 	type: 			{ type: String, required: true }
@@ -116,7 +115,7 @@ PostSchema.methods.fillComments = (cb) ->
 notifyUser = (recpObj, agentObj, data, cb) ->
 	assertArgs({ismodel:'User'},{ismodel:'User'},{contains:['url','type']})
 	
-	User = mongoose.model 'User'
+	User = Resource.model 'User'
 
 	note = new Post {
 		agent: agentObj
@@ -131,7 +130,7 @@ notifyUser = (recpObj, agentObj, data, cb) ->
 		cb?(err,doc)
 
 PostSchema.statics.Trigger = (agentObj, type) ->
-	User = mongoose.model 'User'
+	User = Resource.model 'User'
 
 	switch type
 		when Types.NewFollower

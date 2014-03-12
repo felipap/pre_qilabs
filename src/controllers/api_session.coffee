@@ -4,13 +4,13 @@ required = require '../lib/required.js'
 
 Resource = mongoose.model 'Resource'
 
-User = mongoose.model 'User'
+User = Resource.model 'User'
 Post = Resource.model 'Post'
 Tag  = mongoose.model 'Tag'
 Inbox = mongoose.model 'Inbox'
 Group = mongoose.model 'Group'
-Follow = mongoose.model 'Follow'
-Activity = mongoose.model 'Activity'
+Follow = Resource.model 'Follow'
+Activity = Resource.model 'Activity'
 Subscriber = mongoose.model 'Subscriber'
 Notification = mongoose.model 'Notification'
 
@@ -21,8 +21,13 @@ module.exports = {
 			# This be ugly but me don't care.
 			console.log req.query
 			if req.query.user?
-				User.find {}, (err, users) ->
-					res.endJson { users:users }
+				User.find {}, (err, docs) ->
+					res.endJson { users:docs }
+			if req.query.activity?
+				Activity.find {}
+					.populate 'actor'
+					.exec (err, docs) ->
+						res.endJson { activities:docs }
 			else if req.query.inbox?
 				Inbox.find {}
 					.populate 'resource'

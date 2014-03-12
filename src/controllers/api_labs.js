@@ -12,7 +12,7 @@ GUIDELINES for development:
 - Prefer no not handle creation/modification of documents. Leave those to
   schemas statics and methods.
  */
-var Group, ObjectId, User, mongoose, required, _;
+var Group, ObjectId, Resource, User, mongoose, required, _;
 
 mongoose = require('mongoose');
 
@@ -22,9 +22,11 @@ ObjectId = mongoose.Types.ObjectId;
 
 required = require('../lib/required.js');
 
+Resource = mongoose.model('Resource');
+
 Group = mongoose.model('Group');
 
-User = mongoose.model('User');
+User = Resource.model('User');
 
 module.exports = {
   permissions: [required.login],

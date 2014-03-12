@@ -27,7 +27,7 @@ required = require('../lib/required.js');
 
 Resource = mongoose.model('Resource');
 
-User = mongoose.model('User');
+User = Resource.model('User');
 
 Post = Resource.model('Post');
 
@@ -37,7 +37,7 @@ Inbox = mongoose.model('Inbox');
 
 Group = mongoose.model('Group');
 
-Follow = mongoose.model('Follow');
+Follow = Resource.model('Follow');
 
 Activity = mongoose.model('Activity');
 

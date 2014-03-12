@@ -18,12 +18,10 @@ Inbox = mongoose.model 'Inbox'
 Notification = mongoose.model 'Notification'
 
 Types = 
-	PlainActivity: "PlainActivity"
 	NewFollower: "NewFollower"
 
 ContentHtmlTemplates = 
-	PostComment: '<strong><%= agentName %></strong> comentou na sua publicação.'
-	NewFollower: '<strong><%= agentName %></strong> começou a te seguir.'
+	NewFollower: '<strong><%= actor && actor.name %></strong> começou a seguir <%= target && target.name %>.'
 
 ################################################################################
 ## Schema ######################################################################
@@ -36,7 +34,7 @@ ActivitySchema = new mongoose.Schema {
 	object: 		{ type: ObjectId, ref: 'Resource' }
 	target: 		{ type: ObjectId, ref: 'Resource' }
 
-	verb: 			{ type: String, default: Types.PlainActivity, required: true }
+	verb: 			{ type: String, required: true }
 
 	# group:			{ type: ObjectId, ref: 'Group', indexed: 1, required: false }
 	# event: 			{ type: ObjectId, ref: 'Event', required: false }
@@ -53,10 +51,10 @@ ActivitySchema = new mongoose.Schema {
 ## Virtuals ####################################################################
 
 ActivitySchema.virtual('content').get ->
-	if ContentHtmlTemplates[@type]
-		return _.template(ContentHtmlTemplates[@type], @)
-	console.warn "No html template found for activity of type"+@type
-	return "Notificação "+@type
+	if @verb of ContentHtmlTemplates
+		return _.template(ContentHtmlTemplates[@verb], @)
+	console.warn "No html template found for activity of verb "+@verb
+	return "Notificação "+@verb
 
 ActivitySchema.virtual('apiPath').get ->
 	'/api/activities/'+@id
@@ -72,40 +70,16 @@ ActivitySchema.pre 'save', (next) ->
 ################################################################################
 ## Methods #####################################################################
 
-# ActivitySchema.methods.stuff = (cb) ->
-# 	@.populate 'resources', (err, doc) ->
-# 		if err
-# 			cb(err)
-# 		else if doc
-# 			doc.fillComments(cb)
-# 		else
-# 			cb(false,null)
-
 ################################################################################
 ## Statics #####################################################################
 
-# InboxSchema.statics.fillInboxes = (opts, cb) ->
-# 	console.assert opts and cb and opts.recipients instanceof Array and opts.resource and
-# 		opts.type, "Get your programming straight."
-
-# 	if not opts.recipients.length
-# 		return cb(false, [])
-
-# 	async.mapLimit(opts.recipients, 5, ((rec, done) ->
-# 		inbox = new Inbox {
-# 			resource: opts.resource
-# 			type: opts.type
-# 			author: opts.author
-# 			recipient: rec
-# 		}
-# 		inbox.save(done)
-# 	), cb)
-
 createAndDistributeActivity = (agentObj, data, cb) ->
-	assertArgs({$isModel:'User'},{$contains:['type']},'$isCb')
+	assertArgs({$isModel:'User'},
+		{$contains:['verb', 'url', 'actor', 'object', 'target']},'$isCb')
 
 	activity = new Activity {
-		type: data.type
+		type: 'Activity'
+		verb: data.verb
 		url: data.url
 		actor: data.actor
 		object: data.object
@@ -114,14 +88,14 @@ createAndDistributeActivity = (agentObj, data, cb) ->
 
 	activity.save (err, doc) ->
 		if err then console.log err
+		console.log doc
 		agentObj.getFollowersIds (err, followers) ->
-			console.log 'followers', followers
-			Inbox.fillInboxes([agentObj].concat(followers), {
-				resource: data.resource,
-			})
+			Inbox.fillInboxes([agentObj._id].concat(followers), {
+				resource: activity,
+			}, cb)
 
 ActivitySchema.statics.Trigger = (agentObj, type) ->
-	User = mongoose.model 'User'
+	User = Resource.model 'User'
 
 	switch type
 		when Types.NewFollower
@@ -133,21 +107,21 @@ ActivitySchema.statics.Trigger = (agentObj, type) ->
 					}, '$isCb', arguments)
 				# Find and delete older notifications with the same follower and followee.
 				Activity.remove {
-					type: Types.NewFollower
+					verb: Types.NewFollower
 					agent: opts.follower._id
-					resources: opts.followee._id
+					target: opts.followee._id
 				}, (err, count) ->
-					console.log 'err?', err, count
+					if err then console.log 'trigger err:', err
 					createAndDistributeActivity opts.follower, {
-						type: Types.NewFollower
+						verb: Types.NewFollower
 						url: opts.follower.profileUrl
 						actor: opts.follower
 						object: opts.follow
 						target: opts.followee
-					}, cb
+					}, ->
 
 ActivitySchema.statics.Types = Types
 
 ActivitySchema.plugin(require('./lib/hookedModelPlugin'));
 
-module.exports = Activity = mongoose.model "Activity", ActivitySchema
+module.exports = Activity = Resource.discriminator "Activity", ActivitySchema

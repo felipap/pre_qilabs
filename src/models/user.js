@@ -19,13 +19,13 @@ Resource = mongoose.model('Resource');
 
 Inbox = mongoose.model('Inbox');
 
-Follow = mongoose.model('Follow');
-
-Post = Resource.model('Post');
+Follow = Resource.model('Follow');
 
 Group = mongoose.model('Group');
 
-Activity = mongoose.model('Activity');
+Post = Resource.model('Post');
+
+Activity = Resource.model('Activity');
 
 Notification = mongoose.model('Notification');
 
@@ -283,33 +283,13 @@ HandleLimit = function(func) {
  */
 
 UserSchema.methods.getTimeline = function(_opts, cb) {
-  var mergeNonInboxedPosts, mergePopulatedActivities, opts;
+  var mergeNonInboxedPosts, opts;
   opts = _.extend({
     limit: 10
   }, _opts);
   if (!opts.maxDate) {
     opts.maxDate = Date.now();
   }
-
-  /*
-   */
-  mergePopulatedActivities = (function(_this) {
-    return function(minDate, maxDate, cb) {
-      console.log("lt " + maxDate + " gt " + minDate);
-      return Activity.find({
-        recipient: _this.id,
-        dateCreated: {
-          $lt: maxDate,
-          $gt: minDate
-        }
-      }).sort('-dataCreated').exec(function(err, docs) {
-        console.log(err, docs);
-        return Activity.populateResources(docs, function() {
-          return console.log(arguments);
-        });
-      });
-    };
-  })(this);
 
   /*
   	 * Merge inboxes posts with those from followed users but that preceed "followship".
@@ -355,13 +335,14 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
         all = _.sortBy(nips.concat(ips), function(p) {
           return p.dateCreated;
         });
-        return User.populate(all, {
-          path: 'author'
+        return Resource.populate(all, {
+          path: 'author actor target object'
         }, (function(_this) {
           return function(err, docs) {
             if (err) {
               return cb(err);
             }
+            console.log('docs', docs);
             return Post.fillComments(docs, cb);
           };
         })(this));
@@ -376,7 +357,6 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
   }).sort('-dateSent').populate('resource').limit(opts.limit).exec(HandleLimit((function(_this) {
     return function(err, docs) {
       var oldestPostDate, posts;
-      console.log('docs', docs);
       if (err) {
         return cb(err);
       }
@@ -395,8 +375,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
         oldestPostDate = new Date(0);
       }
       try {
-        mergeNonInboxedPosts(oldestPostDate, posts);
-        return mergePopulatedActivities(oldestPostDate, new Date());
+        return mergeNonInboxedPosts(oldestPostDate, posts);
       } catch (_error) {}
     };
   })(this)));
@@ -625,4 +604,4 @@ UserSchema.methods.getNotifications = function(cb) {
 
 UserSchema.plugin(require('./lib/hookedModelPlugin'));
 
-module.exports = User = mongoose.model("User", UserSchema);
+module.exports = User = Resource.discriminator("User", UserSchema);

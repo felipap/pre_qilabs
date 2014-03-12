@@ -26,8 +26,9 @@ ObjectId = mongoose.Types.ObjectId
 
 required = require '../lib/required.js'
 
+Resource = mongoose.model 'Resource'
 Group = mongoose.model 'Group'
-User = mongoose.model 'User'
+User = Resource.model 'User'
 
 # Starts at /api/labs 
 module.exports = {

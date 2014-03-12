@@ -3,7 +3,7 @@ mongoose = require 'mongoose'
 required = require '../lib/required.js'
 
 Resource = mongoose.model 'Resource'
-User = mongoose.model 'User'
+User = Resource.model 'User'
 Post = Resource.model 'Post'
 
 module.exports = {

@@ -19,13 +19,11 @@ Inbox = mongoose.model('Inbox');
 Notification = mongoose.model('Notification');
 
 Types = {
-  PlainActivity: "PlainActivity",
   NewFollower: "NewFollower"
 };
 
 ContentHtmlTemplates = {
-  PostComment: '<strong><%= agentName %></strong> comentou na sua publicação.',
-  NewFollower: '<strong><%= agentName %></strong> começou a te seguir.'
+  NewFollower: '<strong><%= actor && actor.name %></strong> começou a seguir <%= target && target.name %>.'
 };
 
 ActivitySchema = new mongoose.Schema({
@@ -47,7 +45,6 @@ ActivitySchema = new mongoose.Schema({
   },
   verb: {
     type: String,
-    "default": Types.PlainActivity,
     required: true
   },
   published: {
@@ -68,11 +65,11 @@ ActivitySchema = new mongoose.Schema({
 });
 
 ActivitySchema.virtual('content').get(function() {
-  if (ContentHtmlTemplates[this.type]) {
-    return _.template(ContentHtmlTemplates[this.type], this);
+  if (this.verb in ContentHtmlTemplates) {
+    return _.template(ContentHtmlTemplates[this.verb], this);
   }
-  console.warn("No html template found for activity of type" + this.type);
-  return "Notificação " + this.type;
+  console.warn("No html template found for activity of verb " + this.verb);
+  return "Notificação " + this.verb;
 });
 
 ActivitySchema.virtual('apiPath').get(function() {
@@ -94,10 +91,11 @@ createAndDistributeActivity = function(agentObj, data, cb) {
   assertArgs({
     $isModel: 'User'
   }, {
-    $contains: ['type']
+    $contains: ['verb', 'url', 'actor', 'object', 'target']
   }, '$isCb');
   activity = new Activity({
-    type: data.type,
+    type: 'Activity',
+    verb: data.verb,
     url: data.url,
     actor: data.actor,
     object: data.object,
@@ -107,18 +105,18 @@ createAndDistributeActivity = function(agentObj, data, cb) {
     if (err) {
       console.log(err);
     }
+    console.log(doc);
     return agentObj.getFollowersIds(function(err, followers) {
-      console.log('followers', followers);
-      return Inbox.fillInboxes([agentObj].concat(followers), {
-        resource: data.resource
-      });
+      return Inbox.fillInboxes([agentObj._id].concat(followers), {
+        resource: activity
+      }, cb);
     });
   });
 };
 
 ActivitySchema.statics.Trigger = function(agentObj, type) {
   var User;
-  User = mongoose.model('User');
+  User = Resource.model('User');
   switch (type) {
     case Types.NewFollower:
       return function(opts, cb) {
@@ -134,18 +132,20 @@ ActivitySchema.statics.Trigger = function(agentObj, type) {
           }
         }, '$isCb', arguments);
         return Activity.remove({
-          type: Types.NewFollower,
+          verb: Types.NewFollower,
           agent: opts.follower._id,
-          resources: opts.followee._id
+          target: opts.followee._id
         }, function(err, count) {
-          console.log('err?', err, count);
+          if (err) {
+            console.log('trigger err:', err);
+          }
           return createAndDistributeActivity(opts.follower, {
-            type: Types.NewFollower,
+            verb: Types.NewFollower,
             url: opts.follower.profileUrl,
             actor: opts.follower,
             object: opts.follow,
             target: opts.followee
-          }, cb);
+          }, function() {});
         });
       };
   }
@@ -155,4 +155,4 @@ ActivitySchema.statics.Types = Types;
 
 ActivitySchema.plugin(require('./lib/hookedModelPlugin'));
 
-module.exports = Activity = mongoose.model("Activity", ActivitySchema);
+module.exports = Activity = Resource.discriminator("Activity", ActivitySchema);

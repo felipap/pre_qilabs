@@ -17,10 +17,10 @@ assert = require 'assert'
 
 Resource = mongoose.model 'Resource'
 Inbox 	= mongoose.model 'Inbox'
-Follow 	= mongoose.model 'Follow'
-Post 	= Resource.model 'Post'
+Follow 	= Resource.model 'Follow'
 Group 	= mongoose.model 'Group'
-Activity = mongoose.model 'Activity'
+Post 	= Resource.model 'Post'
+Activity = Resource.model 'Activity'
 Notification = mongoose.model 'Notification'
 
 ObjectId = mongoose.Types.ObjectId
@@ -206,24 +206,6 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 		opts.maxDate = Date.now()
 
 	###
-	###
-	mergePopulatedActivities = (minDate, maxDate, cb) => # ips => Inboxed PostS
-		console.log "lt #{maxDate} gt #{minDate}"
-
-		Activity
-			.find { recipient:@id, dateCreated:{ $lt:maxDate, $gt:minDate }}
-			.sort '-dataCreated'
-			.exec (err, docs) =>
-				console.log err, docs
-				Activity.populateResources docs, () ->
-					console.log arguments
-				# Activity.populateAllTypes docs, (err, popdocs) ->
-
-				# 	# Flatten lists. Remove undefined (from .limit queries).
-				# 	nips = _.flatten(_docs).filter((i)->i
-				# 	onGetNonInboxedPosts(err, nips)
-
-	###
 	# Merge inboxes posts with those from followed users but that preceed "followship".
 	# Limit search to those posts made after @minDate.
 	###
@@ -257,8 +239,9 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			all = _.sortBy(nips.concat(ips), (p) -> p.dateCreated) # merge'n'sort by date
 
 			# Populate author in all docs (nips and ips)
-			User.populate all, {path: 'author'}, (err, docs) =>
+			Resource.populate all, {path: 'author actor target object'}, (err, docs) =>
 				return cb(err) if err
+				console.log 'docs', docs
 				# Fill comments in all docs.
 				Post.fillComments(docs, cb)
 
@@ -269,7 +252,6 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 		.populate 'resource'
 		.limit opts.limit
 		.exec HandleLimit (err, docs) =>
-			console.log 'docs', docs
 			return cb(err) if err
 			# Pluck resources from inbox docs. Remove undefineds and nulls.
 			posts = _.pluck(docs, 'resource').filter((i)->i)
@@ -288,7 +270,6 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 				oldestPostDate = new Date(0)
 			try
 				mergeNonInboxedPosts(oldestPostDate, posts)
-				mergePopulatedActivities(oldestPostDate, new Date())
 			# catch e
 			# 	cb(e)
 
@@ -461,4 +442,4 @@ UserSchema.methods.getNotifications = (cb) ->
 
 UserSchema.plugin(require('./lib/hookedModelPlugin'));
 
-module.exports = User = mongoose.model "User", UserSchema
+module.exports = User = Resource.discriminator "User", UserSchema

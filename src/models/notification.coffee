@@ -10,6 +10,8 @@ assert = require 'assert'
 
 assertArgs = require './lib/assertArgs'
 
+Resource = mongoose.model 'Resource'
+
 Types =
 	PostComment: 'PostComment'
 	PostAnswer: 'PostAnswer'
@@ -78,7 +80,7 @@ NotificationSchema.pre 'save', (next) ->
 notifyUser = (recpObj, agentObj, data, cb) ->
 	assertArgs({$isModel:'User'},{$isModel:'User'},{$contains:['url','type']},'$isCb')
 	
-	User = mongoose.model 'User'
+	User = Resource.model 'User'
 
 	note = new Notification {
 		agent: agentObj
@@ -93,7 +95,7 @@ notifyUser = (recpObj, agentObj, data, cb) ->
 		cb?(err,doc)
 
 NotificationSchema.statics.Trigger = (agentObj, type) ->
-	User = mongoose.model 'User'
+	User = Resource.model 'User'
 
 	switch type
 		when Types.PostComment

@@ -1,4 +1,4 @@
-var MsgHtmlTemplates, MsgTemplates, Notification, NotificationSchema, Types, assert, assertArgs, async, mongoose, notifyUser, _;
+var MsgHtmlTemplates, MsgTemplates, Notification, NotificationSchema, Resource, Types, assert, assertArgs, async, mongoose, notifyUser, _;
 
 mongoose = require('mongoose');
 
@@ -9,6 +9,8 @@ _ = require('underscore');
 assert = require('assert');
 
 assertArgs = require('./lib/assertArgs');
+
+Resource = mongoose.model('Resource');
 
 Types = {
   PostComment: 'PostComment',
@@ -119,7 +121,7 @@ notifyUser = function(recpObj, agentObj, data, cb) {
   }, {
     $contains: ['url', 'type']
   }, '$isCb');
-  User = mongoose.model('User');
+  User = Resource.model('User');
   note = new Notification({
     agent: agentObj,
     agentName: agentObj.name,
@@ -138,7 +140,7 @@ notifyUser = function(recpObj, agentObj, data, cb) {
 
 NotificationSchema.statics.Trigger = function(agentObj, type) {
   var User;
-  User = mongoose.model('User');
+  User = Resource.model('User');
   switch (type) {
     case Types.PostComment:
       return function(commentObj, parentPostObj, cb) {

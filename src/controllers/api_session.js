@@ -6,7 +6,7 @@ required = require('../lib/required.js');
 
 Resource = mongoose.model('Resource');
 
-User = mongoose.model('User');
+User = Resource.model('User');
 
 Post = Resource.model('Post');
 
@@ -16,9 +16,9 @@ Inbox = mongoose.model('Inbox');
 
 Group = mongoose.model('Group');
 
-Follow = mongoose.model('Follow');
+Follow = Resource.model('Follow');
 
-Activity = mongoose.model('Activity');
+Activity = Resource.model('Activity');
 
 Subscriber = mongoose.model('Subscriber');
 
@@ -30,9 +30,16 @@ module.exports = {
     get: function(req, res) {
       console.log(req.query);
       if (req.query.user != null) {
-        return User.find({}, function(err, users) {
+        User.find({}, function(err, docs) {
           return res.endJson({
-            users: users
+            users: docs
+          });
+        });
+      }
+      if (req.query.activity != null) {
+        return Activity.find({}).populate('actor').exec(function(err, docs) {
+          return res.endJson({
+            activities: docs
           });
         });
       } else if (req.query.inbox != null) {

@@ -28,18 +28,9 @@ InboxSchema = new mongoose.Schema({
     indexed: 1,
     required: true
   },
-  author: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: true
-  },
   resource: {
     type: mongoose.Schema.ObjectId,
     ref: 'Resource',
-    required: true
-  },
-  type: {
-    type: String,
     required: true
   }
 });
@@ -52,7 +43,12 @@ InboxSchema.pre('save', function(next) {
 });
 
 InboxSchema.statics.fillInboxes = function(recipients, opts, cb) {
-  console.assert(opts.resource && opts.type, "Get your programming straight.");
+  console.log(recipients instanceof Array);
+  assertArgs({
+    '$isA': Array
+  }, {
+    $contains: ['resource']
+  }, '$isCb');
   if (!recipients.length) {
     return cb(false, []);
   }
@@ -61,8 +57,6 @@ InboxSchema.statics.fillInboxes = function(recipients, opts, cb) {
       var inbox;
       inbox = new Inbox({
         resource: opts.resource,
-        type: opts.type,
-        author: opts.author,
         recipient: rec
       });
       return inbox.save(done);
