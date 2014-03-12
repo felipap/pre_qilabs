@@ -46,7 +46,7 @@ module.exports = {
   },
   children: {
     ':labId/posts': {
-      permissions: [required.labs.userCanAccess('labId')],
+      permissions: [required.labs.userCanSee('labId')],
       get: function(req, res) {
         var labId;
         if (!(labId = req.paramToObjectId('labId'))) {
@@ -99,7 +99,7 @@ module.exports = {
       }
     },
     ':labId/addUser/:userId': {
-      permissions: [required.labs.userCanAccess('labId')],
+      permissions: [required.labs.userIsModerator('labId')],
       name: 'ApiLabAddUser',
       post: function(req, res) {
         var labId, userId;

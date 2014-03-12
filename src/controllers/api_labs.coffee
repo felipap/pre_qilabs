@@ -45,7 +45,7 @@ module.exports = {
 				res.redirect('/labs/'+doc.id)
 	children:
 		':labId/posts': {
-			permissions: [required.labs.userCanAccess('labId')],
+			permissions: [required.labs.userCanSee('labId')],
 			get: (req, res) ->
 				return unless labId = req.paramToObjectId('labId')
 				Group.findOne {_id: labId},
@@ -83,7 +83,7 @@ module.exports = {
 				)
 		}
 		':labId/addUser/:userId': {
-			permissions: [required.labs.userCanSee('labId')],
+			permissions: [required.labs.userIsModerator('labId')],
 			name: 'ApiLabAddUser'
 			post: (req, res) ->
 				return unless labId = req.paramToObjectId('labId')

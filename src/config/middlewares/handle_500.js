@@ -1,21 +1,28 @@
+
+
 module.exports = function(err, req, res, next) {
 	console.error('Error stack:', err);
 
-	if (err.status)
+	if (err.status) {
 		res.status(err.status);
-	if (res.statusCode < 400)
+	}
+	if (res.statusCode < 400) {
 		res.status(500);
-	if (req.app.get('env') != 'test')
-		console.error(err.stack);
+	}
 
 	var accept = req.headers.accept || '';
 
 	if (req.app.get('env') === 'production') {
-		res.render('pages/500', {
-			user: req.user,
-		});
+		if (~accept.indexOf('html')) {
+			res.render('pages/500', { user: req.user });
+		} else {
+			var error = { message: err.message, stack: err.stack };
+			for (var prop in err) error[prop] = err[prop];
+			res
+				.set('Content-Type', 'application/json')
+				.end(JSON.stringify({ error: error }));
+		}
 	} else {
-		
 		if (~accept.indexOf('html')) {
 			res.render('pages/500', {
 				user: req.user,

@@ -2,92 +2,123 @@
 // required.js
 // Python-like decorators for controllers.
 
+var mongoose = require('mongoose');
+var	Group = mongoose.model('Group');
+
 module.exports = {
 	logout: function (req, res, next) {
-		if (req.user) {
-			if (req.accepts('json')) {
-				res.status(403).end();
-			} else {
-				res.redirect('/');
-			}
-		} else {
-			next();
-		}
+		if (req.user)
+			next({permission:'logout'});
+		else next();
 	},
 	login: function (req, res, next) {
-		if (req.user) {
+		if (req.user)
 			next();
-		} else {
-			// if (req.accepts('json'))
-			// 	res.status(403).end();
-			// else
-				res.redirect('/');
-		}
+		else next({permission:'login'});
 	},
+	// Require user to be me. :D
 	isMe: function (req, res, next) {
-		// Require user to be me. :D
-		if (!req.user || req.user.facebookId !== process.env.facebook_me) {
-			// if (req.accepts('html')) 
-			// 	// res.status(403).end();
-			// else
-				res.redirect('/');
-		} else {
+		if (!req.user || req.user.facebookId !== process.env.facebook_me)
+			next({permission:'isMe'});
+		else
 			next();
-		}
 	},
 	labs: {
 		userCanSee: function (labIdParam) {
 			return function (req, res, next) {
-				if (!req.user) {
-					// return res.status(403).redirect('/');
-					return next({error:true, name:"NotLogged"});
+				if (!(labId = req.paramToObjectId(labIdParam))) {
+					next({
+						error: true,
+						type: "InvalidId",
+						args: {
+							param:labIdParam,
+							value:req.params[labIdParam],
+						}
+					});
+					return;			
 				}
-				var mongoose = require('mongoose');
-				var	Group = mongoose.model('Group');
-				// Get labId object.
-				try {
-					var labId =
-						new mongoose.Types.ObjectId.createFromHexString(req.params[labIdParam]);
-				} catch (e) {
-					return next({error:true, name:"InvalidId", args:{
-						param:labIdParam,
-						value:req.params[labIdParam],
-					}});
-				}
+
 				Group.findById(labId,
 					function (err, doc) {
-						if (err || !doc) {
-							return next({error:true, name:"Forbidd2en", msg:doc});
+						if (err) {
+							return next({
+								type: "FindErr",
+								args: { model:"Group", err:err, id:labId },
+							});
+						}
+						else if (!doc) {
+							return next({
+								type: "ObsoleteId",
+								args: { model:"Group", value:labId }
+							});
+						} else if (doc.permission === Group.Permissions.Private) {
+							return next({ permission:"userCanSee" });
 						}
 						next();
-					});
+					}
+				);
 			}
 		},
-		userCanAccess: function (labIdParam) {
+		userIsMember: function (labIdParam) {
 			return function (req, res, next) {
-				if (!req.user) {
-					// return res.status(403).redirect('/');
-					return next({error:true, name:"NotLogged"});
-				}
-				var mongoose = require('mongoose');
-				var Group = mongoose.model('Group');
-				// Get labId object.
-				try {
-					var labId =
-						new mongoose.Types.ObjectId.createFromHexString(req.params[labIdParam]);
-				} catch (e) {
-					return next({error:true, name:"InvalidId", args:{
-						param:labIdParam,
-						value:req.params[labIdParam],
-					}});
-				}
-				Group.Membership.findOne({ member:req.user, group:labId },
-					function (err, doc) {
-						if (err || !doc) {
-							return next({error:true, name:"Forbidden"});
+				if (!(labId = req.paramToObjectId(labIdParam))) {
+					next({
+						error: true,
+						type: "InvalidId",
+						args: {
+							param:labIdParam,
+							value:req.params[labIdParam],
 						}
-						next();
 					});
+					return;
+				}
+
+				Group.Membership.findOne({
+						member: req.user,
+						group: labId,
+					}, function (err, doc) {
+							if (err) {
+								return next({
+									type: "FindErr",
+									args: { model:"Group", err:err, id:labId },
+								});
+							} else if (!doc) {
+								return next({ permission:"userIsMember" });
+							}
+							next();
+						}
+				);
+			}
+		},
+		userIsModerator: function (labIdParam) {
+			return function (req, res, next) {
+				if (!(labId = req.paramToObjectId(labIdParam))) {
+					next({
+						error: true,
+						type: "InvalidId",
+						args: {
+							param:labIdParam,
+							value:req.params[labIdParam],
+						}
+					});
+					return;
+				}
+
+				Group.Membership.findOne({
+						member: req.user,
+						group: labId,
+					}, function (err, doc) {
+							if (err) {
+								return next({
+									type: "FindErr",
+									args: { model:"Group", err:err, id:labId },
+								});
+							} else if (!doc) {
+								return next({ permission:"userIsModerator" });
+							}
+							next();
+						}
+				);
 			}
 		},
 	}
