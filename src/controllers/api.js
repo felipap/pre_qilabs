@@ -90,7 +90,7 @@ module.exports = {
       children: {
         'notifications': {
           get: function(req, res) {
-            return req.user.getNotifications(res.handleErrResult(function(notes) {
+            return req.user.getNotifications(req.handleErrResult(function(notes) {
               return res.endJson({
                 data: notes,
                 error: false
@@ -145,7 +145,7 @@ module.exports = {
                 title: 'My conquest!' + Math.floor(Math.random() * 100),
                 body: req.body.content.body
               }
-            }, res.handleErrResult(function(doc) {
+            }, req.handleErrResult(function(doc) {
               return doc.populate('author', function(err, doc) {
                 return res.endJson({
                   error: false,
@@ -162,7 +162,7 @@ module.exports = {
             if (parseInt(req.query.maxDate)) {
               opts.maxDate = parseInt(req.query.maxDate);
             }
-            return req.user.getTimeline(opts, res.handleErrResult(function(docs) {
+            return req.user.getTimeline(opts, req.handleErrResult(function(docs) {
               var minDate;
               if (docs.length === opts.limit) {
                 minDate = docs[docs.length - 1].dateCreated.valueOf();

@@ -16,7 +16,7 @@ module.exports = {
 			get: (req, res) ->
 				return if not postId = req.paramToObjectId('id')
 				Post.findOne {_id: postId},
-					res.handleErrResult((doc) =>
+					req.handleErrResult((doc) =>
 						# If needed to fill response with comments:
 						doc.fillComments (err, object) =>
 							res.endJson({
@@ -30,7 +30,7 @@ module.exports = {
 			delete: (req, res) ->
 					return if not postId = req.paramToObjectId('id')
 					Post.findOne {_id: postId, author: req.user},
-						res.handleErrResult (doc) ->
+						req.handleErrResult (doc) ->
 							Inbod.remove { resource:doc }, (err, num) =>
 							doc.remove()
 							res.endJson(doc)
@@ -41,8 +41,8 @@ module.exports = {
 							return if not postId = req.paramToObjectId('id')
 							Post.findById postId
 								.populate 'author'
-								.exec res.handleErrResult (post) ->
-									post.getComments res.handleErrResult((comments) =>
+								.exec req.handleErrResult (post) ->
+									post.getComments req.handleErrResult((comments) =>
 										res.endJson {
 											data: comments
 											error: false
@@ -58,11 +58,11 @@ module.exports = {
 								}
 							}
 							Post.findById postId,
-								res.handleErrResult (parentPost) =>
+								req.handleErrResult (parentPost) =>
 									req.user.commentToPost parentPost, data,
-										res.handleErrResult (doc) =>
+										req.handleErrResult (doc) =>
 											doc.populate('author',
-												res.handleErrResult (doc) =>
+												req.handleErrResult (doc) =>
 													res.endJson(error:false, data:doc)
 											)
 						]

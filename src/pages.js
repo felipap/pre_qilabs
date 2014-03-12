@@ -84,8 +84,8 @@ module.exports = {
           }
           return Group.findOne({
             slug: req.params.slug
-          }, res.handleErrResult(function(group) {
-            return group.genGroupProfile(res.handleErrResult(function(groupProfile) {
+          }, req.handleErrResult(function(group) {
+            return group.genGroupProfile(req.handleErrResult(function(groupProfile) {
               return res.render('pages/lab', {
                 group: groupProfile
               });
@@ -104,7 +104,7 @@ module.exports = {
         }
         return User.findOne({
           username: req.params.username
-        }, res.handleErrResult(function(pUser) {
+        }, req.handleErrResult(function(pUser) {
           return pUser.genProfile(function(err, profile) {
             if (err || !profile) {
               return res.render404();
@@ -131,7 +131,7 @@ module.exports = {
           }
           return Post.findOne({
             _id: postId
-          }, res.handleErrResult(function(post) {
+          }, req.handleErrResult(function(post) {
             if (post.parentObj) {
               console.log('redirecting', post.path);
               return res.redirect(post.path);

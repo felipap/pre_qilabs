@@ -91,25 +91,34 @@ app.use(function(req, res, next) {
 		}
 	};
 
-	res.handleErrResult = function (callback) {
+	req.handleErrResult = function (callback, options) {
 		var self = this;
 		return function (err, result) {
 			if (err) {
-				res.render404();
+				return next({ type:"ErrResult",
+					args:_.extend({err:err},options) });
 			} else if (!result) {
-				res.render404();
+				return next({ type:"ObsoleteId",
+					args:_.extend({err:err},options) });
 			} else {
-				callback.apply(self, [].splice.call(arguments,1));
+				return callback.apply(self, [].splice.call(arguments,1));
 			}
 		}
 	};
 
-	req.paramToObjectId = function (param) {
-		try {
-			return new mongoose.Types.ObjectId.createFromHexString(req.params[param])
-		} catch (e) {
-			res.status(400).endJson({error:true, name:'InvalidId', arg:{param:param}})
-			return false;
+	req.paramToObjectId = function (param, callback) {
+		if (arguments.length === 2) { // Async call
+			try {
+				callback(mongoose.Types.ObjectId.createFromHexString(req.params[param]));
+			} catch (e) {
+				next({ type: "InvalidId", args:param});
+			}
+		} else { // Sync call
+			try {
+				return new mongoose.Types.ObjectId.createFromHexString(req.params[param])
+			} catch (e) {
+				next({ name:'InvalidId', arg:{param:param}})
+			}
 		}
 	};
 
@@ -143,14 +152,14 @@ app.use(expressWinston.logger({
 app.use(app.router); 
 /******************************************************************************/
 /** Error logging (must be after app.use(app.router)) *************************/
-app.use(expressWinston.errorLogger({
-	transports: [
-		new winston.transports.Console({
-			json: true,
-			colorize: true
-		}),
-	],
-}));
+// app.use(expressWinston.errorLogger({
+// 	transports: [
+// 		new winston.transports.Console({
+// 			json: true,
+// 			colorize: true
+// 		}),
+// 	],
+// }));
 /**--------------------------------------------------------------------------**/
 
 // app.use(express.logger());

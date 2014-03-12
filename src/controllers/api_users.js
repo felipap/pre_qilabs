@@ -23,7 +23,7 @@ module.exports = {
             return User.getPostsFromUser(userId, {
               limit: 3,
               skip: 5 * parseInt(req.query.page)
-            }, res.handleErrResult(function(docs) {
+            }, req.handleErrResult(function(docs) {
               return res.endJson({
                 data: docs,
                 error: false,
@@ -44,7 +44,7 @@ module.exports = {
             }
             return User.findOne({
               _id: userId
-            }, res.handleErrResult(function(user) {
+            }, req.handleErrResult(function(user) {
               return req.user.dofollowUser(user, function(err, done) {
                 return res.endJson({
                   error: !!err

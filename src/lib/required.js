@@ -3,21 +3,89 @@
 // Python-like decorators for controllers.
 
 var mongoose = require('mongoose');
-var Resource = mongoose.model('Resource');
+var _ = require('underscore');
 
+var Resource = mongoose.model('Resource');
 var Post = Resource.model('Post');
 var	Group = mongoose.model('Group');
+
+function extendErr (err, label) {
+	return _.extend(err,{required:(err.required||[]).concat(label)});
+}
 
 
 var permissions = {
 
 
 	labs: {
+		userCanSee: function (labId, req, res, callback) {
+			Group.findById(labId, req.handleErrResult(function (group) {					
+				
+				res.locals.lab = group;
+				
+				if ( 1|| group.permission === Group.Permissions.Public) {
+					callback();
+				} else {
+					Group.Membership.findOne({
+							member: req.user,
+							group: group,
+						}, function (err, doc) {
+							console.log('four');
+							if (!doc) {
+								return callback({ permission:"userCanSee" });
+							} else {
+								callback();
+							}
+						}
+					);
+				}
+			}));
+		},
+		userIsMember: function (labId, req, res, callback) {
+			Group.Membership.findOne({ member: req.user, group: labId },
+				function (err, doc) {
+					if (err) {
+						return callback({
+							type: "FindErr",
+							args: { model:"Group", err:err, id:labId },
+						});
+					} else if (!doc) {
+						return callback({ permission:"userIsMember" });
+					}
+					callback();
+				});
+		},
+		userIsModerator: function (labId, req, res, callback) {
+			Group.Membership.findOne({ member: req.user, group: labId },
+				function (err, doc) {
+					if (err) {
+						return callback({
+							type: "FindErr",
+							args: { model:"Group", err:err, id:labId },
+						});
+					} else if (!doc.type === Group.Membership.Moderator) {
+						return callback({ permission:"userIsMember" });
+					}
+					callback();
+				});
+		},
 
 	},
 
 	posts: {
-
+		userCanSee: function (postId, req, res, callback) {
+		
+			Post.findById(postId, req.handleErrResult(function (post) {
+				// A priori, all posts are visible if not within a private group.
+				if (!post.group) {
+					callback();
+				} else {
+					permissions.labs.userCanSee(post.group, req, res, function (err) {
+						callback( err ? extendErr(err, 'posts.userCanSee') : undefined);
+					});
+				}
+			}));
+		},
 	},
 
 };
@@ -43,164 +111,39 @@ module.exports = required = {
 	labs: {
 		userCanSee: function (labIdParam) {
 			return function (req, res, next) {
-				if (!(labId = req.paramToObjectId(labIdParam))) {
-					next({
-						type: "InvalidId",
-						args: { param:labIdParam, value:req.params[labIdParam] },
+				req.paramToObjectId(labIdParam, function (labId) {
+					permissions.labs.userCanSee(labId, req, res, function (err) {
+						next( err ? extendErr(err, 'labs.userCanSee') : undefined);
 					});
-					return;			
-				}
-
-				Group.findById(labId,
-					function (err, group) {
-						console.log('group', group.permissions)
-						if (err) {
-							return next({
-								type: "FindErr",
-								args: { model:"Group", err:err, id:labId },
-							});
-						}
-						else if (!group) {
-							return next({
-								type: "ObsoleteId",
-								args: { model:"Group", id:labId }
-							});
-						} else if (group.permission === Group.Permissions.Private) {
-							Group.Membership.findOne({
-									member: req.user,
-									group: 	member,
-								}, function (err, doc) {
-									console.log('four');
-									if (!doc) {
-										return next({ permission:"userCanSee" });
-									}
-									next();
-								}
-							);
-						}
-						res.locals.lab = group;
-						next();
-					}
-				);
-			}
+				});
+			};
 		},
 		userIsMember: function (labIdParam) {
 			return function (req, res, next) {
-				if (!(labId = req.paramToObjectId(labIdParam))) {
-					next({
-						type: "InvalidId",
-						args: { param:labIdParam, value:req.params[labIdParam] },
+				req.paramToObjectId(labIdParam, function (labId) {
+					permissions.labs.userIsMember(labId, req, res, function (err) {
+						next( err ? extendErr(err, 'labs.userIsMember') : undefined);
 					});
-					return;
-				}
-
-				Group.Membership.findOne({
-						member: req.user,
-						group: labId,
-					}, function (err, doc) {
-							if (err) {
-								return next({
-									type: "FindErr",
-									args: { model:"Group", err:err, id:labId },
-								});
-							} else if (!doc) {
-								return next({ permission:"userIsMember" });
-							}
-							next();
-						}
-				);
+				});
 			}
 		},
 		userIsModerator: function (labIdParam) {
 			return function (req, res, next) {
-				if (!(labId = req.paramToObjectId(labIdParam))) {
-					next({
-						type: "InvalidId",
-						args: { param:labIdParam, value:req.params[labIdParam] }
+				req.paramToObjectId(labIdParam, function (labId) {
+					permissions.labs.userIsMember(labId, req, res, function (err) {
+						next( err ? extendErr(err, 'labs.userIsModerator') : undefined);
 					});
-					return;
-				}
-
-				Group.Membership.findOne({
-						member: req.user,
-						group: labId,
-					}, function (err, doc) {
-							if (err) {
-								return next({
-									type: "FindErr",
-									args: { model:"Group", err:err, id:labId },
-								});
-							} else if (!doc) {
-								return next({ permission:"userIsModerator" });
-							}
-							next();
-						}
-				);
+				});
 			}
 		},
 	},
 	posts: {
 		userCanSee: function (postIdParam) {
 			return function (req, res, next) {
-				if (!(postId = req.paramToObjectId(postIdParam))) {
-					next({
-						type: "InvalidId",
-						args: { param:postIdParam,value:req.params[postIdParam] }
+				req.paramToObjectId(postIdParam, function (postId) {
+					permissions.posts.userCanSee(postId, req, res, function (err) {
+						next( err ? extendErr(err, 'posts.userCanSee') : undefined);
 					});
-					return;
-				}
-
-				// permissions.posts.userCanSee({id:postId}, req, res, function (err) {
-				// 	if (err) return next(_.extend(err,{required:'posts.userCanSee'}));
-				// });
-
-				Post.findById(postId, function (err, doc) {
-					console.log("I'm here")
-					if (err) {
-						return next({
-							type:"FindErr", args:{ model:"Post", err:err, id:postId },
-						});
-					} else if (!doc) {
-						return next({
-							type: "ObsoleteId",
-							args: { model:"User", id:postId }
-						});
-					}
-					if (doc.group) {
-						Group.findById(doc.group, function (err, group) {
-							if (err) {
-								return next({
-									type:"FindErr", args:{ model:"Post.group", id:group.group, err:err },
-								});
-							} else if (!group) {
-								return next({
-									type: "ObsoleteId",
-									args: { model:"Post.group", id:group.group }
-								});
-							}
-							if (group.permission === Group.Permissions.Private) {	
-								Group.Membership.findOne({
-										member: req.user,
-										group: group,
-									}, function (err, group) {
-										if (err) {
-											return next({
-												type: "FindErr",
-												args: { model:"Group", err:err, id:labId },
-											});
-										} else if (!doc) {
-											return next({ permission:"userIsModerator" });
-										}
-										next();
-									}
-								);
-							} else {
-								next();
-							}				
-						});
-					} else {
-						next();
-					}
 				});
 			};
 		},

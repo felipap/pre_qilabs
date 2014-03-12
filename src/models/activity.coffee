@@ -31,7 +31,6 @@ ActivitySchema = new mongoose.Schema {
 	published:		{ type: Date }
 	updated:		{ type: Date }
 
-
 	resources:     [{
 		label:	{ type: String, required: true }
 		type:	{ type: String, required: true }
@@ -85,7 +84,6 @@ ActivitySchema.pre 'save', (next) ->
 # 		}
 # 		inbox.save(done)
 # 	), cb)
-
 
 createAndDistributeActivity = (agentObj, data, cb) ->
 	assertArgs({$ismodel:'User'},{$contains:['type']},{$iscb:true},arguments)

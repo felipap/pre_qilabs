@@ -2,7 +2,8 @@
 
 module.exports = function(err, req, res, next) {
 	console.error('Error stack:', err);
-
+	console.trace()
+	
 	if (err.status) {
 		res.status(err.status);
 	}

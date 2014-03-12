@@ -16,7 +16,7 @@ module.exports = {
 						# req.logMe("fetched board of user #{req.params.userId}")
 						User.getPostsFromUser userId,
 							{limit:3, skip:5*parseInt(req.query.page)},
-							res.handleErrResult((docs) ->
+							req.handleErrResult((docs) ->
 								res.endJson {
 									data: docs 
 									error: false
@@ -31,7 +31,7 @@ module.exports = {
 				post: [required.login,
 					(req, res) ->
 						return unless userId = req.paramToObjectId('userId')
-						User.findOne {_id: userId}, res.handleErrResult((user) ->
+						User.findOne {_id: userId}, req.handleErrResult((user) ->
 							req.user.dofollowUser user, (err, done) ->
 								res.endJson {
 									error: !!err,

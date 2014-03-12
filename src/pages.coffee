@@ -66,8 +66,8 @@ module.exports = {
 					unless req.params.slug
 						return res.render404()
 					Group.findOne {slug: req.params.slug},
-						res.handleErrResult (group) ->
-							group.genGroupProfile res.handleErrResult (groupProfile) ->
+						req.handleErrResult (group) ->
+							group.genGroupProfile req.handleErrResult (groupProfile) ->
 								# console.log('groupProfile', groupProfile)
 								res.render 'pages/lab',
 									group: groupProfile
@@ -81,7 +81,7 @@ module.exports = {
 				unless req.params.username
 					return res.render404()
 				User.findOne {username: req.params.username},
-					res.handleErrResult (pUser) ->
+					req.handleErrResult (pUser) ->
 						pUser.genProfile (err, profile) ->
 							if err or not profile
 								# req.logMe "err generating profile", err
@@ -99,7 +99,7 @@ module.exports = {
 		methods: {
 			get: [required.posts.userCanSee('postId'), (req, res) ->
 				return unless postId = req.paramToObjectId('postId')
-				Post.findOne { _id:postId }, res.handleErrResult((post) ->
+				Post.findOne { _id:postId }, req.handleErrResult((post) ->
 					if post.parentObj
 						# Our post is actually a comment/answer, so redirect user to the
 						# comment's actual path (which is its parent's).

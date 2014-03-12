@@ -23,7 +23,7 @@ module.exports = {
         }
         return Post.findOne({
           _id: postId
-        }, res.handleErrResult((function(_this) {
+        }, req.handleErrResult((function(_this) {
           return function(doc) {
             return doc.fillComments(function(err, object) {
               return res.endJson({
@@ -48,7 +48,7 @@ module.exports = {
         return Post.findOne({
           _id: postId,
           author: req.user
-        }, res.handleErrResult(function(doc) {
+        }, req.handleErrResult(function(doc) {
           Inbod.remove({
             resource: doc
           }, (function(_this) {
@@ -67,8 +67,8 @@ module.exports = {
                 if (!(postId = req.paramToObjectId('id'))) {
                   return;
                 }
-                return Post.findById(postId).populate('author').exec(res.handleErrResult(function(post) {
-                  return post.getComments(res.handleErrResult((function(_this) {
+                return Post.findById(postId).populate('author').exec(req.handleErrResult(function(post) {
+                  return post.getComments(req.handleErrResult((function(_this) {
                     return function(comments) {
                       return res.endJson({
                         data: comments,
@@ -91,10 +91,10 @@ module.exports = {
                     body: req.body.content.body
                   }
                 };
-                return Post.findById(postId, res.handleErrResult((function(_this) {
+                return Post.findById(postId, req.handleErrResult((function(_this) {
                   return function(parentPost) {
-                    return req.user.commentToPost(parentPost, data, res.handleErrResult(function(doc) {
-                      return doc.populate('author', res.handleErrResult(function(doc) {
+                    return req.user.commentToPost(parentPost, data, req.handleErrResult(function(doc) {
+                      return doc.populate('author', req.handleErrResult(function(doc) {
                         return res.endJson({
                           error: false,
                           data: doc

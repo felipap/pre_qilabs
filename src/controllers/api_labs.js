@@ -54,7 +54,7 @@ module.exports = {
         }
         return Group.findOne({
           _id: labId
-        }, res.handleErrResult(function(group) {
+        }, req.handleErrResult(function(group) {
           var opts;
           opts = {
             limit: 10
@@ -62,7 +62,7 @@ module.exports = {
           if (parseInt(req.query.page)) {
             opts.maxDate = parseInt(req.query.maxDate);
           }
-          return req.user.getLabPosts(opts, group, res.handleErrResult(function(docs) {
+          return req.user.getLabPosts(opts, group, req.handleErrResult(function(docs) {
             var minDate;
             if (docs.length === opts.limit) {
               minDate = docs[docs.length - 1].dateCreated.valueOf();
@@ -89,7 +89,7 @@ module.exports = {
               title: 'My conquest!' + Math.floor(Math.random() * 100),
               body: req.body.content.body
             }
-          }, res.handleErrResult(function(doc) {
+          }, req.handleErrResult(function(doc) {
             return doc.populate('author', function(err, doc) {
               return res.endJson({
                 error: false,
@@ -113,10 +113,10 @@ module.exports = {
         }
         return Group.findOne({
           _id: labId
-        }, res.handleErrResult(function(group) {
+        }, req.handleErrResult(function(group) {
           return User.findOne({
             _id: userId
-          }, res.handleErrResult(function(user) {
+          }, req.handleErrResult(function(user) {
             var type;
             type = Group.Membership.Types.Member;
             return req.user.addUserToGroup(user, group, type, function(err, membership) {

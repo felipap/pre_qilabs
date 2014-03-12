@@ -49,14 +49,14 @@ module.exports = {
 			get: (req, res) ->
 				return unless labId = req.paramToObjectId('labId')
 				Group.findOne {_id: labId},
-					res.handleErrResult((group) ->
+					req.handleErrResult((group) ->
 
 						opts = {limit:10}
 						if parseInt(req.query.page)
 							opts.maxDate = parseInt(req.query.maxDate)
 
 						req.user.getLabPosts opts, group,
-							res.handleErrResult((docs) ->
+							req.handleErrResult((docs) ->
 
 								if docs.length is opts.limit
 									minDate = docs[docs.length-1].dateCreated.valueOf()
@@ -77,7 +77,7 @@ module.exports = {
 					content:
 						title: 'My conquest!'+Math.floor(Math.random()*100)
 						body: req.body.content.body
-				}, res.handleErrResult((doc) ->
+				}, req.handleErrResult((doc) ->
 					doc.populate 'author', (err, doc) ->
 						res.endJson {error:false, data:doc}
 				)
@@ -89,8 +89,8 @@ module.exports = {
 			post: (req, res) ->
 				return unless labId = req.paramToObjectId('labId')
 				return unless userId = req.paramToObjectId('userId')
-				Group.findOne {_id: labId}, res.handleErrResult((group) ->
-					User.findOne {_id: userId}, res.handleErrResult((user) ->
+				Group.findOne {_id: labId}, req.handleErrResult((group) ->
+					User.findOne {_id: userId}, req.handleErrResult((user) ->
 						type = Group.Membership.Types.Member
 						req.user.addUserToGroup(user, group, type,
 							(err, membership) ->
