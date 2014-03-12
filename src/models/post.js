@@ -46,7 +46,7 @@ PostSchema = new mongoose.Schema({
   },
   parentPost: {
     type: ObjectId,
-    ref: 'Resource',
+    ref: 'Post',
     required: false
   },
   data: {

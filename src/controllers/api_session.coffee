@@ -60,10 +60,10 @@ module.exports = {
 										Notification.find {}, (err, notifics) ->
 											Group.find {}, (err, groups) ->
 												Group.Membership.find {}, (err, memberships) ->
+													Activity.find {}, (err, notes) ->
 														obj =
 															ip: req.ip
 															group: groups
-													Activity.find {}, (err, notes) ->
 															inboxs: inboxs
 															notifics: notifics
 															membership: memberships

@@ -96,27 +96,25 @@ module.exports = {
                 return Follow.find({}, function(err, follows) {
                   return Notification.find({}, function(err, notifics) {
                     return Group.find({}, function(err, groups) {
-                      Group.Membership.find({}, function(err, memberships) {
-                        var obj;
-                        return obj = {
-                          ip: req.ip,
-                          group: groups
-                        };
+                      return Group.Membership.find({}, function(err, memberships) {
+                        return Activity.find({}, function(err, notes) {
+                          var obj;
+                          obj = {
+                            ip: req.ip,
+                            group: groups,
+                            inboxs: inboxs,
+                            notifics: notifics,
+                            membership: memberships,
+                            session: req.session,
+                            users: users,
+                            posts: posts,
+                            follows: follows,
+                            notes: notes,
+                            subscribers: subscribers
+                          };
+                          return res.endJson(obj);
+                        });
                       });
-                      Activity.find({}, function(err, notes) {
-                        return {
-                          inboxs: inboxs,
-                          notifics: notifics,
-                          membership: memberships,
-                          session: req.session,
-                          users: users,
-                          posts: posts,
-                          follows: follows,
-                          notes: notes,
-                          subscribers: subscribers
-                        };
-                      });
-                      return res.endJson(obj);
                     });
                   });
                 });
