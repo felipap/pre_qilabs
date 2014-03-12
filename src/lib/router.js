@@ -34,10 +34,13 @@ module.exports = function Router (app) {
 		
 		// Use app[get/post/put/...] to route methods in routerNode.methods
 		for (var method in httpMethods)
-		if (httpMethods.hasOwnProperty(method)) {
-			var calls = httpMethods[method];
+		if (httpMethods.hasOwnProperty(method.toLowerCase())) {
+			var appMethod = app[method.toLowerCase()]; // Eg: app.get()
+			if (typeof appMethod === 'undefined')
+				throw "Invalid http method found: #{method.toLowerCase}"
+			var calls = httpMethods[method.toLowerCase()];
 			// Call app[method] with arguments (path, *permissions, *calls)
-			app[method].apply(app, [path].concat(permissions||[]).concat(calls));
+			appMethod.apply(app, [path].concat(permissions||[]).concat(calls));
 		}
 		var HTTP_METHODS = ['get', 'post', 'delete', 'put'];
 		for (var i=0; i<HTTP_METHODS.length; i++) {

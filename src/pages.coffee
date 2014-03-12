@@ -67,8 +67,8 @@ module.exports = {
 						return res.render404()
 					Group.findOne {slug: req.params.slug},
 						res.handleErrResult (group) ->
-							group.genGroupProfile res.handleErrResult (groupProfile) -> # groupProfile?
-								console.log('groupProfile', groupProfile)
+							group.genGroupProfile res.handleErrResult (groupProfile) ->
+								# console.log('groupProfile', groupProfile)
 								res.render 'pages/lab',
 									group: groupProfile
 			}
@@ -94,21 +94,24 @@ module.exports = {
 
 	'/posts/:postId':
 		name: 'profile'
+		# slugs: {post:'postId'}
+		# permissions: [required.posts.userCanSee('post')]
 		methods: {
-			get: (req, res) ->
+			get: [required.posts.userCanSee('postId'), (req, res) ->
 				return unless postId = req.paramToObjectId('postId')
 				Post.findOne { _id:postId }, res.handleErrResult((post) ->
 					if post.parentObj
 						# Our post is actually a comment/answer, so redirect user to the
 						# comment's actual path (which is its parent's).
 						console.log 'redirecting', post.path
-						res.redirect(post.path)
+						return res.redirect(post.path)
 					else
 						post.stuff (err, stuffedPost) ->
 							res.render 'pages/post.html', {
 								post: stuffedPost,
 							}
 					)
+				]
 		}
 		children: {
 			'/edit':

@@ -15,42 +15,42 @@ module.exports = {
 		'/:id': {
 			get: (req, res) ->
 				return if not postId = req.paramToObjectId('id')
-				Post.findOne {_id: postId}, res.handleErrResult(
-					(doc) -> # If needed to fill response with comments:
-						doc.fillComments (err, object) ->
+				Post.findOne {_id: postId},
+					res.handleErrResult((doc) =>
+						# If needed to fill response with comments:
+						doc.fillComments (err, object) =>
 							res.endJson({
 								error: false,
 								data: object
 							})
-				)
+					)
 			post: (req, res) ->
 					return if not postId = req.paramToObjectId('id')
 					# For security, handle each option
 			delete: (req, res) ->
 					return if not postId = req.paramToObjectId('id')
 					Post.findOne {_id: postId, author: req.user},
-						res.handleErrResult((doc) ->
-							Inbod.remove { resource: doc }, (err, num) ->
+						res.handleErrResult (doc) ->
+							Inbod.remove { resource:doc }, (err, num) =>
 							doc.remove()
-							res.endJson doc
-						)
+							res.endJson(doc)
 			children: {
-				'/comments': {
+				'/comments':
 					methods: {
-						get: (req, res) ->
+						get: [required.posts.userCanSee('id'), (req, res) ->
 							return if not postId = req.paramToObjectId('id')
 							Post.findById postId
 								.populate 'author'
-								.exec res.handleErrResult((post) ->
-									post.getComments res.handleErrResult((comments) ->
+								.exec res.handleErrResult (post) ->
+									post.getComments res.handleErrResult((comments) =>
 										res.endJson {
 											data: comments
 											error: false
 											page: -1 # sending all
 										}
 									)
-								)
-						post: (req, res) ->
+						]
+						post: [required.posts.userCanComment('id'), (req, res) ->
 							return if not postId = req.paramToObjectId('id')
 							data = {
 								content: {
@@ -58,19 +58,15 @@ module.exports = {
 								}
 							}
 							Post.findById postId,
-								res.handleErrResult((parentPost) =>
-									req.user.commentToPost(parentPost,
-										data,
-										res.handleErrResult((doc) ->
+								res.handleErrResult (parentPost) =>
+									req.user.commentToPost parentPost, data,
+										res.handleErrResult (doc) =>
 											doc.populate('author',
-												res.handleErrResult (doc) ->
+												res.handleErrResult (doc) =>
 													res.endJson(error:false, data:doc)
 											)
-										)
-									)
-								)
+						]
 					}
-				},
 			}
 		},
 	},

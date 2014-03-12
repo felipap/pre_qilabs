@@ -23,14 +23,16 @@ module.exports = {
         }
         return Post.findOne({
           _id: postId
-        }, res.handleErrResult(function(doc) {
-          return doc.fillComments(function(err, object) {
-            return res.endJson({
-              error: false,
-              data: object
+        }, res.handleErrResult((function(_this) {
+          return function(doc) {
+            return doc.fillComments(function(err, object) {
+              return res.endJson({
+                error: false,
+                data: object
+              });
             });
-          });
-        }));
+          };
+        })(this)));
       },
       post: function(req, res) {
         var postId;
@@ -49,7 +51,9 @@ module.exports = {
         }, res.handleErrResult(function(doc) {
           Inbod.remove({
             resource: doc
-          }, function(err, num) {});
+          }, (function(_this) {
+            return function(err, num) {};
+          })(this));
           doc.remove();
           return res.endJson(doc);
         }));
@@ -57,44 +61,50 @@ module.exports = {
       children: {
         '/comments': {
           methods: {
-            get: function(req, res) {
-              var postId;
-              if (!(postId = req.paramToObjectId('id'))) {
-                return;
-              }
-              return Post.findById(postId).populate('author').exec(res.handleErrResult(function(post) {
-                return post.getComments(res.handleErrResult(function(comments) {
-                  return res.endJson({
-                    data: comments,
-                    error: false,
-                    page: -1
-                  });
-                }));
-              }));
-            },
-            post: function(req, res) {
-              var data, postId;
-              if (!(postId = req.paramToObjectId('id'))) {
-                return;
-              }
-              data = {
-                content: {
-                  body: req.body.content.body
+            get: [
+              required.posts.userCanSee('id'), function(req, res) {
+                var postId;
+                if (!(postId = req.paramToObjectId('id'))) {
+                  return;
                 }
-              };
-              return Post.findById(postId, res.handleErrResult((function(_this) {
-                return function(parentPost) {
-                  return req.user.commentToPost(parentPost, data, res.handleErrResult(function(doc) {
-                    return doc.populate('author', res.handleErrResult(function(doc) {
+                return Post.findById(postId).populate('author').exec(res.handleErrResult(function(post) {
+                  return post.getComments(res.handleErrResult((function(_this) {
+                    return function(comments) {
                       return res.endJson({
+                        data: comments,
                         error: false,
-                        data: doc
+                        page: -1
                       });
-                    }));
-                  }));
+                    };
+                  })(this)));
+                }));
+              }
+            ],
+            post: [
+              required.posts.userCanComment('id'), function(req, res) {
+                var data, postId;
+                if (!(postId = req.paramToObjectId('id'))) {
+                  return;
+                }
+                data = {
+                  content: {
+                    body: req.body.content.body
+                  }
                 };
-              })(this)));
-            }
+                return Post.findById(postId, res.handleErrResult((function(_this) {
+                  return function(parentPost) {
+                    return req.user.commentToPost(parentPost, data, res.handleErrResult(function(doc) {
+                      return doc.populate('author', res.handleErrResult(function(doc) {
+                        return res.endJson({
+                          error: false,
+                          data: doc
+                        });
+                      }));
+                    }));
+                  };
+                })(this)));
+              }
+            ]
           }
         }
       }

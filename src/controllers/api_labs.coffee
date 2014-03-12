@@ -70,7 +70,7 @@ module.exports = {
 								}
 							)
 					)
-			post: (req, res) ->
+			post: [required.labs.userIsMember('labId'), (req, res) ->
 				return unless groupId = req.paramToObjectId('labId')
 				req.user.createPost {
 					groupId: groupId
@@ -81,6 +81,7 @@ module.exports = {
 					doc.populate 'author', (err, doc) ->
 						res.endJson {error:false, data:doc}
 				)
+			]
 		}
 		':labId/addUser/:userId': {
 			permissions: [required.labs.userIsModerator('labId')],

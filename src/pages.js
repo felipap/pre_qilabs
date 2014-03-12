@@ -86,7 +86,6 @@ module.exports = {
             slug: req.params.slug
           }, res.handleErrResult(function(group) {
             return group.genGroupProfile(res.handleErrResult(function(groupProfile) {
-              console.log('groupProfile', groupProfile);
               return res.render('pages/lab', {
                 group: groupProfile
               });
@@ -124,26 +123,28 @@ module.exports = {
   '/posts/:postId': {
     name: 'profile',
     methods: {
-      get: function(req, res) {
-        var postId;
-        if (!(postId = req.paramToObjectId('postId'))) {
-          return;
-        }
-        return Post.findOne({
-          _id: postId
-        }, res.handleErrResult(function(post) {
-          if (post.parentObj) {
-            console.log('redirecting', post.path);
-            return res.redirect(post.path);
-          } else {
-            return post.stuff(function(err, stuffedPost) {
-              return res.render('pages/post.html', {
-                post: stuffedPost
-              });
-            });
+      get: [
+        required.posts.userCanSee('postId'), function(req, res) {
+          var postId;
+          if (!(postId = req.paramToObjectId('postId'))) {
+            return;
           }
-        }));
-      }
+          return Post.findOne({
+            _id: postId
+          }, res.handleErrResult(function(post) {
+            if (post.parentObj) {
+              console.log('redirecting', post.path);
+              return res.redirect(post.path);
+            } else {
+              return post.stuff(function(err, stuffedPost) {
+                return res.render('pages/post.html', {
+                  post: stuffedPost
+                });
+              });
+            }
+          }));
+        }
+      ]
     },
     children: {
       '/edit': {

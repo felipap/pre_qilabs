@@ -77,26 +77,28 @@ module.exports = {
           }));
         }));
       },
-      post: function(req, res) {
-        var groupId;
-        if (!(groupId = req.paramToObjectId('labId'))) {
-          return;
-        }
-        return req.user.createPost({
-          groupId: groupId,
-          content: {
-            title: 'My conquest!' + Math.floor(Math.random() * 100),
-            body: req.body.content.body
+      post: [
+        required.labs.userIsMember('labId'), function(req, res) {
+          var groupId;
+          if (!(groupId = req.paramToObjectId('labId'))) {
+            return;
           }
-        }, res.handleErrResult(function(doc) {
-          return doc.populate('author', function(err, doc) {
-            return res.endJson({
-              error: false,
-              data: doc
+          return req.user.createPost({
+            groupId: groupId,
+            content: {
+              title: 'My conquest!' + Math.floor(Math.random() * 100),
+              body: req.body.content.body
+            }
+          }, res.handleErrResult(function(doc) {
+            return doc.populate('author', function(err, doc) {
+              return res.endJson({
+                error: false,
+                data: doc
+              });
             });
-          });
-        }));
-      }
+          }));
+        }
+      ]
     },
     ':labId/addUser/:userId': {
       permissions: [required.labs.userIsModerator('labId')],

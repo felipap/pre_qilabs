@@ -33,9 +33,9 @@ GroupSchema = new mongoose.Schema({
     },
     description: String
   },
-  permissions: {
+  permission: {
     type: String,
-    "default": Permissions.Public
+    "default": Permissions.Private
   }
 });
 
