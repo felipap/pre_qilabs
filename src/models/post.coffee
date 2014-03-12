@@ -32,6 +32,7 @@ PostSchema = new mongoose.Schema {
 	group:			{ type: ObjectId, ref: 'Group', required: false }
 	dateCreated:	{ type: Date, indexed: 1 }
 	type: 			{ type: String, required: true }
+	parentPost:		{ type: ObjectId, ref: 'Resource', required: false }
 	
 	data: {
 		title:		{ type: String, required: false }
