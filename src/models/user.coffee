@@ -120,14 +120,14 @@ UserSchema.methods.getPopulatedFollowers = (cb) -> # Add opts to prevent getting
 	@getFollowsAsFollowee (err, docs) ->
 		return cb(err) if err
 		User.populate docs, { path: 'follower' }, (err, popFollows) ->
-			cb(err, _.pluck(popFollows, 'follower'))
+			cb(err, _.filter(_.pluck(popFollows, 'follower'),(i)->i))
 
 # Get documents of users that follow @.
 UserSchema.methods.getPopulatedFollowing = (cb) -> # Add opts to prevent getting all?
 	@getFollowsAsFollower (err, docs) ->
 		return cb(err) if err
 		User.populate docs, { path: 'followee' }, (err, popFollows) ->
-			cb(err, _.pluck(popFollows, 'followee'))
+			cb(err, _.filter(_.pluck(popFollows, 'followee'),(i)->i))
 
 #
 

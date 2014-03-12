@@ -165,7 +165,9 @@ UserSchema.methods.getPopulatedFollowers = function(cb) {
     return User.populate(docs, {
       path: 'follower'
     }, function(err, popFollows) {
-      return cb(err, _.pluck(popFollows, 'follower'));
+      return cb(err, _.filter(_.pluck(popFollows, 'follower'), function(i) {
+        return i;
+      }));
     });
   });
 };
@@ -178,7 +180,9 @@ UserSchema.methods.getPopulatedFollowing = function(cb) {
     return User.populate(docs, {
       path: 'followee'
     }, function(err, popFollows) {
-      return cb(err, _.pluck(popFollows, 'followee'));
+      return cb(err, _.filter(_.pluck(popFollows, 'followee'), function(i) {
+        return i;
+      }));
     });
   });
 };
