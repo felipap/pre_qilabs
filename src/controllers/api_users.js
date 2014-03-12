@@ -1,4 +1,4 @@
-var Post, Resource, Tag, User, mongoose, required;
+var Post, Resource, User, mongoose, required;
 
 mongoose = require('mongoose');
 
@@ -9,8 +9,6 @@ Resource = mongoose.model('Resource');
 User = mongoose.model('User');
 
 Post = Resource.model('Post');
-
-Tag = mongoose.model('Tag');
 
 module.exports = {
   children: {

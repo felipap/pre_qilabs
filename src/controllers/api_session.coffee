@@ -52,27 +52,27 @@ module.exports = {
 				res.endJson { ip: req.ip, session: req.session } 
 				Activity.find {}, (err, notes) ->
 			else
-					User.find {}, (err, users) ->
-						Post.find {}, (err, posts) ->
-							Inbox.find {}, (err, inboxs) ->
-								Subscriber.find {}, (err, subscribers) ->
-									Follow.find {}, (err, follows) ->
-										Notification.find {}, (err, notifics) ->
-											Group.find {}, (err, groups) ->
-												Group.Membership.find {}, (err, memberships) ->
-													Activity.find {}, (err, notes) ->
-														obj =
-															ip: req.ip
-															group: groups
-															inboxs: inboxs
-															notifics: notifics
-															membership: memberships
-															session: req.session
-															users: users
-															posts: posts
-															follows: follows
-															notes: notes
-															subscribers: subscribers
-														res.endJson obj
+				User.find {}, (err, users) ->
+					Post.find {}, (err, posts) ->
+						Inbox.find {}, (err, inboxs) ->
+							Subscriber.find {}, (err, subscribers) ->
+								Follow.find {}, (err, follows) ->
+									Notification.find {}, (err, notifics) ->
+										Group.find {}, (err, groups) ->
+											Group.Membership.find {}, (err, memberships) ->
+												Activity.find {}, (err, notes) ->
+													obj =
+														ip: req.ip
+														group: groups
+														inboxs: inboxs
+														notifics: notifics
+														membership: memberships
+														session: req.session
+														users: users
+														posts: posts
+														follows: follows
+														notes: notes
+														subscribers: subscribers
+													res.endJson obj
 	}
 }
