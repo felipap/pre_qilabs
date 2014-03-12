@@ -108,7 +108,7 @@ app.use(function(req, res, next) {
 		try {
 			return new mongoose.Types.ObjectId.createFromHexString(req.params[param])
 		} catch (e) {
-			res.status(400).endJson({error:true, name:'InvalidId'})
+			res.status(400).endJson({error:true, name:'InvalidId', arg:{param:param}})
 			return false;
 		}
 	};
