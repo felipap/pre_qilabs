@@ -107,11 +107,11 @@ UserSchema.pre 'remove', (next) ->
 
 # Get Follow documents where @ is followee.
 UserSchema.methods.getFollowsAsFollowee = (cb) ->
-	Follow.find {followee: @}, cb
+	Follow.find {followee: @, follower: {$ne: null}}, cb
 
 # Get Follow documents where @ is follower.
 UserSchema.methods.getFollowsAsFollower = (cb) ->
-	Follow.find {follower: @}, cb
+	Follow.find {follower: @, followee: {$ne: null}}, cb
 
 #
 

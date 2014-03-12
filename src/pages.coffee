@@ -81,12 +81,12 @@ module.exports = {
 				unless req.params.username
 					return res.render404()
 				User.findOne {username: req.params.username},
-					res.handleErrResult (user2) ->
-						user2.genProfile (err, profile) ->
+					res.handleErrResult (pUser) ->
+						pUser.genProfile (err, profile) ->
 							if err or not profile
 								# req.logMe "err generating profile", err
 								return res.render404()
-							req.user.doesFollowUser user2, (err, bool) ->
+							req.user.doesFollowUser pUser, (err, bool) ->
 								res.render 'pages/profile', 
 									profile: profile
 									follows: bool

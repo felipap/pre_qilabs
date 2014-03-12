@@ -105,12 +105,12 @@ module.exports = {
         }
         return User.findOne({
           username: req.params.username
-        }, res.handleErrResult(function(user2) {
-          return user2.genProfile(function(err, profile) {
+        }, res.handleErrResult(function(pUser) {
+          return pUser.genProfile(function(err, profile) {
             if (err || !profile) {
               return res.render404();
             }
-            return req.user.doesFollowUser(user2, function(err, bool) {
+            return req.user.doesFollowUser(pUser, function(err, bool) {
               return res.render('pages/profile', {
                 profile: profile,
                 follows: bool

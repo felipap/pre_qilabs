@@ -141,13 +141,19 @@ UserSchema.pre('remove', function(next) {
 
 UserSchema.methods.getFollowsAsFollowee = function(cb) {
   return Follow.find({
-    followee: this
+    followee: this,
+    follower: {
+      $ne: null
+    }
   }, cb);
 };
 
 UserSchema.methods.getFollowsAsFollower = function(cb) {
   return Follow.find({
-    follower: this
+    follower: this,
+    followee: {
+      $ne: null
+    }
   }, cb);
 };
 
