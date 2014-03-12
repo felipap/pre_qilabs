@@ -83,7 +83,7 @@ module.exports = {
 				)
 		}
 		':labId/addUser/:userId': {
-			permissions: [required.labs.userCanAccess('labId')],
+			permissions: [required.labs.userCanSee('labId')],
 			name: 'ApiLabAddUser'
 			post: (req, res) ->
 				return unless labId = req.paramToObjectId('labId')

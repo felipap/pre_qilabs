@@ -77,7 +77,7 @@ module.exports = {
         }
       },
       ':slug': {
-        permissions: [required.labs.userCanAccess('slug')],
+        permissions: [required.labs.userCanSee('slug')],
         get: function(req, res) {
           if (!req.params.slug) {
             return res.render404();

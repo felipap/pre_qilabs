@@ -61,7 +61,7 @@ module.exports = {
 					get: (req, res) ->
 						res.render 'pages/lab_create'
 			':slug': {
-				permissions: [required.labs.userCanAccess('slug')],
+				permissions: [required.labs.userCanSee('slug')],
 				get: (req, res) ->
 					unless req.params.slug
 						return res.render404()

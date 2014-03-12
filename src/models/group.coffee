@@ -36,7 +36,7 @@ GroupSchema = new mongoose.Schema {
 		name:			{ type: String, required: true }
 		description: 	String
 	}
-	permissions: 		{ type: String, default: Permissions.Private }
+	permissions: 		{ type: String, default: Permissions.Public }
 }
 
 MembershipSchema = new mongoose.Schema {
