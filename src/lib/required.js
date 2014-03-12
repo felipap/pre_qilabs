@@ -48,7 +48,7 @@ module.exports = {
 				// Get labId object.
 				try {
 					var labId =
-						new mongoose.Types.ObjectId.fromString(req.params[labIdParam]);
+						new mongoose.Types.ObjectId.createFromHexString(req.params[labIdParam]);
 				} catch (e) {
 					return next({error:true, name:"InvalidId"});
 				}

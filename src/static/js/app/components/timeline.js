@@ -192,14 +192,20 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				return (
 					React.DOM.div( {className:"commentInputSection"}, 
 						React.DOM.form( {className:"formPostComment", onSubmit:this.handleSubmit}, 
-							React.DOM.div( {className:"mediaUser"}, 
-								React.DOM.a( {href:window.user.profileUrl}, 
-									React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle}
-									)
+							React.DOM.table(null, 
+								React.DOM.tbody(null, 
+									React.DOM.tr(null, React.DOM.td(null, 
+										React.DOM.div( {className:"mediaUser"}, 
+											React.DOM.a( {href:window.user.profileUrl}, 
+												React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle}
+												)
+											)
+										)
+									),React.DOM.td( {className:"commentInputTd"}, 
+										React.DOM.input( {className:"commentInput", ref:"input", type:"text", placeholder:"Comente esse post..."} )
+									))
 								)
-							),
-							React.DOM.input( {className:"commentInput", ref:"input", type:"text", placeholder:"Comente esse post..."} ),
-							React.DOM.button( {'data-action':"send-comment"}, "Enviar")
+							)
 						)
 					)
 				);

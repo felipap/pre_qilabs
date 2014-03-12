@@ -192,14 +192,20 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				return (
 					<div className="commentInputSection">
 						<form className="formPostComment" onSubmit={this.handleSubmit}>
-							<div className="mediaUser">
-								<a href={window.user.profileUrl}>
-									<div className="mediaUserAvatar" style={mediaUserAvatarStyle}>
-									</div>
-								</a>
-							</div>
-							<input className="commentInput" ref="input" type="text" placeholder="Comente esse post..." />
-							<button data-action="send-comment">Enviar</button>
+							<table>
+								<tbody>
+									<tr><td>
+										<div className="mediaUser">
+											<a href={window.user.profileUrl}>
+												<div className="mediaUserAvatar" style={mediaUserAvatarStyle}>
+												</div>
+											</a>
+										</div>
+									</td><td className="commentInputTd">
+										<input className="commentInput" ref="input" type="text" placeholder="Comente esse post..." />
+									</td></tr>
+								</tbody>
+							</table>
 						</form>
 					</div>
 				);

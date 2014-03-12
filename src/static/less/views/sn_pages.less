@@ -147,25 +147,21 @@ body {
 	.commentInputSection .mediaUser,
 	.commentWrapper .mediaUser {
 		.rounded(0);
-		width: 35px;
-		height: 35px;
+		width: 30px;
+		height: 30px;
 	}
 	
 	.postWrapper .msgBody,
 	.commentInput {
 		vertical-align: middle;
 		display: inline-block;
-		min-height: 35px;
-		// padding-left: 40px;
 		border: 1px solid #DDD;
 		.no-box-shadow;
 		outline: none;
-		padding: 6px 5px;
+		font-size: 13px;
+		margin-left: 3px;
+		padding: 5px;
 		.transition(all, .2s, linear);
-
-		&:focus {
-			border-color: #08C;
-		}
 	}
 
 	.postWrapper {
@@ -242,6 +238,7 @@ body {
 			}
 
 			.msgBody {
+				font-size: 14px;
 				padding: 10px;
 				width: 100%;
 				position: relative;
@@ -299,20 +296,22 @@ body {
 		}
 
 		.commentInputSection {
-			padding: 3px 9px 5px;
+			padding: 3px 8px 3px 5px;
 			border-top: 1px solid #DDD;
 			background: #EEE;
-
+			
 			.mediaUser {
 				border: 1px solid #DDD;
 			}
-			.commentInput {
-				width: 490px;
+
+			.commentInputTd {
+				width: 100%;
 			}
-			[data-action=send-comment] {
-				display: inline-block;
-				.high-xbtn(white, @COLOR2);
-				.high-xbtn-padding(6px, 15px, 2px);
+			.commentInput {
+				width: 100%;
+				&:focus {
+					border-color: #08C;
+				}
 			}
 		}
 	}
