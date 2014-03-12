@@ -33,6 +33,28 @@
 		{% endif %}
 	{% endif %}
 
+	<div class="box userList">
+		<div class="head">
+			Seguindo: {{ profile.following.count }}
+		</div>
+		<ul class="body">
+			{% for person in profile.following.docs %}
+				<li>{{ userMacros.renderUser(person) }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+
+	<div class="box userList">
+		<div class="head">
+			Seguidores: {{ profile.followers.count }}
+		</div>
+		<ul class="body">
+			{% for person in profile.followers.docs %}
+				<li>{{ userMacros.renderUser(person) }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+
 	<div class="box tags">
 		<div class="head">
 			Grupos: {{ profile.groups.length }}

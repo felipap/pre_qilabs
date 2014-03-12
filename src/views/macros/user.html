@@ -4,11 +4,13 @@
 #}
 
 {% macro renderUser (__arg_user) %}
+{% if __arg_user %}
 <div class="mediaUser">
 	<a href="{{ __arg_user.profileUrl }}">
 		<div class="mediaUserAvatar" style="background: url({{ __arg_user.avatarUrl }})" data-toggle="tooltip" title="{{ __arg_user.username }}" data-placement="bottom"></div>
 	</a>
 </div>
+{% endif %}
 {% endmacro %}
 
 {% macro renderUserList (__arg_list) %}
