@@ -5,7 +5,7 @@
 	
 {% block bodyEnd %}
 	{% parent %}
-	<script>_lab={id:'{{group.id}}'}; conf={postsRoot:'/api/labs/{{ group.id }}/posts',groupId:'{{ group.id }}'};</script>
+	<script>_lab={id:'{{group._id}}'}; conf={postsRoot:'/api/labs/{{ group._id }}/posts',groupId:'{{ group._id }}'};</script>
 {% endblock %}
 
 {% block sidebarContent %}
@@ -25,7 +25,7 @@
 			{% endfor %}
 
 			<input type="text" id="trust" />
-			<button id="istilldidnt" data-post-href="{{ getPageUrl('ApiLabAddUser',{labId:group.id,userId:user.id}) }}">Add myself</button>
+			<button id="istilldidnt" data-post-href="{{ getPageUrl('ApiLabAddUser',{labId:group._id,userId:user.id}) }}">Add myself</button>
 		</ul>
 	</div>
 
