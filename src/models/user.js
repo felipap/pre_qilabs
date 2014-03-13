@@ -529,14 +529,11 @@ UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
             group: group
           });
         }
-        return mem.save(function(err) {
-          cb(err, mem);
-          return Activity.Trigger(this, Activity.Types.GroupMemberAdded)({
-            group: group,
-            actor: this,
-            member: member
-          }, function() {});
-        });
+        return Activity.Trigger(_this, Activity.Types.GroupMemberAdded)({
+          group: group,
+          actor: _this,
+          member: member
+        }, function() {});
       });
     };
   })(this));

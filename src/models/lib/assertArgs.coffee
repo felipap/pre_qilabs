@@ -38,7 +38,7 @@ builtins =
 				return false
 			else if value instanceof mongoose.model('Resource') and value.__t is expected
 				return false
-			return "Argument '#{value}'' doesn't match Assert {ismodel:#{expected}}"
+			return "The following argument doesn't match {ismodel:#{expected}}: '#{JSON.stringify(value)}'"
 
 	$contains:
 		test: (value, expected) ->
@@ -50,7 +50,7 @@ builtins =
 				return "Invalid expected value for assertion of type 'contains': #{expected}"
 			for key in keys
 				unless key of value
-					return "Argument '#{value}' doesn't match Assert {$contains:#{expected}}" 
+					return "Argument '#{value}' doesn't match {$contains:#{expected}}" 
 			return false
 
 module.exports = assertArgs = (asserts...) -> # (asserts...)

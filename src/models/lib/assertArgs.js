@@ -37,7 +37,7 @@ builtins = {
       } else if (value instanceof mongoose.model('Resource') && value.__t === expected) {
         return false;
       }
-      return "Argument '" + value + "'' doesn't match Assert {ismodel:" + expected + "}";
+      return "The following argument doesn't match {ismodel:" + expected + "}: '" + (JSON.stringify(value)) + "'";
     }
   },
   $contains: {
@@ -53,7 +53,7 @@ builtins = {
       for (_i = 0, _len = keys.length; _i < _len; _i++) {
         key = keys[_i];
         if (!(key in value)) {
-          return "Argument '" + value + "' doesn't match Assert {$contains:" + expected + "}";
+          return "Argument '" + value + "' doesn't match {$contains:" + expected + "}";
         }
       }
       return false;
