@@ -129,12 +129,12 @@ module.exports = {
           if (!(postId = req.paramToObjectId('postId'))) {
             return;
           }
+          console.log('oi');
           return Post.findOne({
             _id: postId
           }, req.handleErrResult(function(post) {
             if (post.parentObj) {
-              console.log('redirecting', post.path);
-              return res.redirect(post.path);
+              return console.log('redirecting', post.path);
             } else {
               return post.stuff(function(err, stuffedPost) {
                 return res.render('pages/post.html', {

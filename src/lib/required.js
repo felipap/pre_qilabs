@@ -154,7 +154,7 @@ module.exports = required = {
 			return function (req, res, next) {
 				req.paramToObjectId(postIdParam, function (postId) {
 					permissions.posts.userCanSee(postId, req, res, function (err) {
-						next( err ? extendErr(err, 'posts.userCanSee') : undefined);
+						next();
 					});
 				});
 			};
