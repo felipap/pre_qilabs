@@ -5,7 +5,7 @@
 	
 {% block bodyEnd %}
 	{% parent %}
-	<script>_lab={id:'{{group._id}}'}; conf={postsRoot:'/api/labs/{{ group._id }}/posts',groupId:'{{ group._id }}'};</script>
+	<script>_lab={id:'{{''+group._id}}'}; conf={postsRoot:'{{ '/api/labs/'+group._id+'/posts' }}',groupId:'{{ ''+group._id }}'};</script>
 {% endblock %}
 
 {% block sidebarContent %}
@@ -32,3 +32,6 @@
 	<div class="box groups">
 	</div>
 {% endblock %}
+
+532671756f743b0548a5ac70020084774d
+53220548a5ac70020084774d
