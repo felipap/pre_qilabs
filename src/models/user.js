@@ -342,7 +342,6 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
             if (err) {
               return cb(err);
             }
-            console.log('docs', docs);
             return Post.fillComments(docs, cb);
           };
         })(this));

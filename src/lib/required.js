@@ -19,7 +19,7 @@ var permissions = {
 
 	labs: {
 		userCanSee: function (labId, req, res, callback) {
-			Group.findById(labId, req.handleErrResult(function (group) {					
+			Group.findById(labId, req.handleErrResult(function (group) {
 				
 				res.locals.lab = group;
 				
@@ -50,7 +50,7 @@ var permissions = {
 							args: { model:"Group", err:err, id:labId },
 						});
 					} else if (!doc) {
-						return callback({ permission:"userIsMember" });
+						return callback({ permission:"labs.userIsMember" });
 					}
 					callback();
 				});
@@ -64,7 +64,7 @@ var permissions = {
 							args: { model:"Group", err:err, id:labId },
 						});
 					} else if (!doc.type === Group.Membership.Moderator) {
-						return callback({ permission:"userIsMember" });
+						return callback({ permission:"labs.userIsModerator" });
 					}
 					callback();
 				});
@@ -82,6 +82,19 @@ var permissions = {
 				} else {
 					permissions.labs.userCanSee(post.group, req, res, function (err) {
 						callback( err ? extendErr(err, 'posts.userCanSee') : undefined);
+					});
+				}
+			}));
+		},
+
+		userCanComment: function (postId, req, res, callback) {
+			Post.findById(postId, req.handleErrResult(function (post) {
+				// A priori, all posts are visible if not within a private group.
+				if (!post.group) {
+					callback();
+				} else {
+					permissions.labs.userIsMember(post.group, req, res, function (err) {
+						callback( err ? extendErr(err, 'posts.userCanComment') : undefined);
 					});
 				}
 			}));
@@ -149,6 +162,11 @@ module.exports = required = {
 		},
 		userCanComment: function (postIdParam) {
 			return function (req, res, next) {
+				req.paramToObjectId(postIdParam, function (postId) {
+					permissions.posts.userCanComment(postId, req, res, function (err) {
+						next( err ? extendErr(err, 'posts.userCanComment') : undefined);
+					});
+				});
 			};
 		},
 	}

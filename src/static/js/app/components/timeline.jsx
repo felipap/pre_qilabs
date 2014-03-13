@@ -78,7 +78,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				this.url = options.url || app.postsRoot || '/api/me/timeline/posts';
 			},
 			comparator: function (i) {
-				console.log('d',i.get('published'),-1*new Date(i.get('published')), 'i',i.attributes)
 				return -1*new Date(i.get('published'));
 			},
 			parse: function (response, options) {
@@ -166,6 +165,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		var CommentInputView = React.createClass({
 
 			handleSubmit: function (evt) {
+				console.log('this was called')
 				evt.preventDefault();
 
 				var bodyEl = $(this.refs.input.getDOMNode());
@@ -184,8 +184,8 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 			render: function () {
 				if (!window.user)
-					return (<div></div>);
-
+					return (<div></div>)
+;
 				var mediaUserAvatarStyle = {
 					background: 'url('+window.user.avatarUrl+')',
 				};
@@ -203,7 +203,10 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 											</a>
 										</div>
 									</td><td className="commentInputTd">
-										<input className="commentInput" ref="input" type="text" placeholder="Comente esse post..." />
+										<textarea className="commentInput" ref="input" type="text" placeholder="Faça um comentário sobre essa publicação.">
+										</textarea>
+									</td><td>
+										<button data-action="send-comment" onClick={this.handleSubmit}>Enviar</button>
 									</td></tr>
 								</tbody>
 							</table>

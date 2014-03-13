@@ -159,7 +159,6 @@ body {
 		.no-box-shadow;
 		outline: none;
 		font-size: 13px;
-		margin-left: 3px;
 		padding: 5px;
 		.transition(all, .2s, linear);
 	}
@@ -242,6 +241,7 @@ body {
 				padding: 10px;
 				width: 100%;
 				position: relative;
+				margin-left: 3px;
 				background: white;
 
 				.arrow {
@@ -296,13 +296,22 @@ body {
 		}
 
 		.commentInputSection {
-			padding: 3px 8px 3px 5px;
+			padding: 3px 5px 3px 5px;
 			border-top: 1px solid #DDD;
 			background: #EEE;
+
+			td {
+				vertical-align: top;
+			}
+
+			td:not(:last-child) {
+				padding-right: 5px;
+			}
 			
 			.mediaUser {
 				border: 1px solid #DDD;
 			}
+			
 
 			.commentInputTd {
 				width: 100%;
@@ -313,6 +322,15 @@ body {
 					border-color: #08C;
 				}
 			}
+
+			[data-action=send-comment] {
+				display: inline-block;
+				.high-xbtn(white, @COLOR2);
+				font-size: 12px;
+				.high-xbtn-padding(6px, 10px, 2px);
+				padding-left: ;
+			}
+
 		}
 	}
 

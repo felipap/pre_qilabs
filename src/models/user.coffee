@@ -241,7 +241,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			# Populate author in all docs (nips and ips)
 			Resource.populate all, {path: 'author actor target object'}, (err, docs) =>
 				return cb(err) if err
-				console.log 'docs', docs
+				# console.log 'docs', docs
 				# Fill comments in all docs.
 				Post.fillComments(docs, cb)
 
