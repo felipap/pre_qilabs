@@ -277,7 +277,10 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				};
 				return (
 					React.DOM.div( {className:"noteMessage"}, 
-						React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('content')}} )
+						React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('content')}} ),
+						React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
+							window.calcTimeFrom(post.published)
+						)
 					)
 				);
 			},

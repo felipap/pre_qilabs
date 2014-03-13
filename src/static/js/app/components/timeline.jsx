@@ -278,6 +278,9 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				return (
 					<div className="noteMessage">
 						<span dangerouslySetInnerHTML={{__html: this.props.model.get('content')}} />
+						<time data-time-count={1*new Date(post.published)}>
+							{window.calcTimeFrom(post.published)}
+						</time>
 					</div>
 				);
 			},
