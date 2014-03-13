@@ -27,7 +27,7 @@ ObjectId = mongoose.Types.ObjectId
 required = require '../lib/required.js'
 
 Resource = mongoose.model 'Resource'
-Group = mongoose.model 'Group'
+Group = Resource.model 'Group'
 User = Resource.model 'User'
 
 # Starts at /api/labs 

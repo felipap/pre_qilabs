@@ -169,7 +169,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 
 			handleSubmit: function (evt) {
-				console.log('this was called')
 				evt.preventDefault();
 
 				var bodyEl = $(this.refs.input.getDOMNode());

@@ -14,7 +14,7 @@ Tag = mongoose.model('Tag');
 
 Inbox = mongoose.model('Inbox');
 
-Group = mongoose.model('Group');
+Group = Resource.model('Group');
 
 Follow = Resource.model('Follow');
 

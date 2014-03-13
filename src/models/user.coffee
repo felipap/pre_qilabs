@@ -18,7 +18,7 @@ assert = require 'assert'
 Resource = mongoose.model 'Resource'
 Inbox 	= mongoose.model 'Inbox'
 Follow 	= Resource.model 'Follow'
-Group 	= mongoose.model 'Group'
+Group 	= Resource.model 'Group'
 Post 	= Resource.model 'Post'
 Activity = Resource.model 'Activity'
 Notification = mongoose.model 'Notification'
@@ -65,6 +65,9 @@ UserSchema.virtual('avatarUrl').get ->
 	'https://graph.facebook.com/'+@facebookId+'/picture'
 
 UserSchema.virtual('profileUrl').get ->
+	'/p/'+@username
+
+UserSchema.virtual('path').get ->
 	'/p/'+@username
 
 ################################################################################

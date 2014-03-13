@@ -23,7 +23,7 @@ Types = {
 };
 
 ContentHtmlTemplates = {
-  NewFollower: '<strong><%= actor && actor.name %></strong> começou a seguir <%= target && target.name %>.'
+  NewFollower: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> começou a seguir <a href="<%= target.path %>"><%= target && target.name %></a>.'
 };
 
 ActivitySchema = new mongoose.Schema({

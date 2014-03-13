@@ -13,7 +13,7 @@ Resource = mongoose.model 'Resource'
 Post 	= Resource.model 'Post'
 Tag 	= mongoose.model 'Tag'
 User 	= Resource.model 'User'
-Group 	= mongoose.model 'Group'
+Group 	= Resource.model 'Group'
 
 Subscriber = mongoose.model 'Subscriber'
 

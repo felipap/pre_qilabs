@@ -13,6 +13,8 @@ Membership is accessible at Group.Membership
 mongoose = require 'mongoose'
 _ = require 'underscore'
 
+Resource = mongoose.model 'Resource'
+
 Types =
 	StudyGroup: 'StudyGroup'
 
@@ -105,4 +107,4 @@ GroupSchema.statics.Membership = Membership = mongoose.model "Membership", Membe
 
 GroupSchema.plugin(require('./lib/hookedModelPlugin'));
 
-module.exports = Group = mongoose.model "Group", GroupSchema
+module.exports = Group = Resource.discriminator "Group", GroupSchema

@@ -21,7 +21,7 @@ Inbox = mongoose.model('Inbox');
 
 Follow = Resource.model('Follow');
 
-Group = mongoose.model('Group');
+Group = Resource.model('Group');
 
 Post = Resource.model('Post');
 
@@ -70,6 +70,10 @@ UserSchema.virtual('avatarUrl').get(function() {
 });
 
 UserSchema.virtual('profileUrl').get(function() {
+  return '/p/' + this.username;
+});
+
+UserSchema.virtual('path').get(function() {
   return '/p/' + this.username;
 });
 
