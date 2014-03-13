@@ -376,7 +376,7 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 					type: type
 					group: group
 				}
-			mem.save (err) ->
+			mem.save (err) =>
 				cb(err, mem)
 				Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
 					group:group, actor:@, member:member

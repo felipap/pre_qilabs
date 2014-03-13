@@ -531,9 +531,9 @@ UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
         }
         return mem.save(function(err) {
           cb(err, mem);
-          return Activity.Trigger(this, Activity.Types.GroupMemberAdded)({
+          return Activity.Trigger(_this, Activity.Types.GroupMemberAdded)({
             group: group,
-            actor: this,
+            actor: _this,
             member: member
           }, function() {});
         });
