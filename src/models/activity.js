@@ -26,7 +26,8 @@ Types = {
 
 ContentHtmlTemplates = {
   NewFollower: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> começou a seguir <a href="<%= target.path %>"><%= target && target.name %></a>.',
-  GroupCreated: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> criou o grupo <a href="<%= object.path %>"><%= object && object.name %></a>.'
+  GroupCreated: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> criou o grupo <a href="<%= object.path %>"><%= object && object.name %></a>.',
+  GroupMemberAdded: '<strong><a href="<%= object.path %>"><%= object && object.name %></a></strong> entrou para o laboratório <a href="<%= target.path %>"><%= target && target.name %></a>.'
 };
 
 ActivitySchema = new mongoose.Schema({
@@ -101,7 +102,6 @@ createActivityAndInbox = function(agentObj, data, cb) {
   }, {
     $contains: ['verb', 'url', 'actor', 'object']
   }, '$isCb');
-  console.log('agent:', agentObj);
   activity = new Activity({
     verb: data.verb,
     url: data.url,
@@ -122,10 +122,10 @@ createActivityAndInbox = function(agentObj, data, cb) {
   });
 };
 
-ActivitySchema.statics.Trigger = function(agentObj, type) {
+ActivitySchema.statics.Trigger = function(agentObj, activityType) {
   var User;
   User = Resource.model('User');
-  switch (type) {
+  switch (activityType) {
     case Types.NewFollower:
       return function(opts, cb) {
         var genericData;
@@ -141,7 +141,7 @@ ActivitySchema.statics.Trigger = function(agentObj, type) {
           }
         }, '$isCb', arguments);
         genericData = {
-          verb: Types.NewFollower,
+          verb: activityType,
           actor: opts.follower,
           target: opts.followee
         };
@@ -167,7 +167,7 @@ ActivitySchema.statics.Trigger = function(agentObj, type) {
           }
         }, '$isCb', arguments);
         genericData = {
-          verb: Types.GroupCreated,
+          verb: activityType,
           actor: opts.creator,
           object: opts.group
         };
@@ -196,7 +196,7 @@ ActivitySchema.statics.Trigger = function(agentObj, type) {
         }, '$isCb', arguments);
         console.log('hi');
         genericData = {
-          verb: Types.GroupCreated,
+          verb: activityType,
           object: opts.member,
           target: opts.group
         };
@@ -205,7 +205,7 @@ ActivitySchema.statics.Trigger = function(agentObj, type) {
             console.log('trigger err:', err);
           }
           console.log('here');
-          return createActivityAndInbox(opts.creator, _.extend(genericData, {
+          return createActivityAndInbox(opts.member, _.extend(genericData, {
             actor: opts.actor,
             url: opts.group.path
           }), function() {});

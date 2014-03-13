@@ -39,7 +39,7 @@ GroupSchema = new Resource.Schema {
 	profile:{
 		description:	String
 	}
-	permission:			{ type:String, default:Permissions.Private }
+	permission:			{ type:String, default:Permissions.Public }
 }
 
 MembershipSchema = new Resource.Schema {

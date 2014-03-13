@@ -493,13 +493,11 @@ UserSchema.methods.createGroup = function(data, cb) {
 
 UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
   assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
-  console.log('oi');
   return Group.Membership.findOne({
     group: group,
     member: this
   }, (function(_this) {
     return function(err, mship) {
-      console.log('oi', err);
       if (err) {
         return cb(err);
       }
@@ -531,7 +529,6 @@ UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
             group: group
           });
         }
-        console.log('i was called');
         return Activity.Trigger(_this, Activity.Types.GroupMemberAdded)({
           group: group,
           actor: _this,

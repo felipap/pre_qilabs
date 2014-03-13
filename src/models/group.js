@@ -39,7 +39,7 @@ GroupSchema = new Resource.Schema({
   },
   permission: {
     type: String,
-    "default": Permissions.Private
+    "default": Permissions.Public
   }
 });
 

@@ -357,13 +357,10 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 	assert _.all([member, group, type, cb]),
 		"Wrong number of arguments supplied to User.addUserToGroup"
 	# First check for user's own priviledges
-	console.log('oi')
 	Group.Membership.findOne {group: group, member: @}, (err, mship) =>
-		console.log('oi', err)
 		return cb(err) if err
 		return cb(error:true,name:'Unauthorized') if not mship or
 			mship.type isnt Group.Membership.Types.Moderator
-
 
 		# req.user is Moderator → good to go
 		Group.Membership.findOne {group: group, member: member}, (err, mem) =>
@@ -380,7 +377,6 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 				}
 				# mem.save (err) ->
 					# cb(err, mem)
-			console.log('i was called')
 			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
 				group:group, actor:@, member:member
 			}, ->)
