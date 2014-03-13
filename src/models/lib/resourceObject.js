@@ -18,7 +18,7 @@ BaseSchema = function() {
       }
     ]).exec((function(_this) {
       return function(err, docs) {
-        console.log("Activity " + err + " " + docs.length + " notifications of resource " + _this.id);
+        console.log("Activity " + err + " " + docs.length + " removed bc " + _this.id);
         return docs.forEach(function(doc) {
           return doc.remove();
         });

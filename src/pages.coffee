@@ -69,6 +69,7 @@ module.exports = {
 						req.handleErrResult (group) ->
 							group.genGroupProfile req.handleErrResult (groupProfile) ->
 								# console.log('groupProfile', groupProfile)
+								console.log('group', groupProfile)
 								res.render 'pages/lab',
 									group: groupProfile
 			}

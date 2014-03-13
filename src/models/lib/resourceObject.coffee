@@ -9,7 +9,7 @@ BaseSchema = () ->
 		next()
 		Activity = mongoose.model 'Activity'
 		Activity.find().or([{target:@},{object:@}]).exec (err, docs) =>
-			console.log "Activity #{err} #{docs.length} notifications of resource #{@id}"
+			console.log "Activity #{err} #{docs.length} removed bc #{@id}"
 			docs.forEach (doc) ->
 				doc.remove()
 
