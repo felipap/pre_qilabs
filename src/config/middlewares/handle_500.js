@@ -29,7 +29,7 @@ module.exports = function(err, req, res, next) {
 				user: req.user,
 				error_code: res.statusCode,
 				error_msg: err,
-				error_stack: (err.stack || '').split('\n').slice(1),
+				error_stack: (err.stack || '').split('\n').slice(1).join('<br>'),
 			});
 		} else if (~accept.indexOf('json')) {
 			var error = { message: err.message, stack: err.stack };

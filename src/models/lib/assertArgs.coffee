@@ -67,13 +67,18 @@ module.exports = assertArgs = (asserts...) -> # (asserts...)
 
 		# Support for many tests. Eg: {$contains:['a','b'], 'a':'$isCb', 'b':{$isA:Array}}
 		for akey, avalue of param
-			if akey[0] is '$' and akey of builtins
-				err = builtins[akey].test(functionArg, avalue)
-				if err then return err
-			else if functionArg.hasOwnProperty(akey)
-				return assertParam(avalue, functionArg[akey])
+			if akey[0] is '$'
+				if akey of builtins
+					err = builtins[akey].test(functionArg, avalue)
+					if err then return err
+				else
+					return "Invalid assertion of type '#{akey}' on value #{functionArg}."
 			else
-				return "Invalid assertion of type #{akey} on value #{functionArg}"
+				if functionArg.hasOwnProperty(akey)
+					err = assertParam(avalue, functionArg[akey])
+					if err then return "On attribute #{akey}. "+err
+				else
+					return "Attribute '#{akey}' not found in #{functionArg}."
 		return null
 
 	if ''+asserts[asserts.length-1] is '[object Arguments]'

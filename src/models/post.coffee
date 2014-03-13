@@ -25,7 +25,7 @@ Types =
 ################################################################################
 ## Schema ######################################################################
 
-PostSchema = new mongoose.Schema {
+PostSchema = new Resource.Schema {
 	author:			{ type: ObjectId, ref: 'Resource', required: true, indexed: 1 }
 	group:			{ type: ObjectId, ref: 'Group', required: false }
 	type: 			{ type: String, required: true }
@@ -68,14 +68,14 @@ PostSchema.virtual('data.unescapedBody').get ->
 
 PostSchema.pre 'remove', (next) ->
 	next()
-	Post.find { parentPost: @ }, (err, docs) ->
+	Notification.find { resources: @ }, (err, docs) =>
+		console.log "Removing #{err} #{docs.length} notifications of resource #{@id}"
 		docs.forEach (doc) ->
 			doc.remove()
 
 PostSchema.pre 'remove', (next) ->
 	next()
-	Notification.find { resources: @ }, (err, docs) =>
-		console.log "Removing #{err} #{docs.length} notifications of post #{@id}"
+	Post.find { parentPost: @ }, (err, docs) ->
 		docs.forEach (doc) ->
 			doc.remove()
 

@@ -24,7 +24,7 @@ Types = {
   Notification: 'Notification'
 };
 
-PostSchema = new mongoose.Schema({
+PostSchema = new Resource.Schema({
   author: {
     type: ObjectId,
     ref: 'Resource',
@@ -100,6 +100,20 @@ PostSchema.virtual('data.unescapedBody').get(function() {
 
 PostSchema.pre('remove', function(next) {
   next();
+  return Notification.find({
+    resources: this
+  }, (function(_this) {
+    return function(err, docs) {
+      console.log("Removing " + err + " " + docs.length + " notifications of resource " + _this.id);
+      return docs.forEach(function(doc) {
+        return doc.remove();
+      });
+    };
+  })(this));
+});
+
+PostSchema.pre('remove', function(next) {
+  next();
   return Post.find({
     parentPost: this
   }, function(err, docs) {
@@ -107,20 +121,6 @@ PostSchema.pre('remove', function(next) {
       return doc.remove();
     });
   });
-});
-
-PostSchema.pre('remove', function(next) {
-  next();
-  return Notification.find({
-    resources: this
-  }, (function(_this) {
-    return function(err, docs) {
-      console.log("Removing " + err + " " + docs.length + " notifications of post " + _this.id);
-      return docs.forEach(function(doc) {
-        return doc.remove();
-      });
-    };
-  })(this));
 });
 
 PostSchema.pre('save', function(next) {

@@ -101,6 +101,11 @@ UserSchema.pre 'remove', (next) ->
 		next()
 
 UserSchema.pre 'remove', (next) ->
+	Activity.remove {actor:@}, (err, docs) =>
+		console.log "Removing #{err} #{docs} activities related to #{@username}"
+		next()
+
+UserSchema.pre 'remove', (next) ->
 	Group.Membership.remove {member:@}, (err, count) =>
 		console.log "Removing #{err} #{count} memberships of #{@username}"
 		next()
@@ -285,7 +290,6 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.sort '-published'
 		.populate 'author'
 		.limit opts.limit or 10
-		.skip opts.skip or 0
 		.exec HandleLimit (err, docs) ->
 			return cb(err) if err
 
@@ -313,34 +317,57 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 
 	Post
 		.find {group:group, parentPost:null, published:{$lt:opts.maxDate}}
+		.sort '-published'
 		.limit opts.limit or 10
-		.skip opts.skip or 0
 		.populate 'author'
-		.exec (err, docs) ->
-			Post.fillComments(docs, cb)
+		.exec HandleLimit (err, docs) ->
+			return cb(err) if err
+
+			console.log('docs', docs)
+
+			async.parallel [ # Fill post comments and get activities in that time.
+				(next) ->
+					minDate = (docs.length && docs[docs.length-1].published) or new Date(0)
+					Activity
+						.find {group:group, updated: {
+							$lt:opts.maxDate, $gt:minDate}
+						}
+						.populate 'resource actor target object'
+						.exec next
+				(next) ->
+					Post.fillComments docs, next
+			], (err, results) -> # Merge results and call back
+				cb(err, _.sortBy(results[1].concat(results[0]), (p) -> p.published))
 
 UserSchema.methods.createGroup = (data, cb) ->
 	group = new Group {
+		name: data.profile.name
 		profile: {
 			name: data.profile.name
 		}
 	}
 	group.save (err, group) =>
+		console.log(err, group)
 		return cb(err) if err
-		group.addUser @, Group.Membership.Types.Moderator, (err, membership) ->
+		group.addUser @, Group.Membership.Types.Moderator, (err, membership) =>
 			cb(err, group)
+			Activity.Trigger(@, Activity.Types.GroupCreated)({group:group, creator:@}, ->)
 
 UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 	assert _.all([member, group, type, cb]),
 		"Wrong number of arguments supplied to User.addUserToGroup"
 	# First check for user's own priviledges
-	Group.Membership.findOne {group: group, member: @}, (err, mship) ->
+	console.log('oi')
+	Group.Membership.findOne {group: group, member: @}, (err, mship) =>
+		console.log('oi', err)
 		return cb(err) if err
 		return cb(error:true,name:'Unauthorized') if not mship or
 			mship.type isnt Group.Membership.Types.Moderator
 
+
 		# req.user is Moderator → good to go
-		Group.Membership.findOne {group: group, member: member}, (err, mem) ->
+		Group.Membership.findOne {group: group, member: member}, (err, mem) =>
+			console.log(err) if err
 			return cb(err, mem) if err
 			if mem
 				mem.type = type
@@ -351,7 +378,12 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 					type: type
 					group: group
 				}
-				mem.save (err) -> cb(err, mem)
+				# mem.save (err) ->
+					# cb(err, mem)
+			console.log('i was called')
+			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
+				group:group, actor:@, member:member
+			}, ->)
 
 UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 	assert _.all([member, group, type, cb]),
@@ -446,7 +478,7 @@ UserSchema.methods.genProfile = (cb) ->
 							count: following.length
 						}
 					if memberships
-						profile.groups = _.pluck(memberships, 'group')
+						profile.groups = _.filter(_.pluck(memberships, 'group'),(i)->i)
 					cb(err1 or err2 or err3, profile)
 
 ################################################################################

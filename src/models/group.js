@@ -2,13 +2,15 @@
 /*
 Membership is accessible at Group.Membership
  */
-var Group, GroupSchema, Membership, MembershipSchema, MembershipTypes, Permissions, Resource, Types, mongoose, _;
+var Activity, Group, GroupSchema, Membership, MembershipSchema, MembershipTypes, Permissions, Resource, Types, mongoose, _;
 
 mongoose = require('mongoose');
 
 _ = require('underscore');
 
 Resource = mongoose.model('Resource');
+
+Activity = mongoose.model('Activity');
 
 Types = {
   StudyGroup: 'StudyGroup'
@@ -24,15 +26,15 @@ MembershipTypes = {
   Member: 'Member'
 };
 
-GroupSchema = new mongoose.Schema({
+GroupSchema = new Resource.Schema({
   slug: String,
   creationDate: Date,
   type: String,
+  name: {
+    type: String,
+    required: true
+  },
   profile: {
-    name: {
-      type: String,
-      required: true
-    },
     description: String
   },
   permission: {
@@ -41,7 +43,7 @@ GroupSchema = new mongoose.Schema({
   }
 });
 
-MembershipSchema = new mongoose.Schema({
+MembershipSchema = new Resource.Schema({
   joinDate: Date,
   type: {
     type: String,

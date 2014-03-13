@@ -133,6 +133,17 @@ UserSchema.pre('remove', function(next) {
 });
 
 UserSchema.pre('remove', function(next) {
+  return Activity.remove({
+    actor: this
+  }, (function(_this) {
+    return function(err, docs) {
+      console.log("Removing " + err + " " + docs + " activities related to " + _this.username);
+      return next();
+    };
+  })(this));
+});
+
+UserSchema.pre('remove', function(next) {
   return Group.Membership.remove({
     member: this
   }, (function(_this) {
@@ -393,7 +404,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     published: {
       $lt: opts.maxDate
     }
-  }).sort('-published').populate('author').limit(opts.limit || 10).skip(opts.skip || 0).exec(HandleLimit(function(err, docs) {
+  }).sort('-published').populate('author').limit(opts.limit || 10).exec(HandleLimit(function(err, docs) {
     if (err) {
       return cb(err);
     }
@@ -428,25 +439,53 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
     published: {
       $lt: opts.maxDate
     }
-  }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {
-    return Post.fillComments(docs, cb);
-  });
+  }).sort('-published').limit(opts.limit || 10).populate('author').exec(HandleLimit(function(err, docs) {
+    if (err) {
+      return cb(err);
+    }
+    console.log('docs', docs);
+    return async.parallel([
+      function(next) {
+        var minDate;
+        minDate = (docs.length && docs[docs.length - 1].published) || new Date(0);
+        return Activity.find({
+          group: group,
+          updated: {
+            $lt: opts.maxDate,
+            $gt: minDate
+          }
+        }).populate('resource actor target object').exec(next);
+      }, function(next) {
+        return Post.fillComments(docs, next);
+      }
+    ], function(err, results) {
+      return cb(err, _.sortBy(results[1].concat(results[0]), function(p) {
+        return p.published;
+      }));
+    });
+  }));
 };
 
 UserSchema.methods.createGroup = function(data, cb) {
   var group;
   group = new Group({
+    name: data.profile.name,
     profile: {
       name: data.profile.name
     }
   });
   return group.save((function(_this) {
     return function(err, group) {
+      console.log(err, group);
       if (err) {
         return cb(err);
       }
       return group.addUser(_this, Group.Membership.Types.Moderator, function(err, membership) {
-        return cb(err, group);
+        cb(err, group);
+        return Activity.Trigger(_this, Activity.Types.GroupCreated)({
+          group: group,
+          creator: _this
+        }, function() {});
       });
     };
   })(this));
@@ -454,43 +493,53 @@ UserSchema.methods.createGroup = function(data, cb) {
 
 UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
   assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
+  console.log('oi');
   return Group.Membership.findOne({
     group: group,
     member: this
-  }, function(err, mship) {
-    if (err) {
-      return cb(err);
-    }
-    if (!mship || mship.type !== Group.Membership.Types.Moderator) {
-      return cb({
-        error: true,
-        name: 'Unauthorized'
-      });
-    }
-    return Group.Membership.findOne({
-      group: group,
-      member: member
-    }, function(err, mem) {
+  }, (function(_this) {
+    return function(err, mship) {
+      console.log('oi', err);
       if (err) {
-        return cb(err, mem);
+        return cb(err);
       }
-      if (mem) {
-        mem.type = type;
-        return mem.save(function(err) {
-          return cb(err, mem);
-        });
-      } else {
-        mem = new Group.Membership({
-          member: member,
-          type: type,
-          group: group
-        });
-        return mem.save(function(err) {
-          return cb(err, mem);
+      if (!mship || mship.type !== Group.Membership.Types.Moderator) {
+        return cb({
+          error: true,
+          name: 'Unauthorized'
         });
       }
-    });
-  });
+      return Group.Membership.findOne({
+        group: group,
+        member: member
+      }, function(err, mem) {
+        if (err) {
+          console.log(err);
+        }
+        if (err) {
+          return cb(err, mem);
+        }
+        if (mem) {
+          mem.type = type;
+          mem.save(function(err) {
+            return cb(err, mem);
+          });
+        } else {
+          mem = new Group.Membership({
+            member: member,
+            type: type,
+            group: group
+          });
+        }
+        console.log('i was called');
+        return Activity.Trigger(_this, Activity.Types.GroupMemberAdded)({
+          group: group,
+          actor: _this,
+          member: member
+        }, function() {});
+      });
+    };
+  })(this));
 };
 
 UserSchema.methods.removeUserFromGroup = function(member, group, type, cb) {
@@ -611,7 +660,9 @@ UserSchema.methods.genProfile = function(cb) {
             };
           }
           if (memberships) {
-            profile.groups = _.pluck(memberships, 'group');
+            profile.groups = _.filter(_.pluck(memberships, 'group'), function(i) {
+              return i;
+            });
           }
           return cb(err1 || err2 || err3, profile);
         });

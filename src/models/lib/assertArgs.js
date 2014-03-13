@@ -77,15 +77,24 @@ module.exports = assertArgs = function() {
     }
     for (akey in param) {
       avalue = param[akey];
-      if (akey[0] === '$' && akey in builtins) {
-        err = builtins[akey].test(functionArg, avalue);
-        if (err) {
-          return err;
+      if (akey[0] === '$') {
+        if (akey in builtins) {
+          err = builtins[akey].test(functionArg, avalue);
+          if (err) {
+            return err;
+          }
+        } else {
+          return "Invalid assertion of type '" + akey + "' on value " + functionArg + ".";
         }
-      } else if (functionArg.hasOwnProperty(akey)) {
-        return assertParam(avalue, functionArg[akey]);
       } else {
-        return "Invalid assertion of type " + akey + " on value " + functionArg;
+        if (functionArg.hasOwnProperty(akey)) {
+          err = assertParam(avalue, functionArg[akey]);
+          if (err) {
+            return ("On attribute " + akey + ". ") + err;
+          }
+        } else {
+          return "Attribute '" + akey + "' not found in " + functionArg + ".";
+        }
       }
     }
     return null;

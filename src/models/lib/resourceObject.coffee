@@ -2,9 +2,21 @@
 mongoose = require 'mongoose'
 util = require 'util'
 
-ResourceSchema = () ->
+BaseSchema = () ->
 	mongoose.Schema.apply(@, arguments)
 
-util.inherits(ResourceSchema, mongoose.Schema)
+	@pre 'remove', (next) ->
+		next()
+		Activity = mongoose.model 'Activity'
+		Activity.find().or([{target:@},{object:@}]).exec (err, docs) =>
+			console.log "Activity #{err} #{docs.length} notifications of resource #{@id}"
+			docs.forEach (doc) ->
+				doc.remove()
 
-module.exports = mongoose.model('Resource', new ResourceSchema)
+util.inherits(BaseSchema, mongoose.Schema)
+
+ResourceSchema = new BaseSchema 
+
+ResourceSchema.statics.Schema = BaseSchema
+
+module.exports = mongoose.model('Resource', ResourceSchema)

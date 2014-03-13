@@ -18,9 +18,12 @@ Notification = mongoose.model 'Notification'
 
 Types = 
 	NewFollower: "NewFollower"
+	GroupCreated: "GroupCreated"
+	GroupMemberAdded: "GroupMemberAdded"
 
 ContentHtmlTemplates = 
 	NewFollower: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> começou a seguir <a href="<%= target.path %>"><%= target && target.name %></a>.'
+	GroupCreated: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> criou o grupo <a href="<%= object.path %>"><%= object && object.name %></a>.'
 
 ################################################################################
 ## Schema ######################################################################
@@ -32,10 +35,9 @@ ActivitySchema = new mongoose.Schema {
 	icon: 			{ type: String }
 	object: 		{ type: ObjectId, ref: 'Resource' }
 	target: 		{ type: ObjectId, ref: 'Resource' }
-
+	group:			{ type: ObjectId, ref: 'Group', indexed: 1}
 	verb: 			{ type: String, required: true }
 
-	# group:		{ type: ObjectId, ref: 'Group', indexed: 1, required: false }
 	# event: 		{ type: ObjectId, ref: 'Event', required: false }
 	# tags:		   [{ type: ObjectId, ref: 'Tag' }]
 	
@@ -74,10 +76,11 @@ ActivitySchema.pre 'save', (next) ->
 
 createActivityAndInbox = (agentObj, data, cb) ->
 	assertArgs({$isModel:'User'},
-		{$contains:['verb', 'url', 'actor', 'object', 'target']},'$isCb')
+		{$contains:['verb', 'url', 'actor', 'object']},'$isCb')
+
+	console.log 'agent:',agentObj
 
 	activity = new Activity {
-		type: 'Activity'
 		verb: data.verb
 		url: data.url
 		actor: data.actor
@@ -104,20 +107,61 @@ ActivitySchema.statics.Trigger = (agentObj, type) ->
 					followee:{$isModel:'User'},
 					follower:{$isModel:'User'}
 					}, '$isCb', arguments)
+
 				# Find and delete older notifications with the same follower and followee.
-				Activity.remove {
-					verb: Types.NewFollower
-					agent: opts.follower._id
-					target: opts.followee._id
-				}, (err, count) ->
+				genericData = {
+					verb:Types.NewFollower,
+					actor:opts.follower,
+					target:opts.followee
+				}
+				Activity.remove genericData, (err, count) ->
 					if err then console.log 'trigger err:', err
-					createActivityAndInbox opts.follower, {
-						verb: Types.NewFollower
+					createActivityAndInbox opts.follower, _.extend(genericData, {
 						url: opts.follower.profileUrl
-						actor: opts.follower
 						object: opts.follow
-						target: opts.followee
-					}, ->
+					}), ->
+		when Types.GroupCreated
+			return (opts, cb) ->
+				assertArgs({
+					creator:{$isModel:'User'},
+					group:{$isModel:'Group'},
+					}, '$isCb', arguments)
+
+				genericData = {
+					verb:Types.GroupCreated,
+					actor:opts.creator,
+					object:opts.group
+				}
+				Activity.remove genericData, (err, count) ->
+					if err then console.log 'trigger err:', err
+					createActivityAndInbox opts.creator, _.extend(genericData, {
+						url: opts.group.path
+					}), ->
+		when Types.GroupMemberAdded
+			return (opts, cb) ->
+				assertArgs({
+					actor:{$isModel:'User'},
+					member:{$isModel:'User'},
+					group:{$isModel:'Group'},
+					}, '$isCb', arguments)
+
+				console.log('hi')
+
+				genericData = {
+					verb:Types.GroupCreated,
+					object:opts.member,
+					target:opts.group,
+				}
+				
+				Activity.remove genericData, (err, count) ->
+					if err then console.log 'trigger err:', err
+					console.log('here')
+					createActivityAndInbox opts.creator, _.extend(genericData, {
+						actor:opts.actor,
+						url: opts.group.path,
+					}), ->
+		else
+			throw "Unrecognized Activity Type passed to Trigger."
 
 ActivitySchema.statics.Types = Types
 

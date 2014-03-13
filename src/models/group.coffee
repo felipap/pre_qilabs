@@ -14,6 +14,7 @@ mongoose = require 'mongoose'
 _ = require 'underscore'
 
 Resource = mongoose.model 'Resource'
+Activity = mongoose.model 'Activity'
 
 Types =
 	StudyGroup: 'StudyGroup'
@@ -29,19 +30,19 @@ MembershipTypes =
 ################################################################################
 ## Schemas #####################################################################
 
-GroupSchema = new mongoose.Schema {
+GroupSchema = new Resource.Schema {
 	slug: 				String
 	creationDate: 		Date
 	# affiliation: 		'' 			# institution, project, NGOs etc (/????)
 	type: 				String
-	profile: {
-		name:			{ type: String, required: true }
-		description: 	String
+	name:				{ type:String, required:true }
+	profile:{
+		description:	String
 	}
-	permission: 		{ type: String, default: Permissions.Private }
+	permission:			{ type:String, default:Permissions.Private }
 }
 
-MembershipSchema = new mongoose.Schema {
+MembershipSchema = new Resource.Schema {
 	joinDate: 	Date,
 	type: 		{ type: String, required: true }
 	member:		{ type: mongoose.Schema.ObjectId, index: 1, ref: 'User' }

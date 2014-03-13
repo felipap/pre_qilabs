@@ -5,12 +5,15 @@
 
 		<h1>Ops! <span>:(</span></h1>
 		<h2>Estamos com problemas no servidor.</h2>
-
+		
 		{% if app.env === 'development' %}
-			<h2><em>{{ error_code }}</em> {{ error_msg|json }}</h2>
+		<div style="margin: 0 -200px; color: white; font-size: 14px; word-wrap: break-word;">
+			<h2><em>{{ error_code }}</em></h2>
+			<small>{{ error_msg }}</small>
 			<ul>
 				<small>{{ error_stack }}</small>
 			</ul>
+		</div>
 		{% endif %}
 
 		<a href="/" class="btn0 inverted-btn">
@@ -18,4 +21,5 @@
 		</a>
 
 	</section>
+
 {% endblock %}

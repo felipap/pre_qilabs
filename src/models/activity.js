@@ -19,11 +19,14 @@ Inbox = mongoose.model('Inbox');
 Notification = mongoose.model('Notification');
 
 Types = {
-  NewFollower: "NewFollower"
+  NewFollower: "NewFollower",
+  GroupCreated: "GroupCreated",
+  GroupMemberAdded: "GroupMemberAdded"
 };
 
 ContentHtmlTemplates = {
-  NewFollower: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> começou a seguir <a href="<%= target.path %>"><%= target && target.name %></a>.'
+  NewFollower: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> começou a seguir <a href="<%= target.path %>"><%= target && target.name %></a>.',
+  GroupCreated: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> criou o grupo <a href="<%= object.path %>"><%= object && object.name %></a>.'
 };
 
 ActivitySchema = new mongoose.Schema({
@@ -42,6 +45,11 @@ ActivitySchema = new mongoose.Schema({
   target: {
     type: ObjectId,
     ref: 'Resource'
+  },
+  group: {
+    type: ObjectId,
+    ref: 'Group',
+    indexed: 1
   },
   verb: {
     type: String,
@@ -91,10 +99,10 @@ createActivityAndInbox = function(agentObj, data, cb) {
   assertArgs({
     $isModel: 'User'
   }, {
-    $contains: ['verb', 'url', 'actor', 'object', 'target']
+    $contains: ['verb', 'url', 'actor', 'object']
   }, '$isCb');
+  console.log('agent:', agentObj);
   activity = new Activity({
-    type: 'Activity',
     verb: data.verb,
     url: data.url,
     actor: data.actor,
@@ -120,6 +128,7 @@ ActivitySchema.statics.Trigger = function(agentObj, type) {
   switch (type) {
     case Types.NewFollower:
       return function(opts, cb) {
+        var genericData;
         assertArgs({
           follow: {
             $isModel: 'Follow'
@@ -131,23 +140,79 @@ ActivitySchema.statics.Trigger = function(agentObj, type) {
             $isModel: 'User'
           }
         }, '$isCb', arguments);
-        return Activity.remove({
+        genericData = {
           verb: Types.NewFollower,
-          agent: opts.follower._id,
-          target: opts.followee._id
-        }, function(err, count) {
+          actor: opts.follower,
+          target: opts.followee
+        };
+        return Activity.remove(genericData, function(err, count) {
           if (err) {
             console.log('trigger err:', err);
           }
-          return createActivityAndInbox(opts.follower, {
-            verb: Types.NewFollower,
+          return createActivityAndInbox(opts.follower, _.extend(genericData, {
             url: opts.follower.profileUrl,
-            actor: opts.follower,
-            object: opts.follow,
-            target: opts.followee
-          }, function() {});
+            object: opts.follow
+          }), function() {});
         });
       };
+    case Types.GroupCreated:
+      return function(opts, cb) {
+        var genericData;
+        assertArgs({
+          creator: {
+            $isModel: 'User'
+          },
+          group: {
+            $isModel: 'Group'
+          }
+        }, '$isCb', arguments);
+        genericData = {
+          verb: Types.GroupCreated,
+          actor: opts.creator,
+          object: opts.group
+        };
+        return Activity.remove(genericData, function(err, count) {
+          if (err) {
+            console.log('trigger err:', err);
+          }
+          return createActivityAndInbox(opts.creator, _.extend(genericData, {
+            url: opts.group.path
+          }), function() {});
+        });
+      };
+    case Types.GroupMemberAdded:
+      return function(opts, cb) {
+        var genericData;
+        assertArgs({
+          actor: {
+            $isModel: 'User'
+          },
+          member: {
+            $isModel: 'User'
+          },
+          group: {
+            $isModel: 'Group'
+          }
+        }, '$isCb', arguments);
+        console.log('hi');
+        genericData = {
+          verb: Types.GroupCreated,
+          object: opts.member,
+          target: opts.group
+        };
+        return Activity.remove(genericData, function(err, count) {
+          if (err) {
+            console.log('trigger err:', err);
+          }
+          console.log('here');
+          return createActivityAndInbox(opts.creator, _.extend(genericData, {
+            actor: opts.actor,
+            url: opts.group.path
+          }), function() {});
+        });
+      };
+    default:
+      throw "Unrecognized Activity Type passed to Trigger.";
   }
 };
 

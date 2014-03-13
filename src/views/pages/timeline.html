@@ -38,7 +38,7 @@
 		</div>
 		<ul class="body groupList">
 			{% for group in user.groups %}
-				<a href="{{ group.path }}">{{ group.profile.name }}</a>
+				<a href="{{ group.path }}">{{ group.name }}</a>
 			{% endfor %}
 		</ul>
 	</div>

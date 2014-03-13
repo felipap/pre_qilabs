@@ -7,7 +7,7 @@ var _ = require('underscore');
 
 var Resource = mongoose.model('Resource');
 var Post = Resource.model('Post');
-var	Group = mongoose.model('Group');
+var	Group = Resource.model('Group');
 
 function extendErr (err, label) {
 	return _.extend(err,{required:(err.required||[]).concat(label)});
