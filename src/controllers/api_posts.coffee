@@ -6,7 +6,7 @@ Resource = mongoose.model 'Resource'
 
 User = Resource.model 'User'
 Post = Resource.model 'Post'
-Tag  = mongoose.model 'Tag'
+Group  = mongoose.model 'Group'
 
 module.exports = {
 
@@ -31,7 +31,6 @@ module.exports = {
 					return if not postId = req.paramToObjectId('id')
 					Post.findOne {_id: postId, author: req.user},
 						req.handleErrResult (doc) ->
-							Inbox.remove { resource:doc }, (err, num) =>
 							doc.remove()
 							res.endJson(doc)
 			children: {

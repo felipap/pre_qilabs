@@ -1,4 +1,4 @@
-var Post, Resource, Tag, User, mongoose, required;
+var Group, Post, Resource, User, mongoose, required;
 
 mongoose = require('mongoose');
 
@@ -10,7 +10,7 @@ User = Resource.model('User');
 
 Post = Resource.model('Post');
 
-Tag = mongoose.model('Tag');
+Group = mongoose.model('Group');
 
 module.exports = {
   permissions: [required.login],
@@ -49,11 +49,6 @@ module.exports = {
           _id: postId,
           author: req.user
         }, req.handleErrResult(function(doc) {
-          Inbox.remove({
-            resource: doc
-          }, (function(_this) {
-            return function(err, num) {};
-          })(this));
           doc.remove();
           return res.endJson(doc);
         }));

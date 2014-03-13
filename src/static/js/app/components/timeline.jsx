@@ -121,16 +121,24 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		/********************************************************************************/
 		/* React.js views */
 
+		var EditablePost = {
+
+			onClickEdit: function () {
+			},
+
+			onClickTrash: function () {
+				if (confirm('Tem certeza que deseja excluir essa postagem?')) {
+					this.props.model.destroy();
+				}
+			},
+
+		};
+
 		var CommentView = React.createClass({
+			mixins: [EditablePost],
 			render: function () {
 				var comment = this.props.model.attributes;
 				var self = this;
-
-				function onClickTrash () {
-					if (confirm('Tem certeza que deseja excluir esse comentário?')) {
-						self.props.model.destroy();
-					}
-				}
 
 				var mediaUserAvatarStyle = {
 					background: 'url('+comment.author.avatarUrl+')',
@@ -148,7 +156,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 							{comment.data.unescapedBody}
 							{(window.user && window.user.id === comment.author.id)?
 								<div className="optionBtns">
-									<button data-action="remove-post" onClick={onClickTrash} data-toggle="tooltip" title="Remover Comentário" data-placement="bottom">
+									<button data-action="remove-post" onClick={this.onClickTrash} data-toggle="tooltip" title="Remover Comentário" data-placement="bottom">
 										<i className="icon-trash"></i>
 									</button>
 								</div>
@@ -260,23 +268,9 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		/************************************************************************************/
 		/************************************************************************************/
 
-		var EditablePost = {
-
-			onClickEdit: function () {
-			},
-
-			onClickTrash: function () {
-				if (confirm('Tem certeza que deseja excluir essa postagem?')) {
-					self.props.model.destroy();
-				}
-			},
-
-		};
-
 		var ActivityView = React.createClass({
 
 			render: function () {
-				console.log('oi')
 				var post = this.props.model.attributes;
 				var mediaUserStyle = {
 					background: 'url('+post.actor.avatarUrl+')',
