@@ -28,10 +28,11 @@ Types =
 PostSchema = new mongoose.Schema {
 	author:			{ type: ObjectId, ref: 'Resource', required: true, indexed: 1 }
 	group:			{ type: ObjectId, ref: 'Group', required: false }
-	dateCreated:	{ type: Date, indexed: 1 }
 	type: 			{ type: String, required: true }
 	parentPost:		{ type: ObjectId, ref: 'Post', required: false }
 	
+	updated:		{ type: Date, indexed: 1 }
+	published:		{ type: Date }
 	data: {
 		title:		{ type: String, required: false }
 		body:		{ type: String, required: true }
@@ -79,7 +80,8 @@ PostSchema.pre 'remove', (next) ->
 			doc.remove()
 
 PostSchema.pre 'save', (next) ->
-	@dateCreated ?= new Date
+	@published ?= new Date
+	@updated ?= new Date
 	next()
 
 ################################################################################

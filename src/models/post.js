@@ -36,10 +36,6 @@ PostSchema = new mongoose.Schema({
     ref: 'Group',
     required: false
   },
-  dateCreated: {
-    type: Date,
-    indexed: 1
-  },
   type: {
     type: String,
     required: true
@@ -48,6 +44,13 @@ PostSchema = new mongoose.Schema({
     type: ObjectId,
     ref: 'Post',
     required: false
+  },
+  updated: {
+    type: Date,
+    indexed: 1
+  },
+  published: {
+    type: Date
   },
   data: {
     title: {
@@ -121,8 +124,11 @@ PostSchema.pre('remove', function(next) {
 });
 
 PostSchema.pre('save', function(next) {
-  if (this.dateCreated == null) {
-    this.dateCreated = new Date;
+  if (this.published == null) {
+    this.published = new Date;
+  }
+  if (this.updated == null) {
+    this.updated = new Date;
   }
   return next();
 });

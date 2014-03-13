@@ -224,7 +224,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 							author: follow.followee,
 							group: null,
 							parentPost: null,
-							dateCreated: {$lt:ltDate, $gt:minDate}
+							published: {$lt:ltDate, $gt:minDate}
 						}
 						.limit opts.limit
 						.exec done
@@ -236,7 +236,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 		onGetNonInboxedPosts = (err, nips) ->
 			return cb(err) if err
 			
-			all = _.sortBy(nips.concat(ips), (p) -> p.dateCreated) # merge'n'sort by date
+			all = _.sortBy(nips.concat(ips), (p) -> p.published) # merge'n'sort by date
 
 			# Populate author in all docs (nips and ips)
 			Resource.populate all, {path: 'author actor target object'}, (err, docs) =>
@@ -264,7 +264,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			if posts.length is opts.limit
 				# There are at least opts.limit inboxed posts. 
 				# Then limit non-inboxed posts to be younger than oldest post here.
-				oldestPostDate = posts[posts.length-1].dateCreated
+				oldestPostDate = posts[posts.length-1].published
 			else
 				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
 				oldestPostDate = new Date(0)
@@ -276,7 +276,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	Post
 		.find {author:userId, parentPost:null, group:null}
-		.sort '-dateCreated'
+		.sort '-published'
 		.populate 'author'
 		.limit opts.limit or 10
 		.skip opts.skip or 0
@@ -293,7 +293,7 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 		opts.maxDate = Date.now()
 
 	Post
-		.find {group:group, parentPost:null, dateCreated:{$lt:opts.maxDate}}
+		.find {group:group, parentPost:null, published:{$lt:opts.maxDate}}
 		.limit opts.limit or 10
 		.skip opts.skip or 0
 		.populate 'author'

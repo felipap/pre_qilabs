@@ -165,7 +165,7 @@ module.exports = {
             return req.user.getTimeline(opts, req.handleErrResult(function(docs) {
               var minDate;
               if (docs.length === opts.limit) {
-                minDate = docs[docs.length - 1].dateCreated.valueOf();
+                minDate = docs[docs.length - 1].published.valueOf();
               } else {
                 minDate = -1;
               }

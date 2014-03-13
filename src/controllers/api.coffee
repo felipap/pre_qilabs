@@ -121,7 +121,7 @@ module.exports = {
 							req.user.getTimeline opts,
 								req.handleErrResult((docs) ->
 									if docs.length is opts.limit
-										minDate = docs[docs.length-1].dateCreated.valueOf()
+										minDate = docs[docs.length-1].published.valueOf()
 									else
 										minDate = -1
 							

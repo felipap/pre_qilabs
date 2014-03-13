@@ -314,7 +314,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
             author: follow.followee,
             group: null,
             parentPost: null,
-            dateCreated: {
+            published: {
               $lt: ltDate,
               $gt: minDate
             }
@@ -333,7 +333,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
           return cb(err);
         }
         all = _.sortBy(nips.concat(ips), function(p) {
-          return p.dateCreated;
+          return p.published;
         });
         return Resource.populate(all, {
           path: 'author actor target object'
@@ -370,7 +370,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
       			 * posts are created.
        */
       if (posts.length === opts.limit) {
-        oldestPostDate = posts[posts.length - 1].dateCreated;
+        oldestPostDate = posts[posts.length - 1].published;
       } else {
         oldestPostDate = new Date(0);
       }
@@ -386,7 +386,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     author: userId,
     parentPost: null,
     group: null
-  }).sort('-dateCreated').populate('author').limit(opts.limit || 10).skip(opts.skip || 0).exec(function(err, docs) {
+  }).sort('-published').populate('author').limit(opts.limit || 10).skip(opts.skip || 0).exec(function(err, docs) {
     if (err) {
       return cb(err);
     }
@@ -401,7 +401,7 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
   return Post.find({
     group: group,
     parentPost: null,
-    dateCreated: {
+    published: {
       $lt: opts.maxDate
     }
   }).limit(opts.limit || 10).skip(opts.skip || 0).populate('author').exec(function(err, docs) {

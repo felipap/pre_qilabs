@@ -78,10 +78,8 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				this.url = options.url || app.postsRoot || '/api/me/timeline/posts';
 			},
 			comparator: function (i) {
-				if (i.get('__t') === 'Activity')
-					return -1*new Date(i.get('updated'));
-				else
-					return -1*new Date(i.get('dateCreated'));
+				console.log('d',i.get('published'),-1*new Date(i.get('published')), 'i',i.attributes)
+				return -1*new Date(i.get('published'));
 			},
 			parse: function (response, options) {
 				this.minDate = response.minDate;
@@ -103,7 +101,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			model: CommentItem,
 			endDate: new Date(),
 			comparator: function (i) {
-				return 1*new Date(i.get('dateCreated'));
+				return 1*new Date(i.get('published'));
 			},
 			url: function () {
 				return this.postItem.get('apiPath') + '/comments'; 
@@ -157,8 +155,8 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 								</div>
 							:undefined}
 						</div>
-						<a href={comment.path} data-time-count={1*new Date(comment.dateCreated)}>
-							{window.calcTimeFrom(comment.dateCreated)}
+						<a href={comment.path} data-time-count={1*new Date(comment.published)}>
+							{window.calcTimeFrom(comment.published)}
 						</a>
 					</div>
 				);
@@ -313,8 +311,8 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 							</div>
 							
 							<a href={post.path}>
-								<time data-time-count={1*new Date(post.dateCreated)}>
-									{window.calcTimeFrom(post.dateCreated)}
+								<time data-time-count={1*new Date(post.published)}>
+									{window.calcTimeFrom(post.published)}
 								</time>
 							</a>
 
@@ -343,7 +341,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		var PostWrapperView = React.createClass({
 			render: function () {
 				var postType = this.props.model.get('__t');
-				console.log('type', postType, this.props.model.attributes)
+				// console.log('type', postType, this.props.model.attributes)
 				return (
 					<div className="postWrapper">
 						{
@@ -352,7 +350,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 							:<ActivityView model={this.props.model} />
 						}
 						{
-							(postType==='PlainPost'||postType==='Answer')?
+							(this.props.model.get('type')==='PlainPost'||this.props.model.get('type')==='Answer')?
 							<CommentSectionView model={this.props.model} />
 							:null
 						}
