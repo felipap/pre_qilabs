@@ -376,11 +376,11 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 					type: type
 					group: group
 				}
-				# mem.save (err) ->
-					# cb(err, mem)
-			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
-				group:group, actor:@, member:member
-			}, ->)
+			mem.save (err) ->
+				cb(err, mem)
+				Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
+					group:group, actor:@, member:member
+				}, ->)
 
 UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 	assert _.all([member, group, type, cb]),
