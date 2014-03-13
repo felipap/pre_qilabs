@@ -415,7 +415,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
           group: null,
           updated: {
             $lt: opts.maxDate,
-            $gt: docs[docs.length - 1].published
+            $gt: (docs.length && docs[docs.length - 1].published) || new Date(0)
           }
         }).populate('resource actor target object').exec(next);
       }, function(next) {

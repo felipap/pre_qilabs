@@ -297,7 +297,8 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 				(next) ->
 					Activity
 						.find {actor:userId, group:null, updated: {
-							$lt:opts.maxDate, $gt:docs[docs.length-1].published}
+							$lt:opts.maxDate,
+							$gt:(docs.length && docs[docs.length-1].published) or new Date(0)}
 						}
 						.populate 'resource actor target object'
 						.exec next
