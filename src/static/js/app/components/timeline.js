@@ -164,6 +164,10 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 		var CommentInputView = React.createClass({displayName: 'CommentInputView',
 
+			componentDidMount: function () {
+				$(this.refs.input.getDOMNode()).autosize();
+			},
+
 			handleSubmit: function (evt) {
 				console.log('this was called')
 				evt.preventDefault();
@@ -184,8 +188,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 			render: function () {
 				if (!window.user)
-					return (React.DOM.div(null))
-;
+					return (React.DOM.div(null));
 				var mediaUserAvatarStyle = {
 					background: 'url('+window.user.avatarUrl+')',
 				};

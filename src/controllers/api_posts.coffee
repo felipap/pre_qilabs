@@ -31,7 +31,7 @@ module.exports = {
 					return if not postId = req.paramToObjectId('id')
 					Post.findOne {_id: postId, author: req.user},
 						req.handleErrResult (doc) ->
-							Inbod.remove { resource:doc }, (err, num) =>
+							Inbox.remove { resource:doc }, (err, num) =>
 							doc.remove()
 							res.endJson(doc)
 			children: {

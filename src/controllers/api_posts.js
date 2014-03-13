@@ -49,7 +49,7 @@ module.exports = {
           _id: postId,
           author: req.user
         }, req.handleErrResult(function(doc) {
-          Inbod.remove({
+          Inbox.remove({
             resource: doc
           }, (function(_this) {
             return function(err, num) {};

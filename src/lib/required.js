@@ -74,7 +74,6 @@ var permissions = {
 
 	posts: {
 		userCanSee: function (postId, req, res, callback) {
-		
 			Post.findById(postId, req.handleErrResult(function (post) {
 				// A priori, all posts are visible if not within a private group.
 				if (!post.group) {
