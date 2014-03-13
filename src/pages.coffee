@@ -99,13 +99,13 @@ module.exports = {
 		methods: {
 			get: [required.posts.userCanSee('postId'), (req, res) ->
 				return unless postId = req.paramToObjectId('postId')
-				console.log('oi')
 				Post.findOne { _id:postId }, req.handleErrResult((post) ->
-					if post.parentObj
+					console.log('oi')
+					if post.parentPost
 						# Our post is actually a comment/answer, so redirect user to the
 						# comment's actual path (which is its parent's).
 						console.log 'redirecting', post.path
-						# return res.redirect(post.path)
+						return res.redirect(post.path)
 					else
 						post.stuff (err, stuffedPost) ->
 							res.render 'pages/post.html', {
