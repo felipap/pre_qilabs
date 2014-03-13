@@ -3,7 +3,6 @@
 # Copyright QILabs.org
 # by @f03lipe
 
-
 assert = require 'assert'
 _ = require 'underscore'
 async = require 'async'
@@ -36,8 +35,8 @@ ActivitySchema = new mongoose.Schema {
 
 	verb: 			{ type: String, required: true }
 
-	# group:			{ type: ObjectId, ref: 'Group', indexed: 1, required: false }
-	# event: 			{ type: ObjectId, ref: 'Event', required: false }
+	# group:		{ type: ObjectId, ref: 'Group', indexed: 1, required: false }
+	# event: 		{ type: ObjectId, ref: 'Event', required: false }
 	# tags:		   [{ type: ObjectId, ref: 'Tag' }]
 	
 	published:		{ type: Date, default: Date.now }
@@ -73,7 +72,7 @@ ActivitySchema.pre 'save', (next) ->
 ################################################################################
 ## Statics #####################################################################
 
-createAndDistributeActivity = (agentObj, data, cb) ->
+createActivityAndInbox = (agentObj, data, cb) ->
 	assertArgs({$isModel:'User'},
 		{$contains:['verb', 'url', 'actor', 'object', 'target']},'$isCb')
 
@@ -112,7 +111,7 @@ ActivitySchema.statics.Trigger = (agentObj, type) ->
 					target: opts.followee._id
 				}, (err, count) ->
 					if err then console.log 'trigger err:', err
-					createAndDistributeActivity opts.follower, {
+					createActivityAndInbox opts.follower, {
 						verb: Types.NewFollower
 						url: opts.follower.profileUrl
 						actor: opts.follower

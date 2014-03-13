@@ -1,4 +1,4 @@
-var Notification, ObjectId, Post, PostSchema, Resource, Types, assert, assertArgs, async, mongoose, notifyUser, urlify, _;
+var Notification, ObjectId, Post, PostSchema, Resource, Types, assert, assertArgs, async, mongoose, urlify, _;
 
 mongoose = require('mongoose');
 
@@ -46,11 +46,11 @@ PostSchema = new mongoose.Schema({
     required: false
   },
   updated: {
-    type: Date,
-    indexed: 1
+    type: Date
   },
   published: {
-    type: Date
+    type: Date,
+    indexed: 1
   },
   data: {
     title: {
@@ -170,61 +170,11 @@ PostSchema.methods.fillComments = function(cb) {
   })(this));
 };
 
-notifyUser = function(recpObj, agentObj, data, cb) {
-  var User, note;
-  assertArgs({
-    ismodel: 'User'
-  }, {
-    ismodel: 'User'
-  }, {
-    contains: ['url', 'type']
-  });
-  User = Resource.model('User');
-  note = new Post({
-    agent: agentObj,
-    agentName: agentObj.name,
-    recipient: recpObj,
-    type: data.type,
-    url: data.url,
-    thumbnailUrl: data.thumbnailUrl || agentObj.avatarUrl
-  });
-  if (data.resources) {
-    note.resources = data.resources;
-  }
-  return note.save(function(err, doc) {
-    return typeof cb === "function" ? cb(err, doc) : void 0;
-  });
-};
-
-PostSchema.statics.Trigger = function(agentObj, type) {
-  var User;
-  User = Resource.model('User');
-  switch (type) {
-    case Types.NewFollower:
-      return function(followerObj, followeeObj, cb) {
-        if (cb == null) {
-          cb = function() {};
-        }
-        return Post.findOne({
-          type: Types.NewFollower,
-          agent: followerObj,
-          recipient: followeeObj
-        }, function(err, doc) {
-          if (doc) {
-            doc.remove(function() {});
-          }
-          return notifyUser(followeeObj, followerObj, {
-            type: Types.NewFollower,
-            url: followerObj.profileUrl
-          }, cb);
-        });
-      };
-  }
-};
-
 PostSchema.statics.fillComments = function(docs, cb) {
   var results;
-  assert(docs, "Can't fill comments of invalid post(s) document.");
+  assertArgs({
+    $isA: Array
+  }, '$isCb');
   results = [];
   return async.forEach(_.filter(docs, function(i) {
     return i;

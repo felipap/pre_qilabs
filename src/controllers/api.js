@@ -2,45 +2,11 @@
 /*
 The controller for /api/* calls.
  */
-
-/*
-GUIDELINES for development:
-- Keep controllers sanitized ALWAYS.
-- Never pass request parameters or data to schema methods, always validate
-  before. Use res.paramToObjectId to get create ids:
-  `(req, res) -> return unless userId = res.paramToObjectId('userId'); ...`
-- Prefer no not handle creation/modification of documents. Leave those to
-  schemas statics and methods.
-- Crucial: never remove documents by calling Model.remove. They prevent hooks
-  from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
- */
-var Activity, Follow, Group, Inbox, Notification, ObjectId, Post, Resource, Subscriber, User, mongoose, required, _;
+var Subscriber, mongoose;
 
 mongoose = require('mongoose');
 
-_ = require('underscore');
-
-ObjectId = mongoose.Types.ObjectId;
-
-required = require('../lib/required.js');
-
-Activity = mongoose.model('Activity');
-
-Inbox = mongoose.model('Inbox');
-
-Notification = mongoose.model('Notification');
-
 Subscriber = mongoose.model('Subscriber');
-
-Resource = mongoose.model('Resource');
-
-User = Resource.model('User');
-
-Post = Resource.model('Post');
-
-Group = Resource.model('Group');
-
-Follow = Resource.model('Follow');
 
 module.exports = {
   children: {

@@ -1,4 +1,4 @@
-var Activity, ActivitySchema, ContentHtmlTemplates, Inbox, Notification, ObjectId, Resource, Types, assert, assertArgs, async, createAndDistributeActivity, mongoose, _;
+var Activity, ActivitySchema, ContentHtmlTemplates, Inbox, Notification, ObjectId, Resource, Types, assert, assertArgs, async, createActivityAndInbox, mongoose, _;
 
 assert = require('assert');
 
@@ -86,7 +86,7 @@ ActivitySchema.pre('save', function(next) {
   return next();
 });
 
-createAndDistributeActivity = function(agentObj, data, cb) {
+createActivityAndInbox = function(agentObj, data, cb) {
   var activity;
   assertArgs({
     $isModel: 'User'
@@ -139,7 +139,7 @@ ActivitySchema.statics.Trigger = function(agentObj, type) {
           if (err) {
             console.log('trigger err:', err);
           }
-          return createAndDistributeActivity(opts.follower, {
+          return createActivityAndInbox(opts.follower, {
             verb: Types.NewFollower,
             url: opts.follower.profileUrl,
             actor: opts.follower,

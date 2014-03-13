@@ -377,24 +377,45 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
       } else {
         oldestPostDate = new Date(0);
       }
-      try {
-        return mergeNonInboxedPosts(oldestPostDate, posts);
-      } catch (_error) {}
+      return mergeNonInboxedPosts(oldestPostDate, posts);
     };
   })(this)));
 };
 
 UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
+  if (!opts.maxDate) {
+    opts.maxDate = Date.now();
+  }
   return Post.find({
     author: userId,
     parentPost: null,
-    group: null
-  }).sort('-published').populate('author').limit(opts.limit || 10).skip(opts.skip || 0).exec(function(err, docs) {
+    group: null,
+    published: {
+      $lt: opts.maxDate
+    }
+  }).sort('-published').populate('author').limit(opts.limit || 10).skip(opts.skip || 0).exec(HandleLimit(function(err, docs) {
     if (err) {
       return cb(err);
     }
-    return Post.fillComments(docs, cb);
-  });
+    return async.parallel([
+      function(next) {
+        return Activity.find({
+          actor: userId,
+          group: null,
+          updated: {
+            $lt: opts.maxDate,
+            $gt: docs[docs.length - 1].published
+          }
+        }).populate('resource actor target object').exec(next);
+      }, function(next) {
+        return Post.fillComments(docs, next);
+      }
+    ], function(err, results) {
+      return cb(err, _.sortBy(results[1].concat(results[0]), function(p) {
+        return p.published;
+      }));
+    });
+  }));
 };
 
 UserSchema.methods.getLabPosts = function(opts, group, cb) {

@@ -31,8 +31,8 @@ PostSchema = new mongoose.Schema {
 	type: 			{ type: String, required: true }
 	parentPost:		{ type: ObjectId, ref: 'Post', required: false }
 	
-	updated:		{ type: Date, indexed: 1 }
-	published:		{ type: Date }
+	updated:		{ type: Date }
+	published:		{ type: Date, indexed: 1 }
 	data: {
 		title:		{ type: String, required: false }
 		body:		{ type: String, required: true }
@@ -114,47 +114,8 @@ PostSchema.methods.fillComments = (cb) ->
 ################################################################################
 ## Statics #####################################################################
 
-notifyUser = (recpObj, agentObj, data, cb) ->
-	assertArgs({ismodel:'User'},{ismodel:'User'},{contains:['url','type']})
-	
-	User = Resource.model 'User'
-
-	note = new Post {
-		agent: agentObj
-		agentName: agentObj.name
-		recipient: recpObj
-		type: data.type
-		url: data.url
-		thumbnailUrl: data.thumbnailUrl or agentObj.avatarUrl
-	}
-	if data.resources then note.resources = data.resources 
-	note.save (err, doc) ->
-		cb?(err,doc)
-
-PostSchema.statics.Trigger = (agentObj, type) ->
-	User = Resource.model 'User'
-
-	switch type
-		when Types.NewFollower
-			return (followerObj, followeeObj, cb) ->
-				# assert
-				cb ?= ->
-				# Find and delete older notifications from the same follower.
-				Post.findOne {
-					type:Types.NewFollower,
-					agent:followerObj,
-					recipient:followeeObj
-					}, (err, doc) ->
-						if doc #
-							doc.remove(()->)
-						notifyUser followeeObj, followerObj, {
-							type: Types.NewFollower
-							url: followerObj.profileUrl
-							# resources: []
-						}, cb
-
 PostSchema.statics.fillComments = (docs, cb) ->
-	assert docs, "Can't fill comments of invalid post(s) document." 
+	assertArgs({$isA:Array},'$isCb')
 	results = []
 	async.forEach _.filter(docs, (i) -> i), (post, done) ->
 			Post.find {parentPost: post, type:Post.Types.Comment}

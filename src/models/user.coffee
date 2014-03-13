@@ -271,21 +271,37 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 			else
 				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
 				oldestPostDate = new Date(0)
-			try
-				mergeNonInboxedPosts(oldestPostDate, posts)
+			# try
+			mergeNonInboxedPosts(oldestPostDate, posts)
 			# catch e
 			# 	cb(e)
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
+	if not opts.maxDate
+		opts.maxDate = Date.now()
+
 	Post
-		.find {author:userId, parentPost:null, group:null}
+		.find {author:userId, parentPost:null, group:null, published:{$lt:opts.maxDate}}
 		.sort '-published'
 		.populate 'author'
 		.limit opts.limit or 10
 		.skip opts.skip or 0
-		.exec (err, docs) ->
+		.exec HandleLimit (err, docs) ->
 			return cb(err) if err
-			Post.fillComments(docs, cb)
+
+			async.parallel [ # Fill post comments and get activities in that time.
+				(next) ->
+					Activity
+						.find {actor:userId, group:null, updated: {
+							$lt:opts.maxDate, $gt:docs[docs.length-1].published}
+						}
+						.populate 'resource actor target object'
+						.exec next
+				(next) ->
+					Post.fillComments docs, next
+			], (err, results) -> # Merge results and call back
+				cb(err, _.sortBy(results[1].concat(results[0]), (p) -> p.published))
+
 
 ################################################################################
 ## related to Groups ###########################################################
