@@ -26,20 +26,28 @@
 			Seguidores: {{ user.followers.count }}
 		</div>
 		<ul class="body">
-			{% for person in user.followers.docs %}
-				<li>{{ userMacros.renderUser(person) }}</li>
-			{% endfor %}
+			{% if user.followers.docs.length %}
+				{% for person in user.followers.docs %}
+					<li>{{ userMacros.renderUser(person) }}</li>
+				{% endfor %}
+			{% else %}
+				<div class="emptyBoxMsg">Você ainda não tem nenhum seguidor.</div>
+			{% endif %}
 		</ul>
 	</div>
 	
 	<div class="box tags">
 		<div class="head">
-			Grupos: {{ user.groups.length }}
+			Labs: {{ user.groups.length }}
 		</div>
 		<ul class="body groupList">
-			{% for group in user.groups %}
-				<a href="{{ group.path }}">{{ group.name }}</a>
-			{% endfor %}
+			{% if user.groups.length %}
+				{% for group in user.groups %}
+					<a href="{{ group.path }}">{{ group.name }}</a>
+				{% endfor %}
+			{% else %}
+				<div class="emptyBoxMsg">Você não está em nenhum laboratório.</div>
+			{% endif %}
 		</ul>
 	</div>
 {% endblock %}

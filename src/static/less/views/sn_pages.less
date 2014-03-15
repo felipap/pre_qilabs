@@ -16,7 +16,7 @@ body {
 }
 
 .bg-img#page-bg {
-	background: #FAFAFA;
+	background: #EEE;
 }
 
 .mediaUser {
@@ -61,19 +61,24 @@ body {
 {
 	width: @width;
 	float: left;
+	margin-top: 20px;
 
 	.btnGoBack {
 		.high-xbtn(white, @COLOR4);
 	}
 
 	.box {
-		margin-bottom: 5px;
-		padding-bottom: 5px;
+		margin-bottom: 10px;
+		background: white;
+		border: 1px solid #DDD;
+		.rounded(3px);
 
 		.head {
-			padding: 5px 0;
+			border-bottom: 1px solid #DDD;
+			padding: 5px;
 			color: #444;
 			font-size: 13px;
+			background: #F3F3F3;
 			font-weight: bold;
 
 			small {
@@ -88,11 +93,18 @@ body {
 		}
 
 		ul.body {
+			padding: 5px;
+			font-size: 13px;
 			list-style: none;
+
+			.emptyBoxMsg {
+				color: #AAA;
+				// font-style: italic;
+				text-align: center;
+			}
 		}
 		
 		&.userList {
-			padding-top: 3px;
 
 			li {
 				list-style: none;

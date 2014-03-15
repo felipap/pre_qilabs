@@ -1,8 +1,8 @@
 
 @import "../common.less";
 
-@-navbar-padding: 3px;
-@real-navbar-height: @navbar-height; // +2*@-navbar-padding;
+@-navbar-padding: 0;
+@real-navbar-height: @navbar-height+2*@-navbar-padding;
 
 .hasFixedNavbar () {
 	nav.bar {
@@ -19,7 +19,7 @@ nav.bar {
 	
 	border-radius: 0 !important;
 	margin-top: -1px;
-	// padding: @-navbar-padding 10px;
+	padding: @-navbar-padding 10px;
 	margin-bottom: 0;
 	background: white;
 	// background: #272824;
@@ -41,7 +41,7 @@ nav.bar {
 	@brandColor: white;
 
 	.navcontent {
-		width: 960px;
+		width: 1000px;
 		margin: 0 auto;
 	}
 
