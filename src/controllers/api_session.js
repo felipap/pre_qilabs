@@ -61,12 +61,6 @@ module.exports = {
             notifics: notifics
           });
         });
-      } else if (req.query.membership != null) {
-        return Group.Membership.find({}, function(err, membership) {
-          return res.endJson({
-            membership: membership
-          });
-        });
       } else if (req.query.post != null) {
         return Post.find({}, function(err, posts) {
           return res.endJson({
@@ -103,24 +97,21 @@ module.exports = {
                 return Follow.find({}, function(err, follows) {
                   return Notification.find({}, function(err, notifics) {
                     return Group.find({}, function(err, groups) {
-                      return Group.Membership.find({}, function(err, memberships) {
-                        return Activity.find({}, function(err, notes) {
-                          var obj;
-                          obj = {
-                            ip: req.ip,
-                            group: groups,
-                            inboxs: inboxs,
-                            notifics: notifics,
-                            membership: memberships,
-                            session: req.session,
-                            users: users,
-                            posts: posts,
-                            follows: follows,
-                            notes: notes,
-                            subscribers: subscribers
-                          };
-                          return res.endJson(obj);
-                        });
+                      return Activity.find({}, function(err, notes) {
+                        var obj;
+                        obj = {
+                          ip: req.ip,
+                          group: groups,
+                          inboxs: inboxs,
+                          notifics: notifics,
+                          session: req.session,
+                          users: users,
+                          posts: posts,
+                          follows: follows,
+                          notes: notes,
+                          subscribers: subscribers
+                        };
+                        return res.endJson(obj);
                       });
                     });
                   });

@@ -1,4 +1,4 @@
-var Group, Post, Resource, Subscriber, Tag, User, mongoose, required, util;
+var Group, Post, Resource, Subscriber, User, mongoose, required, util;
 
 mongoose = require('mongoose');
 
@@ -9,8 +9,6 @@ required = require('./lib/required');
 Resource = mongoose.model('Resource');
 
 Post = Resource.model('Post');
-
-Tag = mongoose.model('Tag');
 
 User = Resource.model('User');
 
@@ -23,9 +21,6 @@ module.exports = {
     name: 'index',
     methods: {
       get: function(req, res) {
-        util.inspect(req, {
-          colors: true
-        });
         if (req.user) {
           req.user.lastUpdate = new Date();
           req.user.save();

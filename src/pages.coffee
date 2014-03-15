@@ -11,7 +11,6 @@ required = require './lib/required'
 Resource = mongoose.model 'Resource'
 
 Post 	= Resource.model 'Post'
-Tag 	= mongoose.model 'Tag'
 User 	= Resource.model 'User'
 Group 	= Resource.model 'Group'
 
@@ -22,12 +21,12 @@ module.exports = {
 		name: 'index'
 		methods: {
 			get: (req, res) ->
-				util.inspect(req, { colors: true })
 				if req.user
 					req.user.lastUpdate = new Date()
 					req.user.save()
 					req.user.genProfile (err, profile) ->
 						if err then console.log 'Serving /. err:', err
+						# res.endJson profile
 						res.render 'pages/timeline',
 							user_profile: profile
 				else

@@ -1,5 +1,6 @@
 
 src/static/
 src/controllers/*.coffee
-src/**/*.coffee
+src/models/*.coffee
+src/*.coffee
 node_modules/**

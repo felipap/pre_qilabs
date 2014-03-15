@@ -63,7 +63,9 @@ UserSchema = new mongoose.Schema({
       },
       permission: {
         type: String,
-        "enum": _.values(Group.MembershipTypes)
+        "enum": _.values(Group.MembershipTypes),
+        required: true,
+        "default": 'Moderator'
       }
     }
   ],
@@ -158,17 +160,6 @@ UserSchema.pre('remove', function(next) {
   }, (function(_this) {
     return function(err, docs) {
       console.log("Removing " + err + " " + docs + " activities related to " + _this.username);
-      return next();
-    };
-  })(this));
-});
-
-UserSchema.pre('remove', function(next) {
-  return Group.Membership.remove({
-    member: this
-  }, (function(_this) {
-    return function(err, count) {
-      console.log("Removing " + err + " " + count + " memberships of " + _this.username);
       return next();
     };
   })(this));
@@ -339,9 +330,7 @@ UserSchema.statics.reInbox = function(user, callback) {
           return next(null, posts.concat(activities));
         });
       });
-    }), function(err, posts) {
-      return console.log('err', err, posts);
-    });
+    }), function(err, posts) {});
   });
 };
 
@@ -537,7 +526,8 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
 };
 
 UserSchema.methods.createGroup = function(data, cb) {
-  var group;
+  var group, self;
+  self = this;
   group = new Group({
     name: data.profile.name,
     profile: {
@@ -550,11 +540,19 @@ UserSchema.methods.createGroup = function(data, cb) {
       if (err) {
         return cb(err);
       }
-      return group.addUser(_this, Group.Membership.Types.Moderator, function(err, membership) {
-        cb(err, group);
-        return Activity.Trigger(_this, Activity.Types.GroupCreated)({
+      return self.update({
+        $push: {
+          memberships: {
+            group: group.id,
+            type: Group.MembershipTypes.Moderator
+          }
+        }
+      }, function(err, doc) {
+        console.log('update result', arguments);
+        cb(null, group);
+        return Activity.Trigger(this, Activity.Types.GroupCreated)({
           group: group,
-          creator: _this
+          creator: self
         }, function() {});
       });
     };
@@ -571,7 +569,7 @@ UserSchema.methods.addUserToGroup = function(member, group, cb) {
       if (err) {
         return cb(err);
       }
-      if (!mship || mship.type !== Group.Membership.Types.Moderator) {
+      if (!mship || mship.type !== Group.MembershipTypes.Moderator) {
         return cb({
           error: true,
           name: 'Unauthorized'
@@ -588,14 +586,14 @@ UserSchema.methods.addUserToGroup = function(member, group, cb) {
           return cb(err, mem);
         }
         if (mem) {
-          mem.type = Group.Membership.Types.Member;
+          mem.type = Group.MembershipTypes.Member;
           mem.save(function(err) {
             return cb(err, mem);
           });
         } else {
           mem = new Group.Membership({
             member: member,
-            type: Group.Membership.Types.Member,
+            type: Group.MembershipTypes.Member,
             group: group
           });
         }
@@ -705,6 +703,8 @@ Generate stuffed profile for the controller.
  */
 
 UserSchema.methods.genProfile = function(cb) {
+  var self;
+  self = this;
   return this.getPopulatedFollowers((function(_this) {
     return function(err1, followers) {
       if (err1) {
@@ -714,29 +714,28 @@ UserSchema.methods.genProfile = function(cb) {
         if (err2) {
           following = null;
         }
-        return Group.Membership.find({
-          member: _this
-        }).populate('group').exec(function(err3, memberships) {
+        return Group.populate(self, {
+          path: 'memberships.group'
+        }, function(err3, groups) {
           var profile;
-          profile = _.extend(_this, {});
-          if (followers) {
-            profile.followers = {
-              docs: followers.slice(0, 20),
-              count: followers.length
-            };
+          console.log('groups:', self.memberships, groups, '\n\n');
+          if (err3) {
+            return cb(err3);
           }
-          if (following) {
-            profile.following = {
-              docs: following.slice(0, 20),
-              count: following.length
-            };
-          }
-          if (memberships) {
-            profile.groups = _.filter(_.pluck(memberships, 'group'), function(i) {
-              return i;
-            });
-          }
-          return cb(err1 || err2 || err3, profile);
+          profile = self.toJSON();
+          profile.followers = {
+            docs: followers.slice(0, 20),
+            count: followers.length
+          };
+          profile.following = {
+            docs: following.slice(0, 20),
+            count: following.length
+          };
+          profile.groups = {
+            docs: _.pluck(self.memberships, 'group').slice(0, 20),
+            count: _.pluck(self.memberships, 'group').length
+          };
+          return cb(err1 || err2, profile);
         });
       });
     };

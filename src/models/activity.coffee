@@ -23,8 +23,8 @@ Types =
 
 ContentHtmlTemplates = 
 	NewFollower: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> começou a seguir <a href="<%= target.path %>"><%= target && target.name %></a>.'
-	GroupCreated: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> criou o grupo <a href="<%= object.path %>"><%= object && object.name %></a>.'
-	GroupMemberAdded: '<strong><a href="<%= object.path %>"><%= object && object.name %></a></strong> entrou para o laboratório <a href="<%= target.path %>"><%= target && target.name %></a>.'
+	GroupCreated: '<strong><a href="<%= actor.path %>"><%= actor && actor.name %></a></strong> criou o grupo <a href="<%= object %>"><%= object && object.name %></a>.'
+	GroupMemberAdded: '<strong><a href="<%= object.path %>"><%= object && object.name %></a></strong> entrou para o laboratório <a href="<%= target %>"><%= target && target.name %></a>.'
 
 ################################################################################
 ## Schema ######################################################################

@@ -49,14 +49,13 @@ UserSchema = new mongoose.Schema {
 		badges: 		[]
 	},
 
-
 	tags:	[{
 		type: String
 	}]
 	memberships: [{
 		group: { type: String, required: true }
 		since: { type: Date, default: Date.now }
-		permission: { type: String, enum: _.values(Group.MembershipTypes) }
+		permission: { type: String, enum: _.values(Group.MembershipTypes), required:true, default:'Moderator' }
 	}]
 
 
@@ -87,7 +86,6 @@ UserSchema.virtual('path').get ->
 # Must bind to user removal the deletion of:
 # - Follows (@=followee or @=follower)
 # - Notification (@=agent or @=recipient)
-# - Group.Membership (@=member)
 # - Post (@=author)
 
 UserSchema.pre 'remove', (next) ->
@@ -114,11 +112,6 @@ UserSchema.pre 'remove', (next) ->
 UserSchema.pre 'remove', (next) ->
 	Activity.remove {actor:@}, (err, docs) =>
 		console.log "Removing #{err} #{docs} activities related to #{@username}"
-		next()
-
-UserSchema.pre 'remove', (next) ->
-	Group.Membership.remove {member:@}, (err, count) =>
-		console.log "Removing #{err} #{count} memberships of #{@username}"
 		next()
 
 ################################################################################
@@ -227,7 +220,7 @@ UserSchema.statics.reInbox = (user, callback) ->
 					next(null, posts.concat(activities))
 
 			), (err, posts) ->
-				console.log('err', err, posts)
+				# console.log('err', err, posts)
 
 		# for following in followingIds
 		# Inbox.remove({recipient: user})
@@ -386,6 +379,8 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 				cb(err, all, minPostDate)
 
 UserSchema.methods.createGroup = (data, cb) ->
+	# assertArgs
+	self = @
 	group = new Group {
 		name: data.profile.name
 		profile: {
@@ -395,9 +390,13 @@ UserSchema.methods.createGroup = (data, cb) ->
 	group.save (err, group) =>
 		console.log(err, group)
 		return cb(err) if err
-		group.addUser @, Group.Membership.Types.Moderator, (err, membership) =>
-			cb(err, group)
-			Activity.Trigger(@, Activity.Types.GroupCreated)({group:group, creator:@}, ->)
+		self.update {$push: { memberships: {
+			group: group.id,
+			type: Group.MembershipTypes.Moderator
+		}}}, (err, doc) ->
+			console.log 'update result', arguments
+			cb(null, group)
+			Activity.Trigger(@, Activity.Types.GroupCreated)({group:group, creator:self}, ->)
 
 UserSchema.methods.addUserToGroup = (member, group, cb) ->
 	assert _.all([member, group, type, cb]),
@@ -406,19 +405,19 @@ UserSchema.methods.addUserToGroup = (member, group, cb) ->
 	Group.Membership.findOne {group: group, member: @}, (err, mship) =>
 		return cb(err) if err
 		return cb(error:true,name:'Unauthorized') if not mship or
-			mship.type isnt Group.Membership.Types.Moderator
+			mship.type isnt Group.MembershipTypes.Moderator
 
 		# req.user is Moderator → good to go
 		Group.Membership.findOne {group: group, member: member}, (err, mem) =>
 			console.log(err) if err
 			return cb(err, mem) if err
 			if mem
-				mem.type = Group.Membership.Types.Member
+				mem.type = Group.MembershipTypes.Member
 				mem.save (err) -> cb(err, mem)
 			else
 				mem = new Group.Membership {
 					member: member
-					type: Group.Membership.Types.Member
+					type: Group.MembershipTypes.Member
 					group: group
 				}
 			mem.save (err) =>
@@ -433,11 +432,11 @@ UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 		"Wrong number of arguments supplied to User.addUserToGroup"
 	# First check for user's own priviledges
 
-	# for membership in self.groups
+	# for membership in self.memberships
 	Group.Membership.find {group: group, member: @}, (err, mship) ->
 		return cb(err) if err
 		return cb(error:true, name:'Unauthorized') if not mship
-			# mship.type isnt Group.Membership.Types.Moderator
+			# mship.type isnt Group.MembershipTypes.Moderator
 		# req.user is Moderator → good to go
 		Group.Membership.remove {group: group, member: member}, (err, mem) ->
 			return cb(err, mem) if err
@@ -503,28 +502,28 @@ UserSchema.methods.createPost = (data, cb) ->
 Generate stuffed profile for the controller.
 ###
 UserSchema.methods.genProfile = (cb) ->
+	self = @
 	@getPopulatedFollowers (err1, followers) =>
 		if err1 then followers = null
 		@getPopulatedFollowing (err2, following) =>
 			if err2 then following = null
-			Group.Membership
-				.find {member: @}
-				.populate 'group'
-				.exec (err3, memberships) =>
-					profile = _.extend(@,{})
-					if followers
-						profile.followers = {
-							docs: followers.slice(0,20)
-							count: followers.length
-						}
-					if following
-						profile.following = {
-							docs: following.slice(0,20)
-							count: following.length
-						}
-					if memberships
-						profile.groups = _.filter(_.pluck(memberships, 'group'),(i)->i)
-					cb(err1 or err2 or err3, profile)
+			Group.populate self, {path:'memberships.group'}, (err3, groups) =>
+				console.log('groups:', self.memberships, groups, '\n\n')
+				if err3 then return cb(err3)
+				profile = self.toJSON()
+				profile.followers = {
+					docs: followers.slice(0,20)
+					count: followers.length
+				}
+				profile.following = {
+					docs: following.slice(0,20)
+					count: following.length
+				}
+				profile.groups = {
+					docs: _.pluck(self.memberships,'group').slice(0,20)
+					count: _.pluck(self.memberships,'group').length
+				}
+				cb(err1 or err2, profile)
 
 ################################################################################
 ## related to the notification #################################################

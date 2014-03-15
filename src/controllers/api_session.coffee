@@ -39,9 +39,6 @@ module.exports = {
 			else if req.query.notification?
 				Notification.find {}, (err, notifics) ->
 					res.endJson { notifics:notifics } 
-			else if req.query.membership?
-				Group.Membership.find {}, (err, membership) ->
-					res.endJson { membership:membership } 
 			else if req.query.post?
 				Post.find {}, (err, posts) ->
 					res.endJson { posts:posts } 
@@ -64,20 +61,18 @@ module.exports = {
 								Follow.find {}, (err, follows) ->
 									Notification.find {}, (err, notifics) ->
 										Group.find {}, (err, groups) ->
-											Group.Membership.find {}, (err, memberships) ->
-												Activity.find {}, (err, notes) ->
-													obj =
-														ip: req.ip
-														group: groups
-														inboxs: inboxs
-														notifics: notifics
-														membership: memberships
-														session: req.session
-														users: users
-														posts: posts
-														follows: follows
-														notes: notes
-														subscribers: subscribers
-													res.endJson obj
+											Activity.find {}, (err, notes) ->
+												obj =
+													ip: req.ip
+													group: groups
+													inboxs: inboxs
+													notifics: notifics
+													session: req.session
+													users: users
+													posts: posts
+													follows: follows
+													notes: notes
+													subscribers: subscribers
+												res.endJson obj
 	}
 }

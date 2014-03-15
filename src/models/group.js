@@ -1,8 +1,4 @@
-
-/*
-Membership is accessible at Group.Membership
- */
-var Activity, Group, GroupSchema, Membership, MembershipSchema, MembershipTypes, Permissions, Resource, Types, mongoose, _;
+var Activity, Group, GroupSchema, MembershipTypes, Permissions, Resource, Types, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -44,24 +40,6 @@ GroupSchema = new Resource.Schema({
   }
 });
 
-MembershipSchema = new Resource.Schema({
-  joinDate: Date,
-  type: {
-    type: String,
-    required: true
-  },
-  member: {
-    type: mongoose.Schema.ObjectId,
-    index: 1,
-    ref: 'User'
-  },
-  group: {
-    type: mongoose.Schema.ObjectId,
-    index: 1,
-    ref: 'Group'
-  }
-});
-
 GroupSchema.virtual('path').get(function() {
   return '/labs/' + this.slug;
 });
@@ -76,36 +54,17 @@ GroupSchema.pre('save', function(next) {
   return next();
 });
 
-MembershipSchema.pre('save', function(next) {
-  console.assert(_.values(MembershipSchema.statics.Types).indexOf(this.type) !== -1, "Invalid membership type: " + this.type);
-  if (this.joinDate == null) {
-    this.joinDate = new Date;
-  }
-  return next();
-});
-
-GroupSchema.methods.addUser = function(user, type, cb) {
-  var membership;
-  if (cb == null) {
-    cb = type;
-  }
-  membership = new Membership({
-    member: user,
-    group: this,
-    type: (cb && type) || MembershipTypes.Member
-  });
-  return membership.save(cb);
-};
-
 GroupSchema.methods.genGroupProfile = function(cb) {
+  var User;
+  User = Resource.model('User');
   return User.find({
-    'groups.group': this
+    'memberships.group': this
   }).exec((function(_this) {
     return function(err, docs) {
       return cb(err, _.extend({}, _this.toJSON(), {
-        memberships: {
-          count: docs.groups.length,
-          docs: docs.groups.slice(20)
+        members: {
+          count: docs.length,
+          docs: docs.slice(20)
         }
       }));
     };
@@ -114,15 +73,11 @@ GroupSchema.methods.genGroupProfile = function(cb) {
 
 GroupSchema.statics.MembershipTypes = MembershipTypes;
 
-MembershipSchema.statics.Types = MembershipTypes;
-
 GroupSchema.statics.Types = Types;
 
 GroupSchema.statics.Permissions = Permissions;
 
 GroupSchema.statics.findOrCreate = require('./lib/findOrCreate');
-
-GroupSchema.statics.Membership = Membership = mongoose.model("Membership", MembershipSchema);
 
 GroupSchema.plugin(require('./lib/hookedModelPlugin'));
 

@@ -12,11 +12,11 @@
 	
 	<div class="box labList">
 		<div class="head">
-			Laboratórios: <div class="right">{{ user.groups.length }}</div>
+			Laboratórios: <div class="right">{{ user_profile.groups.count }}</div>
 		</div>
 		<ul class="body groupList">
-			{% if user.groups.length %}
-				{% for group in user.groups %}
+			{% if user_profile.groups.docs.length %}
+				{% for group in user_profile.groups.docs %}
 					<li><a href="{{ group.path }}">{{ group.name }}</a></li>
 				{% endfor %}
 			{% else %}
@@ -51,11 +51,11 @@
 
 	<div class="box userList">
 		<div class="head">
-			Seguindo: <div class="right">{{ user.following.count }}</div>
+			Seguindo: <div class="right">{{ user_profile.following.count }}</div>
 		</div>
 		<ul class="body">
-			{% if user.following.docs.length %}
-				{% for person in user.following.docs %}
+			{% if user_profile.following.docs.length %}
+				{% for person in user_profile.following.docs %}
 					<li>{{ userMacros.renderUser(person) }}</li>
 				{% endfor %}
 			{% else %}
@@ -66,11 +66,11 @@
 
 	<div class="box userList">
 		<div class="head">
-			Seguidores: <div class="right">{{ user.followers.count }}</div>
+			Seguidores: <div class="right">{{ user_profile.followers.count }}</div>
 		</div>
 		<ul class="body">
-			{% if user.followers.docs.length %}
-				{% for person in user.followers.docs %}
+			{% if user_profile.followers.docs.length %}
+				{% for person in user_profile.followers.docs %}
 					<li>{{ userMacros.renderUser(person) }}</li>
 				{% endfor %}
 			{% else %}
