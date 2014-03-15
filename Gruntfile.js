@@ -70,8 +70,8 @@ module.exports = function(grunt) {
 					args: ['dev'],
 					nodeArgs: ['--debug'],
 					// watch: ['src'],
-					ignore: ['node_modules/**','src/static/**'],
-					ext: 'js',
+					ignore: ['node_modules/**','src/static/**', '/src/static/js/app/components/'],
+					// ext: 'js',
 					delayTime: 1,
 
 					legacyWatch: true,

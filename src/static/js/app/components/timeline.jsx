@@ -84,7 +84,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			parse: function (response, options) {
 				if (response.minDate < 1) {
 					this.EOF = true;
-					this.trigger('endOfStream');
+					this.trigger('statusChange');
 				}
 				this.minDate = 1*new Date(response.minDate);
 				var data = Backbone.Collection.prototype.parse.call(this, response.data, options);
@@ -95,7 +95,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				if (this.minDate < 1) {
 					return;
 				}
-				console.log('try fetch more', this.minDate)
 				this.fetch({data: {maxDate:this.minDate+1}, remove:false});
 			},
 		});
@@ -115,12 +114,12 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				this.endDate = new Date(response.endDate);
 				return Backbone.Collection.prototype.parse.call(this, response.data, options);
 			},
-			tryFetchMore: function () {
-				console.log('tryFetchMore')
-				if (this.endDate === new Date(0))
-					return;
-				this.fetch({data: {endDate:this.endDate}, remove:false});
-			},
+			// fetchMore: function () {
+			// 	console.log('tryFetchMore')
+			// 	if (this.endDate === new Date(0))
+			// 		return;
+			// 	this.fetch({data: {endDate:this.endDate}, remove:false});
+			// },
 		});
 		
 		/********************************************************************************/
@@ -399,10 +398,11 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				return {};
 			},
 			componentWillMount: function () {
-				function update () {
+				function update (evt) {
+					// console.log('updatefired')
 					this.forceUpdate(function(){});
 				}
-				this.props.collection.on('add remove reset endOfStream', update.bind(this));
+				this.props.collection.on('add remove reset statusChange', update.bind(this));
 			},
 			// changeOptions: "change:name",
 			render: function () {
@@ -417,13 +417,13 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 						<PostForm postUrl={this.props.collection.url}/>
 						:null}
 						{postNodes}
-						{
-							this.props.collection.EOF?
-							<div className="streamEnd">
-								OPS! Nenhuma outra atividade encontrada. =O
-							</div>
-							:null
-						}
+						{this.props.collection.EOF?
+						<div className="streamMessage">
+							<i className="icon-exclamation"></i> Nenhuma outra atividade encontrada.
+						</div>
+						:<div className="streamMessage">
+							<i className="icon-spin icon-cog"></i> Procurando mais atividades.
+						</div>}
 					</div>
 				);
 			},
@@ -444,10 +444,6 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 		initialize: function () {
 			console.log('initialized')
 			window.app = this;
-			$('#globalContainer').scroll(_.throttle(function() {
-				if (($('#results-col').outerHeight()-$('#globalContainer').scrollTop()-256)<400)
-					app.postList.tryFetchMore();
-			}, 500));
 		},
 
 		routes: {
@@ -476,7 +472,17 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			React.renderComponent(Post.timelineView(
 				_.extend(opts,{collection:this.postList})),
 				document.getElementById('postsPlacement'));
+
 			this.postList.fetch({reset:true});
+
+			var fetchMore = _.throttle(this.postList.tryFetchMore.bind(app.postList),1000);
+			var fetchMore = this.postList.tryFetchMore.bind(app.postList);
+
+			$('#globalContainer').scroll(function() {
+				if ($('#content').outerHeight()-($('#globalContainer').scrollTop()+$('#globalContainer').outerHeight())<5) {
+					fetchMore();
+				}
+			});
 		},
 
 	});
