@@ -42,7 +42,7 @@
 					<li>{{ userMacros.renderUser(person) }}</li>
 				{% endfor %}
 			{% else %}
-				<div class="emptyBoxMsg">{{user.name.split(' ')[0] }} ainda não segue ninguém.</div>
+				<div class="emptyBoxMsg">{{profile.name.split(' ')[0] }} ainda não segue ninguém.</div>
 			{% endif %}
 		</ul>
 	</div>
@@ -57,7 +57,7 @@
 					<li>{{ userMacros.renderUser(person) }}</li>
 				{% endfor %}
 			{% else %}
-				<div class="emptyBoxMsg">{{user.name.split(' ')[0] }} ainda não tem seguidores.</div>
+				<div class="emptyBoxMsg">{{profile.name.split(' ')[0] }} ainda não tem seguidores.</div>
 			{% endif %}
 		</ul>
 	</div>
