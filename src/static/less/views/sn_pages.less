@@ -6,8 +6,8 @@
 
 @import "../common.less";
 
-@sidebar-width: 320px;
-@results-container-width: 630px;
+@sidebar-width: 280px;
+@results-container-width: 670px;
 @sidebar-gap: 25px;
 
 body { 
@@ -15,8 +15,8 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 
-#pg-bg {
-	// background-image: url(/static/images/cubes.png);
+.bg-img#page-bg {
+	background: #FAFAFA;
 }
 
 .mediaUser {
@@ -166,6 +166,7 @@ body {
 	.postWrapper {
 		position: relative;
 		margin-bottom: 15px;
+		background: white;
 		border: 1px solid #DDD;
 
 		.optionBtns {
@@ -350,7 +351,7 @@ body {
 		#content {
 			margin: 0 auto;
 			width: @results-container-width+@sidebar-width+@sidebar-gap;
-			padding-top: 20px;
+			// padding-top: 20px;
 			#sidebar {
 				.sidebar;
 			}

@@ -205,9 +205,14 @@ ActivitySchema.statics.Trigger = function(agentObj, activityType) {
             console.log('trigger err:', err);
           }
           console.log('here');
-          return createActivityAndInbox(opts.member, _.extend(genericData, {
+          createActivityAndInbox(opts.member, _.extend(genericData, {
             actor: opts.actor,
             url: opts.group.path
+          }), function() {});
+          return createActivityAndInbox(opts.member, _.extend(genericData, {
+            actor: opts.actor,
+            url: opts.group.path,
+            group: opts.group
           }), function() {});
         });
       };

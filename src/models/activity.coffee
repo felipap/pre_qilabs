@@ -156,8 +156,13 @@ ActivitySchema.statics.Trigger = (agentObj, activityType) ->
 					if err then console.log 'trigger err:', err
 					console.log('here')
 					createActivityAndInbox opts.member, _.extend(genericData, {
-						actor:opts.actor,
+						actor: opts.actor,
 						url: opts.group.path,
+					}), ->
+					createActivityAndInbox opts.member, _.extend(genericData, {
+						actor: opts.actor,
+						url: opts.group.path,
+						group: opts.group
 					}), ->
 		else
 			throw "Unrecognized Activity Type passed to Trigger."

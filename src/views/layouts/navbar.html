@@ -1,10 +1,15 @@
 
 <nav class="bar" role="navigation">
-	<a class="brand" href="/" tabindex="-1">
-		Q.I. Laboratories<!--  <sup class="version">{{ app.semantic_version }}</sup> -->
-	</a>
-
+<div class="navcontent">
 	{% if user %}
+		<a class="brand" href="/" tabindex="-1">
+			<script>
+			var icons = ['flask', 'puzzle', 'bolt', 'rocket', 'bulb'];
+			document.write('<i class="icon-'+icons[Math.floor(icons.length*Math.random())]+'"></i>');
+			</script>
+			QI Labs<!--  <sup class="version">{{ app.semantic_version }}</sup> -->
+		</a>
+<!-- 
 		<ul>
 			<li>
 				<a href="#" class="model-link home" data-toggle="tooltip" title="Seu Mural" data-placement="bottom">
@@ -26,7 +31,7 @@
 					<i class="icon-board"></i>
 				</a>
 			</li>
-		</ul>
+		</ul> -->
 		<ul class="pull-right">
 			<li>
 				<button class="plain-btn" data-toggle="tooltip" title="Agenda" data-placement="bottom">
@@ -48,7 +53,7 @@
 			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle"
 					>
 					{{ user.name }}
-					<img id="avatarDd" alt="seu avatar" width=45 class="" src="{{ user.avatarUrl }}" />
+					<div class="avatarDd" style="background-image: url('{{ user.avatarUrl }}')">
 					<i></i>
 					<b class="caret"></b>
 				</div>
@@ -78,9 +83,12 @@
 			</li>
 		</ul>
 	{% else %}
+		<a class="brand" href="/" tabindex="-1">
+			Q.I. Laboratories<!--  <sup class="version">{{ app.semantic_version }}</sup> -->
+		</a>
 		<ul class="nav navbar-nav pull-right">
 			<a data-action="show-signin" href="#signin" data-toggle="dialog">
-				<strong>SEJA UM EARLY-TESTER</strong>
+				<strong>Peça um Convite</strong>
 			</a>
 			<a href="/auth/facebook" class="plain-btn" data-action="login">
 				Entrar
@@ -90,6 +98,7 @@
 			</a>
 		</ul>
 	{% endif %}
+</div>
 </nav>
 
 
