@@ -21,10 +21,6 @@ nav.bar {
 	margin-top: -1px;
 	padding: @-navbar-padding 10px;
 	margin-bottom: 0;
-	// background: url(/static/images/cubes.png);
-	background: white;
-	// background: #272824;
-	background: #31322E;
 	z-index: 5;
 	width: 100%;
 	top: 0;
@@ -40,7 +36,13 @@ nav.bar {
 	}
 	@compColor: white;
 	@brandColor: white;
+	@borderColor: #222;
+	background: url(/static/images/cubes.png);
+	background: #272824;
+	background: #31322E;
 
+	// background: white;
+	// @borderColor: #AAA;
 	// @brandColor: @COLOR1;
 	// @compColor: #444;
 
@@ -111,6 +113,7 @@ nav.bar {
 			&:hover, &:focus, &:active {
 				background: none;
 				box-shadow: none;
+				color: @compColor;
 			}
 			vertical-align: top;
 			box-shadow: none;
@@ -158,7 +161,7 @@ nav.bar {
 			vertical-align: middle;
 			font-size: 12px;
 
-			border-left: 1px solid #DDD;
+			border-left: 1px solid @borderColor;
 			padding-left: 10px;
 
 			.avatar-btn {
@@ -181,7 +184,6 @@ nav.bar {
 
 			.dropdown-menu {
 				left: auto;
-				// right: 0;
 				padding: 3px;
 				.rounded(3px);
 				li a {

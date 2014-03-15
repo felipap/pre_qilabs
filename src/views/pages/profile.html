@@ -34,34 +34,70 @@
 
 	<div class="box userList">
 		<div class="head">
-			Seguindo: {{ profile.following.count }}
+			Seguindo: <div class="right">{{ profile.following.count }}</div>
 		</div>
 		<ul class="body">
-			{% for person in profile.following.docs %}
-				<li>{{ userMacros.renderUser(person) }}</li>
-			{% endfor %}
+			{% if profile.following.docs.length %}
+				{% for person in profile.following.docs %}
+					<li>{{ userMacros.renderUser(person) }}</li>
+				{% endfor %}
+			{% else %}
+				<div class="emptyBoxMsg">{{user.name.split(' ')[0] }} ainda não segue ninguém.</div>
+			{% endif %}
 		</ul>
 	</div>
 
 	<div class="box userList">
 		<div class="head">
-			Seguidores: {{ profile.followers.count }}
+			Seguidores: <div class="right">{{ profile.following.count }}</div>
 		</div>
 		<ul class="body">
-			{% for person in profile.followers.docs %}
-				<li>{{ userMacros.renderUser(person) }}</li>
-			{% endfor %}
+			{% if profile.followers.docs.length %}
+				{% for person in profile.followers.docs %}
+					<li>{{ userMacros.renderUser(person) }}</li>
+				{% endfor %}
+			{% else %}
+				<div class="emptyBoxMsg">{{user.name.split(' ')[0] }} ainda não tem seguidores.</div>
+			{% endif %}
 		</ul>
 	</div>
 
-	<div class="box tags">
+	<div class="box tagList">
 		<div class="head">
-			Grupos: {{ profile.groups.length }}
+			Interesses <div class="right"> 4</div>
+		</div>
+		<ul class="body">
+			<li><a href="#">
+				<span class="tagIcon"></span>
+				<span class="tagName">Application</span>
+			</a></li>
+			<li><a href="#">
+				<span class="tagIcon"></span>
+				<span class="tagName">Intercâmbio</span>
+			</a></li>
+			<li><a href="#">
+				<span class="tagIcon"></span>
+				<span class="tagName">Olimpíadas de Matemática</span>
+			</a></li>
+			<li><a href="#">
+				<span class="tagIcon"></span>
+				<span class="tagName">Vestibular</span>
+			</a></li>
+		</ul>
+	</div>
+	
+	<div class="box labList">
+		<div class="head">
+			Laboratórios: <div class="right">{{ profile.groups.length }}</div>
 		</div>
 		<ul class="body groupList">
-			{% for group in profile.groups %}
-				<a href="{{ group.path }}">{{ group.profile.name }}</a>
-			{% endfor %}
+			{% if profile.groups.length %}
+				{% for group in profile.groups %}
+					<li><a href="{{ group.path }}">{{ group.name }}</a></li>
+				{% endfor %}
+			{% else %}
+				<div class="emptyBoxMsg">Você não está em nenhum laboratório.</div>
+			{% endif %}
 		</ul>
 	</div>
 

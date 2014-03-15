@@ -54,7 +54,7 @@ module.exports = function(grunt) {
 			css: {
 				files: ['src/static/less/**/*.less'],
 				tasks: ['less'],
-				options: { spawn: false, interrupt: true },				
+				options: { spawn: false },
 			},
 			// // Require.js
 			// scripts_lab: {
