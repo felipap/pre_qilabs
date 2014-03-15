@@ -297,7 +297,7 @@ HandleLimit = function(func) {
  * Behold.
  */
 
-UserSchema.methods.getTimeline = function(_opts, cb) {
+UserSchema.methods.getTimeline = function(_opts, callback) {
   var mergeNonInboxedPosts, opts;
   opts = _.extend({
     limit: 10
@@ -320,7 +320,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
         }
       }).exec(function(err, follows) {
         if (err) {
-          return cb(err);
+          return callback(err);
         }
         return async.mapLimit(follows, 5, (function(follow, done) {
           var ltDate;
@@ -345,7 +345,7 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
       return onGetNonInboxedPosts = function(err, nips) {
         var all;
         if (err) {
-          return cb(err);
+          return callback(err);
         }
         all = _.sortBy(nips.concat(ips), function(p) {
           return p.published;
@@ -355,9 +355,12 @@ UserSchema.methods.getTimeline = function(_opts, cb) {
         }, (function(_this) {
           return function(err, docs) {
             if (err) {
-              return cb(err);
+              return callback(err);
             }
-            return Post.fillComments(docs, cb);
+            minDate = docs.length ? docs[docs.length - 1].published : 0;
+            return Post.fillComments(docs, function(err, docs) {
+              return callback(err, docs, minDate);
+            });
           };
         })(this));
       };

@@ -30,7 +30,6 @@ module.exports = {
               if (minDate == null) {
                 minDate = -1;
               }
-              console.log('minDate is', minDate);
               return res.endJson({
                 minDate: minDate,
                 data: docs,

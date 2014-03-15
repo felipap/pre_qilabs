@@ -9,33 +9,18 @@
 {% endblock %}
 
 {% block sidebarContent %}
-
-	<div class="box userList">
+	
+	<div class="box labList">
 		<div class="head">
-			Seguindo: <div class="right">{{ user.following.count }}</div>
+			Laboratórios: <div class="right">{{ user.groups.length }}</div>
 		</div>
-		<ul class="body">
-			{% if user.following.docs.length %}
-				{% for person in user.following.docs %}
-					<li>{{ userMacros.renderUser(person) }}</li>
+		<ul class="body groupList">
+			{% if user.groups.length %}
+				{% for group in user.groups %}
+					<li><a href="{{ group.path }}">{{ group.name }}</a></li>
 				{% endfor %}
 			{% else %}
-				<div class="emptyBoxMsg">Você ainda não segue ninguém.</div>
-			{% endif %}
-		</ul>
-	</div>
-
-	<div class="box userList">
-		<div class="head">
-			Seguidores: <div class="right">{{ user.followers.count }}</div>
-		</div>
-		<ul class="body">
-			{% if user.followers.docs.length %}
-				{% for person in user.followers.docs %}
-					<li>{{ userMacros.renderUser(person) }}</li>
-				{% endfor %}
-			{% else %}
-				<div class="emptyBoxMsg">Você ainda não tem nenhum seguidor.</div>
+				<div class="emptyBoxMsg">Você não está em nenhum laboratório.</div>
 			{% endif %}
 		</ul>
 	</div>
@@ -63,18 +48,33 @@
 			</a></li>
 		</ul>
 	</div>
-	
-	<div class="box labList">
+
+	<div class="box userList">
 		<div class="head">
-			Laboratórios: <div class="right">{{ user.groups.length }}</div>
+			Seguindo: <div class="right">{{ user.following.count }}</div>
 		</div>
-		<ul class="body groupList">
-			{% if user.groups.length %}
-				{% for group in user.groups %}
-					<li><a href="{{ group.path }}">{{ group.name }}</a></li>
+		<ul class="body">
+			{% if user.following.docs.length %}
+				{% for person in user.following.docs %}
+					<li>{{ userMacros.renderUser(person) }}</li>
 				{% endfor %}
 			{% else %}
-				<div class="emptyBoxMsg">Você não está em nenhum laboratório.</div>
+				<div class="emptyBoxMsg">Você ainda não segue ninguém.</div>
+			{% endif %}
+		</ul>
+	</div>
+
+	<div class="box userList">
+		<div class="head">
+			Seguidores: <div class="right">{{ user.followers.count }}</div>
+		</div>
+		<ul class="body">
+			{% if user.followers.docs.length %}
+				{% for person in user.followers.docs %}
+					<li>{{ userMacros.renderUser(person) }}</li>
+				{% endfor %}
+			{% else %}
+				<div class="emptyBoxMsg">Você ainda não tem nenhum seguidor.</div>
 			{% endif %}
 		</ul>
 	</div>

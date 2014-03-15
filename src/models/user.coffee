@@ -204,7 +204,8 @@ HandleLimit = (func) ->
 ###
 # Behold.
 ###
-UserSchema.methods.getTimeline = (_opts, cb) ->
+UserSchema.methods.getTimeline = (_opts, callback) ->
+	# assertArgs({$contains:'limit'}, '$isCb')
 
 	opts = _.extend({
 		limit: 10,
@@ -222,7 +223,7 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 		Follow
 			.find { follower:@, dateBegin:{$gt:minDate} }
 			.exec (err, follows) =>
-				return cb(err) if err
+				return callback(err) if err
 				# Get posts from these users created before "followship" or maxDate
 				# (whichever is older) and after minDate.
 				async.mapLimit follows, 5, ((follow, done) =>
@@ -242,16 +243,18 @@ UserSchema.methods.getTimeline = (_opts, cb) ->
 						onGetNonInboxedPosts(err, nips)
 
 		onGetNonInboxedPosts = (err, nips) ->
-			return cb(err) if err
+			return callback(err) if err
 			
 			all = _.sortBy(nips.concat(ips), (p) -> p.published) # merge'n'sort by date
 
 			# Populate author in all docs (nips and ips)
 			Resource.populate all, {path: 'author actor target object'}, (err, docs) =>
-				return cb(err) if err
+				return callback(err) if err
 				# console.log 'docs', docs
 				# Fill comments in all docs.
-				Post.fillComments(docs, cb)
+				minDate = if docs.length then docs[docs.length-1].published else 0
+				Post.fillComments docs, (err, docs) ->
+					callback(err, docs, minDate)
 
 	# Get inboxed posts older than the maxDate determined by the user.
 	Inbox

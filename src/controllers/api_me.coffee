@@ -71,18 +71,13 @@ module.exports = {
 				)
 
 			get: (req, res) ->
-					opts = { limit:10 }
+					opts = { limit:5 }
 					
 					if parseInt(req.query.maxDate)
 						opts.maxDate = parseInt(req.query.maxDate)
 
 					req.user.getTimeline opts,
-						req.handleErrResult((docs) ->
-							if docs.length is opts.limit
-								minDate = docs[docs.length-1].published.valueOf()
-							else
-								minDate = -1
-					
+						req.handleErrResult((docs, minDate=-1) ->
 							res.endJson {
 								minDate: minDate
 								data: docs

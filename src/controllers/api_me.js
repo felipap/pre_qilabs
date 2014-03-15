@@ -109,16 +109,13 @@ module.exports = {
       get: function(req, res) {
         var opts;
         opts = {
-          limit: 10
+          limit: 5
         };
         if (parseInt(req.query.maxDate)) {
           opts.maxDate = parseInt(req.query.maxDate);
         }
-        return req.user.getTimeline(opts, req.handleErrResult(function(docs) {
-          var minDate;
-          if (docs.length === opts.limit) {
-            minDate = docs[docs.length - 1].published.valueOf();
-          } else {
+        return req.user.getTimeline(opts, req.handleErrResult(function(docs, minDate) {
+          if (minDate == null) {
             minDate = -1;
           }
           return res.endJson({

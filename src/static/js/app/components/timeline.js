@@ -86,7 +86,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 					this.EOF = true;
 					this.trigger('endOfStream');
 				}
-				this.minDate = response.minDate;
+				this.minDate = 1*new Date(response.minDate);
 				var data = Backbone.Collection.prototype.parse.call(this, response.data, options);
 				// Filter for non-null results.
 				return _.filter(data, function (i) { return !!i; });
