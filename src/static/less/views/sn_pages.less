@@ -17,6 +17,7 @@ body {
 
 .bg-img#page-bg {
 	background: #EEE;
+	background: url(/static/images/cubes.png);
 }
 
 .mediaUser {
@@ -111,11 +112,12 @@ body {
 		&.labList {
 			
 			li {
-
-				a { text-decoration: none; }
-				font-weight: bold;
-				padding: 10px;
-				
+				a {
+					display: block;
+					text-decoration: none;
+					font-weight: bold;
+					padding: 10px;
+				}
 				&:not(:last-child) {
 					border-bottom: 1px solid #DDD;
 				}

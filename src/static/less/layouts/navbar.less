@@ -2,7 +2,7 @@
 @import "../common.less";
 
 @-navbar-padding: 0;
-@real-navbar-height: @navbar-height+2*@-navbar-padding;
+@real-navbar-height: (@navbar-height+(2*@-navbar-padding));
 
 .hasFixedNavbar () {
 	nav.bar {
@@ -21,6 +21,7 @@ nav.bar {
 	margin-top: -1px;
 	padding: @-navbar-padding 10px;
 	margin-bottom: 0;
+	// background: url(/static/images/cubes.png);
 	background: white;
 	// background: #272824;
 	background: #31322E;
@@ -40,8 +41,11 @@ nav.bar {
 	@compColor: white;
 	@brandColor: white;
 
+	// @brandColor: @COLOR1;
+	// @compColor: #444;
+
 	.navcontent {
-		width: 1000px;
+		width: 980px;
 		margin: 0 auto;
 	}
 
@@ -53,7 +57,7 @@ nav.bar {
 		margin-right: 15px;
 		vertical-align: middle;
 		
-		color: white;
+		color: @brandColor;
 		cursor: pointer;
 		font-family: @BrandFontFamily;
 		outline: none !important;
@@ -125,11 +129,11 @@ nav.bar {
 		[data-action=login] 		{ }
 		
 		.model-link {
-			&.home { .high-xbtn(white, @COLOR3); }
-			&.groups { .high-xbtn(white, @COLOR1); }
-			&.board { .high-xbtn(white, @COLOR2); }
-			&.agenda { .high-xbtn(white, #345); }
-			&.guia { .high-xbtn(white, @COLOR4); }
+			&.home  	{ .high-xbtn(white, @COLOR3); }
+			&.groups  	{ .high-xbtn(white, @COLOR1); }
+			&.board  	{ .high-xbtn(white, @COLOR2); }
+			&.agenda  	{ .high-xbtn(white, #345); }
+			&.guia  	{ .high-xbtn(white, @COLOR4); }
 			&.home,&.groups,&.board,&.agenda,&.guia {
 				.high-xbtn-padding(5px, 8px);
 			}
@@ -150,18 +154,25 @@ nav.bar {
 			display: inline-block;
 			color: @compColor;
 			margin-left: 5px;
+			line-height: @real-navbar-height;
+			vertical-align: middle;
+			font-size: 12px;
+
+			border-left: 1px solid #DDD;
+			padding-left: 10px;
 
 			.avatar-btn {
+				padding-left: 5px;
 				.reset-button;
 				cursor: pointer;
-				margin-top: 3px;
 				position: relative;
 				display: inline-block;
 				
 				.avatarDd {
 					display: inline-block;
-					width: 30px;
-					height: 30px;
+					width: 35px;
+					vertical-align: middle;
+					height: 35px;
 					.background-size(cover);
 					border-radius: 30px;
 					box-shadow: 0 0 1px black;
@@ -170,7 +181,7 @@ nav.bar {
 
 			.dropdown-menu {
 				left: auto;
-				right: 0;
+				// right: 0;
 				padding: 3px;
 				.rounded(3px);
 				li a {
