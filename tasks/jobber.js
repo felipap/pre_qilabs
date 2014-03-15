@@ -19,12 +19,11 @@ module.exports = function (job, options) {
 		// If being executed directly...
 		// > load keys
 		try {
-			require('../src/env.js')
+			require('../src/env.js');
 		} catch (e) {}
 
 		// Open database.
-		mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/madb'
-		mongoose.connect(mongoUri)
+		require('../src/config/mongoose');
 
 		job({
 			// To be called by user at the end of function.

@@ -55,7 +55,8 @@ UserSchema = new mongoose.Schema({
     {
       group: {
         type: String,
-        required: true
+        required: true,
+        ref: 'Group'
       },
       since: {
         type: Date,
@@ -714,9 +715,7 @@ UserSchema.methods.genProfile = function(cb) {
         if (err2) {
           following = null;
         }
-        return Group.populate(self, {
-          path: 'memberships.group'
-        }, function(err3, groups) {
+        return self.populate('memberships.group', function(err3, groups) {
           var profile;
           console.log('groups:', self.memberships, groups, '\n\n');
           if (err3) {

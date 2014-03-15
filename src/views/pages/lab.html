@@ -17,12 +17,14 @@
 
 	<div class="box userList">
 		<div class="head">
-			Membros: {{ group.memberships.count }}
+			Membros: {{ group.members.count }}
 		</div>
 		<ul class="body">
-			{% for membership in group.memberships.docs %}
-				<li>{{ userMacros.renderUser(membership.member) }}</li>
+			{% for member in group.members.docs %}
+				<li>{{ userMacros.renderUser(member) }}</li>
 			{% endfor %}
+
+			<br>
 
 			<input type="text" id="trust" />
 			<button id="istilldidnt" data-post-href="{{ getPageUrl('ApiLabAddUser',{labId:group._id,userId:user.id}) }}">Add myself</button>

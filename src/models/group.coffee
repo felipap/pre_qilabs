@@ -56,13 +56,14 @@ GroupSchema.pre 'save', (next) ->
 GroupSchema.methods.genGroupProfile = (cb) ->
 	User = Resource.model('User')
 	User
-		.find { 'memberships.group': @ }
+		.find { 'memberships.group': @id }
 		.exec (err, docs) =>
 			# Filter for non-member-less memberships, just in case
+			console.log('members', docs)
 			cb(err, _.extend({}, @toJSON(), {
 				members: {
 					count: docs.length
-					docs: docs.slice(20)
+					docs: docs.slice(0,20)
 				}
 			}))
 

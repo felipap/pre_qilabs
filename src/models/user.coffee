@@ -53,7 +53,7 @@ UserSchema = new mongoose.Schema {
 		type: String
 	}]
 	memberships: [{
-		group: { type: String, required: true }
+		group: { type: String, required: true, ref: 'Group' }
 		since: { type: Date, default: Date.now }
 		permission: { type: String, enum: _.values(Group.MembershipTypes), required:true, default:'Moderator' }
 	}]
@@ -507,7 +507,7 @@ UserSchema.methods.genProfile = (cb) ->
 		if err1 then followers = null
 		@getPopulatedFollowing (err2, following) =>
 			if err2 then following = null
-			Group.populate self, {path:'memberships.group'}, (err3, groups) =>
+			self.populate 'memberships.group', (err3, groups) =>
 				console.log('groups:', self.memberships, groups, '\n\n')
 				if err3 then return cb(err3)
 				profile = self.toJSON()

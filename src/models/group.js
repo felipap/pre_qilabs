@@ -58,13 +58,14 @@ GroupSchema.methods.genGroupProfile = function(cb) {
   var User;
   User = Resource.model('User');
   return User.find({
-    'memberships.group': this
+    'memberships.group': this.id
   }).exec((function(_this) {
     return function(err, docs) {
+      console.log('members', docs);
       return cb(err, _.extend({}, _this.toJSON(), {
         members: {
           count: docs.length,
-          docs: docs.slice(20)
+          docs: docs.slice(0, 20)
         }
       }));
     };
