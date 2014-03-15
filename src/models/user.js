@@ -404,7 +404,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     published: {
       $lt: opts.maxDate
     }
-  }).sort('-published').populate('author').limit(opts.limit || 10).exec(HandleLimit(function(err, docs) {
+  }).sort('-published').populate('author').limit(opts.limit || 4).exec(HandleLimit(function(err, docs) {
     if (err) {
       return cb(err);
     }
@@ -421,11 +421,18 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
       }, function(next) {
         return Post.fillComments(docs, next);
       }
-    ], function(err, results) {
-      return cb(err, _.sortBy(results[1].concat(results[0]), function(p) {
-        return p.published;
-      }));
-    });
+    ], HandleLimit(function(err, results) {
+      var all, minDate, p;
+      results = _.filter(results, function(i) {
+        return i;
+      });
+      all = _.sortBy(results[1].concat(results[0]), function(p) {
+        return -p.published;
+      });
+      console.log(all, all.length - 1);
+      minDate = (p = all[all.length - 1]) ? p.published : 0;
+      return cb(err, all, 1 * minDate);
+    }));
   }));
 };
 

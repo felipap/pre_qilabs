@@ -407,7 +407,9 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				});
 				return (
 					React.DOM.div( {className:"postListWrapper"}, 
-						PostForm( {postUrl:this.props.collection.url}),
+						this.props.canPostForm?
+						PostForm( {postUrl:this.props.collection.url})
+						:null,
 						postNodes
 					)
 				);
@@ -444,21 +446,22 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				},
 			'labs/:labId':
 				function (labId) {					
-					this.renderList('/api/labs/'+labId+'/posts');
+					this.renderList('/api/labs/'+labId+'/posts',{canPostForm:true});
 				},
 			'p/:profileId':
 				function () {
-					this.renderList(window.conf.postsRoot);
+					this.renderList(window.conf.postsRoot,{canPostForm:false});
 				},
 			'':
 				function () {
-					this.renderList('/api/me/timeline/posts');
+					this.renderList('/api/me/timeline/posts',{canPostForm:true});
 				},
 		},
 
-		renderList: function (url) {
+		renderList: function (url, opts) {
 			this.postList = new Post.list([], {url:url});
-			React.renderComponent(Post.timelineView({collection:this.postList}),
+			React.renderComponent(Post.timelineView(
+				_.extend(opts,{collection:this.postList})),
 				document.getElementById('postsPlacement'));
 			this.postList.fetch({reset:true});
 		},

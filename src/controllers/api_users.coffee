@@ -14,15 +14,21 @@ module.exports = {
 					(req, res) ->
 						return unless userId = req.paramToObjectId('userId') 
 						# req.logMe("fetched board of user #{req.params.userId}")
-						User.getPostsFromUser userId,
-							{limit:3, skip:5*parseInt(req.query.page)},
-							req.handleErrResult((docs) ->
+						opts = { limit:3 }
+						
+						if parseInt(req.query.maxDate)
+							opts.maxDate = parseInt(req.query.maxDate)
+
+						User.getPostsFromUser userId, opts,
+							req.handleErrResult((docs, minDate=-1) ->
+								console.log('minDate is', minDate)
 								res.endJson {
-									data: docs 
+									minDate: minDate
+									data: docs
 									error: false
-									page: parseInt(req.query.page)
 								}
 							)
+
 				],
 			}
 		},

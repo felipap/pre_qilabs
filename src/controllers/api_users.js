@@ -16,18 +16,25 @@ module.exports = {
       methods: {
         get: [
           required.login, function(req, res) {
-            var userId;
+            var opts, userId;
             if (!(userId = req.paramToObjectId('userId'))) {
               return;
             }
-            return User.getPostsFromUser(userId, {
-              limit: 3,
-              skip: 5 * parseInt(req.query.page)
-            }, req.handleErrResult(function(docs) {
+            opts = {
+              limit: 3
+            };
+            if (parseInt(req.query.maxDate)) {
+              opts.maxDate = parseInt(req.query.maxDate);
+            }
+            return User.getPostsFromUser(userId, opts, req.handleErrResult(function(docs, minDate) {
+              if (minDate == null) {
+                minDate = -1;
+              }
+              console.log('minDate is', minDate);
               return res.endJson({
+                minDate: minDate,
                 data: docs,
-                error: false,
-                page: parseInt(req.query.page)
+                error: false
               });
             }));
           }

@@ -289,7 +289,7 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.find {author:userId, parentPost:null, group:null, published:{$lt:opts.maxDate}}
 		.sort '-published'
 		.populate 'author'
-		.limit opts.limit or 10
+		.limit opts.limit or 4
 		.exec HandleLimit (err, docs) ->
 			return cb(err) if err
 
@@ -304,9 +304,12 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 						.exec next
 				(next) ->
 					Post.fillComments docs, next
-			], (err, results) -> # Merge results and call back
-				cb(err, _.sortBy(results[1].concat(results[0]), (p) -> p.published))
-
+			], HandleLimit (err, results) -> # Merge results and call back
+				results = _.filter(results, (i) -> i)
+				all = _.sortBy(results[1].concat(results[0]), (p) -> -p.published)
+				console.log(all, all.length-1)
+				minDate = if p = all[all.length-1] then p.published else 0
+				cb(err, all, 1*minDate)
 
 ################################################################################
 ## related to Groups ###########################################################
