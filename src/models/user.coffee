@@ -392,20 +392,22 @@ UserSchema.methods.createGroup = (data, cb) ->
 	group.save (err, group) =>
 		console.log(err, group)
 		return cb(err) if err
-		self.addUserToGroup self, group, () ->
+		self.update {$push: {
+			memberships: {
+				member: user
+				permission: Group.MembershipTypes.Moderator
+				group: group.id
+			}
+		}}, () ->
 			cb(null, group)
 			Activity.Trigger(@, Activity.Types.GroupCreated)({group:group, creator:self}, ->)
 
 UserSchema.methods.addUserToGroup = (user, group, cb) ->
 	self = @
 	assertArgs({$isModel:'User'}, {$isModel:'Group'}, '$isCb')
-	# First check for user's own priviledges
-
-	mem = _.findWhere(user.memberships, {group:group.id})
-	if mem
+	if mem = _.findWhere(user.memberships, {group:group.id})
 		return cb()
 	else
-		console.log('Here!')
 		user.update {$push: {
 			memberships: {
 				member: user
@@ -418,20 +420,25 @@ UserSchema.methods.addUserToGroup = (user, group, cb) ->
 				group:group, actor:@, member:user
 			}, ->)
 
+
 UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 	self = @
-	assert _.all([member, group, type, cb]),
-		"Wrong number of arguments supplied to User.addUserToGroup"
-	# First check for user's own priviledges
+	mem = _.findWhere(user.memberships, {group:group.id})
+	if mem
+		return cb()
+	else
+		user.update {$push: {
+			memberships: {
+				member: user
+				permission: Group.MembershipTypes.Member
+				group: group.id
+			}
+		}}, (err) =>
+			cb(err, mem)
+			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
+				group:group, actor:@, member:user
+			}, ->)
 
-	# for membership in self.memberships
-	Group.Membership.find {group: group, member: @}, (err, mship) ->
-		return cb(err) if err
-		return cb(error:true, name:'Unauthorized') if not mship
-			# mship.type isnt Group.MembershipTypes.Moderator
-		# req.user is Moderator → good to go
-		Group.Membership.remove {group: group, member: member}, (err, mem) ->
-			return cb(err, mem) if err
 
 ################################################################################
 ## related to the Posting ######################################################

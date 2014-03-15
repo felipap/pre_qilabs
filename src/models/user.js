@@ -543,7 +543,15 @@ UserSchema.methods.createGroup = function(data, cb) {
       if (err) {
         return cb(err);
       }
-      return self.addUserToGroup(self, group, function() {
+      return self.update({
+        $push: {
+          memberships: {
+            member: user,
+            permission: Group.MembershipTypes.Moderator,
+            group: group.id
+          }
+        }
+      }, function() {
         cb(null, group);
         return Activity.Trigger(this, Activity.Types.GroupCreated)({
           group: group,
@@ -562,13 +570,11 @@ UserSchema.methods.addUserToGroup = function(user, group, cb) {
   }, {
     $isModel: 'Group'
   }, '$isCb');
-  mem = _.findWhere(user.memberships, {
+  if (mem = _.findWhere(user.memberships, {
     group: group.id
-  });
-  if (mem) {
+  })) {
     return cb();
   } else {
-    console.log('Here!');
     return user.update({
       $push: {
         memberships: {
@@ -591,31 +597,33 @@ UserSchema.methods.addUserToGroup = function(user, group, cb) {
 };
 
 UserSchema.methods.removeUserFromGroup = function(member, group, type, cb) {
-  var self;
+  var mem, self;
   self = this;
-  assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
-  return Group.Membership.find({
-    group: group,
-    member: this
-  }, function(err, mship) {
-    if (err) {
-      return cb(err);
-    }
-    if (!mship) {
-      return cb({
-        error: true,
-        name: 'Unauthorized'
-      });
-    }
-    return Group.Membership.remove({
-      group: group,
-      member: member
-    }, function(err, mem) {
-      if (err) {
-        return cb(err, mem);
-      }
-    });
+  mem = _.findWhere(user.memberships, {
+    group: group.id
   });
+  if (mem) {
+    return cb();
+  } else {
+    return user.update({
+      $push: {
+        memberships: {
+          member: user,
+          permission: Group.MembershipTypes.Member,
+          group: group.id
+        }
+      }
+    }, (function(_this) {
+      return function(err) {
+        cb(err, mem);
+        return Activity.Trigger(_this, Activity.Types.GroupMemberAdded)({
+          group: group,
+          actor: _this,
+          member: user
+        }, function() {});
+      };
+    })(this));
+  }
 };
 
 
