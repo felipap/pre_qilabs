@@ -14,7 +14,7 @@ module.exports = {
 					(req, res) ->
 						return unless userId = req.paramToObjectId('userId') 
 						# req.logMe("fetched board of user #{req.params.userId}")
-						opts = { limit:3 }
+						opts = { limit: 5 }
 						
 						if parseInt(req.query.maxDate)
 							opts.maxDate = parseInt(req.query.maxDate)

@@ -76,20 +76,26 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			constructor: function (models, options) {
 				Backbone.Collection.apply(this, arguments);
 				this.url = options.url || app.postsRoot || '/api/me/timeline/posts';
+				this.EOF = false;
 			},
 			comparator: function (i) {
 				return -1*new Date(i.get('published'));
 			},
 			parse: function (response, options) {
+				if (response.minDate < 1) {
+					this.EOF = true;
+					this.trigger('endOfStream');
+				}
 				this.minDate = response.minDate;
 				var data = Backbone.Collection.prototype.parse.call(this, response.data, options);
 				// Filter for non-null results.
 				return _.filter(data, function (i) { return !!i; });
 			},
 			tryFetchMore: function () {
-				if (this.minDate <= 0)
+				if (this.minDate < 1) {
 					return;
-				console.log('try fetch more')
+				}
+				console.log('try fetch more', this.minDate)
 				this.fetch({data: {maxDate:this.minDate+1}, remove:false});
 			},
 		});
@@ -396,7 +402,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				function update () {
 					this.forceUpdate(function(){});
 				}
-				this.props.collection.on('add remove reset', update.bind(this));
+				this.props.collection.on('add remove reset endOfStream', update.bind(this));
 			},
 			// changeOptions: "change:name",
 			render: function () {
@@ -410,7 +416,14 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 						this.props.canPostForm?
 						PostForm( {postUrl:this.props.collection.url})
 						:null,
-						postNodes
+						postNodes,
+						
+							this.props.collection.EOF?
+							React.DOM.div( {className:"streamEnd"}, 
+								"OPS! Nenhuma outra atividade encontrada. =O"
+							)
+							:null
+						
 					)
 				);
 			},

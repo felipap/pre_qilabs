@@ -21,7 +21,7 @@ module.exports = {
               return;
             }
             opts = {
-              limit: 3
+              limit: 5
             };
             if (parseInt(req.query.maxDate)) {
               opts.maxDate = parseInt(req.query.maxDate);

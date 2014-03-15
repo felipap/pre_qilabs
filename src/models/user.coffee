@@ -286,7 +286,7 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		opts.maxDate = Date.now()
 
 	Post
-		.find {author:userId, parentPost:null, group:null, published:{$lt:opts.maxDate}}
+		.find {author:userId, parentPost:null, group:null, published:{$lt:opts.maxDate-1}}
 		.sort '-published'
 		.populate 'author'
 		.limit opts.limit or 4

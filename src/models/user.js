@@ -402,7 +402,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     parentPost: null,
     group: null,
     published: {
-      $lt: opts.maxDate
+      $lt: opts.maxDate - 1
     }
   }).sort('-published').populate('author').limit(opts.limit || 4).exec(HandleLimit(function(err, docs) {
     if (err) {
