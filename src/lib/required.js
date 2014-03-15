@@ -45,13 +45,9 @@ var permissions = {
 		},
 		selfIsModerator: function (labId, req, res, callback) {
 			var mem = _.findWhere(req.user.memberships,{group:''+labId});
-			console.log('I have been here checked')
-			console.log('I have been here checked')
+			if (mem.permission === Group.MembershipTypes.Moderator) {
 				callback();
-			if (doc.type === Group.MembershipTypes.Moderator) {
-				console.log('hwat?')
 			} else {
-				console.log('uye')
 				return callback({ permission:"labs.selfIsModerator" });
 			}
 		},

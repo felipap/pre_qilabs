@@ -543,15 +543,7 @@ UserSchema.methods.createGroup = function(data, cb) {
       if (err) {
         return cb(err);
       }
-      return self.update({
-        $push: {
-          memberships: {
-            group: group.id,
-            type: Group.MembershipTypes.Moderator
-          }
-        }
-      }, function(err, doc) {
-        console.log('update result', arguments);
+      return self.addUserToGroup(self, group, function() {
         cb(null, group);
         return Activity.Trigger(this, Activity.Types.GroupCreated)({
           group: group,
@@ -581,8 +573,8 @@ UserSchema.methods.addUserToGroup = function(user, group, cb) {
       $push: {
         memberships: {
           member: user,
-          type: Group.MembershipTypes.Member,
-          group: group
+          permission: Group.MembershipTypes.Member,
+          group: group.id
         }
       }
     }, (function(_this) {

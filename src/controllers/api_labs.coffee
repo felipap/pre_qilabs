@@ -79,7 +79,7 @@ module.exports = {
 			permissions: [required.labs.selfIsModerator('labId')],
 			name: 'ApiLabAddUser'
 			post: (req, res) ->
-				console.log('oi')
+				return unless labId = req.paramToObjectId('labId')
 				return unless userId = req.paramToObjectId('userId')
 				Group.findOne {_id: labId}, req.handleErrResult((group) ->
 					User.findOne {_id: userId}, req.handleErrResult((user) ->

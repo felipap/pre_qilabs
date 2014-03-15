@@ -102,8 +102,10 @@ module.exports = {
       permissions: [required.labs.selfIsModerator('labId')],
       name: 'ApiLabAddUser',
       post: function(req, res) {
-        var userId;
-        console.log('oi');
+        var labId, userId;
+        if (!(labId = req.paramToObjectId('labId'))) {
+          return;
+        }
         if (!(userId = req.paramToObjectId('userId'))) {
           return;
         }

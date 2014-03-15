@@ -392,11 +392,7 @@ UserSchema.methods.createGroup = (data, cb) ->
 	group.save (err, group) =>
 		console.log(err, group)
 		return cb(err) if err
-		self.update {$push: { memberships: {
-			group: group.id,
-			type: Group.MembershipTypes.Moderator
-		}}}, (err, doc) ->
-			console.log 'update result', arguments
+		self.addUserToGroup self, group, () ->
 			cb(null, group)
 			Activity.Trigger(@, Activity.Types.GroupCreated)({group:group, creator:self}, ->)
 
@@ -413,8 +409,8 @@ UserSchema.methods.addUserToGroup = (user, group, cb) ->
 		user.update {$push: {
 			memberships: {
 				member: user
-				type: Group.MembershipTypes.Member
-				group: group
+				permission: Group.MembershipTypes.Member
+				group: group.id
 			}
 		}}, (err) =>
 			cb(err, mem)
