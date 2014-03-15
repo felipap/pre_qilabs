@@ -213,7 +213,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 											</a>
 										</div>
 									</td><td className="commentInputTd">
-										<textarea className="commentInput" ref="input" type="text" placeholder="Faça um comentário sobre essa publicação.">
+										<textarea required="required" className="commentInput" ref="input" type="text" placeholder="Faça um comentário sobre essa publicação.">
 										</textarea>
 									</td><td>
 										<button data-action="send-comment" onClick={this.handleSubmit}>Enviar</button>

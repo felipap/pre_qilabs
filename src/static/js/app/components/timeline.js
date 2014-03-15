@@ -213,7 +213,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 											)
 										)
 									),React.DOM.td( {className:"commentInputTd"}, 
-										React.DOM.textarea( {className:"commentInput", ref:"input", type:"text", placeholder:"Faça um comentário sobre essa publicação."}
+										React.DOM.textarea( {required:"required", className:"commentInput", ref:"input", type:"text", placeholder:"Faça um comentário sobre essa publicação."}
 										)
 									),React.DOM.td(null, 
 										React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
