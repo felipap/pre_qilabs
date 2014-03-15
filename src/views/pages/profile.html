@@ -88,15 +88,15 @@
 	
 	<div class="box labList">
 		<div class="head">
-			Laboratórios: <div class="right">{{ profile.groups.length }}</div>
+			Laboratórios: <div class="right">{{ profile.groups.count }}</div>
 		</div>
 		<ul class="body groupList">
-			{% if profile.groups.length %}
-				{% for group in profile.groups %}
+			{% if profile.groups.docs.length %}
+				{% for group in profile.groups.docs %}
 					<li><a href="{{ group.path }}">{{ group.name }}</a></li>
 				{% endfor %}
 			{% else %}
-				<div class="emptyBoxMsg">Você não está em nenhum laboratório.</div>
+				<div class="emptyBoxMsg">{{profile.name.split(' ')[0]}} não está em nenhum laboratório.</div>
 			{% endif %}
 		</ul>
 	</div>
