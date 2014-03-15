@@ -21,6 +21,7 @@ module.exports = {
 
 						User.getPostsFromUser userId, opts,
 							req.handleErrResult((docs, minDate=-1) ->
+								console.log(minDate)
 								res.endJson {
 									minDate: minDate
 									data: docs

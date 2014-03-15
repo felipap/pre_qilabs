@@ -296,23 +296,26 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.exec HandleLimit (err, docs) ->
 			return cb(err) if err
 
+			minPostDate = 1*(docs.length and docs[docs.length-1].published) or 0
+
 			async.parallel [ # Fill post comments and get activities in that time.
 				(next) ->
 					Activity
 						.find {actor:userId, group:null, updated: {
 							$lt:opts.maxDate,
-							$gt:(docs.length && docs[docs.length-1].published) or new Date(0)}
+							$gt: minPostDate}
 						}
 						.populate 'resource actor target object'
 						.exec next
 				(next) ->
 					Post.fillComments docs, next
 			], HandleLimit (err, results) -> # Merge results and call back
-				results = _.filter(results, (i) -> i)
-				all = _.sortBy(results[1].concat(results[0]), (p) -> -p.published)
-				console.log(all, all.length-1)
-				minDate = if p = all[all.length-1] then p.published else 0
-				cb(err, all, 1*minDate)
+				activities = results[0]
+				posts = results[1]
+				# Merge and sort by date.
+				all = _.sortBy(posts.concat(activities), (p) -> -p.published)
+				# If no posts were found, minDate is 0
+				cb(err, all, minPostDate)
 
 ################################################################################
 ## related to Groups ###########################################################

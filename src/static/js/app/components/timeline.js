@@ -95,7 +95,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				if (this.minDate < 1) {
 					return;
 				}
-				this.fetch({data: {maxDate:this.minDate+1}, remove:false});
+				this.fetch({data: {maxDate:this.minDate-1}, remove:false});
 			},
 		});
 

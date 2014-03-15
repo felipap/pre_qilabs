@@ -408,9 +408,11 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
       $lt: opts.maxDate - 1
     }
   }).sort('-published').populate('author').limit(opts.limit || 4).exec(HandleLimit(function(err, docs) {
+    var minPostDate;
     if (err) {
       return cb(err);
     }
+    minPostDate = (docs.length && docs[docs.length - 1].published) || 0;
     return async.parallel([
       function(next) {
         return Activity.find({
@@ -418,23 +420,20 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
           group: null,
           updated: {
             $lt: opts.maxDate,
-            $gt: (docs.length && docs[docs.length - 1].published) || new Date(0)
+            $gt: minPostDate
           }
         }).populate('resource actor target object').exec(next);
       }, function(next) {
         return Post.fillComments(docs, next);
       }
     ], HandleLimit(function(err, results) {
-      var all, minDate, p;
-      results = _.filter(results, function(i) {
-        return i;
-      });
-      all = _.sortBy(results[1].concat(results[0]), function(p) {
+      var activities, all, posts;
+      activities = results[0];
+      posts = results[1];
+      all = _.sortBy(posts.concat(activities), function(p) {
         return -p.published;
       });
-      console.log(all, all.length - 1);
-      minDate = (p = all[all.length - 1]) ? p.published : 0;
-      return cb(err, all, 1 * minDate);
+      return cb(err, all, minPostDate);
     }));
   }));
 };
