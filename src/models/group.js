@@ -104,8 +104,8 @@ GroupSchema.methods.genGroupProfile = function(cb) {
     return function(err, docs) {
       return cb(err, _.extend({}, _this.toJSON(), {
         memberships: {
-          count: docs.length,
-          docs: docs.slice(20)
+          count: docs.groups.length,
+          docs: docs.groups.slice(20)
         }
       }));
     };

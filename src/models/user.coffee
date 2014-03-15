@@ -53,7 +53,7 @@ UserSchema = new mongoose.Schema {
 	tags:	[{
 		type: String
 	}]
-	groups: [{
+	memberships: [{
 		group: { type: String, required: true }
 		since: { type: Date, default: Date.now }
 		permission: { type: String, enum: _.values(Group.MembershipTypes) }
@@ -428,9 +428,12 @@ UserSchema.methods.addUserToGroup = (member, group, cb) ->
 				}, ->)
 
 UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
+	self = @
 	assert _.all([member, group, type, cb]),
 		"Wrong number of arguments supplied to User.addUserToGroup"
 	# First check for user's own priviledges
+
+	# for membership in self.groups
 	Group.Membership.find {group: group, member: @}, (err, mship) ->
 		return cb(err) if err
 		return cb(error:true, name:'Unauthorized') if not mship

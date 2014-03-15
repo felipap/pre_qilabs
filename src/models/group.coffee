@@ -88,8 +88,8 @@ GroupSchema.methods.genGroupProfile = (cb) ->
 			# Filter for non-member-less memberships, just in case
 			cb(err, _.extend({}, @toJSON(), {
 				memberships: {
-					count: docs.length
-					docs: docs.slice(20)
+					count: docs.groups.length
+					docs: docs.groups.slice(20)
 				}
 			}))
 

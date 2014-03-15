@@ -51,7 +51,7 @@ UserSchema = new mongoose.Schema({
       type: String
     }
   ],
-  groups: [
+  memberships: [
     {
       group: {
         type: String,
@@ -613,6 +613,8 @@ UserSchema.methods.addUserToGroup = function(member, group, cb) {
 };
 
 UserSchema.methods.removeUserFromGroup = function(member, group, type, cb) {
+  var self;
+  self = this;
   assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
   return Group.Membership.find({
     group: group,
