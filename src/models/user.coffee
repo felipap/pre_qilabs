@@ -16,12 +16,14 @@ async = require 'async'
 assert = require 'assert'
 
 Resource = mongoose.model 'Resource'
+
+Activity = Resource.model 'Activity'
+Notification = mongoose.model 'Notification'
+
 Inbox 	= mongoose.model 'Inbox'
 Follow 	= Resource.model 'Follow'
 Group 	= Resource.model 'Group'
 Post 	= Resource.model 'Post'
-Activity = Resource.model 'Activity'
-Notification = mongoose.model 'Notification'
 
 ObjectId = mongoose.Types.ObjectId
 
@@ -47,12 +49,21 @@ UserSchema = new mongoose.Schema {
 		badges: 		[]
 	},
 
+
+	tags:	[{
+		type: String
+	}]
+	groups: [{
+		group: { type: String, required: true }
+		since: { type: Date, default: Date.now }
+		permission: { type: String, enum: _.values(Group.MembershipTypes) }
+	}]
+
+
 	# I don't know what to do with these (2-mar-14)
+	followingTags: 	[]
 	lastUpdate:		{ type: Date, default: Date(0) }
 	notifiable:		{ type: Boolean, default: true }
-	tags:			Array
-	followingTags: 	[]
-
 }, {
 	toObject:	{ virtuals: true }
 	toJSON: 	{ virtuals: true }
@@ -201,11 +212,33 @@ HandleLimit = (func) ->
 		docs = _.filter(_docs, (e) -> e)
 		func(err,docs)
 
+UserSchema.statics.reInbox = (user, callback) ->
+
+	# Group.Membership.find
+
+	user.getFollowingIds (err, followingIds=[]) ->		
+
+		async.mapLimit followingIds.concat(user.id), 3,((fId, next) ->
+
+			Activity.find {actor:fId}, (err, activities=[]) ->
+				if err then console.log(1, err)
+				Post.find {author:fId}, (err, posts=[]) ->
+					if err then console.log(2, err)
+					next(null, posts.concat(activities))
+
+			), (err, posts) ->
+				console.log('err', err, posts)
+
+		# for following in followingIds
+		# Inbox.remove({recipient: user})
 ###
 # Behold.
 ###
 UserSchema.methods.getTimeline = (_opts, callback) ->
 	# assertArgs({$contains:'limit'}, '$isCb')
+	self = @
+
+	User.reInbox(@, () ->)
 
 	opts = _.extend({
 		limit: 10,
@@ -221,7 +254,7 @@ UserSchema.methods.getTimeline = (_opts, callback) ->
 	mergeNonInboxedPosts = (minDate, ips) => # ips => Inboxed PostS
 		# Get all "followships" created after @minDate.
 		Follow
-			.find { follower:@, dateBegin:{$gt:minDate} }
+			.find { follower:self, dateBegin:{$gt:minDate} }
 			.exec (err, follows) =>
 				return callback(err) if err
 				# Get posts from these users created before "followship" or maxDate
@@ -258,13 +291,14 @@ UserSchema.methods.getTimeline = (_opts, callback) ->
 
 	# Get inboxed posts older than the maxDate determined by the user.
 	Inbox
-		.find { recipient:@id, dateSent:{ $lt:opts.maxDate }}
+		.find { recipient:self.id, dateSent:{ $lt:opts.maxDate }}
 		.sort '-dateSent'
 		.populate 'resource'
 		.limit opts.limit
-		.exec HandleLimit (err, docs) =>
+		.exec (err, docs) =>
 			return cb(err) if err
-			# Pluck resources from inbox docs. Remove undefineds and nulls.
+
+			# Pluck resources from inbox docs. Remove null (deleted) resources.
 			posts = _.pluck(docs, 'resource').filter((i)->i)
 
 			###
@@ -272,17 +306,15 @@ UserSchema.methods.getTimeline = (_opts, callback) ->
 			# Non-inboxed posts must be younger than that, so that at least opts.limit
 			# posts are created. 
 			###
-			if posts.length is opts.limit
+			if not posts.length or not docs[docs.length-1]
+				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
+				oldestPostDate = 0
+			else
 				# There are at least opts.limit inboxed posts. 
 				# Then limit non-inboxed posts to be younger than oldest post here.
 				oldestPostDate = posts[posts.length-1].published
-			else
-				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
-				oldestPostDate = new Date(0)
-			# try
+
 			mergeNonInboxedPosts(oldestPostDate, posts)
-			# catch e
-			# 	cb(e)
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	if not opts.maxDate
@@ -314,7 +346,6 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 				posts = results[1]
 				# Merge and sort by date.
 				all = _.sortBy(posts.concat(activities), (p) -> -p.published)
-				# If no posts were found, minDate is 0
 				cb(err, all, minPostDate)
 
 ################################################################################
@@ -334,10 +365,11 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 			return cb(err) if err
 
 			console.log('docs', docs)
+			minPostDate = (docs.length && docs[docs.length-1].published) or 0
 
 			async.parallel [ # Fill post comments and get activities in that time.
 				(next) ->
-					minDate = (docs.length && docs[docs.length-1].published) or new Date(0)
+					minDate = minPostDate
 					Activity
 						.find {group:group, updated: {
 							$lt:opts.maxDate, $gt:minDate}
@@ -346,8 +378,12 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 						.exec next
 				(next) ->
 					Post.fillComments docs, next
-			], (err, results) -> # Merge results and call back
-				cb(err, _.sortBy(results[1].concat(results[0]), (p) -> p.published))
+			], (err, results) ->
+				activities = results[0]
+				posts = results[1]
+				# merge results
+				all = _.sortBy(results[1].concat(results[0]), (p) -> p.published)
+				cb(err, all, minPostDate)
 
 UserSchema.methods.createGroup = (data, cb) ->
 	group = new Group {
@@ -363,7 +399,7 @@ UserSchema.methods.createGroup = (data, cb) ->
 			cb(err, group)
 			Activity.Trigger(@, Activity.Types.GroupCreated)({group:group, creator:@}, ->)
 
-UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
+UserSchema.methods.addUserToGroup = (member, group, cb) ->
 	assert _.all([member, group, type, cb]),
 		"Wrong number of arguments supplied to User.addUserToGroup"
 	# First check for user's own priviledges
@@ -377,12 +413,12 @@ UserSchema.methods.addUserToGroup = (member, group, type, cb) ->
 			console.log(err) if err
 			return cb(err, mem) if err
 			if mem
-				mem.type = type
+				mem.type = Group.Membership.Types.Member
 				mem.save (err) -> cb(err, mem)
 			else
 				mem = new Group.Membership {
 					member: member
-					type: type
+					type: Group.Membership.Types.Member
 					group: group
 				}
 			mem.save (err) =>

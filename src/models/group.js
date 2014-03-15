@@ -37,9 +37,10 @@ GroupSchema = new Resource.Schema({
   profile: {
     description: String
   },
-  permission: {
+  visibility: {
     type: String,
-    "default": Permissions.Public
+    "default": Permissions.Public,
+    "enum": _.values(Permissions)
   }
 });
 
@@ -97,22 +98,21 @@ GroupSchema.methods.addUser = function(user, type, cb) {
 };
 
 GroupSchema.methods.genGroupProfile = function(cb) {
-  return Membership.find({
-    group: this
-  }).populate('member').limit(20).exec((function(_this) {
+  return User.find({
+    'groups.group': this
+  }).exec((function(_this) {
     return function(err, docs) {
-      docs = _.filter(docs, function(i) {
-        return i.member;
-      });
       return cb(err, _.extend({}, _this.toJSON(), {
         memberships: {
           count: docs.length,
-          docs: docs
+          docs: docs.slice(20)
         }
       }));
     };
   })(this));
 };
+
+GroupSchema.statics.MembershipTypes = MembershipTypes;
 
 MembershipSchema.statics.Types = MembershipTypes;
 

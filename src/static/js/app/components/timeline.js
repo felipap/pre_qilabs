@@ -161,7 +161,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 							comment.data.unescapedBody,
 							(window.user && window.user.id === comment.author.id)?
 								React.DOM.div( {className:"optionBtns"}, 
-									React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash, 'data-toggle':"tooltip", title:"Remover Comentário", 'data-placement':"bottom"}, 
+									React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
 										React.DOM.i( {className:"icon-trash"})
 									)
 								)
@@ -258,7 +258,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 			render: function () {
 				return (
-					React.DOM.div(null, 
+					React.DOM.div( {className:"commentSection"}, 
 						CommentListView( {collection:this.props.model.commentList} ),
 						
 							window.user?
@@ -345,12 +345,12 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 
-		var PostWrapperView = React.createClass({displayName: 'PostWrapperView',
+		var StreamItemView = React.createClass({displayName: 'StreamItemView',
 			render: function () {
 				var postType = this.props.model.get('__t');
 				// console.log('type', postType, this.props.model.attributes)
 				return (
-					React.DOM.div( {className:"postWrapper"}, 
+					React.DOM.div( {className:"streamItemWrapper"}, 
 						
 							(postType==='Post')?
 							PostView( {model:this.props.model} )
@@ -408,7 +408,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			render: function () {
 				var postNodes = this.props.collection.map(function (post) {
 					return (
-						PostWrapperView( {model:post} )
+						StreamItemView( {model:post} )
 					);
 				});
 				return (
@@ -433,7 +433,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			item: PostItem,
 			list: PostList,
 			timelineView: TimelineView,
-			postView: PostWrapperView,
+			postView: StreamItemView,
 		};
 	})();
 

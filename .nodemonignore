@@ -1,3 +1,5 @@
 
 src/static/
+src/controllers/*.coffee
+src/**/*.coffee
 node_modules/**

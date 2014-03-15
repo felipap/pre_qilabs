@@ -23,7 +23,7 @@ var permissions = {
 				
 				res.locals.lab = group;
 				
-				if ( 1|| group.permission === Group.Permissions.Public) {
+				if ( 1|| group.visibility === Group.Permissions.Public) {
 					callback();
 				} else {
 					Group.Membership.findOne({

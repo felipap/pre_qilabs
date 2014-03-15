@@ -161,7 +161,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 							{comment.data.unescapedBody}
 							{(window.user && window.user.id === comment.author.id)?
 								<div className="optionBtns">
-									<button data-action="remove-post" onClick={this.onClickTrash} data-toggle="tooltip" title="Remover Comentário" data-placement="bottom">
+									<button data-action="remove-post" onClick={this.onClickTrash}>
 										<i className="icon-trash"></i>
 									</button>
 								</div>
@@ -258,7 +258,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 			render: function () {
 				return (
-					<div>
+					<div className="commentSection">
 						<CommentListView collection={this.props.model.commentList} />
 						{
 							window.user?
@@ -345,12 +345,12 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 
-		var PostWrapperView = React.createClass({
+		var StreamItemView = React.createClass({
 			render: function () {
 				var postType = this.props.model.get('__t');
 				// console.log('type', postType, this.props.model.attributes)
 				return (
-					<div className="postWrapper">
+					<div className="streamItemWrapper">
 						{
 							(postType==='Post')?
 							<PostView model={this.props.model} />
@@ -408,7 +408,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			render: function () {
 				var postNodes = this.props.collection.map(function (post) {
 					return (
-						<PostWrapperView model={post} />
+						<StreamItemView model={post} />
 					);
 				});
 				return (
@@ -433,7 +433,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			item: PostItem,
 			list: PostList,
 			timelineView: TimelineView,
-			postView: PostWrapperView,
+			postView: StreamItemView,
 		};
 	})();
 

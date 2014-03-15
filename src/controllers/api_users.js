@@ -21,7 +21,7 @@ module.exports = {
               return;
             }
             opts = {
-              limit: 5
+              limit: 10
             };
             if (parseInt(req.query.maxDate)) {
               opts.maxDate = parseInt(req.query.maxDate);
@@ -33,8 +33,7 @@ module.exports = {
               console.log(minDate);
               return res.endJson({
                 minDate: minDate,
-                data: docs,
-                error: false
+                data: docs
               });
             }));
           }

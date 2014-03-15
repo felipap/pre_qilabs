@@ -109,7 +109,7 @@ module.exports = {
       get: function(req, res) {
         var opts;
         opts = {
-          limit: 5
+          limit: 10
         };
         if (parseInt(req.query.maxDate)) {
           opts.maxDate = parseInt(req.query.maxDate);
@@ -120,8 +120,7 @@ module.exports = {
           }
           return res.endJson({
             minDate: minDate,
-            data: docs,
-            error: false
+            data: docs
           });
         }));
       }

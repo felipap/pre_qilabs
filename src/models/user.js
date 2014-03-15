@@ -17,6 +17,10 @@ assert = require('assert');
 
 Resource = mongoose.model('Resource');
 
+Activity = Resource.model('Activity');
+
+Notification = mongoose.model('Notification');
+
 Inbox = mongoose.model('Inbox');
 
 Follow = Resource.model('Follow');
@@ -24,10 +28,6 @@ Follow = Resource.model('Follow');
 Group = Resource.model('Group');
 
 Post = Resource.model('Post');
-
-Activity = Resource.model('Activity');
-
-Notification = mongoose.model('Notification');
 
 ObjectId = mongoose.Types.ObjectId;
 
@@ -46,6 +46,28 @@ UserSchema = new mongoose.Schema({
     avatarUrl: '',
     badges: []
   },
+  tags: [
+    {
+      type: String
+    }
+  ],
+  groups: [
+    {
+      group: {
+        type: String,
+        required: true
+      },
+      since: {
+        type: Date,
+        "default": Date.now
+      },
+      permission: {
+        type: String,
+        "enum": _.values(Group.MembershipTypes)
+      }
+    }
+  ],
+  followingTags: [],
   lastUpdate: {
     type: Date,
     "default": Date(0)
@@ -53,9 +75,7 @@ UserSchema = new mongoose.Schema({
   notifiable: {
     type: Boolean,
     "default": true
-  },
-  tags: Array,
-  followingTags: []
+  }
 }, {
   toObject: {
     virtuals: true
@@ -292,13 +312,48 @@ HandleLimit = function(func) {
   };
 };
 
+UserSchema.statics.reInbox = function(user, callback) {
+  return user.getFollowingIds(function(err, followingIds) {
+    if (followingIds == null) {
+      followingIds = [];
+    }
+    return async.mapLimit(followingIds.concat(user.id), 3, (function(fId, next) {
+      return Activity.find({
+        actor: fId
+      }, function(err, activities) {
+        if (activities == null) {
+          activities = [];
+        }
+        if (err) {
+          console.log(1, err);
+        }
+        return Post.find({
+          author: fId
+        }, function(err, posts) {
+          if (posts == null) {
+            posts = [];
+          }
+          if (err) {
+            console.log(2, err);
+          }
+          return next(null, posts.concat(activities));
+        });
+      });
+    }), function(err, posts) {
+      return console.log('err', err, posts);
+    });
+  });
+};
+
 
 /*
  * Behold.
  */
 
 UserSchema.methods.getTimeline = function(_opts, callback) {
-  var mergeNonInboxedPosts, opts;
+  var mergeNonInboxedPosts, opts, self;
+  self = this;
+  User.reInbox(this, function() {});
   opts = _.extend({
     limit: 10
   }, _opts);
@@ -314,7 +369,7 @@ UserSchema.methods.getTimeline = function(_opts, callback) {
     return function(minDate, ips) {
       var onGetNonInboxedPosts;
       Follow.find({
-        follower: _this,
+        follower: self,
         dateBegin: {
           $gt: minDate
         }
@@ -367,11 +422,11 @@ UserSchema.methods.getTimeline = function(_opts, callback) {
     };
   })(this);
   return Inbox.find({
-    recipient: this.id,
+    recipient: self.id,
     dateSent: {
       $lt: opts.maxDate
     }
-  }).sort('-dateSent').populate('resource').limit(opts.limit).exec(HandleLimit((function(_this) {
+  }).sort('-dateSent').populate('resource').limit(opts.limit).exec((function(_this) {
     return function(err, docs) {
       var oldestPostDate, posts;
       if (err) {
@@ -386,14 +441,14 @@ UserSchema.methods.getTimeline = function(_opts, callback) {
       			 * Non-inboxed posts must be younger than that, so that at least opts.limit
       			 * posts are created.
        */
-      if (posts.length === opts.limit) {
-        oldestPostDate = posts[posts.length - 1].published;
+      if (!posts.length || !docs[docs.length - 1]) {
+        oldestPostDate = 0;
       } else {
-        oldestPostDate = new Date(0);
+        oldestPostDate = posts[posts.length - 1].published;
       }
       return mergeNonInboxedPosts(oldestPostDate, posts);
     };
-  })(this)));
+  })(this));
 };
 
 UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
@@ -412,7 +467,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
     if (err) {
       return cb(err);
     }
-    minPostDate = (docs.length && docs[docs.length - 1].published) || 0;
+    minPostDate = 1 * (docs.length && docs[docs.length - 1].published) || 0;
     return async.parallel([
       function(next) {
         return Activity.find({
@@ -449,14 +504,16 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
       $lt: opts.maxDate
     }
   }).sort('-published').limit(opts.limit || 10).populate('author').exec(HandleLimit(function(err, docs) {
+    var minPostDate;
     if (err) {
       return cb(err);
     }
     console.log('docs', docs);
+    minPostDate = (docs.length && docs[docs.length - 1].published) || 0;
     return async.parallel([
       function(next) {
         var minDate;
-        minDate = (docs.length && docs[docs.length - 1].published) || new Date(0);
+        minDate = minPostDate;
         return Activity.find({
           group: group,
           updated: {
@@ -468,9 +525,13 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
         return Post.fillComments(docs, next);
       }
     ], function(err, results) {
-      return cb(err, _.sortBy(results[1].concat(results[0]), function(p) {
+      var activities, all, posts;
+      activities = results[0];
+      posts = results[1];
+      all = _.sortBy(results[1].concat(results[0]), function(p) {
         return p.published;
-      }));
+      });
+      return cb(err, all, minPostDate);
     });
   }));
 };
@@ -500,7 +561,7 @@ UserSchema.methods.createGroup = function(data, cb) {
   })(this));
 };
 
-UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
+UserSchema.methods.addUserToGroup = function(member, group, cb) {
   assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
   return Group.Membership.findOne({
     group: group,
@@ -527,14 +588,14 @@ UserSchema.methods.addUserToGroup = function(member, group, type, cb) {
           return cb(err, mem);
         }
         if (mem) {
-          mem.type = type;
+          mem.type = Group.Membership.Types.Member;
           mem.save(function(err) {
             return cb(err, mem);
           });
         } else {
           mem = new Group.Membership({
             member: member,
-            type: type,
+            type: Group.Membership.Types.Member,
             group: group
           });
         }

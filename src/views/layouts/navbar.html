@@ -7,7 +7,7 @@
 			var icons = ['flask', 'bolt', 'puzzle', 'rocket', 'bulb'];
 			document.write('<i class="icon-'+icons[Math.floor(icons.length*Math.random())]+'"></i>');
 			</script>
-			QI Labs.org<!--  <sup class="version">{{ app.semantic_version }}</sup> -->
+			QI Labs.org<!-- <sup style="font-family: 'Open Sans'">α</sup> -->
 		</a>
 <!-- 
 		<ul>
@@ -54,8 +54,7 @@
 			<div class="separator"></div>
 		 	<li class="menu-dd" class="dropdown">
 			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle">
-					{{ user.name }}
-					<div class="avatarDd" style="background-image: url('{{ user.avatarUrl }}')">
+					{{ user.name }} &nbsp;<div class="avatarDd" style="background-image: url('{{ user.avatarUrl }}')">
 					</div>
 					<i></i>
 					<b class="caret"></b>

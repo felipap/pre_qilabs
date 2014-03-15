@@ -39,7 +39,7 @@ GroupSchema = new Resource.Schema {
 	profile:{
 		description:	String
 	}
-	permission:			{ type:String, default:Permissions.Public }
+	visibility:			{ type:String, default:Permissions.Public, enum:_.values(Permissions) }
 }
 
 MembershipSchema = new Resource.Schema {
@@ -82,23 +82,21 @@ GroupSchema.methods.addUser = (user, type, cb) ->
 	membership.save(cb)
 
 GroupSchema.methods.genGroupProfile = (cb) ->
-	Membership
-		.find { group: @ }
-		.populate 'member'
-		.limit 20
+	User
+		.find { 'groups.group': @ }
 		.exec (err, docs) =>
 			# Filter for non-member-less memberships, just in case
-			docs = _.filter(docs, (i) -> i.member)
 			cb(err, _.extend({}, @toJSON(), {
 				memberships: {
 					count: docs.length
-					docs: docs
+					docs: docs.slice(20)
 				}
 			}))
 
 ################################################################################
 ## Statics #####################################################################
 
+GroupSchema.statics.MembershipTypes = MembershipTypes
 MembershipSchema.statics.Types = MembershipTypes
 
 GroupSchema.statics.Types = Types

@@ -232,7 +232,7 @@ body {
 		height: 30px;
 	}
 	
-	.postWrapper .msgBody,
+	.streamItemWrapper .msgBody,
 	.commentInput {
 		vertical-align: middle;
 		display: inline-block;
@@ -244,45 +244,15 @@ body {
 		// .transition(all, .2s, linear);
 	}
 
-	.postWrapper {
+	.streamItemWrapper {
 		position: relative;
 		margin-bottom: 15px;
-		background: white;
-		border: 1px solid #DDD;
-
-		.optionBtns {
-			float: right;
-			display: inline-block;
-			position: absolute;
-			right: 5px; top: 0px;
-			z-index: 10;
-			
-			.transition(all, .2s, linear);
-			opacity: .5;
-			&:hover {
-				opacity: 1;
-			}
-
-			[data-action=remove-post],
-			[data-action=edit-post] {
-				.full-reset-button;
-				padding-left: 3px;
-				vertical-align: middle;
-				padding-right: 3px;
-				font-size: 105%;
-				font-weight: bolder;
-				color: #888;
-				opacity: .6;
-				&:hover {
-					color: #444;
-				}
-				&:active {
-					outline: none;
-				}
-			}
-		}
 
 		.opMessage {
+
+			background: white;
+			border: 1px solid #DDD;
+			border-bottom: none;
 			padding: 10px;
 
 			.msgHeader {
@@ -337,87 +307,123 @@ body {
 			}
 		}
 
-		.commentListWrapper {
+		.commentSection {
+			border: 1px solid #DDD;
+			background: white;
 
-			.commentWrapper:first-child {
+			.commentListWrapper {
+
+				.commentWrapper:first-child {
+					// border-top: 1px solid #DDD;
+					padding-top: 10px;
+				}
+				.commentWrapper:last-child {
+					padding-bottom: 8px;
+				}
+				.commentWrapper {
+					padding-left: 10px;
+					padding-right: 10px;
+					padding-bottom: 3px;
+					word-wrap: break-word;
+
+					.mediaUser {
+						vertical-align: top;
+						border: 1px solid #DDD;
+					}
+
+					.msgBody {
+						background: white;
+						position: relative;
+						width: 500px;
+					}
+
+					time, [data-time-count] {
+						vertical-align: middle;
+						font-size: 11px;
+						font-style: italic;
+						padding: 0 5px;
+						color: #888;
+						width: 60px;
+					}
+				}
+				.commentWrapper:target {
+					background: yellow;
+				}
+			}
+
+			.commentInputSection {
+				padding: 3px 5px 3px 5px;
 				border-top: 1px solid #DDD;
-				padding-top: 10px;
-			}
-			.commentWrapper:last-child {
-				padding-bottom: 8px;
-			}
-			.commentWrapper {
-				padding-left: 10px;
-				padding-right: 10px;
-				padding-bottom: 3px;
-				word-wrap: break-word;
+				background: #EEE;
 
-				.mediaUser {
+				td {
 					vertical-align: top;
+				}
+
+				td:not(:last-child) {
+					padding-right: 5px;
+				}
+				
+				.mediaUser {
 					border: 1px solid #DDD;
 				}
+				
 
-				.msgBody {
-					background: white;
-					position: relative;
-					width: 500px;
+				.commentInputTd {
+					width: 100%;
+				}
+				.commentInput {
+					width: 100%;
+					height: 30px;
+					&:focus {
+						border-color: #08C;
+						height: 35px;
+					}
+					resize: vertical;
 				}
 
-				time, [data-time-count] {
-					vertical-align: middle;
-					font-size: 11px;
-					font-style: italic;
-					padding: 0 5px;
-					color: #888;
-					width: 60px;
+				[data-action=send-comment] {
+					display: inline-block;
+					.high-xbtn(white, @COLOR2);
+					font-size: 12px;
+					.high-xbtn-padding(4px, 10px, 2px);
 				}
-			}
-			.commentWrapper:target {
-				background: yellow;
 			}
 		}
 
-		.commentInputSection {
-			padding: 3px 5px 3px 5px;
-			border-top: 1px solid #DDD;
-			background: #EEE;
-
-			td {
-				vertical-align: top;
-			}
-
-			td:not(:last-child) {
-				padding-right: 5px;
-			}
+		.optionBtns {
+			float: right;
+			display: inline-block;
+			position: absolute;
+			right: 5px; top: 0px;
+			z-index: 10;
 			
-			.mediaUser {
-				border: 1px solid #DDD;
+			.transition(all, .2s, linear);
+			opacity: .5;
+			&:hover {
+				opacity: 1;
 			}
-			
 
-			.commentInputTd {
-				width: 100%;
-			}
-			.commentInput {
-				width: 100%;
-				height: 30px;
-				&:focus {
-					border-color: #08C;
-					height: 35px;
+			[data-action=remove-post],
+			[data-action=edit-post] {
+				.full-reset-button;
+				padding-left: 3px;
+				vertical-align: middle;
+				padding-right: 3px;
+				font-size: 105%;
+				font-weight: bolder;
+				color: #888;
+				opacity: .6;
+				&:hover {
+					color: #444;
 				}
-				resize: vertical;
-			}
-
-			[data-action=send-comment] {
-				display: inline-block;
-				.high-xbtn(white, @COLOR2);
-				font-size: 12px;
-				.high-xbtn-padding(4px, 10px, 2px);
+				&:active {
+					outline: none;
+				}
 			}
 		}
-
+			
 	}
-	
 
 }
 

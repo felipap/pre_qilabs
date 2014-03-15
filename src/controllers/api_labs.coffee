@@ -51,22 +51,13 @@ module.exports = {
 				return unless labId = req.paramToObjectId('labId')
 				Group.findOne {_id: labId},
 					req.handleErrResult((group) ->
-
-						opts = {limit:10}
+						opts = { limit:10 }
 						if parseInt(req.query.page)
 							opts.maxDate = parseInt(req.query.maxDate)
-
 						req.user.getLabPosts opts, group,
-							req.handleErrResult((docs) ->
-
-								if docs.length is opts.limit
-									minDate = docs[docs.length-1].published.valueOf()
-								else
-									minDate = -1
-						
+							req.handleErrResult((docs, minDate=-1) ->						
 								res.endJson {
 									data: docs
-									error:false
 									minDate: minDate
 								}
 							)
@@ -92,7 +83,6 @@ module.exports = {
 				return unless userId = req.paramToObjectId('userId')
 				Group.findOne {_id: labId}, req.handleErrResult((group) ->
 					User.findOne {_id: userId}, req.handleErrResult((user) ->
-						type = Group.Membership.Types.Member
 						req.user.addUserToGroup(user, group, type,
 							(err, membership) ->
 								# console.log('what?', err, membership)

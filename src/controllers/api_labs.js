@@ -64,16 +64,12 @@ module.exports = {
           if (parseInt(req.query.page)) {
             opts.maxDate = parseInt(req.query.maxDate);
           }
-          return req.user.getLabPosts(opts, group, req.handleErrResult(function(docs) {
-            var minDate;
-            if (docs.length === opts.limit) {
-              minDate = docs[docs.length - 1].published.valueOf();
-            } else {
+          return req.user.getLabPosts(opts, group, req.handleErrResult(function(docs, minDate) {
+            if (minDate == null) {
               minDate = -1;
             }
             return res.endJson({
               data: docs,
-              error: false,
               minDate: minDate
             });
           }));
@@ -119,8 +115,6 @@ module.exports = {
           return User.findOne({
             _id: userId
           }, req.handleErrResult(function(user) {
-            var type;
-            type = Group.Membership.Types.Member;
             return req.user.addUserToGroup(user, group, type, function(err, membership) {
               return res.endJson({
                 error: !!err,
