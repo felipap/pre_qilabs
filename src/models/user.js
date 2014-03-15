@@ -5,7 +5,7 @@ GUIDELINES for development:
 - Crucial: never remove documents by calling Model.remove. They prevent hooks
   from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
  */
-var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, Resource, User, UserSchema, assert, async, mongoose, _;
+var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, Resource, User, UserSchema, assert, assertArgs, async, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -14,6 +14,8 @@ _ = require('underscore');
 async = require('async');
 
 assert = require('assert');
+
+assertArgs = require('./lib/assertArgs');
 
 Resource = mongoose.model('Resource');
 
@@ -560,55 +562,40 @@ UserSchema.methods.createGroup = function(data, cb) {
   })(this));
 };
 
-UserSchema.methods.addUserToGroup = function(member, group, cb) {
-  assert(_.all([member, group, type, cb]), "Wrong number of arguments supplied to User.addUserToGroup");
-  return Group.Membership.findOne({
-    group: group,
-    member: this
-  }, (function(_this) {
-    return function(err, mship) {
-      if (err) {
-        return cb(err);
+UserSchema.methods.addUserToGroup = function(user, group, cb) {
+  var mem, self;
+  self = this;
+  assertArgs({
+    $isModel: 'User'
+  }, {
+    $isModel: 'Group'
+  }, '$isCb');
+  mem = _.findWhere(user.memberships, {
+    group: group.id
+  });
+  if (mem) {
+    return cb();
+  } else {
+    console.log('Here!');
+    return user.update({
+      $push: {
+        memberships: {
+          member: user,
+          type: Group.MembershipTypes.Member,
+          group: group
+        }
       }
-      if (!mship || mship.type !== Group.MembershipTypes.Moderator) {
-        return cb({
-          error: true,
-          name: 'Unauthorized'
-        });
-      }
-      return Group.Membership.findOne({
-        group: group,
-        member: member
-      }, function(err, mem) {
-        if (err) {
-          console.log(err);
-        }
-        if (err) {
-          return cb(err, mem);
-        }
-        if (mem) {
-          mem.type = Group.MembershipTypes.Member;
-          mem.save(function(err) {
-            return cb(err, mem);
-          });
-        } else {
-          mem = new Group.Membership({
-            member: member,
-            type: Group.MembershipTypes.Member,
-            group: group
-          });
-        }
-        return mem.save(function(err) {
-          cb(err, mem);
-          return Activity.Trigger(_this, Activity.Types.GroupMemberAdded)({
-            group: group,
-            actor: _this,
-            member: member
-          }, function() {});
-        });
-      });
-    };
-  })(this));
+    }, (function(_this) {
+      return function(err) {
+        cb(err, mem);
+        return Activity.Trigger(_this, Activity.Types.GroupMemberAdded)({
+          group: group,
+          actor: _this,
+          member: user
+        }, function() {});
+      };
+    })(this));
+  }
 };
 
 UserSchema.methods.removeUserFromGroup = function(member, group, type, cb) {
@@ -707,34 +694,34 @@ UserSchema.methods.genProfile = function(cb) {
   var self;
   self = this;
   return this.getPopulatedFollowers((function(_this) {
-    return function(err1, followers) {
-      if (err1) {
-        followers = null;
+    return function(err, followers) {
+      if (err) {
+        return cb(err);
       }
-      return _this.getPopulatedFollowing(function(err2, following) {
-        if (err2) {
-          following = null;
+      return _this.getPopulatedFollowing(function(err, following) {
+        if (err) {
+          return cb(err);
         }
-        return self.populate('memberships.group', function(err3, groups) {
+        return self.populate('memberships.group', function(err, groups) {
           var profile;
-          console.log('groups:', self.memberships, groups, '\n\n');
-          if (err3) {
-            return cb(err3);
+          if (err) {
+            return cb(err);
           }
-          profile = self.toJSON();
-          profile.followers = {
-            docs: followers.slice(0, 20),
-            count: followers.length
-          };
-          profile.following = {
-            docs: following.slice(0, 20),
-            count: following.length
-          };
-          profile.groups = {
-            docs: _.pluck(self.memberships, 'group').slice(0, 20),
-            count: _.pluck(self.memberships, 'group').length
-          };
-          return cb(err1 || err2, profile);
+          profile = _.extend(self.toJSON(), {
+            followers: {
+              docs: followers.slice(0, 20),
+              count: followers.length
+            },
+            following: {
+              docs: following.slice(0, 20),
+              count: following.length
+            },
+            groups: {
+              docs: _.pluck(self.memberships, 'group').slice(0, 20),
+              count: _.pluck(self.memberships, 'group').length
+            }
+          });
+          return cb(null, profile);
         });
       });
     };

@@ -57,7 +57,7 @@ module.exports = {
         '/comments': {
           methods: {
             get: [
-              required.posts.userCanSee('id'), function(req, res) {
+              required.posts.selfCanSee('id'), function(req, res) {
                 var postId;
                 if (!(postId = req.paramToObjectId('id'))) {
                   return;
@@ -76,7 +76,7 @@ module.exports = {
               }
             ],
             post: [
-              required.posts.userCanComment('id'), function(req, res) {
+              required.posts.selfCanComment('id'), function(req, res) {
                 var data, postId;
                 if (!(postId = req.paramToObjectId('id'))) {
                   return;

@@ -48,7 +48,7 @@ module.exports = {
   },
   children: {
     ':labId/posts': {
-      permissions: [required.labs.userCanSee('labId')],
+      permissions: [required.labs.selfCanSee('labId')],
       get: function(req, res) {
         var labId;
         if (!(labId = req.paramToObjectId('labId'))) {
@@ -76,7 +76,7 @@ module.exports = {
         }));
       },
       post: [
-        required.labs.userIsMember('labId'), function(req, res) {
+        required.labs.selfIsMember('labId'), function(req, res) {
           var groupId;
           if (!(groupId = req.paramToObjectId('labId'))) {
             return;
@@ -99,13 +99,11 @@ module.exports = {
       ]
     },
     ':labId/addUser/:userId': {
-      permissions: [required.labs.userIsModerator('labId')],
+      permissions: [required.labs.selfIsModerator('labId')],
       name: 'ApiLabAddUser',
       post: function(req, res) {
-        var labId, userId;
-        if (!(labId = req.paramToObjectId('labId'))) {
-          return;
-        }
+        var userId;
+        console.log('oi');
         if (!(userId = req.paramToObjectId('userId'))) {
           return;
         }
@@ -115,7 +113,7 @@ module.exports = {
           return User.findOne({
             _id: userId
           }, req.handleErrResult(function(user) {
-            return req.user.addUserToGroup(user, group, type, function(err, membership) {
+            return req.user.addUserToGroup(user, group, function(err, membership) {
               return res.endJson({
                 error: !!err,
                 membership: membership

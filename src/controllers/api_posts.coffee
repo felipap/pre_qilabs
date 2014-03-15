@@ -36,7 +36,7 @@ module.exports = {
 			children: {
 				'/comments':
 					methods: {
-						get: [required.posts.userCanSee('id'), (req, res) ->
+						get: [required.posts.selfCanSee('id'), (req, res) ->
 							return if not postId = req.paramToObjectId('id')
 							Post.findById postId
 								.populate 'author'
@@ -49,7 +49,7 @@ module.exports = {
 										}
 									)
 						]
-						post: [required.posts.userCanComment('id'), (req, res) ->
+						post: [required.posts.selfCanComment('id'), (req, res) ->
 							return if not postId = req.paramToObjectId('id')
 							data = {
 								content: {

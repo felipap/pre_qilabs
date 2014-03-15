@@ -109,10 +109,11 @@ app.use(function(req, res, next) {
 	req.paramToObjectId = function (param, callback) {
 		if (arguments.length === 2) { // Async call
 			try {
-				callback(mongoose.Types.ObjectId.createFromHexString(req.params[param]));
+				var id = mongoose.Types.ObjectId.createFromHexString(req.params[param]);
 			} catch (e) {
-				next({ type: "InvalidId", args:param});
+				next({ type: "InvalidId", args:param, value:req.params[param]});
 			}
+			callback(id);
 		} else { // Sync call
 			try {
 				return new mongoose.Types.ObjectId.createFromHexString(req.params[param])

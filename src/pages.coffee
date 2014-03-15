@@ -60,7 +60,7 @@ module.exports = {
 					get: (req, res) ->
 						res.render 'pages/lab_create'
 			':slug': {
-				permissions: [required.labs.userCanSee('slug')],
+				permissions: [required.labs.selfCanSee('slug')],
 				get: (req, res) ->
 					unless req.params.slug
 						return res.render404()
@@ -95,9 +95,9 @@ module.exports = {
 	'/posts/:postId':
 		name: 'profile'
 		# slugs: {post:'postId'}
-		# permissions: [required.posts.userCanSee('post')]
+		# permissions: [required.posts.selfCanSee('post')]
 		methods: {
-			get: [required.posts.userCanSee('postId'), (req, res) ->
+			get: [required.posts.selfCanSee('postId'), (req, res) ->
 				return unless postId = req.paramToObjectId('postId')
 				Post.findOne { _id:postId }, req.handleErrResult((post) ->
 					console.log('oi')

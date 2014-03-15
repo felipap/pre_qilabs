@@ -59,7 +59,6 @@ GroupSchema.methods.genGroupProfile = (cb) ->
 		.find { 'memberships.group': @id }
 		.exec (err, docs) =>
 			# Filter for non-member-less memberships, just in case
-			console.log('members', docs)
 			cb(err, _.extend({}, @toJSON(), {
 				members: {
 					count: docs.length

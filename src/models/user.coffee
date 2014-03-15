@@ -15,6 +15,8 @@ _ = require 'underscore'
 async = require 'async'
 assert = require 'assert'
 
+assertArgs = require './lib/assertArgs'
+
 Resource = mongoose.model 'Resource'
 
 Activity = Resource.model 'Activity'
@@ -398,33 +400,27 @@ UserSchema.methods.createGroup = (data, cb) ->
 			cb(null, group)
 			Activity.Trigger(@, Activity.Types.GroupCreated)({group:group, creator:self}, ->)
 
-UserSchema.methods.addUserToGroup = (member, group, cb) ->
-	assert _.all([member, group, type, cb]),
-		"Wrong number of arguments supplied to User.addUserToGroup"
+UserSchema.methods.addUserToGroup = (user, group, cb) ->
+	self = @
+	assertArgs({$isModel:'User'}, {$isModel:'Group'}, '$isCb')
 	# First check for user's own priviledges
-	Group.Membership.findOne {group: group, member: @}, (err, mship) =>
-		return cb(err) if err
-		return cb(error:true,name:'Unauthorized') if not mship or
-			mship.type isnt Group.MembershipTypes.Moderator
 
-		# req.user is Moderator → good to go
-		Group.Membership.findOne {group: group, member: member}, (err, mem) =>
-			console.log(err) if err
-			return cb(err, mem) if err
-			if mem
-				mem.type = Group.MembershipTypes.Member
-				mem.save (err) -> cb(err, mem)
-			else
-				mem = new Group.Membership {
-					member: member
-					type: Group.MembershipTypes.Member
-					group: group
-				}
-			mem.save (err) =>
-				cb(err, mem)
-				Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
-					group:group, actor:@, member:member
-				}, ->)
+	mem = _.findWhere(user.memberships, {group:group.id})
+	if mem
+		return cb()
+	else
+		console.log('Here!')
+		user.update {$push: {
+			memberships: {
+				member: user
+				type: Group.MembershipTypes.Member
+				group: group
+			}
+		}}, (err) =>
+			cb(err, mem)
+			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
+				group:group, actor:@, member:user
+			}, ->)
 
 UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 	self = @
@@ -503,27 +499,31 @@ Generate stuffed profile for the controller.
 ###
 UserSchema.methods.genProfile = (cb) ->
 	self = @
-	@getPopulatedFollowers (err1, followers) =>
-		if err1 then followers = null
-		@getPopulatedFollowing (err2, following) =>
-			if err2 then following = null
-			self.populate 'memberships.group', (err3, groups) =>
-				console.log('groups:', self.memberships, groups, '\n\n')
-				if err3 then return cb(err3)
-				profile = self.toJSON()
-				profile.followers = {
-					docs: followers.slice(0,20)
-					count: followers.length
-				}
-				profile.following = {
-					docs: following.slice(0,20)
-					count: following.length
-				}
-				profile.groups = {
-					docs: _.pluck(self.memberships,'group').slice(0,20)
-					count: _.pluck(self.memberships,'group').length
-				}
-				cb(err1 or err2, profile)
+	@getPopulatedFollowers (err, followers) =>
+		if err then return cb(err)
+
+		@getPopulatedFollowing (err, following) =>
+			if err then return cb(err)
+
+			self.populate 'memberships.group', (err, groups) =>
+				if err then return cb(err)
+
+				profile = _.extend(self.toJSON(), {
+					followers: {
+						docs: followers.slice(0,20)
+						count: followers.length
+					}
+					following: {
+						docs: following.slice(0,20)
+						count: following.length
+					}
+					groups: {
+						docs: _.pluck(self.memberships,'group').slice(0,20)
+						count: _.pluck(self.memberships,'group').length
+					}
+				})
+
+				cb(null, profile)
 
 ################################################################################
 ## related to the notification #################################################

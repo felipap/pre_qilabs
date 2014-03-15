@@ -61,7 +61,6 @@ GroupSchema.methods.genGroupProfile = function(cb) {
     'memberships.group': this.id
   }).exec((function(_this) {
     return function(err, docs) {
-      console.log('members', docs);
       return cb(err, _.extend({}, _this.toJSON(), {
         members: {
           count: docs.length,

@@ -18,82 +18,68 @@ var permissions = {
 
 
 	labs: {
-		userCanSee: function (labId, req, res, callback) {
-			Group.findById(labId, req.handleErrResult(function (group) {
-				
-				res.locals.lab = group;
-				
-				if ( 1|| group.visibility === Group.Permissions.Public) {
-					callback();
-				} else {
-					Group.Membership.findOne({
-							member: req.user,
-							group: group,
-						}, function (err, doc) {
-							console.log('four');
-							if (!doc) {
-								return callback({ permission:"userCanSee" });
-							} else {
-								callback();
-							}
-						}
-					);
-				}
-			}));
-		},
-		userIsMember: function (labId, req, res, callback) {
-			Group.Membership.findOne({ member: req.user, group: labId },
-				function (err, doc) {
-					if (err) {
-						return callback({
-							type: "FindErr",
-							args: { model:"Group", err:err, id:labId },
-						});
-					} else if (!doc) {
-						return callback({ permission:"labs.userIsMember" });
+		selfCanSee: function (labId, req, res, callback) {
+			var mem = _.findWhere(req.user.memberships,{group:''+labId});
+			if (mem) {
+				callback();
+			} else {
+				Group.findById(labId, req.handleErrResult(function (group) {
+					
+					res.locals.lab = group;
+					
+					if ( 1|| group.visibility === Group.Permissions.Public) {
+						callback();
+					} else {
+						return callback({ permission:"selfCanSee" });
 					}
-					callback();
-				});
+				}));
+			}
 		},
-		userIsModerator: function (labId, req, res, callback) {
-			Group.Membership.findOne({ member: req.user, group: labId },
-				function (err, doc) {
-					if (err) {
-						return callback({
-							type: "FindErr",
-							args: { model:"Group", err:err, id:labId },
-						});
-					} else if (!doc.type === Group.Membership.Moderator) {
-						return callback({ permission:"labs.userIsModerator" });
-					}
-					callback();
-				});
+		selfIsMember: function (labId, req, res, callback) {
+			var mem = _.findWhere(req.user.memberships,{group:''+labId});
+			if (mem) {
+				callback();
+			} else {
+				return callback({ permission:"labs.selfIsMember" });
+			}
+		},
+		selfIsModerator: function (labId, req, res, callback) {
+			var mem = _.findWhere(req.user.memberships,{group:''+labId});
+			console.log('I have been here checked')
+			console.log('I have been here checked')
+				callback();
+			if (doc.type === Group.MembershipTypes.Moderator) {
+				console.log('hwat?')
+			} else {
+				console.log('uye')
+				return callback({ permission:"labs.selfIsModerator" });
+			}
 		},
 
 	},
 
 	posts: {
-		userCanSee: function (postId, req, res, callback) {
+		selfCanSee: function (postId, req, res, callback) {
 			Post.findById(postId, req.handleErrResult(function (post) {
 				// A priori, all posts are visible if not within a private group.
 				if (!post.group) {
 					callback();
 				} else {
-					permissions.labs.userCanSee(post.group, req, res, function (err) {
-						callback( err ? extendErr(err, 'posts.userCanSee') : undefined);
+					permissions.labs.selfCanSee(post.group, req, res, function (err) {
+						callback( err ? extendErr(err, 'posts.selfCanSee') : undefined);
 					});
 				}
 			}));
 		},
 
-		userCanComment: function (postId, req, res, callback) {
+		selfCanComment: function (postId, req, res, callback) {
 			Post.findById(postId, req.handleErrResult(function (post) {
 				// A priori, all posts are visible if not within a private group.
 				if (!post.group) {
 					callback();
 				} else {
-					permissions.labs.userIsMember(post.group, req, res, function (err) {
-						callback( err ? extendErr(err, 'posts.userCanComment') : undefined);
+					permissions.labs.selfIsMember(post.group, req, res, function (err) {
+						callback( err ? extendErr(err, 'posts.selfCanComment') : undefined);
 					});
 				}
 			}));
@@ -121,49 +107,50 @@ module.exports = required = {
 			next();
 	},
 	labs: {
-		userCanSee: function (labIdParam) {
+		selfCanSee: function (labIdParam) {
 			return function (req, res, next) {
 				req.paramToObjectId(labIdParam, function (labId) {
-					permissions.labs.userCanSee(labId, req, res, function (err) {
-						next( err ? extendErr(err, 'labs.userCanSee') : undefined);
+					permissions.labs.selfCanSee(labId, req, res, function (err) {
+						next( err ? extendErr(err, 'labs.selfCanSee') : undefined);
 					});
 				});
 			};
 		},
-		userIsMember: function (labIdParam) {
+		selfIsMember: function (labIdParam) {
 			return function (req, res, next) {
 				req.paramToObjectId(labIdParam, function (labId) {
-					permissions.labs.userIsMember(labId, req, res, function (err) {
-						next( err ? extendErr(err, 'labs.userIsMember') : undefined);
+					permissions.labs.selfIsMember(labId, req, res, function (err) {
+						next( err ? extendErr(err, 'labs.selfIsMember') : undefined);
 					});
 				});
 			}
 		},
-		userIsModerator: function (labIdParam) {
+		selfIsModerator: function (labIdParam) {
 			return function (req, res, next) {
 				req.paramToObjectId(labIdParam, function (labId) {
-					permissions.labs.userIsMember(labId, req, res, function (err) {
-						next( err ? extendErr(err, 'labs.userIsModerator') : undefined);
+					permissions.labs.selfIsModerator(labId, req, res, function (err) {
+						console.log('here too')
+						next( err ? extendErr(err, 'labs.selfIsModerator') : undefined);
 					});
 				});
 			}
 		},
 	},
 	posts: {
-		userCanSee: function (postIdParam) {
+		selfCanSee: function (postIdParam) {
 			return function (req, res, next) {
 				req.paramToObjectId(postIdParam, function (postId) {
-					permissions.posts.userCanSee(postId, req, res, function (err) {
+					permissions.posts.selfCanSee(postId, req, res, function (err) {
 						next();
 					});
 				});
 			};
 		},
-		userCanComment: function (postIdParam) {
+		selfCanComment: function (postIdParam) {
 			return function (req, res, next) {
 				req.paramToObjectId(postIdParam, function (postId) {
-					permissions.posts.userCanComment(postId, req, res, function (err) {
-						next( err ? extendErr(err, 'posts.userCanComment') : undefined);
+					permissions.posts.selfCanComment(postId, req, res, function (err) {
+						next( err ? extendErr(err, 'posts.selfCanComment') : undefined);
 					});
 				});
 			};

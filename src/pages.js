@@ -72,7 +72,7 @@ module.exports = {
         }
       },
       ':slug': {
-        permissions: [required.labs.userCanSee('slug')],
+        permissions: [required.labs.selfCanSee('slug')],
         get: function(req, res) {
           if (!req.params.slug) {
             return res.render404();
@@ -120,7 +120,7 @@ module.exports = {
     name: 'profile',
     methods: {
       get: [
-        required.posts.userCanSee('postId'), function(req, res) {
+        required.posts.selfCanSee('postId'), function(req, res) {
           var postId;
           if (!(postId = req.paramToObjectId('postId'))) {
             return;

@@ -148,16 +148,9 @@ body {
 					color: #666;
 
 					.tagIcon {
-						margin-right: 4px;
-						display: inline-block;
-						vertical-align: middle;
-						width: 12px;
-						height: 12px;
-						margin-top: -1px;
-						background: #08C;
-						.rounded(2px)
-
+						margin-right: 3px;
 					}
+
 					&:hover{
 						color: #444;
 					}
@@ -165,10 +158,10 @@ body {
 				&:not(:last-child) {
 					border-bottom: 1px solid #DDD;
 				}
-				&:nth-child(1) a .tagIcon { background: @COLOR1; }
-				&:nth-child(2) a .tagIcon { background: @COLOR2; }
-				&:nth-child(3) a .tagIcon { background: @COLOR3; }
-				&:nth-child(4) a .tagIcon { background: @COLOR4; }
+				&:nth-child(1) a .tagIcon { color: @COLOR1; }
+				&:nth-child(2) a .tagIcon { color: @COLOR2; }
+				&:nth-child(3) a .tagIcon { color: @COLOR3; }
+				&:nth-child(4) a .tagIcon { color: @COLOR4; }
 			}
 		}
 

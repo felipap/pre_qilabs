@@ -46,7 +46,7 @@ module.exports = {
 				res.redirect('/labs/'+doc.id)
 	children:
 		':labId/posts': {
-			permissions: [required.labs.userCanSee('labId')],
+			permissions: [required.labs.selfCanSee('labId')],
 			get: (req, res) ->
 				return unless labId = req.paramToObjectId('labId')
 				Group.findOne {_id: labId},
@@ -62,7 +62,7 @@ module.exports = {
 								}
 							)
 					)
-			post: [required.labs.userIsMember('labId'), (req, res) ->
+			post: [required.labs.selfIsMember('labId'), (req, res) ->
 				return unless groupId = req.paramToObjectId('labId')
 				req.user.createPost {
 					groupId: groupId
@@ -76,14 +76,14 @@ module.exports = {
 			]
 		}
 		':labId/addUser/:userId': {
-			permissions: [required.labs.userIsModerator('labId')],
+			permissions: [required.labs.selfIsModerator('labId')],
 			name: 'ApiLabAddUser'
 			post: (req, res) ->
-				return unless labId = req.paramToObjectId('labId')
+				console.log('oi')
 				return unless userId = req.paramToObjectId('userId')
 				Group.findOne {_id: labId}, req.handleErrResult((group) ->
 					User.findOne {_id: userId}, req.handleErrResult((user) ->
-						req.user.addUserToGroup(user, group, type,
+						req.user.addUserToGroup(user, group,
 							(err, membership) ->
 								# console.log('what?', err, membership)
 								res.endJson {
