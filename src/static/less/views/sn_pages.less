@@ -138,6 +138,37 @@ body {
 			}
 		}
 
+		&.tagList {
+			li {
+				a {
+					display: block;
+					text-decoration: none;
+					font-weight: bold;
+					padding: 10px;
+					color: #666;
+
+					.tagIcon {
+						margin-right: 4px;
+						display: inline-block;
+						vertical-align: middle;
+						width: 12px;
+						height: 12px;
+						margin-top: -1px;
+						background: #08C;
+						.rounded(2px)
+					}
+
+				}
+				&:not(:last-child) {
+					border-bottom: 1px solid #DDD;
+				}
+				&:nth-child(1) a .tagIcon { background: @COLOR1; }
+				&:nth-child(2) a .tagIcon { background: @COLOR2; }
+				&:nth-child(3) a .tagIcon { background: @COLOR3; }
+				&:nth-child(4) a .tagIcon { background: @COLOR4; }
+			}
+		}
+
 		border-bottom: 1px solid #DDD;
 	}
 
