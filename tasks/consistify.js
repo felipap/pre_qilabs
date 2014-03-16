@@ -5,9 +5,10 @@ async = require('async');
 _ = require('underscore');
 
 jobber = require('./jobber.js')(function(e) {
-  var Activity, Group, Notification, Post, Resource, User, mongoose, testCount, tests, wrapTest;
+  var Activity, Group, Inbox, Notification, Post, Resource, User, mongoose, testCount, tests, wrapTest;
   mongoose = require('mongoose');
   Notification = mongoose.model('Notification');
+  Inbox = mongoose.model('Inbox');
   Resource = mongoose.model('Resource');
   Activity = Resource.model('Activity');
   Post = Resource.model('Post');
@@ -85,7 +86,22 @@ jobber = require('./jobber.js')(function(e) {
           if (err) {
             console.warn(err);
           }
-          console.log('Posts with obsolete group found:', docs.length);
+          console.log('Notifications with obsolete recipient/agent found:', docs.length);
+          return next(err);
+        };
+      })(this));
+    }, function(next) {
+      return Inbox.find({}).populate('resource').exec((function(_this) {
+        return function(err, docs) {
+          var doc, incon, _i, _len;
+          incon = _.filter(docs, function(i) {
+            return !i.resource;
+          });
+          console.log('Inboxes with obsolete resource found:', incon.length);
+          for (_i = 0, _len = incon.length; _i < _len; _i++) {
+            doc = incon[_i];
+            doc.remove(function() {});
+          }
           return next(err);
         };
       })(this));
@@ -95,7 +111,6 @@ jobber = require('./jobber.js')(function(e) {
           if (err) {
             console.warn(err);
           }
-          console.log('Users with obsolete groups found:', incon.length);
           return next(err);
         };
       })(this));

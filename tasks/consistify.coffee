@@ -8,6 +8,7 @@ jobber = require('./jobber.js')((e) ->
 	mongoose = require 'mongoose'
 
 	Notification = mongoose.model 'Notification'
+	Inbox = mongoose.model 'Inbox'
 	Resource = mongoose.model 'Resource'
 
 	Activity = Resource.model 'Activity'
@@ -49,7 +50,15 @@ jobber = require('./jobber.js')((e) ->
 		,(next) ->
 			Notification.find({}).populate('recipient agent').exec (err, docs) =>
 				if err then console.warn err
-				console.log('Posts with obsolete group found:', docs.length)
+				console.log('Notifications with obsolete recipient/agent found:', docs.length)
+				next(err)
+
+		,(next) ->
+			Inbox.find({}).populate('resource').exec (err, docs) =>
+				incon = _.filter(docs,(i)->not i.resource)
+				console.log('Inboxes with obsolete resource found:', incon.length)
+				for doc in incon
+					doc.remove ->
 				next(err)
 
 		,(next) ->
@@ -57,9 +66,9 @@ jobber = require('./jobber.js')((e) ->
 				if err then console.warn err
 
 				# for user in users
-					
 
-				console.log('Users with obsolete groups found:', incon.length)
+
+				# console.log('Users with obsolete groups found:', incon.length)
 
 				next(err)
 		]

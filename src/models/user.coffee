@@ -247,6 +247,7 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 			return cb(err) if err
 			# Pluck resources from inbox docs. Remove null (deleted) resources.
 			posts = _.pluck(docs, 'resource').filter((i)->i)
+			console.log "#{posts.length} posts gathered from inbox"
 			# Get oldest post date. Non-inboxed posts must be younger than that, so that
 			# at least opts.limit posts are created.
 			if not posts.length or not docs[docs.length-1]

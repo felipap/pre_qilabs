@@ -367,6 +367,7 @@ UserSchema.methods.getTimeline = function(opts, callback) {
       posts = _.pluck(docs, 'resource').filter(function(i) {
         return i;
       });
+      console.log("" + posts.length + " posts gathered from inbox");
       if (!posts.length || !docs[docs.length - 1]) {
         oldestPostDate = 0;
       } else {
