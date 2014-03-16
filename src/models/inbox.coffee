@@ -26,9 +26,8 @@ Types =
 InboxSchema = new mongoose.Schema {
 	dateSent:	{ type: Date, indexed: 1 }
 	recipient:	{ type: mongoose.Schema.ObjectId, ref: 'User', indexed: 1, required: true }
+	author:		{ type: mongoose.Schema.ObjectId, ref: 'User', indexed: 1, required: true }
 	resource:	{ type: mongoose.Schema.ObjectId, ref: 'Resource', required: true }
-	# type: 		{ type: String, required: true }
-	# author:		{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
 }
 
 ################################################################################
@@ -41,17 +40,8 @@ InboxSchema.pre 'save', (next) ->
 ################################################################################
 ## Statics #####################################################################
 
-# InboxSchema.statics.getFromUser = (user, opts, cb) ->
-# 	cb ?= opts
-# 	@
-		# .find({author: user.id})
-# 		.sort('-dateSent')
-# 		.exec(cb)
-
 InboxSchema.statics.fillInboxes = (recipients, opts, cb) ->
-	console.log recipients instanceof Array
-
-	assertArgs({'$isA':Array}, {$contains:['resource']}, '$isCb')
+	assertArgs({'$isA':Array}, {$contains:['resource','author']}, '$isCb')
 
 	if not recipients.length
 		return cb(false, [])
@@ -59,11 +49,29 @@ InboxSchema.statics.fillInboxes = (recipients, opts, cb) ->
 	async.mapLimit(recipients, 5, ((rec, done) =>
 		inbox = new Inbox {
 			resource: opts.resource
-			# type: opts.type
-			# author: opts.author
 			recipient: rec
+			author: opts.author 
 		}
 		inbox.save(done)
+	), cb)
+
+InboxSchema.statics.fillUserInboxWithResources = (recipient, resources, cb) ->
+	assertArgs({'$isModel':'User'},{'$isA':Array},'$isCb')
+
+	if not resources.length
+		return cb(false, [])
+
+	console.log 'Resources found:', resources.length
+	async.mapLimit(resources, 5, ((resource, done) =>
+		inbox = new Inbox {
+			resource: resource
+			recipient: recipient
+			author: resource.author or resource.actor
+			dateSent: resource.published # or should it be 'updated'?
+		}
+		inbox.save (err, doc) ->
+			console.log "Resource #{resource.id} of type #{resource.__t} sent on #{resource.published} added"
+			done(err,doc)
 	), cb)
 
 InboxSchema.statics.Types = Types

@@ -28,6 +28,12 @@ InboxSchema = new mongoose.Schema({
     indexed: 1,
     required: true
   },
+  author: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    indexed: 1,
+    required: true
+  },
   resource: {
     type: mongoose.Schema.ObjectId,
     ref: 'Resource',
@@ -43,11 +49,10 @@ InboxSchema.pre('save', function(next) {
 });
 
 InboxSchema.statics.fillInboxes = function(recipients, opts, cb) {
-  console.log(recipients instanceof Array);
   assertArgs({
     '$isA': Array
   }, {
-    $contains: ['resource']
+    $contains: ['resource', 'author']
   }, '$isCb');
   if (!recipients.length) {
     return cb(false, []);
@@ -57,9 +62,37 @@ InboxSchema.statics.fillInboxes = function(recipients, opts, cb) {
       var inbox;
       inbox = new Inbox({
         resource: opts.resource,
-        recipient: rec
+        recipient: rec,
+        author: opts.author
       });
       return inbox.save(done);
+    };
+  })(this)), cb);
+};
+
+InboxSchema.statics.fillUserInboxWithResources = function(recipient, resources, cb) {
+  assertArgs({
+    '$isModel': 'User'
+  }, {
+    '$isA': Array
+  }, '$isCb');
+  if (!resources.length) {
+    return cb(false, []);
+  }
+  console.log('Resources found:', resources.length);
+  return async.mapLimit(resources, 5, ((function(_this) {
+    return function(resource, done) {
+      var inbox;
+      inbox = new Inbox({
+        resource: resource,
+        recipient: recipient,
+        author: resource.author || resource.actor,
+        dateSent: resource.published
+      });
+      return inbox.save(function(err, doc) {
+        console.log("Resource " + resource.id + " of type " + resource.__t + " sent on " + resource.published + " added");
+        return done(err, doc);
+      });
     };
   })(this)), cb);
 };

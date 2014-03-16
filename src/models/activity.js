@@ -116,6 +116,7 @@ createActivityAndInbox = function(agentObj, data, cb) {
     console.log(doc);
     return agentObj.getFollowersIds(function(err, followers) {
       return Inbox.fillInboxes([agentObj._id].concat(followers), {
+        author: agentObj,
         resource: activity
       }, cb);
     });

@@ -171,26 +171,36 @@ UserSchema.methods.doesFollowUser = (user, cb) ->
 #### Actions
 
 UserSchema.methods.dofollowUser = (user, cb) ->
-	assert user instanceof User, 'Passed argument not a user document'
-	if ''+user.id is ''+@.id
+	assertArgs({$isModel:'User'},'$isCb')
+	self = @
+	if ''+user.id is ''+self.id # Can't follow myself
 		return cb(true)
 
-	Follow.findOne {follower:@, followee:user},
+	Follow.findOne {follower:self, followee:user},
 		(err, doc) =>
 			unless doc
 				doc = new Follow {
-					follower: @
+					follower: self
 					followee: user
 				}
 				doc.save()
 			cb(err, !!doc)
 
-			Notification.Trigger(@, Notification.Types.NewFollower)(@, user, ->)
-			Activity.Trigger(@, Notification.Types.NewFollower)({
+			# Notify followed user
+			Notification.Trigger(self, Notification.Types.NewFollower)(self, user, ->)
+			# Trigger creation of activity to timeline
+			Activity.Trigger(self, Notification.Types.NewFollower)({
 				follow: doc,
-				follower: @,
+				follower: self,
 				followee: user
 			}, ->)
+			# Populate follower inbox with at most 100 resources from followed user
+			Resource.find()
+				.or [{__t:'Post', group:null, author:user._id},{__t:'Activity', group:null, actor:user._id}]
+				.limit(100)
+				.exec (err, docs) ->
+					console.log 'Resources found:', err, docs.length
+					Inbox.fillUserInboxWithResources(self, docs, ->)
 
 UserSchema.methods.unfollowUser = (user, cb) ->
 	assert user instanceof User, 'Passed argument not a user document'
@@ -207,37 +217,14 @@ HandleLimit = (func) ->
 		docs = _.filter(_docs, (e) -> e)
 		func(err,docs)
 
-UserSchema.statics.reInbox = (user, callback) ->
-
-	# Group.Membership.find
-
-	user.getFollowingIds (err, followingIds=[]) ->		
-
-		async.mapLimit followingIds.concat(user.id), 3,((fId, next) ->
-
-			Activity.find {actor:fId}, (err, activities=[]) ->
-				if err then console.log(1, err)
-				Post.find {author:fId}, (err, posts=[]) ->
-					if err then console.log(2, err)
-					next(null, posts.concat(activities))
-
-			), (err, posts) ->
-				# console.log('err', err, posts)
-
-		# for following in followingIds
-		# Inbox.remove({recipient: user})
 ###
 # Behold.
 ###
 UserSchema.methods.getTimeline = (opts, callback) ->
 	assertArgs({$contains:['limit','maxDate']}, '$isCb')
 	self = @
-
-	User.reInbox(@, () ->)
-
-	###
+	
 	# Get inboxed posts older than the opts.maxDate determined by the user.
-	###
 	Inbox
 		.find { recipient:self.id, dateSent:{ $lt:opts.maxDate }}
 		.sort '-dateSent' # tied to selection of oldest post below
@@ -248,60 +235,18 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 			# Pluck resources from inbox docs. Remove null (deleted) resources.
 			posts = _.pluck(docs, 'resource').filter((i)->i)
 			console.log "#{posts.length} posts gathered from inbox"
-			# Get oldest post date. Non-inboxed posts must be younger than that, so that
-			# at least opts.limit posts are created.
 			if not posts.length or not docs[docs.length-1]
-				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
-				oldestPostDate = 0
-			else# There are at least opts.limit inboxed posts. 
-				# Limit non-inboxed posts to be younger than oldest post here.
-				oldestPostDate = posts[posts.length-1].published
-			mergeNonInboxedPosts(oldestPostDate, posts)
-
-	###
-	# Merge inboxes posts with those from followed users but that preceed "followship".
-	# Limit search to those posts made after @minDate.
-	###
-	mergeNonInboxedPosts = (minDate, ips) => # ips => Inboxed PostS
-		# Get all "followships" created after @minDate.
-		Follow.find { follower:self, dateBegin:{$gt:minDate} }, (err, follows) =>
-				return callback(err) if err
-				
-				# Get posts from these users created before "followship" or maxDate
-				# (whichever is older) and after minDate.
-				async.mapLimit follows, 5, ((follow, done) =>
-					ltDate = Math.min(follow.dateBegin, opts.maxDate) 
-					Post
-						.find {
-							author: follow.followee,
-							group: null,
-							parentPost: null,
-							published: {$lt:ltDate, $gt:minDate}
-						}
-						.limit opts.limit
-						.exec done
-					), (err, _docs) ->
-						# Flatten lists. Remove undefined (from .limit queries).
-						nips = _.flatten(_docs).filter((i)->i)
-						console.log "#{nips.length} posts gathered from follow"
-						onGetNonInboxedPosts(err, nips)
-
-		onGetNonInboxedPosts = (err, nips) ->
-			return callback(err) if err
+				# Not even opts.limit inboxed posts exist.
+				# Pass minDate=0 to prevent newer fetches.
+				minDate = 0
+			else# Pass minDate=oldestPostDate, to start newer fetches from there.
+				minDate = posts[posts.length-1].published
 			
-			all = _.sortBy(nips.concat(ips), (p) -> -p.published) # merge'n'sort by date
-
-			# Populate author in all docs (nips and ips)
-			Resource.populate all, {path: 'author actor target object'}, (err, docs) =>
+			Resource.populate posts, {path: 'author actor target object'}, (err, docs) =>
 				return callback(err) if err
-				# console.log 'docs', docs
-				# Fill comments in all docs.
-				console.log 'dates:\n'+_.map(docs,(i)->i.published).join('\n')
-
-				minDate = if docs.length then docs[docs.length-1].published else 0
-				console.log 'minDate', minDate
 				Post.fillComments docs, (err, docs) ->
 					callback(err, docs, minDate)
+
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	if not opts.maxDate
@@ -457,9 +402,9 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 Create a post object and fan out through inboxes.
 ###
 UserSchema.methods.createPost = (data, cb) ->
-
+	self = @
 	post = new Post {
-		author: @id
+		author: self.id
 		data: {
 			title: data.content.title
 			body: data.content.body
@@ -479,11 +424,11 @@ UserSchema.methods.createPost = (data, cb) ->
 			return
 		# Make separate job for this.
 		# Iter through followers and fill inboxes.
-		@getPopulatedFollowers (err, followers) =>
-			Inbox.fillInboxes([@].concat(followers), {
+		self.getPopulatedFollowers (err, followers) =>
+			Inbox.fillInboxes([self].concat(followers), {
 				resource: post.id,
 				type: Inbox.Types.Post,
-				author: @id
+				author: self.id
 			}, () -> )
 
 ################################################################################

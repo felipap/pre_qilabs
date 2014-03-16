@@ -1,4 +1,4 @@
-var Activity, Follow, Group, Inbox, Notification, ObjectId, Post, Resource, Subscriber, User, mongoose, required, _,
+var Activity, Inbox, Notification, ObjectId, mongoose, required, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -14,18 +14,6 @@ Activity = mongoose.model('Activity');
 Inbox = mongoose.model('Inbox');
 
 Notification = mongoose.model('Notification');
-
-Subscriber = mongoose.model('Subscriber');
-
-Resource = mongoose.model('Resource');
-
-User = Resource.model('User');
-
-Post = Resource.model('Post');
-
-Group = Resource.model('Group');
-
-Follow = Resource.model('Follow');
 
 module.exports = {
   permissions: [required.login],
@@ -109,7 +97,7 @@ module.exports = {
       get: function(req, res) {
         var opts;
         opts = {
-          limit: 20,
+          limit: 10,
           maxDate: Date.now()
         };
         if (parseInt(req.query.maxDate)) {

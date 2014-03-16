@@ -92,6 +92,7 @@ createActivityAndInbox = (agentObj, data, cb) ->
 		console.log doc
 		agentObj.getFollowersIds (err, followers) ->
 			Inbox.fillInboxes([agentObj._id].concat(followers), {
+				author: agentObj,
 				resource: activity,
 			}, cb)
 

@@ -8,16 +8,6 @@ required = require '../lib/required.js'
 Activity = mongoose.model 'Activity'
 Inbox = mongoose.model 'Inbox'
 Notification = mongoose.model 'Notification'
-Subscriber = mongoose.model 'Subscriber'
-
-Resource = mongoose.model 'Resource'
-
-# Users, Posts, Groups and Follow relationships are Resources.
-# They can be refered by Activities and Notifications and populated later.
-User = Resource.model 'User'
-Post = Resource.model 'Post'
-Group = Resource.model 'Group'
-Follow = Resource.model 'Follow'
 
 module.exports = {
 	permissions: [required.login],
@@ -71,7 +61,7 @@ module.exports = {
 				)
 
 			get: (req, res) ->
-					opts = { limit:20, maxDate:Date.now() }
+					opts = { limit:10, maxDate:Date.now() }
 					if parseInt(req.query.maxDate)
 						opts.maxDate = parseInt(req.query.maxDate)
 					req.user.getTimeline opts,

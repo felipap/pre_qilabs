@@ -252,29 +252,47 @@ UserSchema.methods.doesFollowUser = function(user, cb) {
 };
 
 UserSchema.methods.dofollowUser = function(user, cb) {
-  assert(user instanceof User, 'Passed argument not a user document');
-  if ('' + user.id === '' + this.id) {
+  var self;
+  assertArgs({
+    $isModel: 'User'
+  }, '$isCb');
+  self = this;
+  if ('' + user.id === '' + self.id) {
     return cb(true);
   }
   return Follow.findOne({
-    follower: this,
+    follower: self,
     followee: user
   }, (function(_this) {
     return function(err, doc) {
       if (!doc) {
         doc = new Follow({
-          follower: _this,
+          follower: self,
           followee: user
         });
         doc.save();
       }
       cb(err, !!doc);
-      Notification.Trigger(_this, Notification.Types.NewFollower)(_this, user, function() {});
-      return Activity.Trigger(_this, Notification.Types.NewFollower)({
+      Notification.Trigger(self, Notification.Types.NewFollower)(self, user, function() {});
+      Activity.Trigger(self, Notification.Types.NewFollower)({
         follow: doc,
-        follower: _this,
+        follower: self,
         followee: user
       }, function() {});
+      return Resource.find().or([
+        {
+          __t: 'Post',
+          group: null,
+          author: user._id
+        }, {
+          __t: 'Activity',
+          group: null,
+          actor: user._id
+        }
+      ]).limit(100).exec(function(err, docs) {
+        console.log('Resources found:', err, docs.length);
+        return Inbox.fillUserInboxWithResources(self, docs, function() {});
+      });
     };
   })(this));
 };
@@ -306,61 +324,25 @@ HandleLimit = function(func) {
   };
 };
 
-UserSchema.statics.reInbox = function(user, callback) {
-  return user.getFollowingIds(function(err, followingIds) {
-    if (followingIds == null) {
-      followingIds = [];
-    }
-    return async.mapLimit(followingIds.concat(user.id), 3, (function(fId, next) {
-      return Activity.find({
-        actor: fId
-      }, function(err, activities) {
-        if (activities == null) {
-          activities = [];
-        }
-        if (err) {
-          console.log(1, err);
-        }
-        return Post.find({
-          author: fId
-        }, function(err, posts) {
-          if (posts == null) {
-            posts = [];
-          }
-          if (err) {
-            console.log(2, err);
-          }
-          return next(null, posts.concat(activities));
-        });
-      });
-    }), function(err, posts) {});
-  });
-};
-
 
 /*
  * Behold.
  */
 
 UserSchema.methods.getTimeline = function(opts, callback) {
-  var mergeNonInboxedPosts, self;
+  var self;
   assertArgs({
     $contains: ['limit', 'maxDate']
   }, '$isCb');
   self = this;
-  User.reInbox(this, function() {});
-
-  /*
-  	 * Get inboxed posts older than the opts.maxDate determined by the user.
-   */
-  Inbox.find({
+  return Inbox.find({
     recipient: self.id,
     dateSent: {
       $lt: opts.maxDate
     }
   }).sort('-dateSent').populate('resource').limit(opts.limit).exec((function(_this) {
     return function(err, docs) {
-      var oldestPostDate, posts;
+      var minDate, posts;
       if (err) {
         return cb(err);
       }
@@ -369,79 +351,22 @@ UserSchema.methods.getTimeline = function(opts, callback) {
       });
       console.log("" + posts.length + " posts gathered from inbox");
       if (!posts.length || !docs[docs.length - 1]) {
-        oldestPostDate = 0;
+        minDate = 0;
       } else {
-        oldestPostDate = posts[posts.length - 1].published;
+        minDate = posts[posts.length - 1].published;
       }
-      return mergeNonInboxedPosts(oldestPostDate, posts);
-    };
-  })(this));
-
-  /*
-  	 * Merge inboxes posts with those from followed users but that preceed "followship".
-  	 * Limit search to those posts made after @minDate.
-   */
-  return mergeNonInboxedPosts = (function(_this) {
-    return function(minDate, ips) {
-      var onGetNonInboxedPosts;
-      Follow.find({
-        follower: self,
-        dateBegin: {
-          $gt: minDate
-        }
-      }, function(err, follows) {
+      return Resource.populate(posts, {
+        path: 'author actor target object'
+      }, function(err, docs) {
         if (err) {
           return callback(err);
         }
-        return async.mapLimit(follows, 5, (function(follow, done) {
-          var ltDate;
-          ltDate = Math.min(follow.dateBegin, opts.maxDate);
-          return Post.find({
-            author: follow.followee,
-            group: null,
-            parentPost: null,
-            published: {
-              $lt: ltDate,
-              $gt: minDate
-            }
-          }).limit(opts.limit).exec(done);
-        }), function(err, _docs) {
-          var nips;
-          nips = _.flatten(_docs).filter(function(i) {
-            return i;
-          });
-          console.log("" + nips.length + " posts gathered from follow");
-          return onGetNonInboxedPosts(err, nips);
+        return Post.fillComments(docs, function(err, docs) {
+          return callback(err, docs, minDate);
         });
       });
-      return onGetNonInboxedPosts = function(err, nips) {
-        var all;
-        if (err) {
-          return callback(err);
-        }
-        all = _.sortBy(nips.concat(ips), function(p) {
-          return -p.published;
-        });
-        return Resource.populate(all, {
-          path: 'author actor target object'
-        }, (function(_this) {
-          return function(err, docs) {
-            if (err) {
-              return callback(err);
-            }
-            console.log('dates:\n' + _.map(docs, function(i) {
-              return i.published;
-            }).join('\n'));
-            minDate = docs.length ? docs[docs.length - 1].published : 0;
-            console.log('minDate', minDate);
-            return Post.fillComments(docs, function(err, docs) {
-              return callback(err, docs, minDate);
-            });
-          };
-        })(this));
-      };
     };
-  })(this);
+  })(this));
 };
 
 UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
@@ -653,9 +578,10 @@ Create a post object and fan out through inboxes.
  */
 
 UserSchema.methods.createPost = function(data, cb) {
-  var post, _ref;
+  var post, self, _ref;
+  self = this;
   post = new Post({
-    author: this.id,
+    author: self.id,
     data: {
       title: data.content.title,
       body: data.content.body
@@ -675,11 +601,11 @@ UserSchema.methods.createPost = function(data, cb) {
       if (post.group) {
         return;
       }
-      return _this.getPopulatedFollowers(function(err, followers) {
-        return Inbox.fillInboxes([_this].concat(followers), {
+      return self.getPopulatedFollowers(function(err, followers) {
+        return Inbox.fillInboxes([self].concat(followers), {
           resource: post.id,
           type: Inbox.Types.Post,
-          author: _this.id
+          author: self.id
         }, function() {});
       });
     };
