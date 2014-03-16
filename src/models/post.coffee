@@ -28,7 +28,7 @@ Types =
 PostSchema = new Resource.Schema {
 	author:			{ type: ObjectId, ref: 'Resource', required: true, indexed: 1 }
 	group:			{ type: ObjectId, ref: 'Group', required: false }
-	type: 			{ type: String, required: true }
+	type: 			{ type: String, required: true, enum:_.values(Types) }
 	parentPost:		{ type: ObjectId, ref: 'Post', required: false }
 	
 	updated:		{ type: Date }
@@ -98,33 +98,43 @@ PostSchema.methods.stuff = (cb) ->
 		if err
 			cb(err)
 		else if doc
-			doc.fillComments(cb)
+			doc.fillChildren(cb)
 		else
 			cb(false,null)
 
-PostSchema.methods.fillComments = (cb) ->
+PostSchema.methods.fillChildren = (cb) ->
 	if @type not in ['PlainPost', 'Answer']
 		cb(false, @toJSON())
 
-	Post.find {parentPost:@, type:Post.Types.Comment}
+	Post.find {parentPost:@}
 	.populate 'author'
-	.exec (err, comments) =>
-		cb(err, _.extend({}, @toJSON(), { comments:comments }))
+	.exec (err, children) =>
+		comments = _.filter(children, (i) -> i.type is Types.Comment)
+		answers = _.filter(children, (i) -> i.type is Types.Answer)
+		cb(err, _.extend({}, @toJSON(), { comments:comments, answers:answers }))
 
 ################################################################################
 ## Statics #####################################################################
 
-PostSchema.statics.fillComments = (docs, cb) ->
+PostSchema.statics.fillChildren = (docs, cb) ->
 	assertArgs({$isA:Array},'$isCb')
 	results = []
 	async.forEach _.filter(docs, (i) -> i), (post, done) ->
-			Post.find {parentPost: post, type:Post.Types.Comment}
+			Post.find {parentPost:post}
 				.populate 'author'
-				.exec (err, comments) ->
+				.exec (err, children) ->
+					comments = _.filter(children, (i) -> i.type is Types.Comment)
+					answers = _.filter(children, (i) -> i.type is Types.Answer)
 					if post.toObject
-						results.push(_.extend({}, post.toObject(), { comments:comments }))
+						results.push(_.extend({}, post.toObject(), {
+							comments: comments,
+							answers: answers
+						}))
 					else
-						results.push(_.extend({}, post, { comments:comments }))
+						results.push(_.extend({}, post, {
+							comments: comments
+							answers: answers
+						}))
 					done()
 		, (err) ->
 			if err then console.log 'Error in fillinpostcomments', err

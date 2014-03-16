@@ -38,7 +38,8 @@ PostSchema = new Resource.Schema({
   },
   type: {
     type: String,
-    required: true
+    required: true,
+    "enum": _.values(Types)
   },
   parentPost: {
     type: ObjectId,
@@ -146,31 +147,38 @@ PostSchema.methods.stuff = function(cb) {
     if (err) {
       return cb(err);
     } else if (doc) {
-      return doc.fillComments(cb);
+      return doc.fillChildren(cb);
     } else {
       return cb(false, null);
     }
   });
 };
 
-PostSchema.methods.fillComments = function(cb) {
+PostSchema.methods.fillChildren = function(cb) {
   var _ref;
   if ((_ref = this.type) !== 'PlainPost' && _ref !== 'Answer') {
     cb(false, this.toJSON());
   }
   return Post.find({
-    parentPost: this,
-    type: Post.Types.Comment
+    parentPost: this
   }).populate('author').exec((function(_this) {
-    return function(err, comments) {
+    return function(err, children) {
+      var answers, comments;
+      comments = _.filter(children, function(i) {
+        return i.type === Types.Comment;
+      });
+      answers = _.filter(children, function(i) {
+        return i.type === Types.Answer;
+      });
       return cb(err, _.extend({}, _this.toJSON(), {
-        comments: comments
+        comments: comments,
+        answers: answers
       }));
     };
   })(this));
 };
 
-PostSchema.statics.fillComments = function(docs, cb) {
+PostSchema.statics.fillChildren = function(docs, cb) {
   var results;
   assertArgs({
     $isA: Array
@@ -180,16 +188,24 @@ PostSchema.statics.fillComments = function(docs, cb) {
     return i;
   }), function(post, done) {
     return Post.find({
-      parentPost: post,
-      type: Post.Types.Comment
-    }).populate('author').exec(function(err, comments) {
+      parentPost: post
+    }).populate('author').exec(function(err, children) {
+      var answers, comments;
+      comments = _.filter(children, function(i) {
+        return i.type === Types.Comment;
+      });
+      answers = _.filter(children, function(i) {
+        return i.type === Types.Answer;
+      });
       if (post.toObject) {
         results.push(_.extend({}, post.toObject(), {
-          comments: comments
+          comments: comments,
+          answers: answers
         }));
       } else {
         results.push(_.extend({}, post, {
-          comments: comments
+          comments: comments,
+          answers: answers
         }));
       }
       return done();

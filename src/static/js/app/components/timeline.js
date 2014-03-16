@@ -64,10 +64,26 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			initialize: function () {
 				this.commentList = new CommentList(this.get('comments'));
 				this.commentList.postItem = this.postItem;
+				if (this.get('answers')) {
+					this.answerList = new AnswerList(this.get('answers'));
+				}
 				// if (this.get('hasComments')) {
 				// 	this.commentList.fetch({reset:true});
 				// }
 			},
+		});
+
+		var AnswerItem = GenericPostItem.extend({
+			initialize: function () {
+			}
+		});
+		
+		var AnswerList = Backbone.Collection.extend({
+			model: AnswerItem,	
+			comparator: function (i) {
+				// do votes here! :)
+				return -1*new Date(i.get('published'));
+			}
 		});
 
 		var PostList = Backbone.Collection.extend({
@@ -113,13 +129,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			parse: function (response, options) {
 				this.endDate = new Date(response.endDate);
 				return Backbone.Collection.prototype.parse.call(this, response.data, options);
-			},
-			// fetchMore: function () {
-			// 	console.log('tryFetchMore')
-			// 	if (this.endDate === new Date(0))
-			// 		return;
-			// 	this.fetch({data: {endDate:this.endDate}, remove:false});
-			// },
+			}
 		});
 		
 		/********************************************************************************/
@@ -175,7 +185,43 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 
-		var CommentInputView = React.createClass({displayName: 'CommentInputView',
+		var AnswerView = React.createClass({displayName: 'AnswerView',
+			mixins: [EditablePost],
+			render: function () {
+				var comment = this.props.model.attributes;
+				var self = this;
+
+				var mediaUserAvatarStyle = {
+					background: 'url('+comment.author.avatarUrl+')',
+				};
+
+				return (
+					React.DOM.div( {className:"commentWrapper", id:comment.id}, 
+						React.DOM.div( {className:"mediaUser"}, 
+							React.DOM.a( {href:comment.author.profileUrl}, 
+								React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle, title:comment.author.username}
+								)
+							)
+						),
+						React.DOM.div( {className:(window.user && comment.author.id===window.user.id)?'msgBody editable':'msgBody'}, 
+							comment.data.unescapedBody,
+							(window.user && window.user.id === comment.author.id)?
+								React.DOM.div( {className:"optionBtns"}, 
+									React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
+										React.DOM.i( {className:"icon-trash"})
+									)
+								)
+							:undefined
+						),
+						React.DOM.a( {href:comment.path, 'data-time-count':1*new Date(comment.published)}, 
+							window.calcTimeFrom(comment.published)
+						)
+					)
+				);
+			},
+		});
+
+		var CommentInputForm = React.createClass({displayName: 'CommentInputForm',
 
 			componentDidMount: function () {
 				$(this.refs.input.getDOMNode()).autosize();
@@ -260,11 +306,46 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				return (
 					React.DOM.div( {className:"commentSection"}, 
 						CommentListView( {collection:this.props.model.commentList} ),
-						
-							window.user?
-							CommentInputView( {model:this.props.model} )
-							:null
-						
+						window.user?
+						CommentInputForm( {model:this.props.model} )
+						:null
+					)
+				);
+			},
+		});
+
+		var AnswerSectionView = React.createClass({displayName: 'AnswerSectionView',
+
+			render: function () {
+				return (
+					React.DOM.div( {className:"answerSection"}, 
+						AnswerListView( {collection:this.props.model.answerList} ),
+						window.user?
+						AnswerInputForm( {model:this.props.model} )
+						:null
+					)
+				);
+			},
+		});
+
+		var AnswerListView = React.createClass({displayName: 'AnswerListView',
+			componentWillMount: function () {
+				var update = function () {
+					this.forceUpdate(function(){});
+				}
+				this.props.collection.on('add reset remove', update.bind(this));
+			},
+
+			render: function () {
+				var answerNodes = this.props.collection.map(function (answer) {
+					return (
+						AnswerView( {model:answer} ) 
+					);
+				});
+
+				return (
+					React.DOM.div( {className:"answerList"}, 
+						answerNodes
 					)
 				);
 			},
@@ -292,7 +373,63 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 		});
 
-		var PlainPostView = React.createClass({displayName: 'PlainPostView',
+		var AnswerInputForm = React.createClass({displayName: 'AnswerInputForm',
+
+			componentDidMount: function () {
+				$(this.refs.input.getDOMNode()).autosize();
+			},
+
+			handleSubmit: function (evt) {
+				evt.preventDefault();
+
+				var bodyEl = $(this.refs.input.getDOMNode());
+				var self = this;
+				$.ajax({
+					type: 'post',
+					dataType: 'json',
+					url: this.props.model.get('apiPath')+'/answers',
+					data: { content: { body: bodyEl.val() } }
+				}).done(function(response) {
+					bodyEl.val('');
+					console.log('response', response);
+					self.props.model.answerList.add(new AnswerItem(response.data));
+				});
+			},
+
+			render: function () {
+				if (!window.user)
+					return (React.DOM.div(null));
+				var mediaUserAvatarStyle = {
+					background: 'url('+window.user.avatarUrl+')',
+				};
+
+				return (
+					React.DOM.div( {className:"commentInputSection"}, 
+						React.DOM.form( {className:"formPostComment", onSubmit:this.handleSubmit}, 
+							React.DOM.table(null, 
+								React.DOM.tbody(null, 
+									React.DOM.tr(null, React.DOM.td(null, 
+										React.DOM.div( {className:"mediaUser"}, 
+											React.DOM.a( {href:window.user.profileUrl}, 
+												React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle}
+												)
+											)
+										)
+									),React.DOM.td( {className:"commentInputTd"}, 
+										React.DOM.textarea( {required:"required", className:"commentInput", ref:"input", type:"text", placeholder:"Responda essa publicação."}
+										)
+									),React.DOM.td(null, 
+										React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
+									))
+								)
+							)
+						)
+					)
+				);
+			},
+		})
+
+		var QAPostView = React.createClass({displayName: 'QAPostView',
 			mixins: [EditablePost],
 
 			render: function () {
@@ -303,43 +440,47 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				var rawMarkup = post.data.unescapedBody;
 
 				return (
-					React.DOM.div( {className:"opMessage"}, 
-						React.DOM.div( {className:"msgHeader"}, 
-							React.DOM.div( {className:"mediaUser"}, 
-								React.DOM.a( {href:post.author.profileUrl}, 
-									React.DOM.div( {className:"mediaUserAvatar", style:mediaUserStyle})
-								)
-							),
-							React.DOM.div( {className:"headline"}, 
-								React.DOM.a( {href:post.author.profileUrl, className:"authorUsername"}, 
-									post.author.name
-								), 
-								"disse:"
-							),
-							
-							React.DOM.a( {href:post.path}, 
-								React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
-									window.calcTimeFrom(post.published)
-								)
-							),
-
-							(window.user && post.author.id === window.user.id)?
-								React.DOM.div( {className:"optionBtns"}, 
-									React.DOM.button(	{onClick:this.onClickTrash, title:"Remover Post",
-										'data-action':"remove-post", 'data-toggle':"tooltip", 'data-placement':"bottom"}, 
-										React.DOM.i( {className:"icon-trash"})
-									),
-									React.DOM.button(	{onClick:this.onClickEdit, title:"Editar Post",
-										'data-action':"edit-post", 'data-toggle':"tooltip", 'data-placement':"bottom"}, 
-										React.DOM.i( {className:"icon-edit"})
+					React.DOM.div( {className:"postPart"}, 
+						React.DOM.div( {className:"opMessage"}, 
+							React.DOM.div( {className:"msgHeader"}, 
+								React.DOM.div( {className:"mediaUser"}, 
+									React.DOM.a( {href:post.author.profileUrl}, 
+										React.DOM.div( {className:"mediaUserAvatar", style:mediaUserStyle})
 									)
-								)
-								:undefined
+								),
+								React.DOM.div( {className:"headline"}, 
+									React.DOM.a( {href:post.author.profileUrl, className:"authorUsername"}, 
+										post.author.name
+									), 
+									"disse:"
+								),
+								
+								React.DOM.a( {href:post.path}, 
+									React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
+										window.calcTimeFrom(post.published)
+									)
+								),
+
+								(window.user && post.author.id === window.user.id)?
+									React.DOM.div( {className:"optionBtns"}, 
+										React.DOM.button(	{onClick:this.onClickTrash, title:"Remover Post",
+											'data-action':"remove-post", 'data-toggle':"tooltip", 'data-placement':"bottom"}, 
+											React.DOM.i( {className:"icon-trash"})
+										),
+										React.DOM.button(	{onClick:this.onClickEdit, title:"Editar Post",
+											'data-action':"edit-post", 'data-toggle':"tooltip", 'data-placement':"bottom"}, 
+											React.DOM.i( {className:"icon-edit"})
+										)
+									)
+									:undefined
+							),
+							React.DOM.div( {className:"msgBody"}, 
+								React.DOM.div( {className:"arrow"}),
+								React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
+							)
 						),
-						React.DOM.div( {className:"msgBody"}, 
-							React.DOM.div( {className:"arrow"}),
-							React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
-						)
+						CommentSectionView( {model:this.props.model} ),
+						AnswerSectionView( {model:this.props.model} )
 					)
 				);
 			},
@@ -351,12 +492,10 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 			render: function () {
 				var postType = this.props.model.get('type');
+				// test for type, QA for example
 				return (
 					React.DOM.div( {className:"postView"}, 
-						PlainPostView( {model:this.props.model} ),
-						(postType==='PlainPost'||postType==='Answer')?
-						CommentSectionView( {model:this.props.model} )
-						:null
+						QAPostView( {model:this.props.model} )
 					)
 				);
 			},

@@ -361,7 +361,7 @@ UserSchema.methods.getTimeline = function(opts, callback) {
         if (err) {
           return callback(err);
         }
-        return Post.fillComments(docs, function(err, docs) {
+        return Post.fillChildren(docs, function(err, docs) {
           return callback(err, docs, minDate);
         });
       });
@@ -397,7 +397,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
           }
         }).populate('resource actor target object').exec(next);
       }, function(next) {
-        return Post.fillComments(docs, next);
+        return Post.fillChildren(docs, next);
       }
     ], HandleLimit(function(err, results) {
       var activities, all, posts;
@@ -440,7 +440,7 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
           }
         }).populate('resource actor target object').exec(next);
       }, function(next) {
-        return Post.fillComments(docs, next);
+        return Post.fillChildren(docs, next);
       }
     ], function(err, results) {
       var activities, all, posts;
@@ -532,10 +532,8 @@ UserSchema.methods.removeUserFromGroup = function(member, group, type, cb) {
     return cb();
   } else {
     return user.update({
-      $push: {
+      $pull: {
         memberships: {
-          member: user,
-          permission: Group.MembershipTypes.Member,
           group: group.id
         }
       }
@@ -557,8 +555,13 @@ UserSchema.methods.removeUserFromGroup = function(member, group, type, cb) {
 Create a post object with type comment.
  */
 
-UserSchema.methods.commentToPost = function(parentPost, data, cb) {
+UserSchema.methods.postToParentPost = function(parentPost, data, cb) {
   var comment;
+  assertArgs({
+    $isModel: Post
+  }, {
+    $contains: ['content', 'type']
+  }, '$isCb');
   comment = new Post({
     author: this,
     group: parentPost.group,
@@ -566,7 +569,7 @@ UserSchema.methods.commentToPost = function(parentPost, data, cb) {
       body: data.content.body
     },
     parentPost: parentPost,
-    type: Post.Types.Comment
+    type: data.type
   });
   comment.save(cb);
   return Notification.Trigger(this, Notification.Types.PostComment)(comment, parentPost, function() {});

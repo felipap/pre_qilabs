@@ -18,7 +18,7 @@ module.exports = {
 				Post.findOne {_id: postId},
 					req.handleErrResult((doc) =>
 						# If needed to fill response with comments:
-						doc.fillComments (err, object) =>
+						doc.fillChildren (err, object) =>
 							res.endJson({
 								error: false,
 								data: object
@@ -35,37 +35,68 @@ module.exports = {
 							res.endJson(doc)
 			children: {
 				'/comments':
-					methods: {
-						get: [required.posts.selfCanSee('id'), (req, res) ->
-							return if not postId = req.paramToObjectId('id')
-							Post.findById postId
-								.populate 'author'
-								.exec req.handleErrResult (post) ->
-									post.getComments req.handleErrResult((comments) =>
-										res.endJson {
-											data: comments
-											error: false
-											page: -1 # sending all
-										}
-									)
-						]
-						post: [required.posts.selfCanComment('id'), (req, res) ->
-							return if not postId = req.paramToObjectId('id')
-							data = {
-								content: {
-									body: req.body.content.body
-								}
+					get: [required.posts.selfCanSee('id'), (req, res) ->
+						return if not postId = req.paramToObjectId('id')
+						Post.findById postId
+							.populate 'author'
+							.exec req.handleErrResult (post) ->
+								post.getComments req.handleErrResult((comments) =>
+									res.endJson {
+										data: comments
+										error: false
+										page: -1 # sending all
+									}
+								)
+					]
+					post: [required.posts.selfCanComment('id'), (req, res) ->
+						return if not postId = req.paramToObjectId('id')
+						data = {
+							content: {
+								body: req.body.content.body
 							}
-							Post.findById postId,
-								req.handleErrResult (parentPost) =>
-									req.user.commentToPost parentPost, data,
-										req.handleErrResult (doc) =>
-											doc.populate('author',
-												req.handleErrResult (doc) =>
-													res.endJson(error:false, data:doc)
-											)
-						]
-					}
+							type: Post.Types.Comment
+						}
+						Post.findById postId,
+							req.handleErrResult (parentPost) =>
+								req.user.postToParentPost parentPost, data,
+									req.handleErrResult (doc) =>
+										doc.populate('author',
+											req.handleErrResult (doc) =>
+												res.endJson(error:false, data:doc)
+										)
+					]
+				'/answers':
+					# get: [required.posts.selfCanSee('id'), (req, res) ->
+					# 	return if not postId = req.paramToObjectId('id')
+					# 	Post.findById postId
+					# 		.populate 'author'
+					# 		.exec req.handleErrResult (post) ->
+					# 			post.getComments req.handleErrResult((comments) =>
+					# 				res.endJson {
+					# 					data: comments
+					# 					error: false
+					# 					page: -1 # sending all
+					# 				}
+					# 			)
+					# ]
+					post: [required.posts.selfCanComment('id'), (req, res) ->
+						return if not postId = req.paramToObjectId('id')
+						data = {
+							content: {
+								body: req.body.content.body
+							}
+							type: Post.Types.Answer
+						}
+						Post.findById postId,
+							req.handleErrResult (parentPost) =>
+								req.user.postToParentPost parentPost, data,
+									req.handleErrResult (doc) =>
+										doc.populate('author',
+											req.handleErrResult (doc) =>
+												res.endJson(error:false, data:doc)
+										)
+					]
+
 			}
 		},
 	},

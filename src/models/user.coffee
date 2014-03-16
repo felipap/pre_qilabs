@@ -244,7 +244,7 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 			
 			Resource.populate posts, {path: 'author actor target object'}, (err, docs) =>
 				return callback(err) if err
-				Post.fillComments docs, (err, docs) ->
+				Post.fillChildren docs, (err, docs) ->
 					callback(err, docs, minDate)
 
 
@@ -272,7 +272,7 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 						.populate 'resource actor target object'
 						.exec next
 				(next) ->
-					Post.fillComments docs, next
+					Post.fillChildren docs, next
 			], HandleLimit (err, results) -> # Merge results and call back
 				activities = results[0]
 				posts = results[1]
@@ -309,7 +309,7 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 						.populate 'resource actor target object'
 						.exec next
 				(next) ->
-					Post.fillComments docs, next
+					Post.fillChildren docs, next
 			], (err, results) ->
 				activities = results[0]
 				posts = results[1]
@@ -364,13 +364,7 @@ UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 	if mem
 		return cb()
 	else
-		user.update {$push: {
-			memberships: {
-				member: user
-				permission: Group.MembershipTypes.Member
-				group: group.id
-			}
-		}}, (err) =>
+		user.update {$pull: { memberships: { group: group.id } }}, (err) =>
 			cb(err, mem)
 			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
 				group:group, actor:@, member:user
@@ -383,7 +377,8 @@ UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 ###
 Create a post object with type comment.
 ###
-UserSchema.methods.commentToPost = (parentPost, data, cb) ->
+UserSchema.methods.postToParentPost = (parentPost, data, cb) ->
+	assertArgs({$isModel:Post},{$contains:['content','type']},'$isCb')
 	# Detect repeated posts and comments!
 	comment = new Post {
 		author: @
@@ -392,7 +387,7 @@ UserSchema.methods.commentToPost = (parentPost, data, cb) ->
 			body: data.content.body
 		}
 		parentPost: parentPost
-		type: Post.Types.Comment
+		type: data.type
 	}
 	comment.save cb
 

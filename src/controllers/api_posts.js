@@ -25,7 +25,7 @@ module.exports = {
           _id: postId
         }, req.handleErrResult((function(_this) {
           return function(doc) {
-            return doc.fillComments(function(err, object) {
+            return doc.fillChildren(function(err, object) {
               return res.endJson({
                 error: false,
                 data: object
@@ -55,52 +55,79 @@ module.exports = {
       },
       children: {
         '/comments': {
-          methods: {
-            get: [
-              required.posts.selfCanSee('id'), function(req, res) {
-                var postId;
-                if (!(postId = req.paramToObjectId('id'))) {
-                  return;
-                }
-                return Post.findById(postId).populate('author').exec(req.handleErrResult(function(post) {
-                  return post.getComments(req.handleErrResult((function(_this) {
-                    return function(comments) {
-                      return res.endJson({
-                        data: comments,
-                        error: false,
-                        page: -1
-                      });
-                    };
-                  })(this)));
-                }));
+          get: [
+            required.posts.selfCanSee('id'), function(req, res) {
+              var postId;
+              if (!(postId = req.paramToObjectId('id'))) {
+                return;
               }
-            ],
-            post: [
-              required.posts.selfCanComment('id'), function(req, res) {
-                var data, postId;
-                if (!(postId = req.paramToObjectId('id'))) {
-                  return;
-                }
-                data = {
-                  content: {
-                    body: req.body.content.body
-                  }
-                };
-                return Post.findById(postId, req.handleErrResult((function(_this) {
-                  return function(parentPost) {
-                    return req.user.commentToPost(parentPost, data, req.handleErrResult(function(doc) {
-                      return doc.populate('author', req.handleErrResult(function(doc) {
-                        return res.endJson({
-                          error: false,
-                          data: doc
-                        });
-                      }));
-                    }));
+              return Post.findById(postId).populate('author').exec(req.handleErrResult(function(post) {
+                return post.getComments(req.handleErrResult((function(_this) {
+                  return function(comments) {
+                    return res.endJson({
+                      data: comments,
+                      error: false,
+                      page: -1
+                    });
                   };
                 })(this)));
+              }));
+            }
+          ],
+          post: [
+            required.posts.selfCanComment('id'), function(req, res) {
+              var data, postId;
+              if (!(postId = req.paramToObjectId('id'))) {
+                return;
               }
-            ]
-          }
+              data = {
+                content: {
+                  body: req.body.content.body
+                },
+                type: Post.Types.Comment
+              };
+              return Post.findById(postId, req.handleErrResult((function(_this) {
+                return function(parentPost) {
+                  return req.user.postToParentPost(parentPost, data, req.handleErrResult(function(doc) {
+                    return doc.populate('author', req.handleErrResult(function(doc) {
+                      return res.endJson({
+                        error: false,
+                        data: doc
+                      });
+                    }));
+                  }));
+                };
+              })(this)));
+            }
+          ]
+        },
+        '/answers': {
+          post: [
+            required.posts.selfCanComment('id'), function(req, res) {
+              var data, postId;
+              if (!(postId = req.paramToObjectId('id'))) {
+                return;
+              }
+              data = {
+                content: {
+                  body: req.body.content.body
+                },
+                type: Post.Types.Answer
+              };
+              return Post.findById(postId, req.handleErrResult((function(_this) {
+                return function(parentPost) {
+                  return req.user.postToParentPost(parentPost, data, req.handleErrResult(function(doc) {
+                    return doc.populate('author', req.handleErrResult(function(doc) {
+                      return res.endJson({
+                        error: false,
+                        data: doc
+                      });
+                    }));
+                  }));
+                };
+              })(this)));
+            }
+          ]
         }
       }
     }
