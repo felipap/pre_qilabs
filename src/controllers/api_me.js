@@ -109,7 +109,8 @@ module.exports = {
       get: function(req, res) {
         var opts;
         opts = {
-          limit: 20
+          limit: 20,
+          maxDate: 0
         };
         if (parseInt(req.query.maxDate)) {
           opts.maxDate = parseInt(req.query.maxDate);

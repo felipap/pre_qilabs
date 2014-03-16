@@ -71,7 +71,7 @@ module.exports = {
 				)
 
 			get: (req, res) ->
-					opts = { limit:20 }
+					opts = { limit:20, maxDate:0 }
 					if parseInt(req.query.maxDate)
 						opts.maxDate = parseInt(req.query.maxDate)
 					req.user.getTimeline opts,

@@ -342,22 +342,45 @@ UserSchema.statics.reInbox = function(user, callback) {
  * Behold.
  */
 
-UserSchema.methods.getTimeline = function(_opts, callback) {
-  var mergeNonInboxedPosts, opts, self;
+UserSchema.methods.getTimeline = function(opts, callback) {
+  var mergeNonInboxedPosts, self;
+  assertArgs({
+    $contains: ['limit', 'maxDate']
+  }, '$isCb');
   self = this;
   User.reInbox(this, function() {});
-  opts = _.extend({
-    limit: 10
-  }, _opts);
-  if (!opts.maxDate) {
-    opts.maxDate = Date.now();
-  }
+
+  /*
+  	 * Get inboxed posts older than the opts.maxDate determined by the user.
+   */
+  Inbox.find({
+    recipient: self.id,
+    dateSent: {
+      $lt: opts.maxDate
+    }
+  }).sort('-dateSent').populate('resource').limit(opts.limit).exec((function(_this) {
+    return function(err, docs) {
+      var oldestPostDate, posts;
+      if (err) {
+        return cb(err);
+      }
+      posts = _.pluck(docs, 'resource').filter(function(i) {
+        return i;
+      });
+      if (!posts.length || !docs[docs.length - 1]) {
+        oldestPostDate = 0;
+      } else {
+        oldestPostDate = posts[posts.length - 1].published;
+      }
+      return mergeNonInboxedPosts(oldestPostDate, posts);
+    };
+  })(this));
 
   /*
   	 * Merge inboxes posts with those from followed users but that preceed "followship".
   	 * Limit search to those posts made after @minDate.
    */
-  mergeNonInboxedPosts = (function(_this) {
+  return mergeNonInboxedPosts = (function(_this) {
     return function(minDate, ips) {
       var onGetNonInboxedPosts;
       Follow.find({
@@ -365,7 +388,7 @@ UserSchema.methods.getTimeline = function(_opts, callback) {
         dateBegin: {
           $gt: minDate
         }
-      }).exec(function(err, follows) {
+      }, function(err, follows) {
         if (err) {
           return callback(err);
         }
@@ -386,6 +409,7 @@ UserSchema.methods.getTimeline = function(_opts, callback) {
           nips = _.flatten(_docs).filter(function(i) {
             return i;
           });
+          console.log("" + nips.length + " posts gathered from follow");
           return onGetNonInboxedPosts(err, nips);
         });
       });
@@ -395,7 +419,7 @@ UserSchema.methods.getTimeline = function(_opts, callback) {
           return callback(err);
         }
         all = _.sortBy(nips.concat(ips), function(p) {
-          return p.published;
+          return -p.published;
         });
         return Resource.populate(all, {
           path: 'author actor target object'
@@ -404,7 +428,11 @@ UserSchema.methods.getTimeline = function(_opts, callback) {
             if (err) {
               return callback(err);
             }
+            console.log('dates:\n' + _.map(docs, function(i) {
+              return i.published;
+            }).join('\n'));
             minDate = docs.length ? docs[docs.length - 1].published : 0;
+            console.log('minDate', minDate);
             return Post.fillComments(docs, function(err, docs) {
               return callback(err, docs, minDate);
             });
@@ -413,34 +441,6 @@ UserSchema.methods.getTimeline = function(_opts, callback) {
       };
     };
   })(this);
-  return Inbox.find({
-    recipient: self.id,
-    dateSent: {
-      $lt: opts.maxDate
-    }
-  }).sort('-dateSent').populate('resource').limit(opts.limit).exec((function(_this) {
-    return function(err, docs) {
-      var oldestPostDate, posts;
-      if (err) {
-        return cb(err);
-      }
-      posts = _.pluck(docs, 'resource').filter(function(i) {
-        return i;
-      });
-
-      /*
-      			 * Get oldest post date
-      			 * Non-inboxed posts must be younger than that, so that at least opts.limit
-      			 * posts are created.
-       */
-      if (!posts.length || !docs[docs.length - 1]) {
-        oldestPostDate = 0;
-      } else {
-        oldestPostDate = posts[posts.length - 1].published;
-      }
-      return mergeNonInboxedPosts(oldestPostDate, posts);
-    };
-  })(this));
 };
 
 UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
@@ -702,11 +702,14 @@ UserSchema.methods.genProfile = function(cb) {
         if (err) {
           return cb(err);
         }
-        return self.populate('memberships.group', function(err, groups) {
-          var profile;
+        return self.populate('memberships.group', function(err, _groups) {
+          var groups, profile;
           if (err) {
             return cb(err);
           }
+          groups = _.filter(_groups, function(i) {
+            return i && i.group;
+          });
           profile = _.extend(self.toJSON(), {
             followers: {
               docs: followers.slice(0, 20),
@@ -717,8 +720,8 @@ UserSchema.methods.genProfile = function(cb) {
               count: following.length
             },
             groups: {
-              docs: _.pluck(self.memberships, 'group').slice(0, 20),
-              count: _.pluck(self.memberships, 'group').length
+              docs: _.pluck(groups, 'group').slice(0, 20),
+              count: _.pluck(groups, 'group').length
             }
           });
           return cb(null, profile);

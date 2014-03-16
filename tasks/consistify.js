@@ -89,6 +89,16 @@ jobber = require('./jobber.js')(function(e) {
           return next(err);
         };
       })(this));
+    }, function(next) {
+      return User.find({}).populate('memberships.group').exec((function(_this) {
+        return function(err, users) {
+          if (err) {
+            console.warn(err);
+          }
+          console.log('Users with obsolete groups found:', incon.length);
+          return next(err);
+        };
+      })(this));
     }
   ];
   wrapTest = function(test) {

@@ -421,8 +421,8 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 						React.DOM.div( {className:"streamMessage"}, 
 							React.DOM.i( {className:"icon-exclamation"}), " Nenhuma outra atividade encontrada."
 						)
-						:React.DOM.div( {className:"streamMessage"}, 
-							React.DOM.i( {className:"icon-spin icon-cog"}), " Procurando mais atividades."
+						:React.DOM.a( {className:"streamMessage", href:"#", onClick:this.props.collection.tryFetchMore}, 
+							React.DOM.i( {className:"icon-spin icon-cog"}),"Procurando mais atividades."
 						)
 					)
 				);

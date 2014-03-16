@@ -51,6 +51,17 @@ jobber = require('./jobber.js')((e) ->
 				if err then console.warn err
 				console.log('Posts with obsolete group found:', docs.length)
 				next(err)
+
+		,(next) ->
+			User.find({}).populate('memberships.group').exec (err, users) =>
+				if err then console.warn err
+
+				# for user in users
+					
+
+				console.log('Users with obsolete groups found:', incon.length)
+
+				next(err)
 		]
 
 	wrapTest = (test) ->

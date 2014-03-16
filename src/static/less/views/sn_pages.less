@@ -202,12 +202,22 @@ body {
 	}
 	
 	.streamMessage {
+		&a {
+			color: #AAA;
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
 		color: #AAA;
 		border: 2px dashed #AAA;
+		width: 100%;
 		font-weight: 13px;
 		font-weight: bold;
 		padding: 20px;
 		.rounded(4px);
+		display: block;
 		text-align: center;
 	}
 	

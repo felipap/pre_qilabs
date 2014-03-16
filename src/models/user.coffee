@@ -229,18 +229,33 @@ UserSchema.statics.reInbox = (user, callback) ->
 ###
 # Behold.
 ###
-UserSchema.methods.getTimeline = (_opts, callback) ->
-	# assertArgs({$contains:'limit'}, '$isCb')
+UserSchema.methods.getTimeline = (opts, callback) ->
+	assertArgs({$contains:['limit','maxDate']}, '$isCb')
 	self = @
 
 	User.reInbox(@, () ->)
 
-	opts = _.extend({
-		limit: 10,
-	}, _opts)
-
-	if not opts.maxDate
-		opts.maxDate = Date.now()
+	###
+	# Get inboxed posts older than the opts.maxDate determined by the user.
+	###
+	Inbox
+		.find { recipient:self.id, dateSent:{ $lt:opts.maxDate }}
+		.sort '-dateSent' # tied to selection of oldest post below
+		.populate 'resource'
+		.limit opts.limit
+		.exec (err, docs) =>
+			return cb(err) if err
+			# Pluck resources from inbox docs. Remove null (deleted) resources.
+			posts = _.pluck(docs, 'resource').filter((i)->i)
+			# Get oldest post date. Non-inboxed posts must be younger than that, so that
+			# at least opts.limit posts are created.
+			if not posts.length or not docs[docs.length-1]
+				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
+				oldestPostDate = 0
+			else# There are at least opts.limit inboxed posts. 
+				# Limit non-inboxed posts to be younger than oldest post here.
+				oldestPostDate = posts[posts.length-1].published
+			mergeNonInboxedPosts(oldestPostDate, posts)
 
 	###
 	# Merge inboxes posts with those from followed users but that preceed "followship".
@@ -248,10 +263,9 @@ UserSchema.methods.getTimeline = (_opts, callback) ->
 	###
 	mergeNonInboxedPosts = (minDate, ips) => # ips => Inboxed PostS
 		# Get all "followships" created after @minDate.
-		Follow
-			.find { follower:self, dateBegin:{$gt:minDate} }
-			.exec (err, follows) =>
+		Follow.find { follower:self, dateBegin:{$gt:minDate} }, (err, follows) =>
 				return callback(err) if err
+				
 				# Get posts from these users created before "followship" or maxDate
 				# (whichever is older) and after minDate.
 				async.mapLimit follows, 5, ((follow, done) =>
@@ -268,48 +282,25 @@ UserSchema.methods.getTimeline = (_opts, callback) ->
 					), (err, _docs) ->
 						# Flatten lists. Remove undefined (from .limit queries).
 						nips = _.flatten(_docs).filter((i)->i)
+						console.log "#{nips.length} posts gathered from follow"
 						onGetNonInboxedPosts(err, nips)
 
 		onGetNonInboxedPosts = (err, nips) ->
 			return callback(err) if err
 			
-			all = _.sortBy(nips.concat(ips), (p) -> p.published) # merge'n'sort by date
+			all = _.sortBy(nips.concat(ips), (p) -> -p.published) # merge'n'sort by date
 
 			# Populate author in all docs (nips and ips)
 			Resource.populate all, {path: 'author actor target object'}, (err, docs) =>
 				return callback(err) if err
 				# console.log 'docs', docs
 				# Fill comments in all docs.
+				console.log 'dates:\n'+_.map(docs,(i)->i.published).join('\n')
+
 				minDate = if docs.length then docs[docs.length-1].published else 0
+				console.log 'minDate', minDate
 				Post.fillComments docs, (err, docs) ->
 					callback(err, docs, minDate)
-
-	# Get inboxed posts older than the maxDate determined by the user.
-	Inbox
-		.find { recipient:self.id, dateSent:{ $lt:opts.maxDate }}
-		.sort '-dateSent'
-		.populate 'resource'
-		.limit opts.limit
-		.exec (err, docs) =>
-			return cb(err) if err
-
-			# Pluck resources from inbox docs. Remove null (deleted) resources.
-			posts = _.pluck(docs, 'resource').filter((i)->i)
-
-			###
-			# Get oldest post date
-			# Non-inboxed posts must be younger than that, so that at least opts.limit
-			# posts are created. 
-			###
-			if not posts.length or not docs[docs.length-1]
-				# Not even opts.limit inboxed posts exist. Get all non-inboxed posts.
-				oldestPostDate = 0
-			else
-				# There are at least opts.limit inboxed posts. 
-				# Then limit non-inboxed posts to be younger than oldest post here.
-				oldestPostDate = posts[posts.length-1].published
-
-			mergeNonInboxedPosts(oldestPostDate, posts)
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	if not opts.maxDate
@@ -508,8 +499,10 @@ UserSchema.methods.genProfile = (cb) ->
 		@getPopulatedFollowing (err, following) =>
 			if err then return cb(err)
 
-			self.populate 'memberships.group', (err, groups) =>
+			self.populate 'memberships.group', (err, _groups) =>
 				if err then return cb(err)
+
+				groups = _.filter(_groups, (i) -> i and i.group)
 
 				profile = _.extend(self.toJSON(), {
 					followers: {
@@ -521,8 +514,8 @@ UserSchema.methods.genProfile = (cb) ->
 						count: following.length
 					}
 					groups: {
-						docs: _.pluck(self.memberships,'group').slice(0,20)
-						count: _.pluck(self.memberships,'group').length
+						docs: _.pluck(groups,'group').slice(0,20)
+						count: _.pluck(groups,'group').length
 					}
 				})
 
