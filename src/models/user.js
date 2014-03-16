@@ -472,7 +472,7 @@ UserSchema.methods.createGroup = function(data, cb) {
       return self.update({
         $push: {
           memberships: {
-            member: user,
+            member: self,
             permission: Group.MembershipTypes.Moderator,
             group: group.id
           }

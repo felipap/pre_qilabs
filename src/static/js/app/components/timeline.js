@@ -247,7 +247,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				});
 
 				return (
-					React.DOM.div( {className:"commentListWrapper"}, 
+					React.DOM.div( {className:"commentList"}, 
 						commentNodes
 					)
 				);
@@ -281,7 +281,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 					background: 'url('+post.actor.avatarUrl+')',
 				};
 				return (
-					React.DOM.div( {className:"noteMessage"}, 
+					React.DOM.div( {className:"activityView"}, 
 						React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('content')}} ),
 						React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
 							window.calcTimeFrom(post.published)
@@ -292,7 +292,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 		});
 
-		var PostView = React.createClass({displayName: 'PostView',
+		var PlainPostView = React.createClass({displayName: 'PlainPostView',
 			mixins: [EditablePost],
 
 			render: function () {
@@ -345,22 +345,31 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 
+
+		var PostView = React.createClass({displayName: 'PostView',
+			mixins: [EditablePost],
+
+			render: function () {
+				var postType = this.props.model.get('type');
+				return (
+					React.DOM.div( {className:"postView"}, 
+						PlainPostView( {model:this.props.model} ),
+						(postType==='PlainPost'||postType==='Answer')?
+						CommentSectionView( {model:this.props.model} )
+						:null
+					)
+				);
+			},
+		});
+
 		var StreamItemView = React.createClass({displayName: 'StreamItemView',
 			render: function () {
-				var postType = this.props.model.get('__t');
-				// console.log('type', postType, this.props.model.attributes)
+				var itemType = this.props.model.get('__t');
 				return (
-					React.DOM.div( {className:"streamItemWrapper"}, 
-						
-							(postType==='Post')?
-							PostView( {model:this.props.model} )
-							:ActivityView( {model:this.props.model} ),
-						
-						
-							(this.props.model.get('type')==='PlainPost'||this.props.model.get('type')==='Answer')?
-							CommentSectionView( {model:this.props.model} )
-							:null
-						
+					React.DOM.div( {className:"streamItem"}, 
+						(itemType==='Post')?
+						PostView( {model:this.props.model} )
+						:ActivityView( {model:this.props.model} )
 					)
 				);
 			},
@@ -418,10 +427,10 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 						:null,
 						postNodes,
 						this.props.collection.EOF?
-						React.DOM.div( {className:"streamMessage"}, 
+						React.DOM.div( {className:"streamSign"}, 
 							React.DOM.i( {className:"icon-exclamation"}), " Nenhuma outra atividade encontrada."
 						)
-						:React.DOM.a( {className:"streamMessage", href:"#", onClick:this.props.collection.tryFetchMore}, 
+						:React.DOM.a( {className:"streamSign", href:"#", onClick:this.props.collection.tryFetchMore}, 
 							React.DOM.i( {className:"icon-spin icon-cog"}),"Procurando mais atividades."
 						)
 					)

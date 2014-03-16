@@ -247,7 +247,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				});
 
 				return (
-					<div className="commentListWrapper">
+					<div className="commentList">
 						{commentNodes}
 					</div>
 				);
@@ -281,7 +281,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 					background: 'url('+post.actor.avatarUrl+')',
 				};
 				return (
-					<div className="noteMessage">
+					<div className="activityView">
 						<span dangerouslySetInnerHTML={{__html: this.props.model.get('content')}} />
 						<time data-time-count={1*new Date(post.published)}>
 							{window.calcTimeFrom(post.published)}
@@ -292,7 +292,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 		});
 
-		var PostView = React.createClass({
+		var PlainPostView = React.createClass({
 			mixins: [EditablePost],
 
 			render: function () {
@@ -345,22 +345,31 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 
+
+		var PostView = React.createClass({
+			mixins: [EditablePost],
+
+			render: function () {
+				var postType = this.props.model.get('type');
+				return (
+					<div className="postView">
+						<PlainPostView model={this.props.model} />
+						{(postType==='PlainPost'||postType==='Answer')?
+						<CommentSectionView model={this.props.model} />
+						:null}
+					</div>
+				);
+			},
+		});
+
 		var StreamItemView = React.createClass({
 			render: function () {
-				var postType = this.props.model.get('__t');
-				// console.log('type', postType, this.props.model.attributes)
+				var itemType = this.props.model.get('__t');
 				return (
-					<div className="streamItemWrapper">
-						{
-							(postType==='Post')?
-							<PostView model={this.props.model} />
-							:<ActivityView model={this.props.model} />
-						}
-						{
-							(this.props.model.get('type')==='PlainPost'||this.props.model.get('type')==='Answer')?
-							<CommentSectionView model={this.props.model} />
-							:null
-						}
+					<div className="streamItem">
+						{(itemType==='Post')?
+						<PostView model={this.props.model} />
+						:<ActivityView model={this.props.model} />}
 					</div>
 				);
 			},
@@ -418,10 +427,10 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 						:null}
 						{postNodes}
 						{this.props.collection.EOF?
-						<div className="streamMessage">
+						<div className="streamSign">
 							<i className="icon-exclamation"></i> Nenhuma outra atividade encontrada.
 						</div>
-						:<a className="streamMessage" href="#" onClick={this.props.collection.tryFetchMore}>
+						:<a className="streamSign" href="#" onClick={this.props.collection.tryFetchMore}>
 							<i className="icon-spin icon-cog"></i>Procurando mais atividades.
 						</a>}
 					</div>

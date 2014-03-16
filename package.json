@@ -52,6 +52,7 @@
     "express-validator": "~1.0.1",
     "express-winston": "~0.2.4",
     "winston": "~0.7.2",
-    "assert": "^1.1.1"
+    "assert": "^1.1.1",
+    "colors": "^0.6.2"
   }
 }

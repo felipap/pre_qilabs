@@ -6,16 +6,26 @@
 - This is not a library.
 - I swear not to try to make this into a library. */
 
+var colors = require('colors');
+var path = require('path');
+var mongoose = require('mongoose');
+
 module.exports = function (job, options) {
 	
 	var standalone = (module.parent === require.main);
 
+	var verbose = (options && options.verbose)||true;
 	var requirable = options?((typeof options === 'string')?options:options.requirable):false;
 	if (!standalone && !requirable)
 		throw "This module is supposed to be executed as a job.";
-	
-	var mongoose = require('mongoose');
-	var start = function () {		
+
+	var parentFile = path.basename(module.parent.filename);
+
+	var start = function () {
+
+		if (verbose)
+			console.log(('Jobber: Requiring environment keys.').green);
+		
 		// If being executed directly...
 		// > load keys
 		try {
@@ -23,12 +33,22 @@ module.exports = function (job, options) {
 		} catch (e) {}
 
 		// Open database.
+		if (verbose)
+			console.log(('Jobber: Opening database configuration file.').green);
 		require('../src/config/mongoose');
 
+		if (verbose)
+			console.log(('Jobber: Requiring environment keys.').green);
+
+		if (verbose)
+			console.log(('Jobber: Calling job on file '+parentFile).green);
 		job({
 			// To be called by user at the end of function.
 			quit: function (err) {
-				console.log("Process (pid="+process.pid+") terminated. Error:", err)
+				if (err)
+					console.log(("Jobber: Process (pid="+process.pid+") terminated with err:").red, err)
+				else 
+					console.log(("Jobber: Process (pid="+process.pid+") terminated.").green)
 				// Close database at the end.
 				// Otherwise, the script won't close.
 				mongoose.connection.close()

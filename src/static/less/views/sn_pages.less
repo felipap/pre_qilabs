@@ -15,6 +15,12 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 
+nav.bar {
+	.navcontent {
+		width: 980px;
+	}
+}
+
 .bg-img#page-bg {
 	background: #EEE;
 	background: url(/static/images/cubes.png);
@@ -81,12 +87,6 @@ body {
 			background: #F3F3F3;
 			font-weight: bold;
 
-			small {
-				font-size: 12px;
-				font-weight: normal;
-				float: right;
-			}
-
 			a {
 				text-decoration: none;
 			}
@@ -96,76 +96,61 @@ body {
 			}
 		}
 
-		ul.body {
+		.emptyBoxMsg {
+			color: #AAA;
+			padding: 5px;
+			font-size: 13px;
+			text-align: center;
+		}
+
+		.body {
 			font-size: 13px;
 			list-style: none;
+		}
+	
+		&.userList .body
+		{
+			padding: 5px;
 
-			.emptyBoxMsg {
-				color: #AAA;
-				padding: 5px;
-				// font-style: italic;
-				text-align: center;
+			li {
+				list-style: none;
+				display: inline-block;
+				margin-bottom: 3px;
+				margin-right: 3px;
 			}
-
 		}
 
-		&.labList {
-
+		&.labList .body,
+		&.tagList .body
+		{
 			li {
 				a {
 					display: block;
 					text-decoration: none;
 					font-weight: bold;
 					padding: 10px;
-				}
-			} 
-			li:not(:last-child) {
-				border-bottom: 1px solid #DDD;
-			}
-		}
-		
-		&.userList {
-			.body {
-				
-				padding: 5px;
 
-				li {
-					list-style: none;
-					display: inline-block;
-					margin-bottom: 3px;
-					margin-right: 3px;
-				}
-			}
-		}
-
-		&.tagList {
-			li {
-				a {
-					display: block;
-					text-decoration: none;
-					font-weight: bold;
-					padding: 10px;
 					color: #666;
-
-					.tagIcon {
-						margin-right: 3px;
-					}
-
 					&:hover{
 						color: #444;
 					}
 				}
-				&:not(:last-child) {
-					border-bottom: 1px solid #DDD;
-				}
+			} 
+
+			li:not(:last-child) {
+				border-bottom: 1px solid #DDD;
+			}
+		}
+
+		&.tagList .body {
+			li {
+				.tagIcon { margin-right: 3px; }
 				&:nth-child(1) a .tagIcon { color: @COLOR1; }
 				&:nth-child(2) a .tagIcon { color: @COLOR2; }
 				&:nth-child(3) a .tagIcon { color: @COLOR3; }
 				&:nth-child(4) a .tagIcon { color: @COLOR4; }
 			}
 		}
-
-		border-bottom: 1px solid #DDD;
 	}
 
 	.mediaUser {
@@ -183,13 +168,7 @@ body {
 	margin-left: @sidebar-width+@sidebar-gap;
 	margin-bottom: 20px;
 
-	.box {
-		margin-bottom: 10px;
-		list-style: none;
-		padding: 20px;
-	}
-
-	& {
+	.postInputForm {
 		textarea {
 			display: block;
 			width: 100%;
@@ -201,17 +180,9 @@ body {
 		}
 	}
 	
-	.streamMessage {
-		&a {
-			color: #AAA;
-			text-decoration: none;
-			&:hover {
-				text-decoration: underline;
-			}
-		}
-
+	.streamSign {
 		color: #AAA;
-		border: 2px dashed #AAA;
+		border: 1px dashed #AAA;
 		width: 100%;
 		font-weight: 13px;
 		font-weight: bold;
@@ -219,215 +190,237 @@ body {
 		.rounded(4px);
 		display: block;
 		text-align: center;
-	}
-	
-	.postListWrapper,
-	.commentListWrapper {
-		list-style: none;
-		padding-left: 0;
-		margin-bottom: 0;
-	}
-	
-	.commentInputSection .mediaUser,
-	.commentWrapper .mediaUser {
-		.rounded(0);
-		width: 30px;
-		height: 30px;
-	}
-	
-	.streamItemWrapper .msgBody,
-	.commentInput {
-		vertical-align: middle;
-		display: inline-block;
-		border: 1px solid #DDD;
-		.no-box-shadow;
-		outline: none;
-		font-size: 13px;
-		padding: 5px;
-		// .transition(all, .2s, linear);
+
+		&a {
+			color: #AAA;
+			text-decoration: none;
+		}
 	}
 
-	.streamItemWrapper {
+	.streamItem {
 		position: relative;
 		margin-bottom: 15px;
 
-		.opMessage {
+		.postView {
 
-			background: white;
-			border: 1px solid #DDD;
-			border-bottom: none;
-			padding: 10px;
+			.commentInputSection .mediaUser,
+			.commentWrapper .mediaUser {
+				.rounded(0);
+				width: 30px;
+				height: 30px;
+			}
+		
+			.opMessage {
 
-			.msgHeader {
-				height: 55px;
-				.mediaUser {
-					width: 40px;
-					height: 40px;
-					.rounded(0);
-					border: 1px solid #DDD;
-				}
-				.headline {
-					margin-left: 5px;
-					display: inline-block;
-					font: 14px "Open Sans";
-					.authorUsername {
-						color: #666;
-						&:hover {
-							color: #444;
-						}
-						text-decoration: none;
-						display: inline;
-						font-weight: bold;
+				background: white;
+				border: 1px solid #DDD;
+				border-bottom: none;
+				padding: 10px;
+
+				.msgHeader {
+					height: 55px;
+					.mediaUser {
+						width: 40px;
+						height: 40px;
+						.rounded(0);
+						border: 1px solid #DDD;
 					}
-					width: 450px;
+					.headline {
+						margin-left: 5px;
+						display: inline-block;
+						font: 14px "Open Sans";
+						.authorUsername {
+							color: #666;
+							&:hover {
+								color: #444;
+							}
+							text-decoration: none;
+							display: inline;
+							font-weight: bold;
+						}
+						width: 450px;
+					}
+					time {
+						position: absolute;
+						right: 13px;
+						top: 45px;
+						font-size: 13px;
+						color: #888;
+						float: right;
+					}
 				}
-				time {
-					position: absolute;
-					right: 13px;
-					top: 45px;
-					font-size: 13px;
-					color: #888;
-					float: right;
+
+				.msgBody {
+					font-size: 14px;
+					padding: 10px;
+					position: relative;
+					margin: 0 -5px -5px;
+					background: #EFEFEF;
+
+					.arrow {
+						content: '';
+						border: 7px solid transparent;
+						border-bottom-color: #EFEFEF;
+						top: -14px;
+						position: absolute;
+						left: 14px;
+					}
 				}
 			}
 
-			.msgBody {
-				font-size: 14px;
-				padding: 10px;
-				width: 100%;
-				position: relative;
-				margin-left: 3px;
+			.commentSection {
+				border: 1px solid #DDD;
 				background: white;
 
-				.arrow {
-					content: '';
-					border: 7px solid transparent;
-					border-bottom-color: #DDD;
-					top: -14px;
-					position: absolute;
-					left: 14px;
+				.commentList {
+					list-style: none;
+					padding-left: 0;
+					margin-bottom: 0;
+
+					.commentWrapper:first-child {
+						// border-top: 1px solid #DDD;
+						padding-top: 10px;
+					}
+					.commentWrapper:last-child {
+						padding-bottom: 8px;
+					}
+					.commentWrapper {
+						padding-left: 10px;
+						padding-right: 10px;
+						padding-bottom: 3px;
+						word-wrap: break-word;
+
+						.mediaUser {
+							vertical-align: top;
+							border: 1px solid #DDD;
+						}
+
+						.msgBody {
+							vertical-align: middle;
+							display: inline-block;
+							border: 1px solid #DDD;
+							.no-box-shadow;
+							outline: none;
+							font-size: 13px;
+							padding: 5px;
+							background: white;
+							position: relative;
+							width: 500px;
+						}
+
+						time, [data-time-count] {
+							vertical-align: middle;
+							font-size: 11px;
+							font-style: italic;
+							padding: 0 5px;
+							color: #888;
+							width: 60px;
+						}
+					}
+					.commentWrapper:target {
+						background: yellow;
+					}
 				}
-			}
-		}
 
-		.commentSection {
-			border: 1px solid #DDD;
-			background: white;
+				.commentInputSection {
+					padding: 3px 5px 3px 5px;
+					border-top: 1px solid #DDD;
+					background: #EEE;
 
-			.commentListWrapper {
-
-				.commentWrapper:first-child {
-					// border-top: 1px solid #DDD;
-					padding-top: 10px;
-				}
-				.commentWrapper:last-child {
-					padding-bottom: 8px;
-				}
-				.commentWrapper {
-					padding-left: 10px;
-					padding-right: 10px;
-					padding-bottom: 3px;
-					word-wrap: break-word;
-
-					.mediaUser {
+					td {
 						vertical-align: top;
+					}
+
+					td:not(:last-child) {
+						padding-right: 5px;
+					}
+					
+					.mediaUser {
 						border: 1px solid #DDD;
 					}
 
-					.msgBody {
-						background: white;
-						position: relative;
-						width: 500px;
+					.commentInputTd {
+						width: 100%;
 					}
+					.commentInput {
 
-					time, [data-time-count] {
 						vertical-align: middle;
-						font-size: 11px;
-						font-style: italic;
-						padding: 0 5px;
-						color: #888;
-						width: 60px;
+						display: inline-block;
+						border: 1px solid #DDD;
+						.no-box-shadow;
+						outline: none;
+						font-size: 13px;
+						padding: 5px;
+
+						width: 100%;
+						height: 30px;
+						&:focus {
+							border-color: #08C;
+							height: 35px;
+						}
+						resize: vertical;
+					}
+
+					[data-action=send-comment] {
+						display: inline-block;
+						.high-xbtn(white, @COLOR2);
+						font-size: 12px;
+						.high-xbtn-padding(4px, 10px, 2px);
 					}
 				}
-				.commentWrapper:target {
-					background: yellow;
-				}
 			}
 
-			.commentInputSection {
-				padding: 3px 5px 3px 5px;
-				border-top: 1px solid #DDD;
-				background: #EEE;
-
-				td {
-					vertical-align: top;
-				}
-
-				td:not(:last-child) {
-					padding-right: 5px;
-				}
+			.optionBtns {
+				float: right;
+				display: inline-block;
+				position: absolute;
+				right: 5px; top: 0px;
+				z-index: 10;
 				
-				.mediaUser {
-					border: 1px solid #DDD;
-				}
-				
-
-				.commentInputTd {
-					width: 100%;
-				}
-				.commentInput {
-					width: 100%;
-					height: 30px;
-					&:focus {
-						border-color: #08C;
-						height: 35px;
-					}
-					resize: vertical;
-				}
-
-				[data-action=send-comment] {
-					display: inline-block;
-					.high-xbtn(white, @COLOR2);
-					font-size: 12px;
-					.high-xbtn-padding(4px, 10px, 2px);
-				}
-			}
-		}
-
-		.optionBtns {
-			float: right;
-			display: inline-block;
-			position: absolute;
-			right: 5px; top: 0px;
-			z-index: 10;
-			
-			.transition(all, .2s, linear);
-			opacity: .5;
-			&:hover {
-				opacity: 1;
-			}
-
-			[data-action=remove-post],
-			[data-action=edit-post] {
-				.full-reset-button;
-				padding-left: 3px;
-				vertical-align: middle;
-				padding-right: 3px;
-				font-size: 105%;
-				font-weight: bolder;
-				color: #888;
-				opacity: .6;
+				.transition(all, .2s, linear);
+				opacity: .5;
 				&:hover {
-					color: #444;
+					opacity: 1;
 				}
-				&:active {
-					outline: none;
+
+				[data-action=remove-post],
+				[data-action=edit-post] {
+					.full-reset-button;
+					padding-left: 3px;
+					vertical-align: middle;
+					padding-right: 3px;
+					font-size: 105%;
+					font-weight: bolder;
+					color: #888;
+					opacity: .6;
+					&:hover {
+						color: #444;
+					}
+					&:active {
+						outline: none;
+					}
 				}
 			}
 		}
-			
-	}
 
+		.activityView {
+			a {
+				text-decoration: none;
+				color: #666;
+				&:hover {
+					color: #08C;
+				}
+				font-weight: bold;
+			}	
+			time {
+				font-size: 11px;
+				margin-left: 5px;
+			}
+
+			border-bottom: 1px dashed #DDD;
+			padding-bottom: 10px;
+		}
+	}
 }
 
 body {
@@ -456,11 +449,6 @@ body {
 }
 
 [data-page=profile] {
-
-	background: url('/static/images/pinstripe.png');
-	@sidebar-width: 20px;
-	@results-container-width: 630px;
-
 
 	#sidebar {
 

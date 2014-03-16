@@ -7,76 +7,27 @@
 
 {% block body %}
 <body data-page="about">
-	<div class="bg-img half-opacity" style="background-image: url(/static/images/connect.png)"></div>
 
 	{% include '../layouts/navbar.html' %}
 
-	<section>
-		<section>
-			<div class="col-md-7">
-				<h1><strong>QI Labs</strong> <small></small></h1>
-				<h3>{{ version_str }}</h3>
-				<div class="well">
-					<p>O <strong>QI Labs</strong> é um serviço para deixar alunos por dentro de oportunidades acadêmicas e profissionais (como olimpíadas escolares, cursos, intercâmbio, projetos de pesquisa etc). Nós vamos até a fonte da informação, e te avisamos quando algo do seu interesse aparece por aqui.</p>
-				</div>
-			</div>
-			<div class="col-md-4 col-md-offset-1">
-				<i class="icon-bullhorn" style="padding: 20px; font-size: 250px"></i>
-			</div>
-		</section>
-	</section>
-
-	<section id="howto">
-		<h2>Como o QI Labs funciona</h2>
-		<section class="instructions">
-			<div class="column">	
-				<i class="icon-tags"></i>
-				<h4>1. Você nos diz o que te interessa</h4>
-				<p>
-					Nós criamos conteúdo direcionado para uma grande variedade de interesses.
-				</p>
-			</div>
-			<div class="column">
-				<i class="icon-eye"></i>
-				<h4>2. Nos ficamos de olho por você</h4>
-				<p>
-					Nós te poupamos o trabalho de ficar indo de site em site a procura dos assuntos que te interessam.
-				</p>
-			</div>
-			<div class="column">
-				<i class="icon-comments-o"></i>
-				<h4>3. A gente <strong>te avisa</strong> das novidades</h4>
-				<p>
-					Você recebe notificações pelo Facebook e email sempre que uma oportunidade nova aparece.
-				</p>
-			</div>
-		</section>
-	</section>
-	
 	<section id="parcerias">
 		<section>
+			<div class="col-md-7">
+				<h1><strong>QI Labs</strong></h1>
+			</div>
+		</section>
+		<section>
 			<li>
-				<h3>Parcerias</h3>
+				<h3>Parceria:</h3>
 			</li>
-<!-- 			<li>
-				<a href="http://www.estudar.org.br/‎" title="Fundação Estudar">
-					<img width=230 src="{{ getMediaUrl('images/fe.png') }}"></img>
-				</a>
-			</li>
- -->			<li>
-				<a href="https://www.facebook.com/duxrio" title="Dux Institute">
-					<img width=200 src="{{ getMediaUrl('images/di.jpg') }}"></img>
-				</a>
-			</li>
- 			<li>
- 				<a href="http://turmacidada.org" title="Turma Cidadã Brasil">
-					<img width=150 src="{{ getMediaUrl('images/tc.png') }}"></img>
-				</a>
-			</li>
+			<a href="https://www.facebook.com/duxrio" title="Dux Institute">
+				<img height=100 src="{{ getMediaUrl('images/di.jpg') }}"></img>
+			</a>
+			<a href="http://turmacidada.org" title="Turma Cidadã Brasil">
+				<img width=150 src="{{ getMediaUrl('images/tc.png') }}"></img>
+			</a>
 		</section>
 	</section>
-
-	{% include '../layouts/footer.html' %}
 
 </body>
 {% endblock %}

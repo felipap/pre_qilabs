@@ -1,15 +1,15 @@
 
 <nav class="bar" role="navigation">
 <div class="navcontent">
-	{% if user %}
 		<a class="brand" href="/" tabindex="-1">
 			<script>
-			var icons = ['flask', 'bolt', 'puzzle', 'rocket', 'bulb'];
+			var icons = ['flask', 'puzzle', 'rocket', 'bulb'];
 			document.write('<i class="icon-'+icons[Math.floor(icons.length*Math.random())]+'"></i>');
 			</script>
 			QI Labs.org<!-- <sup style="font-family: 'Open Sans'">α</sup> -->
 		</a>
-<!-- 
+	{% if user %}
+
 		<ul>
 			<li>
 				<a href="#" class="model-link home" data-toggle="tooltip" title="Seu Mural" data-placement="bottom">
@@ -31,7 +31,7 @@
 					<i class="icon-board"></i>
 				</a>
 			</li>
-		</ul> -->
+		</ul>
 		<ul class="pull-right">
 			<div class="separator"></div>
 			<li>
@@ -46,8 +46,7 @@
 			</li>
 			<div class="separator"></div>
 			<li>
-				<a href="{{ getPageUrl('panel') }}" class="plain-btn"
-					title="Configurações de conta" data-toggle="tooltip" data-placement="bottom">
+				<a href="{{ getPageUrl('panel') }}" class="plain-btn">
 					<i class="icon-cog"></i>
 				</a>
 			</li>
@@ -85,9 +84,6 @@
 			</li>
 		</ul>
 	{% else %}
-		<a class="brand" href="/" tabindex="-1">
-			Q.I. Laboratories<!--  <sup class="version">{{ app.semantic_version }}</sup> -->
-		</a>
 		<ul class="nav navbar-nav pull-right">
 			<a data-action="show-signin" href="#signin" data-toggle="dialog">
 				<strong>Peça um Convite</strong>

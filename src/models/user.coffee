@@ -331,7 +331,7 @@ UserSchema.methods.createGroup = (data, cb) ->
 		return cb(err) if err
 		self.update {$push: {
 			memberships: {
-				member: user
+				member: self
 				permission: Group.MembershipTypes.Moderator
 				group: group.id
 			}
