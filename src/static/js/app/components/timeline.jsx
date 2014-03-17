@@ -14,13 +14,18 @@ window.calcTimeFrom = function (arg, long) {
 
 	if (long) {
 		if (diff < 1000*60) {
-			return 'agora'; 'há '+Math.floor(diff/1000)+' segundos';
+			return 'agora';
+			var m = Math.floor(diff/1000);
+			return 'há '+m+' segundo'+m>1?'s':'';
 		} else if (diff < 1000*60*60) {
-			return 'há '+Math.floor(diff/1000/60)+' minutos';
+			var m = Math.floor(diff/1000/60);
+			return 'há '+m+' minuto'+m>1?'s':'';
 		} else if (diff < 1000*60*60*30) { // até 30 horas
-			return 'há '+Math.floor(diff/1000/60/60)+' horas';
+			var m = Math.floor(diff/1000/60/60);
+			return 'há '+m+' hora'+m>1?'s':'';
 		} else {
-			return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
+			var m = Math.floor(diff/1000/60/60/24);
+			return 'há '+m+' dia'+m>1?'s':'';
 		}
 	} else {
 		if (diff < 1000*60) {
@@ -30,7 +35,7 @@ window.calcTimeFrom = function (arg, long) {
 		} else if (diff < 1000*60*60*30) { // até 30 horas
 			return 'há '+Math.floor(diff/1000/60/60)+'h';
 		} else {
-			return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
+			return 'há '+Math.floor(diff/1000/60/60/24)+'d';
 		}
 	}
 };
