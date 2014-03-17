@@ -643,7 +643,6 @@ UserSchema.methods.genProfile = function(cb) {
           groups = _.filter(me.memberships, function(i) {
             return i && i.group;
           });
-          console.log('groups', groups);
           profile = _.extend(self.toJSON(), {
             followers: {
               docs: followers.slice(0, 20),
