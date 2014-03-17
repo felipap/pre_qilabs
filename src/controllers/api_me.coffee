@@ -9,6 +9,9 @@ Activity = mongoose.model 'Activity'
 Inbox = mongoose.model 'Inbox'
 Notification = mongoose.model 'Notification'
 
+Resource = mongoose.model 'Resource'
+Post = Resource.model 'Post'
+
 module.exports = {
 	permissions: [required.login],
 	post: (req, res) ->
@@ -50,10 +53,14 @@ module.exports = {
 		}
 		'timeline/posts': {
 			post: (req, res) ->
+				if not req.body.type in _.values(Post.Types)
+					console.log 'typo', req.body.type, 'invalido', _.values(Post.Types)
+					return res.endJSON {error:true,type:'InvalidPostType'}
+
 				req.user.createPost {
 					groupId: null
 					content:
-						title: 'My conquest!'+Math.floor(Math.random()*100)
+						title: req.body.content.title
 						body: req.body.content.body
 				}, req.handleErrResult((doc) ->
 					doc.populate 'author', (err, doc) ->

@@ -16,6 +16,7 @@ requirejs.config({
 		// 'app.mural':		'app/app/mural',
 		// Components
 		'components.bell':		'app/components/bell',
+		'components.postForms':	'app/components/postForms',
 		'components.timeline':	'app/components/timeline',
 		// Third-party
 		'jquery':			'vendor/jquery-2.0.3.min',

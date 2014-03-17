@@ -20,6 +20,7 @@ Types = {
   Comment: 'Comment',
   Answer: 'Answer',
   PlainPost: 'PlainPost',
+  QA: 'QA',
   VideoPost: 'VideoPost',
   Notification: 'Notification'
 };

@@ -35,7 +35,8 @@ window.calcTimeFrom = function (arg, long) {
 	}
 };
 
-define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, Backbone, _, React, Showdown) {
+define(['jquery', 'backbone', 'components.postForms', 'underscore', 'react', 'showdown'],
+	function ($, Backbone, postForms, _, React, Showdown) {
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
@@ -540,36 +541,9 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 
-		var PostForm = React.createClass({
-			handleSubmit: function (evt) {
-				var body = this.refs.postBody.getDOMNode().value.trim();
-				if (!body) {
-					return false;
-				}
-				$.ajax({
-					type: 'post', dataType: 'json', url: this.props.postUrl,
-					data: { content: { body: body }, groupId: window.groupId }
-				}).done(function(response) {
-					app.postList.add(new Post.item(response.data));
-				});
-				this.refs.postBody.getDOMNode().value = '';
-
-				return false;
-			},
-			render: function () {
-				return (
-					<form className="postInputForm" onSubmit={this.handleSubmit}>
-						<h2>Enviar uma msg para o seus seguidores</h2>
-						<textarea placeholder="Escreva uma mensagem aqui" ref="postBody"></textarea>
-						<button data-action="send-post" type="submit">Enviar Post</button>
-					</form>
-				);
-			}
-		});
-
 		var TimelineView = React.createClass({
 			getInitialState: function () {
-				return {};
+				return {selectedForm:null};
 			},
 			componentWillMount: function () {
 				function update (evt) {
@@ -585,11 +559,48 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 						<StreamItemView model={post} />
 					);
 				});
+
+				var self = this;
+
+				function dismissForm () {
+					self.setState({selectedForm:'QA'}, function(){});
+				}
+
+				function selectForm (evt) {
+					var btn = evt.target;
+					self.setState({selectedForm:btn.dataset.form}, function(){
+						console.log('state set:', self.state)
+					});
+				}
+
+				switch (this.state.selectedForm) {
+					case 'QA':
+						var postForm = postForms.QA;
+						break;
+					case 'PlainText':
+						var postForm = postForms.PlainText;
+						break;
+					default:
+						var postForm = null;
+				}
+
 				return (
 					<div className="postListWrapper">
 						{this.props.canPostForm?
-						<PostForm postUrl={this.props.collection.url}/>
-						:null}
+							(
+								postForm?
+								<postForm postUrl={this.props.collection.url}/>
+								:<div className="">
+									<button onClick={selectForm} data-form='QA'>
+										Fazer uma pergunta
+									</button>
+									<button onClick={selectForm} data-form='PlainText'>
+										Escreva um texto
+									</button>
+								</div>
+							)
+							:null
+						}
 						{postNodes}
 						{this.props.collection.EOF?
 						<div className="streamSign">

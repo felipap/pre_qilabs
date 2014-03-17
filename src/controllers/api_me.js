@@ -1,4 +1,4 @@
-var Activity, Inbox, Notification, ObjectId, mongoose, required, _,
+var Activity, Inbox, Notification, ObjectId, Post, Resource, mongoose, required, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -14,6 +14,10 @@ Activity = mongoose.model('Activity');
 Inbox = mongoose.model('Inbox');
 
 Notification = mongoose.model('Notification');
+
+Resource = mongoose.model('Resource');
+
+Post = Resource.model('Post');
 
 module.exports = {
   permissions: [required.login],
@@ -79,10 +83,18 @@ module.exports = {
     },
     'timeline/posts': {
       post: function(req, res) {
+        var _ref;
+        if (_ref = !req.body.type, __indexOf.call(_.values(Post.Types), _ref) >= 0) {
+          console.log('typo', req.body.type, 'invalido', _.values(Post.Types));
+          return res.endJSON({
+            error: true,
+            type: 'InvalidPostType'
+          });
+        }
         return req.user.createPost({
           groupId: null,
           content: {
-            title: 'My conquest!' + Math.floor(Math.random() * 100),
+            title: req.body.content.title,
             body: req.body.content.body
           }
         }, req.handleErrResult(function(doc) {
