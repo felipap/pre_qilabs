@@ -259,9 +259,7 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 		.limit opts.limit or 4
 		.exec HandleLimit (err, docs) ->
 			return cb(err) if err
-
 			minPostDate = 1*(docs.length and docs[docs.length-1].published) or 0
-
 			async.parallel [ # Fill post comments and get activities in that time.
 				(next) ->
 					Activity
@@ -441,10 +439,12 @@ UserSchema.methods.genProfile = (cb) ->
 		@getPopulatedFollowing (err, following) =>
 			if err then return cb(err)
 
-			self.populate 'memberships.group', (err, _groups) =>
+			self.populate 'memberships.group', (err, me) =>
 				if err then return cb(err)
 
-				groups = _.filter(_groups, (i) -> i and i.group)
+				groups = _.filter(me.memberships, (i) -> i and i.group)
+
+				console.log('groups', groups)
 
 				profile = _.extend(self.toJSON(), {
 					followers: {

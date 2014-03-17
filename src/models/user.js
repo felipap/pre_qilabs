@@ -635,14 +635,15 @@ UserSchema.methods.genProfile = function(cb) {
         if (err) {
           return cb(err);
         }
-        return self.populate('memberships.group', function(err, _groups) {
+        return self.populate('memberships.group', function(err, me) {
           var groups, profile;
           if (err) {
             return cb(err);
           }
-          groups = _.filter(_groups, function(i) {
+          groups = _.filter(me.memberships, function(i) {
             return i && i.group;
           });
+          console.log('groups', groups);
           profile = _.extend(self.toJSON(), {
             followers: {
               docs: followers.slice(0, 20),
