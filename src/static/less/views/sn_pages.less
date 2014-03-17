@@ -92,6 +92,7 @@ nav.bar {
 			font-size: 12px;
 			background: #F3F3F3;
 			font-weight: bold;
+			position: relative;
 
 			a {
 				text-decoration: none;
@@ -100,8 +101,6 @@ nav.bar {
 			.right {
 				float: right;
 			}
-
-			.btn-follow { float: right; font-size: 12px; width: 80px; }
 		}
 
 		.emptyBoxMsg {
@@ -161,13 +160,31 @@ nav.bar {
 		}
 
 		&.userProfile {
+
+			.head {
+				.btn-follow {
+					font-size: 12px;
+					width: 72px;
+					position: absolute;
+					top: 6px;
+					right: 10px;
+				}
+			}
+
 			.mediaUser {
 				width: 40px;
 				height: 40px;
 				.rounded(20px);
-				margin-right: 10px;
+				margin-right: 5px;
 			}
-			.name { font-size: 15px; }
+			.name {
+				font-size: 14px;
+				vertical-align: middle;
+				max-width: 135px;
+				overflow: hidden;
+				display: inline-block;
+				text-overflow: ellipsis;
+			}
 
 			.body {
 				padding: 10px;
