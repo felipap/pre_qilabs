@@ -7,18 +7,31 @@
 ** by @f03lipe
 */
 
-window.calcTimeFrom = function (arg) {
+window.calcTimeFrom = function (arg, long) {
 	var now = new Date(),
 		then = new Date(arg),
 		diff = now-then;
-	if (diff < 1000*60) {
-		return 'agora'; 'há '+Math.floor(diff/1000)+'s';
-	} else if (diff < 1000*60*60) {
-		return 'há '+Math.floor(diff/1000/60)+'min';
-	} else if (diff < 1000*60*60*30) { // até 30 horas
-		return 'há '+Math.floor(diff/1000/60/60)+'h';
+
+	if (long) {
+		if (diff < 1000*60) {
+			return 'agora'; 'há '+Math.floor(diff/1000)+' segundos';
+		} else if (diff < 1000*60*60) {
+			return 'há '+Math.floor(diff/1000/60)+' minutos';
+		} else if (diff < 1000*60*60*30) { // até 30 horas
+			return 'há '+Math.floor(diff/1000/60/60)+' horas';
+		} else {
+			return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
+		}
 	} else {
-		return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
+		if (diff < 1000*60) {
+			return 'agora'; 'há '+Math.floor(diff/1000)+'s';
+		} else if (diff < 1000*60*60) {
+			return 'há '+Math.floor(diff/1000/60)+'min';
+		} else if (diff < 1000*60*60*30) { // até 30 horas
+			return 'há '+Math.floor(diff/1000/60/60)+'h';
+		} else {
+			return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
+		}
 	}
 };
 
@@ -26,7 +39,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
-			this.innerHTML = calcTimeFrom(parseInt(this.dataset.timeCount));
+			this.innerHTML = calcTimeFrom(parseInt(this.dataset.timeCount), this.dataset.timeLong);
 		});
 		setTimeout(updateCounters, 1000);
 	}, 1000);
@@ -64,9 +77,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			initialize: function () {
 				this.commentList = new CommentList(this.get('comments'));
 				this.commentList.postItem = this.postItem;
-				if (this.get('answers')) {
-					this.answerList = new AnswerList(this.get('answers'));
-				}
+				this.answerList = new AnswerList(this.get('answers'));
 				// if (this.get('hasComments')) {
 				// 	this.commentList.fetch({reset:true});
 				// }
@@ -160,15 +171,12 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				};
 
 				return (
-					<div className="commentWrapper" id={comment.id}>
-						<div className="mediaUser">
-							<a href={comment.author.profileUrl}>
-								<div className="mediaUserAvatar" style={mediaUserAvatarStyle} title={comment.author.username}>
-								</div>
-							</a>
-						</div>
-						<div className={(window.user && comment.author.id===window.user.id)?'msgBody editable':'msgBody'}>
+					<div className="commentWrapper">
+						<div className='msgBody'>
+							<div className="arrow"></div>
 							{comment.data.unescapedBody}
+						</div>
+						<div className="infoBar">
 							{(window.user && window.user.id === comment.author.id)?
 								<div className="optionBtns">
 									<button data-action="remove-post" onClick={this.onClickTrash}>
@@ -176,46 +184,21 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 									</button>
 								</div>
 							:undefined}
-						</div>
-						<a href={comment.path} data-time-count={1*new Date(comment.published)}>
-							{window.calcTimeFrom(comment.published)}
-						</a>
-					</div>
-				);
-			},
-		});
-
-		var AnswerView = React.createClass({
-			mixins: [EditablePost],
-			render: function () {
-				var comment = this.props.model.attributes;
-				var self = this;
-
-				var mediaUserAvatarStyle = {
-					background: 'url('+comment.author.avatarUrl+')',
-				};
-
-				return (
-					<div className="commentWrapper" id={comment.id}>
-						<div className="mediaUser">
-							<a href={comment.author.profileUrl}>
-								<div className="mediaUserAvatar" style={mediaUserAvatarStyle} title={comment.author.username}>
+							<a className="userLink author" href={comment.author.profileUrl}>
+								<div className="mediaUser">
+									<div className="mediaUserAvatar" style={mediaUserAvatarStyle} title={comment.author.username}>
+									</div>
 								</div>
-							</a>
+								<span className="name">
+									{comment.author.name}
+								</span>
+							</a>,&nbsp;
+
+							<time data-time-count={1*new Date(comment.published)} data-time-long="true">
+								{window.calcTimeFrom(comment.published)}
+							</time>
+						
 						</div>
-						<div className={(window.user && comment.author.id===window.user.id)?'msgBody editable':'msgBody'}>
-							{comment.data.unescapedBody}
-							{(window.user && window.user.id === comment.author.id)?
-								<div className="optionBtns">
-									<button data-action="remove-post" onClick={this.onClickTrash}>
-										<i className="icon-trash"></i>
-									</button>
-								</div>
-							:undefined}
-						</div>
-						<a href={comment.path} data-time-count={1*new Date(comment.published)}>
-							{window.calcTimeFrom(comment.published)}
-						</a>
 					</div>
 				);
 			},
@@ -256,14 +239,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 						<form className="formPostComment" onSubmit={this.handleSubmit}>
 							<table>
 								<tbody>
-									<tr><td>
-										<div className="mediaUser">
-											<a href={window.user.profileUrl}>
-												<div className="mediaUserAvatar" style={mediaUserAvatarStyle}>
-												</div>
-											</a>
-										</div>
-									</td><td className="commentInputTd">
+									<tr><td className="commentInputTd">
 										<textarea required="required" className="commentInput" ref="input" type="text" placeholder="Faça um comentário sobre essa publicação.">
 										</textarea>
 									</td><td>
@@ -314,15 +290,42 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 
-		var AnswerSectionView = React.createClass({
-
+		var AnswerView = React.createClass({
+			mixins: [EditablePost],
 			render: function () {
+				var model = this.props.model.attributes;
+				var self = this;
+
+				var mediaUserAvatarStyle = {
+					background: 'url('+model.author.avatarUrl+')',
+				};
+
 				return (
-					<div className="answerSection">
-						<AnswerListView collection={this.props.model.answerList} />
-						{window.user?
-						<AnswerInputForm model={this.props.model} />
-						:null}
+					<div className="answerView">
+						<div className="leftCol">
+							<div className="mediaUser">
+								<a href={model.author.profileUrl}>
+									<div className="mediaUserAvatar" style={mediaUserAvatarStyle} title={model.author.username}>
+									</div>
+								</a>
+							</div>
+							<div className="optionBtns">
+								<button data-action="remove-post" onClick={this.onClickTrash}>
+									<i className="icon-trash"></i>
+								</button>
+							</div>
+						</div>
+						<div className={(window.user && model.author.id===window.user.id)?'msgBody editable':'msgBody'}>
+							{model.data.unescapedBody}
+							{(window.user && window.user.id === model.author.id)?
+								<div className="arrow"></div>
+							:undefined}
+						</div>
+						<a href={model.path} data-time-count={1*new Date(model.published)}>
+							{window.calcTimeFrom(model.published)}
+						</a>
+						<hr />
+						<CommentSectionView model={this.props.model} />
 					</div>
 				);
 			},
@@ -339,13 +342,27 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			render: function () {
 				var answerNodes = this.props.collection.map(function (answer) {
 					return (
-						<AnswerView model={answer} /> 
+						<AnswerView model={answer} />
 					);
 				});
 
 				return (
 					<div className="answerList">
 						{answerNodes}
+					</div>
+				);
+			},
+		});
+
+		var AnswerSectionView = React.createClass({
+
+			render: function () {
+				return (
+					<div className="answerSection">
+						<AnswerListView collection={this.props.model.answerList} />
+						{window.user?
+						<AnswerInputForm model={this.props.model} />
+						:null}
 					</div>
 				);
 			},
@@ -440,7 +457,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				var rawMarkup = post.data.unescapedBody;
 
 				return (
-					<div className="postPart">
+					<div className="postPart" data-post-type="QAPost">
 						<div className="opMessage">
 							<div className="msgHeader">
 								<div className="mediaUser">
@@ -452,7 +469,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 									<a href={post.author.profileUrl} className="authorUsername">
 										{post.author.name}
 									</a> 
-									disse:
+									fez uma pergunta:
 								</div>
 								
 								<a href={post.path}>
@@ -474,13 +491,22 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 									</div>
 									:undefined}
 							</div>
-							<div className="msgBody">
+							<div className="msgTitle">
 								<div className="arrow"></div>
+								<span>{post.data.title}</span>
+							</div>
+							<div className="msgBody">
 								<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
 							</div>
 						</div>
-						<CommentSectionView model={this.props.model} />
-						<AnswerSectionView model={this.props.model} />
+						{app.postItem?
+						<div>
+							<CommentSectionView model={this.props.model} />
+							<AnswerSectionView model={this.props.model} />
+						</div>
+						:<div className="showMorePrompt">
+							Visualizar {this.props.model.answerList.models.length} respostas
+						</div>}
 					</div>
 				);
 			},

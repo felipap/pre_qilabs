@@ -38,6 +38,12 @@ PostSchema = new Resource.Schema {
 		body:		{ type: String, required: true }
 		tags:		{ type: Array }
 	},
+
+	points:			{ type: Number, default: 0 }
+	votes: 	[{
+		voter: 		{ type: String, ref: 'User', required: true }
+		when:		{ type: Date, default: Date.now }
+	}]
 }, {
 	toObject:	{ virtuals: true }
 	toJSON: 	{ virtuals: true }
@@ -103,6 +109,7 @@ PostSchema.methods.stuff = (cb) ->
 			cb(false,null)
 
 PostSchema.methods.fillChildren = (cb) ->
+	self = @
 	if @type not in ['PlainPost', 'Answer']
 		cb(false, @toJSON())
 
@@ -110,8 +117,13 @@ PostSchema.methods.fillChildren = (cb) ->
 	.populate 'author'
 	.exec (err, children) =>
 		comments = _.filter(children, (i) -> i.type is Types.Comment)
-		answers = _.filter(children, (i) -> i.type is Types.Answer)
-		cb(err, _.extend({}, @toJSON(), { comments:comments, answers:answers }))
+		_answers = _.filter(children, (i) -> i.type is Types.Answer)
+		
+		async.forEach _answers, ((ans, done) ->
+			Post.find({parentPost:ans}).populate('author').exec (err, comments) ->
+				done(err, _.extend({},ans.toJSON(), { comments: comments }))
+		), (err, answers) ->
+			cb(err, _.extend({}, self.toJSON(), { comments:comments, answers:answers }))
 
 ################################################################################
 ## Statics #####################################################################

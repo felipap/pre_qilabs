@@ -65,7 +65,24 @@ PostSchema = new Resource.Schema({
     tags: {
       type: Array
     }
-  }
+  },
+  points: {
+    type: Number,
+    "default": 0
+  },
+  votes: [
+    {
+      voter: {
+        type: String,
+        ref: 'User',
+        required: true
+      },
+      when: {
+        type: Date,
+        "default": Date.now
+      }
+    }
+  ]
 }, {
   toObject: {
     virtuals: true
@@ -155,7 +172,8 @@ PostSchema.methods.stuff = function(cb) {
 };
 
 PostSchema.methods.fillChildren = function(cb) {
-  var _ref;
+  var self, _ref;
+  self = this;
   if ((_ref = this.type) !== 'PlainPost' && _ref !== 'Answer') {
     cb(false, this.toJSON());
   }
@@ -163,17 +181,27 @@ PostSchema.methods.fillChildren = function(cb) {
     parentPost: this
   }).populate('author').exec((function(_this) {
     return function(err, children) {
-      var answers, comments;
+      var comments, _answers;
       comments = _.filter(children, function(i) {
         return i.type === Types.Comment;
       });
-      answers = _.filter(children, function(i) {
+      _answers = _.filter(children, function(i) {
         return i.type === Types.Answer;
       });
-      return cb(err, _.extend({}, _this.toJSON(), {
-        comments: comments,
-        answers: answers
-      }));
+      return async.forEach(_answers, (function(ans, done) {
+        return Post.find({
+          parentPost: ans
+        }).populate('author').exec(function(err, comments) {
+          return done(err, _.extend({}, ans.toJSON(), {
+            comments: comments
+          }));
+        });
+      }), function(err, answers) {
+        return cb(err, _.extend({}, self.toJSON(), {
+          comments: comments,
+          answers: answers
+        }));
+      });
     };
   })(this));
 };

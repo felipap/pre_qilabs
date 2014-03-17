@@ -203,18 +203,24 @@ nav.bar {
 
 		.postView {
 			border: 1px solid #DDD;
-			
+			font-size: 13px;
+
 			.commentInputSection .mediaUser,
 			.commentWrapper .mediaUser {
 				.rounded(0);
 				width: 30px;
 				height: 30px;
 			}
+
+			time {
+				display: inline;
+				font-size: 12px;
+			}
 		
 			.opMessage {
 				background: white;
 				border-bottom: none;
-				// padding: 5px;
+				padding: 10px;
 	
 				.msgHeader {
 					padding: 5px;
@@ -244,18 +250,19 @@ nav.bar {
 						position: absolute;
 						right: 13px;
 						top: 45px;
-						font-size: 13px;
+						font-size: 12;
 						color: #888;
 						float: right;
 					}
 				}
 
-				.msgBody {
-					font-size: 14px;
+				.msgBody, .msgTitle {
+					font-size: 13px;
 					padding: 10px;
 					position: relative;
-					background: #EFEFEF;
-
+					background: white;
+					border: 1px solid #DDD;
+					overflow-wrap: break-word;
 					.arrow {
 						content: '';
 						border: 7px solid transparent;
@@ -269,50 +276,76 @@ nav.bar {
 
 			.commentSection {
 				background: white;
+				font-size: 13px;
 
 				.commentList {
 					list-style: none;
-					padding-left: 0;
-					margin-bottom: 0;
+					padding: 0 5px;
 
-					.commentWrapper:first-child {
-						// border-top: 1px solid #DDD;
-						padding-top: 10px;
-					}
 					.commentWrapper:last-child {
-						padding-bottom: 8px;
+						padding-bottom: 5px;
 					}
 					.commentWrapper {
-						padding-left: 10px;
-						padding-right: 10px;
-						padding-bottom: 3px;
-						word-wrap: break-word;
-
-						.mediaUser {
-							vertical-align: top;
-							border: 1px solid #DDD;
-						}
+						padding-top: 5px;
+						overflow-wrap: break-word;
+						border-top: 1px dashed #DDD;
 
 						.msgBody {
 							vertical-align: middle;
 							display: inline-block;
-							border: 1px solid #DDD;
 							.no-box-shadow;
 							outline: none;
 							font-size: 13px;
 							padding: 5px;
-							background: white;
+							width: 100%;
 							position: relative;
-							width: 500px;
+
+							border: 1px solid #EFEFEF;
+
+							.arrow {
+								content: '';
+								border: 5px solid transparent;
+								border-top-color: #EFEFEF;
+								bottom: -10px;
+								position: absolute;
+								left: 8px;
+							}
 						}
 
-						time, [data-time-count] {
-							vertical-align: middle;
-							font-size: 11px;
-							font-style: italic;
-							padding: 0 5px;
-							color: #888;
-							width: 60px;
+						.infoBar {
+							position: relative;
+							padding: 5px;
+							font-size: 12px;
+
+							.author {
+								color: #666;
+								text-decoration: none;
+
+								&:hover {
+									color: #333;
+								}
+
+								.mediaUser {
+									height: 20px;
+									width: 20px;
+									vertical-align: middle;
+									margin-right: 5px;
+									border: 1px solid #DDD;
+									.rounded(15px);
+
+									.mediaUserAvatar {
+										.rounded(15px);
+									}
+								}
+
+								.name {
+									vertical-align: middle;
+								}
+							}
+
+							.time {
+								font-size: 11px;
+							}
 						}
 					}
 					.commentWrapper:target {
@@ -397,6 +430,71 @@ nav.bar {
 					&:active {
 						outline: none;
 					}
+				}
+			}
+
+			[data-post-type=QAPost] {
+
+				.opMessage {
+					.msgTitle {
+						font-size: 13px;
+						padding: 10px;
+						position: relative;
+						background: white;
+						border: 1px solid #DDD;
+						overflow-wrap: break-word;
+						.arrow {
+							content: '';
+							border: 7px solid transparent;
+							border-bottom-color: #EFEFEF;
+							top: -14px;
+							position: absolute;
+							left: 5px+14px;
+						}
+						margin-bottom: 10px;
+					}
+					.msgBody {
+						font-size: 13px;
+					}
+				}
+
+				.answerView {
+					background: #FAFAFA;
+					padding: 10px;
+
+					.leftCol {
+						float: left;
+
+						.mediaUser {
+							vertical-align: top;
+							border: 1px solid #DDD;
+							height: 35px;
+							width: 35px;
+						}
+					}
+
+					.msgBody {
+						font-size: 14px;
+						padding: 10px;
+						position: relative;
+						margin-left: 60px;
+						background: white;
+						border: 1px solid #DDD;
+						overflow-wrap: break-word;
+
+						.arrow {
+							content: '';
+							border: 7px solid transparent;
+							border-right-color: #EFEFEF;
+							top: 14px;
+							position: absolute;
+							left: -15px;
+						}
+					}
+				}
+
+				.showMorePrompt {
+					background: #DDD;
 				}
 			}
 		}

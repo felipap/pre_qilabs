@@ -7,18 +7,31 @@
 ** by @f03lipe
 */
 
-window.calcTimeFrom = function (arg) {
+window.calcTimeFrom = function (arg, long) {
 	var now = new Date(),
 		then = new Date(arg),
 		diff = now-then;
-	if (diff < 1000*60) {
-		return 'agora'; 'há '+Math.floor(diff/1000)+'s';
-	} else if (diff < 1000*60*60) {
-		return 'há '+Math.floor(diff/1000/60)+'min';
-	} else if (diff < 1000*60*60*30) { // até 30 horas
-		return 'há '+Math.floor(diff/1000/60/60)+'h';
+
+	if (long) {
+		if (diff < 1000*60) {
+			return 'agora'; 'há '+Math.floor(diff/1000)+' segundos';
+		} else if (diff < 1000*60*60) {
+			return 'há '+Math.floor(diff/1000/60)+' minutos';
+		} else if (diff < 1000*60*60*30) { // até 30 horas
+			return 'há '+Math.floor(diff/1000/60/60)+' horas';
+		} else {
+			return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
+		}
 	} else {
-		return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
+		if (diff < 1000*60) {
+			return 'agora'; 'há '+Math.floor(diff/1000)+'s';
+		} else if (diff < 1000*60*60) {
+			return 'há '+Math.floor(diff/1000/60)+'min';
+		} else if (diff < 1000*60*60*30) { // até 30 horas
+			return 'há '+Math.floor(diff/1000/60/60)+'h';
+		} else {
+			return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
+		}
 	}
 };
 
@@ -26,7 +39,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
-			this.innerHTML = calcTimeFrom(parseInt(this.dataset.timeCount));
+			this.innerHTML = calcTimeFrom(parseInt(this.dataset.timeCount), this.dataset.timeLong);
 		});
 		setTimeout(updateCounters, 1000);
 	}, 1000);
@@ -64,9 +77,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			initialize: function () {
 				this.commentList = new CommentList(this.get('comments'));
 				this.commentList.postItem = this.postItem;
-				if (this.get('answers')) {
-					this.answerList = new AnswerList(this.get('answers'));
-				}
+				this.answerList = new AnswerList(this.get('answers'));
 				// if (this.get('hasComments')) {
 				// 	this.commentList.fetch({reset:true});
 				// }
@@ -160,61 +171,33 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				};
 
 				return (
-					React.DOM.div( {className:"commentWrapper", id:comment.id}, 
-						React.DOM.div( {className:"mediaUser"}, 
-							React.DOM.a( {href:comment.author.profileUrl}, 
-								React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle, title:comment.author.username}
-								)
-							)
+					React.DOM.div( {className:"commentWrapper"}, 
+						React.DOM.div( {className:"msgBody"}, 
+							React.DOM.div( {className:"arrow"}),
+							comment.data.unescapedBody
 						),
-						React.DOM.div( {className:(window.user && comment.author.id===window.user.id)?'msgBody editable':'msgBody'}, 
-							comment.data.unescapedBody,
+						React.DOM.div( {className:"infoBar"}, 
 							(window.user && window.user.id === comment.author.id)?
 								React.DOM.div( {className:"optionBtns"}, 
 									React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
 										React.DOM.i( {className:"icon-trash"})
 									)
 								)
-							:undefined
-						),
-						React.DOM.a( {href:comment.path, 'data-time-count':1*new Date(comment.published)}, 
-							window.calcTimeFrom(comment.published)
-						)
-					)
-				);
-			},
-		});
-
-		var AnswerView = React.createClass({displayName: 'AnswerView',
-			mixins: [EditablePost],
-			render: function () {
-				var comment = this.props.model.attributes;
-				var self = this;
-
-				var mediaUserAvatarStyle = {
-					background: 'url('+comment.author.avatarUrl+')',
-				};
-
-				return (
-					React.DOM.div( {className:"commentWrapper", id:comment.id}, 
-						React.DOM.div( {className:"mediaUser"}, 
-							React.DOM.a( {href:comment.author.profileUrl}, 
-								React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle, title:comment.author.username}
-								)
-							)
-						),
-						React.DOM.div( {className:(window.user && comment.author.id===window.user.id)?'msgBody editable':'msgBody'}, 
-							comment.data.unescapedBody,
-							(window.user && window.user.id === comment.author.id)?
-								React.DOM.div( {className:"optionBtns"}, 
-									React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
-										React.DOM.i( {className:"icon-trash"})
+							:undefined,
+							React.DOM.a( {className:"userLink author", href:comment.author.profileUrl}, 
+								React.DOM.div( {className:"mediaUser"}, 
+									React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle, title:comment.author.username}
 									)
+								),
+								React.DOM.span( {className:"name"}, 
+									comment.author.name
 								)
-							:undefined
-						),
-						React.DOM.a( {href:comment.path, 'data-time-count':1*new Date(comment.published)}, 
-							window.calcTimeFrom(comment.published)
+							),", ",
+
+							React.DOM.time( {'data-time-count':1*new Date(comment.published), 'data-time-long':"true"}, 
+								window.calcTimeFrom(comment.published)
+							)
+						
 						)
 					)
 				);
@@ -256,14 +239,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 						React.DOM.form( {className:"formPostComment", onSubmit:this.handleSubmit}, 
 							React.DOM.table(null, 
 								React.DOM.tbody(null, 
-									React.DOM.tr(null, React.DOM.td(null, 
-										React.DOM.div( {className:"mediaUser"}, 
-											React.DOM.a( {href:window.user.profileUrl}, 
-												React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle}
-												)
-											)
-										)
-									),React.DOM.td( {className:"commentInputTd"}, 
+									React.DOM.tr(null, React.DOM.td( {className:"commentInputTd"}, 
 										React.DOM.textarea( {required:"required", className:"commentInput", ref:"input", type:"text", placeholder:"Faça um comentário sobre essa publicação."}
 										)
 									),React.DOM.td(null, 
@@ -314,15 +290,42 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			},
 		});
 
-		var AnswerSectionView = React.createClass({displayName: 'AnswerSectionView',
-
+		var AnswerView = React.createClass({displayName: 'AnswerView',
+			mixins: [EditablePost],
 			render: function () {
+				var model = this.props.model.attributes;
+				var self = this;
+
+				var mediaUserAvatarStyle = {
+					background: 'url('+model.author.avatarUrl+')',
+				};
+
 				return (
-					React.DOM.div( {className:"answerSection"}, 
-						AnswerListView( {collection:this.props.model.answerList} ),
-						window.user?
-						AnswerInputForm( {model:this.props.model} )
-						:null
+					React.DOM.div( {className:"answerView"}, 
+						React.DOM.div( {className:"leftCol"}, 
+							React.DOM.div( {className:"mediaUser"}, 
+								React.DOM.a( {href:model.author.profileUrl}, 
+									React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle, title:model.author.username}
+									)
+								)
+							),
+							React.DOM.div( {className:"optionBtns"}, 
+								React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
+									React.DOM.i( {className:"icon-trash"})
+								)
+							)
+						),
+						React.DOM.div( {className:(window.user && model.author.id===window.user.id)?'msgBody editable':'msgBody'}, 
+							model.data.unescapedBody,
+							(window.user && window.user.id === model.author.id)?
+								React.DOM.div( {className:"arrow"})
+							:undefined
+						),
+						React.DOM.a( {href:model.path, 'data-time-count':1*new Date(model.published)}, 
+							window.calcTimeFrom(model.published)
+						),
+						React.DOM.hr(null ),
+						CommentSectionView( {model:this.props.model} )
 					)
 				);
 			},
@@ -339,13 +342,27 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 			render: function () {
 				var answerNodes = this.props.collection.map(function (answer) {
 					return (
-						AnswerView( {model:answer} ) 
+						AnswerView( {model:answer} )
 					);
 				});
 
 				return (
 					React.DOM.div( {className:"answerList"}, 
 						answerNodes
+					)
+				);
+			},
+		});
+
+		var AnswerSectionView = React.createClass({displayName: 'AnswerSectionView',
+
+			render: function () {
+				return (
+					React.DOM.div( {className:"answerSection"}, 
+						AnswerListView( {collection:this.props.model.answerList} ),
+						window.user?
+						AnswerInputForm( {model:this.props.model} )
+						:null
 					)
 				);
 			},
@@ -440,7 +457,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 				var rawMarkup = post.data.unescapedBody;
 
 				return (
-					React.DOM.div( {className:"postPart"}, 
+					React.DOM.div( {className:"postPart", 'data-post-type':"QAPost"}, 
 						React.DOM.div( {className:"opMessage"}, 
 							React.DOM.div( {className:"msgHeader"}, 
 								React.DOM.div( {className:"mediaUser"}, 
@@ -452,7 +469,7 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 									React.DOM.a( {href:post.author.profileUrl, className:"authorUsername"}, 
 										post.author.name
 									), 
-									"disse:"
+									"fez uma pergunta:"
 								),
 								
 								React.DOM.a( {href:post.path}, 
@@ -474,13 +491,22 @@ define(['jquery', 'backbone', 'underscore', 'react', 'showdown'], function ($, B
 									)
 									:undefined
 							),
-							React.DOM.div( {className:"msgBody"}, 
+							React.DOM.div( {className:"msgTitle"}, 
 								React.DOM.div( {className:"arrow"}),
+								React.DOM.span(null, post.data.title)
+							),
+							React.DOM.div( {className:"msgBody"}, 
 								React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
 							)
 						),
-						CommentSectionView( {model:this.props.model} ),
-						AnswerSectionView( {model:this.props.model} )
+						app.postItem?
+						React.DOM.div(null, 
+							CommentSectionView( {model:this.props.model} ),
+							AnswerSectionView( {model:this.props.model} )
+						)
+						:React.DOM.div( {className:"showMorePrompt"}, 
+							"Visualizar ", this.props.model.answerList.models.length, " respostas"
+						)
 					)
 				);
 			},
