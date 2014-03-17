@@ -9,18 +9,22 @@
 {% endblock %}
 
 {% block sidebarContent %}
-	<div class="thumbnail">
-		<img alt="seu avatar" width="200" src="{{ profile.avatarUrl }}">
-	</div>
-	<div class="info-groups">
-		<div class="info-group">
-			<h2>{{ profile.name }}</h2>
+
+	<div class="box userProfile">
+		<div class="head">
+			{{ userMacros.renderUser(profile) }}
+			<span class="name">{{ profile.name }}</span>
 		</div>
-		<div class="info-group">
-			<h3>Honolulu, Hawaii, US</h3>
-		</div>
-		<div class="info-group">
-			<h3>18 anos</h3>
+
+		<div class="body">
+			<div class="info-group">
+				<label>Origem:</label>
+				<span class="answer">Honolulu, Hawaii, US</span>
+			</div>
+			<div class="info-group">
+				<label>Idade:</label>
+				<span class="answer">18 anos</span>
+			</div>
 		</div>
 	</div>
 

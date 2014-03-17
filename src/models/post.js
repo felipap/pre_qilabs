@@ -62,12 +62,14 @@ PostSchema = new Resource.Schema({
     body: {
       type: String,
       required: true
-    },
-    tags: {
-      type: Array
     }
   },
-  points: {
+  tags: [
+    {
+      type: String
+    }
+  ],
+  voteSum: {
     type: Number,
     "default": 0
   },

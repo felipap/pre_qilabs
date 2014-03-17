@@ -27,23 +27,24 @@ Types =
 ## Schema ######################################################################
 
 PostSchema = new Resource.Schema {
-	author:			{ type: ObjectId, ref: 'Resource', required: true, indexed: 1 }
-	group:			{ type: ObjectId, ref: 'Group', required: false }
-	type: 			{ type: String, required: true, enum:_.values(Types) }
-	parentPost:		{ type: ObjectId, ref: 'Post', required: false }
+	author:		{ type: ObjectId, ref: 'Resource', required: true, indexed: 1 }
+	group:		{ type: ObjectId, ref: 'Group', required: false }
+	type: 		{ type: String, required: true, enum:_.values(Types) }
+	parentPost:	{ type: ObjectId, ref: 'Post', required: false }
 	
-	updated:		{ type: Date }
-	published:		{ type: Date, indexed: 1 }
+	updated:	{ type: Date }
+	published:	{ type: Date, indexed: 1 }
 	data: {
-		title:		{ type: String, required: false }
-		body:		{ type: String, required: true }
-		tags:		{ type: Array }
+		title:	{ type: String, required: false }
+		body:	{ type: String, required: true }
 	},
 
-	points:			{ type: Number, default: 0 }
+	tags:		[{ type: String }]
+	
+	voteSum:	{ type: Number, default: 0 }
 	votes: 	[{
-		voter: 		{ type: String, ref: 'User', required: true }
-		when:		{ type: Date, default: Date.now }
+		voter: 	{ type: String, ref: 'User', required: true }
+		when:	{ type: Date, default: Date.now }
 	}]
 }, {
 	toObject:	{ virtuals: true }
