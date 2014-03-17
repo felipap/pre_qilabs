@@ -14,6 +14,13 @@
 		<div class="head">
 			{{ userMacros.renderUser(profile) }}
 			<span class="name">{{ profile.name }}</span>
+			{% if user.id != profile.id %}
+				{% if follows %}
+					<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+				{% else %}
+					<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
+				{% endif %}
+			{% endif %}
 		</div>
 
 		<div class="body">
@@ -27,14 +34,6 @@
 			</div>
 		</div>
 	</div>
-
-	{% if user.id != profile.id %}
-		{% if follows %}
-			<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-		{% else %}
-			<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
-		{% endif %}
-	{% endif %}
 
 	<div class="box userList">
 		<div class="head">

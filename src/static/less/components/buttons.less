@@ -64,17 +64,22 @@
 }
 
 .btn-follow {
+	font-size: 13px;
+
 	&[data-action=follow] {
-		&:empty::before {
-			content: "Follow";
-		}
-		.high-xbtn(@color: white, @bg: @COLOR1);
+		&:empty::before { content: "Follow"; }
+		.high-xbtn(@color: white, @bg: @COLOR2);
+		.high-xbtn-padding(6px, 5px, 5px);
 	}
 	&[data-action=unfollow] {
-		&:empty::before {
-			content: "Unfollow";
+		.high-xbtn(@color: white, @bg: @COLOR1);
+		.high-xbtn-padding(6px, 5px, 5px);
+		&::before { content: "Following"; }
+		&:hover{
+			&:empty::before { content: "Unfollow"; }
+			.high-xbtn(@color: white, @bg: @COLOR4);
+			.high-xbtn-padding(6px, 5px, 5px);
 		}
-		.high-xbtn(@color: white, @bg: @COLOR4);
 	}
 }
 
