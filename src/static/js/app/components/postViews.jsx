@@ -344,8 +344,8 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 					</div>
 					{app.postItem?
 					<div>
-						<CommentSectionView model={this.props.model} />
 						<AnswerSectionView model={this.props.model} />
+						<CommentSectionView model={this.props.model} />
 					</div>
 					:<div className="showMorePrompt">
 						Visualizar {this.props.model.answerList.models.length} respostas
@@ -405,14 +405,7 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 							<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
 						</div>
 					</div>
-					{app.postItem?
-					<div>
-						<CommentSectionView model={this.props.model} />
-						<AnswerSectionView model={this.props.model} />
-					</div>
-					:<div className="showMorePrompt">
-						Visualizar {this.props.model.answerList.models.length} respostas
-					</div>}
+					<CommentSectionView model={this.props.model} />
 				</div>
 			);
 		},

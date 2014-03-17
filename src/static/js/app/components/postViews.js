@@ -344,8 +344,8 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 					),
 					app.postItem?
 					React.DOM.div(null, 
-						CommentSectionView( {model:this.props.model} ),
-						AnswerSectionView( {model:this.props.model} )
+						AnswerSectionView( {model:this.props.model} ),
+						CommentSectionView( {model:this.props.model} )
 					)
 					:React.DOM.div( {className:"showMorePrompt"}, 
 						"Visualizar ", this.props.model.answerList.models.length, " respostas"
@@ -405,14 +405,7 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 							React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
 						)
 					),
-					app.postItem?
-					React.DOM.div(null, 
-						CommentSectionView( {model:this.props.model} ),
-						AnswerSectionView( {model:this.props.model} )
-					)
-					:React.DOM.div( {className:"showMorePrompt"}, 
-						"Visualizar ", this.props.model.answerList.models.length, " respostas"
-					)
+					CommentSectionView( {model:this.props.model} )
 				)
 			);
 		},
