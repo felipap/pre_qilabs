@@ -397,6 +397,7 @@ UserSchema.methods.postToParentPost = (parentPost, data, cb) ->
 Create a post object and fan out through inboxes.
 ###
 UserSchema.methods.createPost = (data, cb) ->
+	assertArgs({$contains:['content','type']}, '$isCb')
 	self = @
 	post = new Post {
 		author: self.id
@@ -404,7 +405,7 @@ UserSchema.methods.createPost = (data, cb) ->
 			title: data.content.title
 			body: data.content.body
 		},
-		type: Post.Types?.PlainPost or 'PlainPost'
+		type: data.type
 	}
 	if data.groupId
 		post.group = data.groupId

@@ -54,7 +54,7 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 						body: body,
 					},
 					groupId: window.groupId,
-					type: 'PlainText'
+					type: 'QA'
 				},
 			}).done(function(response) {
 				app.postList.add(new Post.item(response.data));

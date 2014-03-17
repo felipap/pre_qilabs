@@ -581,7 +581,10 @@ Create a post object and fan out through inboxes.
  */
 
 UserSchema.methods.createPost = function(data, cb) {
-  var post, self, _ref;
+  var post, self;
+  assertArgs({
+    $contains: ['content', 'type']
+  }, '$isCb');
   self = this;
   post = new Post({
     author: self.id,
@@ -589,7 +592,7 @@ UserSchema.methods.createPost = function(data, cb) {
       title: data.content.title,
       body: data.content.body
     },
-    type: ((_ref = Post.Types) != null ? _ref.PlainPost : void 0) || 'PlainPost'
+    type: data.type
   });
   if (data.groupId) {
     post.group = data.groupId;

@@ -93,6 +93,7 @@ module.exports = {
         }
         return req.user.createPost({
           groupId: null,
+          type: req.body.type,
           content: {
             title: req.body.content.title,
             body: req.body.content.body
