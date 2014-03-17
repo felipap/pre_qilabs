@@ -26,8 +26,8 @@ Types = {
 
 ContentHtmlTemplates = {
   NewFollower: '<a href="<%= actor.path %>"><%= actor && actor.name %></a> começou a seguir <a href="<%= target.path %>"><%= target && target.name %></a>.',
-  GroupCreated: '<a href="<%= actor.path %>"><%= actor && actor.name %></a> criou o grupo <a href="<%= object %>"><%= object && object.name %></a>.',
-  GroupMemberAdded: '<a href="<%= object.path %>"><%= object && object.name %></a> entrou para o laboratório <a href="<%= target %>"><%= target && target.name %></a>.'
+  GroupCreated: '<a href="<%= actor.path %>"><%= actor && actor.name %></a> criou o grupo <a href="<%= object && object.path %>"><%= object && object.name %></a>.',
+  GroupMemberAdded: '<a href="<%= object.path %>"><%= object && object.name %></a> entrou para o laboratório <a href="<%= target && target.path %>"><%= target && target.name %></a>.'
 };
 
 ActivitySchema = new mongoose.Schema({
