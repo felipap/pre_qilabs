@@ -42,13 +42,17 @@ module.exports = function (job, options) {
 
 		if (verbose)
 			console.log(('Jobber: Calling job on file '+parentFile).green);
+	
+		console.time('jobTime');
 		job({
 			// To be called by user at the end of function.
 			quit: function (err) {
-				if (err)
+				console.timeEnd('jobTime');
+				if (err) {					
 					console.log(("Jobber: Process (pid="+process.pid+") terminated with err:").red, err)
-				else 
+				} else {
 					console.log(("Jobber: Process (pid="+process.pid+") terminated.").green)
+				}
 				// Close database at the end.
 				// Otherwise, the script won't close.
 				mongoose.connection.close()

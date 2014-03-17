@@ -66,7 +66,8 @@ jobber = require('./jobber.js')((e) ->
 				for doc in incon
 					doc.remove ->
 				next(err)
-
+				$not
+ 
 		,(next) ->
 			console.log "Looking for user memberships of obsolete groups"
 			Group.find({}).exec (err, docs) =>

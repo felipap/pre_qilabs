@@ -109,7 +109,8 @@ jobber = require('./jobber.js')(function(e) {
             doc = incon[_i];
             doc.remove(function() {});
           }
-          return next(err);
+          next(err);
+          return $not;
         };
       })(this));
     }, function(next) {

@@ -1,11 +1,46 @@
 {% extends '../sidebared.html' %}
 {% set requireView="lab" %}
 
+{% import '../macros/user.html' as userMacros %}
+
 {% block head %}
 	{% parent %}
 {% endblock %}
 
 {% block sidebarContent %}
+{% endblock %}
+
+{% set requireView="lab" %}
+
+	
+{% block bodyEnd %}
+	{% parent %}
+	<script>_lab={id:'{{''+group._id}}'}; conf={postsRoot:'{{ '/api/labs/'+group._id+'/posts' }}',groupId:'{{ ''+group._id }}'};</script>
+{% endblock %}
+
+{% block sidebarContent %}
+	<div class="box">
+		<div class="head">
+				<a href="/" class="btnGoBack">Voltar para Timeline</a>
+		</div>
+	</div>
+
+	<div class="transparentBox">
+
+		<h1>Crie o seu laboratório.</h1>
+
+		<h2>Selecione os tipos de publicação</h2>
+
+		<h3>Selecione os tipos de publicação</h3>
+
+		<h4>Selecione os tipos de publicação</h4>
+
+		<p>
+			Você pode selecionar até 4 tipos entre os disponíveis. Escolha aqueles que
+			melhor se adaptarem as necessidades do seu grupo.
+		</p>
+
+	</div>
 {% endblock %}
 
 {% block mainContent %}
