@@ -311,8 +311,7 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 							<div className="headline">
 								<a href={post.author.profileUrl} className="authorUsername">
 									{post.author.name}
-								</a> 
-								fez uma pergunta:
+								</a> fez uma pergunta:
 							</div>
 							
 							<a href={post.path}>
@@ -377,8 +376,7 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 							<div className="headline">
 								<a href={post.author.profileUrl} className="authorUsername">
 									{post.author.name}
-								</a> 
-								fez uma pergunta:
+								</a> disse:
 							</div>
 							
 							<a href={post.path}>

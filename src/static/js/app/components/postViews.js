@@ -311,8 +311,7 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 							React.DOM.div( {className:"headline"}, 
 								React.DOM.a( {href:post.author.profileUrl, className:"authorUsername"}, 
 									post.author.name
-								), 
-								"fez uma pergunta:"
+								), " fez uma pergunta:"
 							),
 							
 							React.DOM.a( {href:post.path}, 
@@ -377,8 +376,7 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 							React.DOM.div( {className:"headline"}, 
 								React.DOM.a( {href:post.author.profileUrl, className:"authorUsername"}, 
 									post.author.name
-								), 
-								"fez uma pergunta:"
+								), " disse:"
 							),
 							
 							React.DOM.a( {href:post.path}, 
