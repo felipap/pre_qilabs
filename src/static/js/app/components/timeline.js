@@ -16,16 +16,16 @@ window.calcTimeFrom = function (arg, long) {
 		if (diff < 1000*60) {
 			return 'agora';
 			var m = Math.floor(diff/1000);
-			return 'há '+m+' segundo'+m>1?'s':'';
+			return 'há '+m+' segundo'+(m>1?'s':'');
 		} else if (diff < 1000*60*60) {
 			var m = Math.floor(diff/1000/60);
-			return 'há '+m+' minuto'+m>1?'s':'';
+			return 'há '+m+' minuto'+(m>1?'s':'');
 		} else if (diff < 1000*60*60*30) { // até 30 horas
 			var m = Math.floor(diff/1000/60/60);
-			return 'há '+m+' hora'+m>1?'s':'';
+			return 'há '+m+' hora'+(m>1?'s':'');
 		} else {
 			var m = Math.floor(diff/1000/60/60/24);
-			return 'há '+m+' dia'+m>1?'s':'';
+			return 'há '+m+' dia'+(m>1?'s':'');
 		}
 	} else {
 		if (diff < 1000*60) {
