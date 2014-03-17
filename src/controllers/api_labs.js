@@ -12,7 +12,8 @@ GUIDELINES for development:
 - Prefer no not handle creation/modification of documents. Leave those to
   schemas statics and methods.
  */
-var Group, ObjectId, Resource, User, mongoose, required, _;
+var Group, ObjectId, Post, Resource, User, mongoose, required, _,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
 
@@ -27,6 +28,8 @@ Resource = mongoose.model('Resource');
 Group = Resource.model('Group');
 
 User = Resource.model('User');
+
+Post = Resource.model('Post');
 
 module.exports = {
   permissions: [required.login],
@@ -77,14 +80,22 @@ module.exports = {
       },
       post: [
         required.labs.selfIsMember('labId'), function(req, res) {
-          var groupId;
+          var groupId, _ref;
           if (!(groupId = req.paramToObjectId('labId'))) {
             return;
           }
+          if (_ref = !req.body.type, __indexOf.call(_.values(Post.Types), _ref) >= 0) {
+            console.log('typo', req.body.type, 'invalido', _.values(Post.Types));
+            return res.endJSON({
+              error: true,
+              type: 'InvalidPostType'
+            });
+          }
           return req.user.createPost({
             groupId: groupId,
+            type: req.body.type,
             content: {
-              title: 'My conquest!' + Math.floor(Math.random() * 100),
+              title: req.body.content.title,
               body: req.body.content.body
             }
           }, req.handleErrResult(function(doc) {

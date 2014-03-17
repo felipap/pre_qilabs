@@ -29,6 +29,7 @@ required = require '../lib/required.js'
 Resource = mongoose.model 'Resource'
 Group = Resource.model 'Group'
 User = Resource.model 'User'
+Post = Resource.model 'Post'
 
 # Starts at /api/labs 
 module.exports = {
@@ -64,10 +65,15 @@ module.exports = {
 					)
 			post: [required.labs.selfIsMember('labId'), (req, res) ->
 				return unless groupId = req.paramToObjectId('labId')
+				if not req.body.type in _.values(Post.Types)
+					console.log 'typo', req.body.type, 'invalido', _.values(Post.Types)
+					return res.endJSON {error:true,type:'InvalidPostType'}
+
 				req.user.createPost {
 					groupId: groupId
+					type: req.body.type
 					content:
-						title: 'My conquest!'+Math.floor(Math.random()*100)
+						title: req.body.content.title
 						body: req.body.content.body
 				}, req.handleErrResult((doc) ->
 					doc.populate 'author', (err, doc) ->
