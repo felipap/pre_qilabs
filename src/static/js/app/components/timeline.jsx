@@ -7,39 +7,6 @@
 ** by @f03lipe
 */
 
-window.calcTimeFrom = function (arg, long) {
-	var now = new Date(),
-		then = new Date(arg),
-		diff = now-then;
-
-	if (long) {
-		if (diff < 1000*60) {
-			return 'agora';
-			var m = Math.floor(diff/1000);
-			return 'há '+m+' segundo'+(m>1?'s':'');
-		} else if (diff < 1000*60*60) {
-			var m = Math.floor(diff/1000/60);
-			return 'há '+m+' minuto'+(m>1?'s':'');
-		} else if (diff < 1000*60*60*30) { // até 30 horas
-			var m = Math.floor(diff/1000/60/60);
-			return 'há '+m+' hora'+(m>1?'s':'');
-		} else {
-			var m = Math.floor(diff/1000/60/60/24);
-			return 'há '+m+' dia'+(m>1?'s':'');
-		}
-	} else {
-		if (diff < 1000*60) {
-			return 'agora'; 'há '+Math.floor(diff/1000)+'s';
-		} else if (diff < 1000*60*60) {
-			return 'há '+Math.floor(diff/1000/60)+'min';
-		} else if (diff < 1000*60*60*30) { // até 30 horas
-			return 'há '+Math.floor(diff/1000/60/60)+'h';
-		} else {
-			return 'há '+Math.floor(diff/1000/60/60/24)+'d';
-		}
-	}
-};
-
 define(['jquery', 'backbone', 'components.postForms', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
 	function ($, Backbone, postForms, postModels, postViews, _, React, Showdown) {
 
@@ -132,7 +99,6 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 			}
 			this.props.collection.on('add remove reset statusChange', update.bind(this));
 		},
-		// changeOptions: "change:name",
 		render: function () {
 			var postNodes = this.props.collection.map(function (post) {
 				return (
@@ -163,23 +129,23 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 			// 	default:
 			// 		var postForm = null;
 			// }
+			// {this.props.canPostForm?
+			// 	(
+			// 		postForm?
+			// 		<postForm postUrl={this.props.collection.url}/>
+			// 		:<div className="">
+			// 			<button onClick={selectForm} data-form='QA'>
+			// 				Fazer uma pergunta
+			// 			</button>
+			// 			<button onClick={selectForm} data-form='PlainText'>
+			// 				Escreva um texto
+			// 			</button>
+			// 		</div>
+			// 	)
+			// 	:null
+			// }
 
-					var postForm = postForms.Plain;
-						// {this.props.canPostForm?
-						// 	(
-						// 		postForm?
-						// 		<postForm postUrl={this.props.collection.url}/>
-						// 		:<div className="">
-						// 			<button onClick={selectForm} data-form='QA'>
-						// 				Fazer uma pergunta
-						// 			</button>
-						// 			<button onClick={selectForm} data-form='PlainText'>
-						// 				Escreva um texto
-						// 			</button>
-						// 		</div>
-						// 	)
-						// 	:null
-						// }
+			var postForm = postForms.Plain;
 
 			return (
 				<div className="timeline">
@@ -216,7 +182,7 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 				 function (postId) {
 				 	this.postItem = new postModels.postItem(window.conf.postData);
 				 	React.renderComponent(PostView({model:this.postItem}),
-				 		document.getElementById('postsPlacement'));
+				 		document.getElementById('resultsContainer'));
 				},
 			'labs/:labId':
 				function (labId) {					
@@ -236,7 +202,7 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 			this.postList = new postModels.postList([], {url:url});
 			React.renderComponent(TimelineView(
 				_.extend(opts,{collection:this.postList})),
-				document.getElementById('resultsCol'));
+				document.getElementById('resultsContainer'));
 
 			this.postList.fetch({reset:true});
 

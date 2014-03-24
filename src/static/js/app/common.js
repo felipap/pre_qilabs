@@ -29,18 +29,37 @@
 	}
 }());
 
-window.calcTimeFrom = function (arg) {
+
+window.calcTimeFrom = function (arg, long) {
 	var now = new Date(),
 		then = new Date(arg),
 		diff = now-then;
-	if (diff < 1000*60) {
-		return 'agora'; 'há '+Math.floor(diff/1000)+'s';
-	} else if (diff < 1000*60*60) {
-		return 'há '+Math.floor(diff/1000/60)+'min';
-	} else if (diff < 1000*60*60*30) { // até 30 horas
-		return 'há '+Math.floor(diff/1000/60/60)+'h';
+
+	if (long) {
+		if (diff < 1000*60) {
+			return 'agora';
+			var m = Math.floor(diff/1000);
+			return 'há '+m+' segundo'+(m>1?'s':'');
+		} else if (diff < 1000*60*60) {
+			var m = Math.floor(diff/1000/60);
+			return 'há '+m+' minuto'+(m>1?'s':'');
+		} else if (diff < 1000*60*60*30) { // até 30 horas
+			var m = Math.floor(diff/1000/60/60);
+			return 'há '+m+' hora'+(m>1?'s':'');
+		} else {
+			var m = Math.floor(diff/1000/60/60/24);
+			return 'há '+m+' dia'+(m>1?'s':'');
+		}
 	} else {
-		return 'há '+Math.floor(diff/1000/60/60/24)+' dias';
+		if (diff < 1000*60) {
+			return 'agora'; 'há '+Math.floor(diff/1000)+'s';
+		} else if (diff < 1000*60*60) {
+			return 'há '+Math.floor(diff/1000/60)+'min';
+		} else if (diff < 1000*60*60*30) { // até 30 horas
+			return 'há '+Math.floor(diff/1000/60/60)+'h';
+		} else {
+			return 'há '+Math.floor(diff/1000/60/60/24)+'d';
+		}
 	}
 };
 

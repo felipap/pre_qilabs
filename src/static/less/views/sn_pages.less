@@ -259,7 +259,7 @@ nav.bar {
 
 	.header {
 		position: relative;
-
+	
 		.userAvatar {
 			height: 40px;
 			width: 40px;
@@ -325,77 +325,151 @@ nav.bar {
 		position: relative;
 		margin-bottom: 15px;
 
-		.postView {
-			border: 1px solid #DDD;
+		.activityView {
 			font-size: 13px;
+			a {
+				text-decoration: none;
+				color: #666;
+				&:hover {
+					color: #08C;
+				}
+				font-weight: bold;
+			}	
+			time {
+				font-size: 11px;
+				margin-left: 5px;
+			}
+
+			border-bottom: 1px dashed #DDD;
+			padding-bottom: 10px;
+		}
+	}
+
+
+	.postView {
+		font-size: 13px;
+		border: 1px solid #DDD;
+
+
+		.postHead {
+			background: white;
+			.rounded(4px);
+
+			// background: white;
+			border-bottom: none;
+
+			.msgHeader {
+				padding: 5px;
+				height: 55px;
+				.mediaUser {
+					width: 40px;
+					height: 40px;
+					.rounded(0);
+					// border: 1px solid #DDD;
+				}
+				.headline {
+					margin-left: 5px;
+					display: inline-block;
+					font: 13px "Open Sans";
+					.authorUsername {
+						color: #666;
+						&:hover {
+							color: #444;
+						}
+						text-decoration: none;
+						display: inline;
+						font-weight: bold;
+					}
+					width: 450px;
+				}
+				time {
+					position: absolute;
+					right: 13px;
+					top: 45px;
+					font-size: 12px;
+					color: #888;
+					float: right;
+				}
+			}
+
+			.msgBody, .msgTitle {
+				margin: 5px;
+				padding: 10px;
+				position: relative;
+				background: white;
+				border: 1px solid #DDD;
+				overflow-wrap: break-word;
+				.arrow {
+					content: '';
+					border: 7px solid transparent;
+					border-bottom-color: #EFEFEF;
+					top: -14px;
+					position: absolute;
+					left: 5px+14px;
+				}
+			
+			}
+			.msgTitle {
+				font-size: 14px;
+				font-weight: 600;
+			}
+			.msgBody {
+				font-size: 13px;
+				font-weight: normal;
+			}
+
+			.postInfobar {
+				position: relative;
+				margin-top: 10px;
+				border-top: 1px solid #DDD;
+				
+				li {
+					cursor: pointer;
+					vertical-align: bottom;
+					padding: 5px 8px 6px;
+					color: #888;
+					font-size: 11px;
+					list-style: none;
+					display: inline-block;
+					&:hover {
+						color: #444;
+					}
+
+					.tooltip {
+						font-size: 11px;
+						.tooltip-inner {
+							.rounded(2px);
+							padding-top: 1px;
+						}
+					}
+				}
+
+				i { font-size: 12px; }
+
+				.icon-red {
+					color: red;
+				}
+
+				ul.right {
+					position: absolute;
+					top: 0;
+					right: 0;
+					li { border-left: 1px solid #DDD; }
+				}
+
+				ul.left{
+					li { border-right: 1px solid #DDD; }
+				}
+			}
+		}
+
+		.postFoot {
 
 			.commentInputSection .mediaUser,
 			.commentWrapper .mediaUser {
 				.rounded(0);
 				width: 30px;
 				height: 30px;
-			}
-
-			time {
-				display: inline;
-				font-size: 12px;
-			}
-		
-			.opMessage {
-				background: white;
-				border-bottom: none;
-				padding: 5px;
-	
-				.msgHeader {
-					padding: 5px;
-					height: 55px;
-					.mediaUser {
-						width: 40px;
-						height: 40px;
-						.rounded(0);
-						// border: 1px solid #DDD;
-					}
-					.headline {
-						margin-left: 5px;
-						display: inline-block;
-						font: 13px "Open Sans";
-						.authorUsername {
-							color: #666;
-							&:hover {
-								color: #444;
-							}
-							text-decoration: none;
-							display: inline;
-							font-weight: bold;
-						}
-						width: 450px;
-					}
-					time {
-						position: absolute;
-						right: 13px;
-						top: 45px;
-						font-size: 12;
-						color: #888;
-						float: right;
-					}
-				}
-
-				.msgBody, .msgTitle {
-					font-size: 13px;
-					padding: 10px;
-					position: relative;
-					background: white;
-					border: 1px solid #DDD;
-					overflow-wrap: break-word;
-					.arrow {
-						content: '';
-						border: 7px solid transparent;
-						border-bottom-color: #EFEFEF;
-						top: -14px;
-						position: absolute;
-						left: 5px+14px;
-					}
-				}
 			}
 
 			.commentSection {
@@ -524,128 +598,110 @@ nav.bar {
 					}
 				}
 			}
+		}
 
-			.optionBtns {
-				float: right;
-				display: inline-block;
-				position: absolute;
-				right: 5px; top: 0px;
-				z-index: 4;
-				
-				.transition(all, .2s, linear);
-				opacity: .5;
-				&:hover {
-					opacity: 1;
-				}
-
-				[data-action=remove-post],
-				[data-action=edit-post] {
-					.full-reset-button;
-					padding-left: 3px;
-					vertical-align: middle;
-					padding-right: 3px;
-					font-size: 105%;
-					font-weight: bolder;
-					color: #888;
-					opacity: .6;
-					&:hover {
-						color: #444;
-					}
-					&:active {
-						outline: none;
-					}
-				}
+		.optionBtns {
+			float: right;
+			display: inline-block;
+			position: absolute;
+			right: 5px; top: 0px;
+			z-index: 4;
+			
+			.transition(all, .2s, linear);
+			opacity: .5;
+			&:hover {
+				opacity: 1;
 			}
 
-			[data-post-type=QAPost] {
-
-				.opMessage {
-					.msgTitle {
-						font-size: 13px;
-						padding: 10px;
-						position: relative;
-						background: white;
-						border: 1px solid #DDD;
-						overflow-wrap: break-word;
-						.arrow {
-							content: '';
-							border: 7px solid transparent;
-							border-bottom-color: #EFEFEF;
-							top: -14px;
-							position: absolute;
-							left: 5px+14px;
-						}
-						margin-bottom: 10px;
-						&::after {
-							content: '?';
-							float: right;
-							font-size: 20px;
-
-						}
-					}
-					.msgBody {
-						font-size: 13px;
-					}
+			[data-action=remove-post],
+			[data-action=edit-post] {
+				.full-reset-button;
+				padding-left: 3px;
+				vertical-align: middle;
+				padding-right: 3px;
+				font-size: 105%;
+				font-weight: bolder;
+				color: #888;
+				opacity: .6;
+				&:hover {
+					color: #444;
 				}
-
-				.answerView {
-					background: #FAFAFA;
-					padding: 10px;
-
-					.leftCol {
-						float: left;
-
-						.mediaUser {
-							vertical-align: top;
-							border: 1px solid #DDD;
-							height: 35px;
-							width: 35px;
-						}
-					}
-
-					.msgBody {
-						font-size: 14px;
-						padding: 10px;
-						position: relative;
-						margin-left: 60px;
-						background: white;
-						border: 1px solid #DDD;
-						overflow-wrap: break-word;
-
-						.arrow {
-							content: '';
-							border: 7px solid transparent;
-							border-right-color: #EFEFEF;
-							top: 14px;
-							position: absolute;
-							left: -15px;
-						}
-					}
-				}
-
-				.showMorePrompt {
-					background: #DDD;
+				&:active {
+					outline: none;
 				}
 			}
 		}
 
-		.activityView {
-			font-size: 13px;
-			a {
-				text-decoration: none;
-				color: #666;
-				&:hover {
-					color: #08C;
+		[data-post-type=QAPost] {
+			
+
+			.postHead {
+				.msgTitle {
+					font-size: 13px;
+					padding: 10px;
+					position: relative;
+					background: white;
+					border: 1px solid #DDD;
+					overflow-wrap: break-word;
+					.arrow {
+						content: '';
+						border: 7px solid transparent;
+						border-bottom-color: #EFEFEF;
+						top: -14px;
+						position: absolute;
+						left: 5px+14px;
+					}
+					margin-bottom: 10px;
+					&::after {
+						content: '?';
+						float: right;
+						font-size: 20px;
+
+					}
 				}
-				font-weight: bold;
-			}	
-			time {
-				font-size: 11px;
-				margin-left: 5px;
+				.msgBody {
+					font-size: 13px;
+				}
 			}
 
-			border-bottom: 1px dashed #DDD;
-			padding-bottom: 10px;
+			.answerView {
+				background: #FAFAFA;
+				padding: 10px;
+
+				.leftCol {
+					float: left;
+
+					.mediaUser {
+						vertical-align: top;
+						border: 1px solid #DDD;
+						height: 35px;
+						width: 35px;
+					}
+				}
+
+				.msgBody {
+					font-size: 14px;
+					padding: 10px;
+					position: relative;
+					margin-left: 60px;
+					background: white;
+					border: 1px solid #DDD;
+					overflow-wrap: break-word;
+
+					.arrow {
+						content: '';
+						border: 7px solid transparent;
+						border-right-color: #EFEFEF;
+						top: 14px;
+						position: absolute;
+						left: -15px;
+					}
+				}
+			}
+
+			.showMorePrompt {
+				background: #DDD;
+			}
 		}
 	}
 }

@@ -298,10 +298,13 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				background: 'url('+post.author.avatarUrl+')',
 			};
 			var rawMarkup = post.data.unescapedBody;
+			function gotoPost () {
+				window.location.href = post.path;
+			}
 
 			return (
-				React.DOM.div( {className:"postPart", 'data-post-type':"QAPost"}, 
-					React.DOM.div( {className:"opMessage"}, 
+				React.DOM.div(null, 
+					React.DOM.div( {className:"postHead", 'data-post-type':"QAPost"}, 
 						React.DOM.div( {className:"msgHeader"}, 
 							React.DOM.div( {className:"mediaUser"}, 
 								React.DOM.a( {href:post.author.profileUrl}, 
@@ -312,12 +315,6 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 								React.DOM.a( {href:post.author.profileUrl, className:"authorUsername"}, 
 									post.author.name
 								), " fez uma pergunta:"
-							),
-							
-							React.DOM.a( {href:post.path}, 
-								React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
-									window.calcTimeFrom(post.published)
-								)
 							),
 
 							(window.user && post.author.id === window.user.id)?
@@ -339,15 +336,42 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 						),
 						React.DOM.div( {className:"msgBody"}, 
 							React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
+						),
+						
+						React.DOM.div( {className:"postInfobar", onClick:gotoPost}, 
+							React.DOM.ul( {className:"left"}, 
+								React.DOM.li(null, 
+									React.DOM.i( {className:"icon-heart"})," ",
+									this.props.model.commentList.models.length
+								),
+								React.DOM.li(null, 
+									React.DOM.i( {className:"icon-comment-o"})," ",
+									this.props.model.commentList.models.length, " comentários"
+								),
+								React.DOM.li(null, 
+									React.DOM.span( {'data-toggle':"tooltip", title:"Denunciar publicação", 'data-placement':"bottom"}, 
+										React.DOM.i( {className:"icon-flag"})
+									)
+								)
+							),
+							React.DOM.ul( {className:"right"}, 
+								React.DOM.li(null, 
+									React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
+										window.calcTimeFrom(post.published,true)
+									)
+								)
+							)
 						)
 					),
-					app.postItem?
-					React.DOM.div(null, 
-						AnswerSectionView( {model:this.props.model} ),
-						CommentSectionView( {model:this.props.model} )
-					)
-					:React.DOM.div( {className:"showMorePrompt"}, 
-						"Visualizar ", this.props.model.answerList.models.length, " respostas"
+					React.DOM.div( {className:"postFoot"}, 
+						
+							app.postItem?
+							React.DOM.div(null, 
+								AnswerSectionView( {model:this.props.model} ),
+								CommentSectionView( {model:this.props.model} )
+							)
+							:null
+						
 					)
 				)
 			);
@@ -365,7 +389,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			var rawMarkup = post.data.unescapedBody;
 
 			return (
-				React.DOM.div( {className:"postPart", 'data-post-type':"QAPost"}, 
+				React.DOM.div( {className:"postHead", 'data-post-type':"QAPost"}, 
 					React.DOM.div( {className:"opMessage"}, 
 						React.DOM.div( {className:"msgHeader"}, 
 							React.DOM.div( {className:"mediaUser"}, 

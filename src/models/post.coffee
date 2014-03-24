@@ -102,7 +102,7 @@ PostSchema.methods.getComments = (cb) ->
 			cb(err, docs)
 
 PostSchema.methods.stuff = (cb) ->
-	@.populate 'author', (err, doc) ->
+	@populate 'author', (err, doc) ->
 		if err
 			cb(err)
 		else if doc
@@ -113,7 +113,7 @@ PostSchema.methods.stuff = (cb) ->
 PostSchema.methods.fillChildren = (cb) ->
 	self = @
 	if @type not in ['PlainPost', 'Answer']
-		cb(false, @toJSON())
+		return cb(false, @toJSON())
 
 	Post.find {parentPost:@}
 	.populate 'author'

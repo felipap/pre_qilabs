@@ -298,10 +298,13 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				background: 'url('+post.author.avatarUrl+')',
 			};
 			var rawMarkup = post.data.unescapedBody;
+			function gotoPost () {
+				window.location.href = post.path;
+			}
 
 			return (
-				<div className="postPart" data-post-type="QAPost">
-					<div className="opMessage">
+				<div>
+					<div className="postHead" data-post-type="QAPost">
 						<div className="msgHeader">
 							<div className="mediaUser">
 								<a href={post.author.profileUrl}>
@@ -313,12 +316,6 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 									{post.author.name}
 								</a> fez uma pergunta:
 							</div>
-							
-							<a href={post.path}>
-								<time data-time-count={1*new Date(post.published)}>
-									{window.calcTimeFrom(post.published)}
-								</time>
-							</a>
 
 							{(window.user && post.author.id === window.user.id)?
 								<div className="optionBtns">
@@ -340,15 +337,42 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 						<div className="msgBody">
 							<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
 						</div>
+						
+						<div className="postInfobar" onClick={gotoPost}>
+							<ul className="left">
+								<li>
+									<i className="icon-heart"></i>&nbsp;
+									{this.props.model.commentList.models.length}
+								</li>
+								<li>
+									<i className="icon-comment-o"></i>&nbsp;
+									{this.props.model.commentList.models.length} comentários
+								</li>
+								<li>
+									<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
+										<i className="icon-flag"></i>
+									</span>
+								</li>
+							</ul>
+							<ul className="right">
+								<li>
+									<time data-time-count={1*new Date(post.published)} data-time-long="true">
+										{window.calcTimeFrom(post.published,true)}
+									</time>
+								</li>
+							</ul>
+						</div>
 					</div>
-					{app.postItem?
-					<div>
-						<AnswerSectionView model={this.props.model} />
-						<CommentSectionView model={this.props.model} />
+					<div className="postFoot">
+						{
+							app.postItem?
+							<div>
+								<AnswerSectionView model={this.props.model} />
+								<CommentSectionView model={this.props.model} />
+							</div>
+							:null
+						}
 					</div>
-					:<div className="showMorePrompt">
-						Visualizar {this.props.model.answerList.models.length} respostas
-					</div>}
 				</div>
 			);
 		},
@@ -365,7 +389,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			var rawMarkup = post.data.unescapedBody;
 
 			return (
-				<div className="postPart" data-post-type="QAPost">
+				<div className="postHead" data-post-type="QAPost">
 					<div className="opMessage">
 						<div className="msgHeader">
 							<div className="mediaUser">

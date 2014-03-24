@@ -178,7 +178,7 @@ PostSchema.methods.fillChildren = function(cb) {
   var self, _ref;
   self = this;
   if ((_ref = this.type) !== 'PlainPost' && _ref !== 'Answer') {
-    cb(false, this.toJSON());
+    return cb(false, this.toJSON());
   }
   return Post.find({
     parentPost: this

@@ -90,6 +90,8 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 
 	return {
 		postItem: PostItem,
+		answerItem: AnswerItem,
+		commentItem: CommentItem,
 		postList: PostList
 	}
 });
