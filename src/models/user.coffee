@@ -194,7 +194,7 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 			}, ->)
 			# Populate follower inbox with at most 100 resources from followed user
 			Resource.find()
-				.or [{__t:'Post', group:null, author:user._id},{__t:'Activity', group:null, actor:user._id}]
+				.or [{__t:'Post', group:null, parentPost:null, author:user._id},{__t:'Activity', group:null, actor:user._id}]
 				.limit(100)
 				.exec (err, docs) ->
 					console.log 'Resources found:', err, docs.length

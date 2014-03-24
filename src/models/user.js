@@ -281,6 +281,7 @@ UserSchema.methods.dofollowUser = function(user, cb) {
         {
           __t: 'Post',
           group: null,
+          parentPost: null,
           author: user._id
         }, {
           __t: 'Activity',
