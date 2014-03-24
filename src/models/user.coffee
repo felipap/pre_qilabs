@@ -6,8 +6,6 @@
 ###
 GUIDELINES for development:
 - Never utilize directly request parameters or data.
-- Crucial: never remove documents by calling Model.remove. They prevent hooks
-  from firing. See http://mongoosejs.com/docs/api.html#model_Model.remove
 ###
 
 mongoose = require 'mongoose'

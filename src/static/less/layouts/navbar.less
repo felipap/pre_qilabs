@@ -74,8 +74,8 @@ nav.bar {
 		}
 	}
 
-
 	.navcontent > ul {
+
 		&:extend(.nav);
 		&:extend(.navbar-nav);
 
@@ -86,6 +86,47 @@ nav.bar {
 			display: inline-block;
 			vertical-align: top;
 			list-style: none;
+			height: 100%;
+		}
+
+		.searchInput {
+			line-height: @navbar-height;
+			// width: 0;
+			// overflow: hidden;
+			vertical-align: middle;
+
+			input {
+				line-height: 30px;
+				.rounded(3px);
+				font: 13px "Open Sans";
+				color: #444;
+				border: none;
+				.no-box-shadow();
+				padding: 5px 8px;
+				padding-right: 20px;
+				width: 200px;
+				outline: none;
+				border: 1px solid #444;
+				.transition();
+				&:focus {
+					border: 1px solid black;
+					width: 250px;
+				}
+			}
+
+			i {
+				cursor: pointer;
+				position: relative;
+				right: 23px;
+				top: -1px;
+				color: #888;
+				&::before {
+					font-size: 14px;
+				}
+				&:hover {
+					color: #444;
+				}
+			}
 		}
 	
 		.bell-btn {
