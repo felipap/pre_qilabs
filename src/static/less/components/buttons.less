@@ -48,6 +48,7 @@
 	.high-xbtn-padding(9px, 20px, 6px, 2px);
 }
 
+
 .high-xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px, @shadowSize:2px) {
 	padding: @vertical @horizontal;
 	padding-bottom: @shadowSize+@vertical;
@@ -61,6 +62,16 @@
 		margin-bottom: @verticalMargin; // -2+1 (from padding-bottom)
 		padding-bottom: @vertical;
 	}
+}
+
+.small-xbtn () {
+	.xbtn-padding(4px, 5px, 4px);
+}
+
+.xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px) {
+	padding: @vertical @horizontal;
+	margin-top: @verticalMargin;
+	margin-bottom: @verticalMargin;
 }
 
 .btn-follow {

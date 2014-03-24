@@ -153,31 +153,40 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 				});
 			}
 
-			switch (this.state.selectedForm) {
-				case 'QA':
-					var postForm = postForms.QA;
-					break;
-				case 'PlainText':
-					var postForm = postForms.PlainText;
-					break;
-				default:
-					var postForm = null;
-			}
+			// switch (this.state.selectedForm) {
+			// 	case 'QA':
+			// 		var postForm = postForms.QA;
+			// 		break;
+			// 	case 'PlainText':
+			// 		var postForm = postForms.Plain;
+			// 		break;
+			// 	default:
+			// 		var postForm = null;
+			// }
+
+					var postForm = postForms.Plain;
+						// {this.props.canPostForm?
+						// 	(
+						// 		postForm?
+						// 		<postForm postUrl={this.props.collection.url}/>
+						// 		:<div className="">
+						// 			<button onClick={selectForm} data-form='QA'>
+						// 				Fazer uma pergunta
+						// 			</button>
+						// 			<button onClick={selectForm} data-form='PlainText'>
+						// 				Escreva um texto
+						// 			</button>
+						// 		</div>
+						// 	)
+						// 	:null
+						// }
 
 			return (
-				React.DOM.div( {className:"postListWrapper"}, 
+				React.DOM.div( {className:"timeline"}, 
 					this.props.canPostForm?
-						(
-							postForm?
-							postForm( {postUrl:this.props.collection.url})
-							:React.DOM.div( {className:""}, 
-								React.DOM.button( {onClick:selectForm, 'data-form':"QA"}, 
-									"Fazer uma pergunta"
-								),
-								React.DOM.button( {onClick:selectForm, 'data-form':"PlainText"}, 
-									"Escreva um texto"
-								)
-							)
+						React.DOM.div( {className:"header"}, 
+							postForm( {postUrl:this.props.collection.url}),
+							React.DOM.hr(null )
 						)
 						:null,
 					
@@ -227,7 +236,7 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 			this.postList = new postModels.postList([], {url:url});
 			React.renderComponent(TimelineView(
 				_.extend(opts,{collection:this.postList})),
-				document.getElementById('postsPlacement'));
+				document.getElementById('resultsCol'));
 
 			this.postList.fetch({reset:true});
 

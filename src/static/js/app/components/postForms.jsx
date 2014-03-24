@@ -26,11 +26,20 @@ define(['jquery', 'underscore', 'react', 'components.postModels'], function ($, 
 			return false;
 		},
 		render: function () {
+			var styleMap = {
+				backgroundImage: 'url('+user.avatarUrl+')',
+			}
 			return (
 				<form className="postInputForm" onSubmit={this.handleSubmit}>
-					<h2>Enviar uma msg para o seus seguidores</h2>
-					<textarea placeholder="Escreva uma mensagem aqui" ref="postBody"></textarea>
-					<button data-action="send-post" type="submit">Enviar Post</button>
+					<div className="userAvatar" style={styleMap}>
+					</div>
+					<div className="textInput">
+						<div className="arrow"></div>
+						<textarea placeholder="Conte algo de interessante..." ref="postBody"></textarea>
+						<button data-action="send">
+							Enviar
+						</button>
+					</div>
 				</form>
 			);
 		}

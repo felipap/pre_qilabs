@@ -79,32 +79,3 @@
 		{% endif %}
 	</div>
 {% endblock %}
-
-{% block mainContent %}
-<div id="results-col">
-
-	<div class="header">
-		<div class="twt">
-			<div class="userAvatar" style="background-image:url({{ user_profile.avatarUrl }})">
-			</div>
-			<div class="textInput">
-				<div class="arrow"></div>
-				<textarea placeholder="Conte algo de interessante..."></textarea>
-			</div>
-		</div>
-
-		<div class="box">
-			<div id="postInput"></div>
-		</div>
-	</div>
-
-	<div id="container"></div>
-
-	<a href="#">Interessante | </a><a href="#">Seus Grupos | </a><a href="">Global</a>
-
-	<div id="posts-col">
-		<div id="postsPlacement">
-		</div>
-	</div>
-</div>
-{% endblock %}

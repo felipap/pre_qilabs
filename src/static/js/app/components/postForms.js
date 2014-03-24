@@ -26,11 +26,20 @@ define(['jquery', 'underscore', 'react', 'components.postModels'], function ($, 
 			return false;
 		},
 		render: function () {
+			var styleMap = {
+				backgroundImage: 'url('+user.avatarUrl+')',
+			}
 			return (
 				React.DOM.form( {className:"postInputForm", onSubmit:this.handleSubmit}, 
-					React.DOM.h2(null, "Enviar uma msg para o seus seguidores"),
-					React.DOM.textarea( {placeholder:"Escreva uma mensagem aqui", ref:"postBody"}),
-					React.DOM.button( {'data-action':"send-post", type:"submit"}, "Enviar Post")
+					React.DOM.div( {className:"userAvatar", style:styleMap}
+					),
+					React.DOM.div( {className:"textInput"}, 
+						React.DOM.div( {className:"arrow"}),
+						React.DOM.textarea( {placeholder:"Conte algo de interessante...", ref:"postBody"}),
+						React.DOM.button( {'data-action':"send"}, 
+							"Enviar"
+						)
+					)
 				)
 			);
 		}
