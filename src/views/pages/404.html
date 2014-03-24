@@ -4,7 +4,11 @@
 <section>
 	
 	<h1>Ops! <span>:(</span></h1>
+	{% if msg %}
+	<h2>{{ msg }}</h2>
+	{% else %}
 	<h2>Parece que a página que você estava tentando visualizar não existe...</h2>
+	{% endif %}
 
 	<a href="/" class="btn0 inverted-btn">
 		Voltar para o site

@@ -1,8 +1,12 @@
 
-
 module.exports = function(err, req, res, next) {
+
+	if (err.type === 'ObsoleteId') {
+		return res.render404("Esse usuário não existe.");
+	}
+
 	console.error('Error stack:', err);
-	console.trace()
+	console.trace();
 	
 	if (err.status) {
 		res.status(err.status);
