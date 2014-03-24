@@ -59,7 +59,11 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 	});
 
 	var AnswerItem = GenericPostItem.extend({
+
 		initialize: function () {
+			this.commentList = new CommentList(this.get('comments'));
+			this.commentList.postItem = this.postItem;
+			this.answerList = new AnswerList(this.get('answers'));
 		}
 	});
 	

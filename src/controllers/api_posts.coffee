@@ -13,17 +13,13 @@ module.exports = {
 	permissions: [required.login],
 	children: {
 		'/:id': {
-			get: (req, res) ->
-				return if not postId = req.paramToObjectId('id')
-				Post.findOne {_id: postId},
-					req.handleErrResult((doc) =>
-						# If needed to fill response with comments:
-						doc.fillChildren (err, object) =>
-							res.endJson({
-								error: false,
-								data: object
-							})
+			get: [required.posts.selfCanSee('id'), (req, res) ->
+					return unless postId = req.paramToObjectId('id')
+					Post.findOne { _id:postId }, req.handleErrResult((post) ->
+						post.stuff req.handleErrResult (stuffedPost) ->
+							res.endJson( post: stuffedPost )
 					)
+				]
 			post: (req, res) ->
 					return if not postId = req.paramToObjectId('id')
 					# For security, handle each option

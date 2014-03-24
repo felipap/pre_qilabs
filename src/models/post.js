@@ -1,4 +1,5 @@
-var Notification, ObjectId, Post, PostSchema, Resource, Types, assert, assertArgs, async, mongoose, urlify, _;
+var Notification, ObjectId, Post, PostSchema, Resource, Types, assert, assertArgs, async, mongoose, urlify, _,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
 
@@ -177,7 +178,7 @@ PostSchema.methods.stuff = function(cb) {
 PostSchema.methods.fillChildren = function(cb) {
   var self, _ref;
   self = this;
-  if ((_ref = this.type) !== 'PlainPost' && _ref !== 'Answer') {
+  if (_ref = this.type, __indexOf.call(_.values(Types), _ref) < 0) {
     return cb(false, this.toJSON());
   }
   return Post.find({
@@ -191,7 +192,7 @@ PostSchema.methods.fillChildren = function(cb) {
       _answers = _.filter(children, function(i) {
         return i.type === Types.Answer;
       });
-      return async.forEach(_answers, (function(ans, done) {
+      return async.map(_answers, (function(ans, done) {
         return Post.find({
           parentPost: ans
         }).populate('author').exec(function(err, comments) {

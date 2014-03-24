@@ -16,24 +16,23 @@ module.exports = {
   permissions: [required.login],
   children: {
     '/:id': {
-      get: function(req, res) {
-        var postId;
-        if (!(postId = req.paramToObjectId('id'))) {
-          return;
-        }
-        return Post.findOne({
-          _id: postId
-        }, req.handleErrResult((function(_this) {
-          return function(doc) {
-            return doc.fillChildren(function(err, object) {
+      get: [
+        required.posts.selfCanSee('id'), function(req, res) {
+          var postId;
+          if (!(postId = req.paramToObjectId('id'))) {
+            return;
+          }
+          return Post.findOne({
+            _id: postId
+          }, req.handleErrResult(function(post) {
+            return post.stuff(req.handleErrResult(function(stuffedPost) {
               return res.endJson({
-                error: false,
-                data: object
+                post: stuffedPost
               });
-            });
-          };
-        })(this)));
-      },
+            }));
+          }));
+        }
+      ],
       post: function(req, res) {
         var postId;
         if (!(postId = req.paramToObjectId('id'))) {

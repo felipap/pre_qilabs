@@ -96,24 +96,21 @@ module.exports = {
 		name: 'profile'
 		# slugs: {post:'postId'}
 		# permissions: [required.posts.selfCanSee('post')]
-		methods: {
-			get: [required.posts.selfCanSee('postId'), (req, res) ->
-				return unless postId = req.paramToObjectId('postId')
-				Post.findOne { _id:postId }, req.handleErrResult((post) ->
-					if post.parentPost
-						# Our post is actually a comment/answer, so redirect user to the
-						# comment's actual path (which is its parent's).
-						console.log 'redirecting', post.path
-						return res.redirect(post.path)
-					else
-						post.stuff req.handleErrResult (stuffedPost) ->
-
-							res.render 'pages/post.html', {
-								post: stuffedPost,
-							}
-					)
-				]
-		}
+		get: [required.posts.selfCanSee('postId'), (req, res) ->
+			return unless postId = req.paramToObjectId('postId')
+			Post.findOne { _id:postId }, req.handleErrResult((post) ->
+				if post.parentPost
+					# Our post is actually a comment/answer, so redirect user to the
+					# comment's actual path (which is its parent's).
+					console.log 'redirecting', post.path
+					return res.redirect(post.path)
+				else
+					post.stuff req.handleErrResult (stuffedPost) ->
+						res.render 'pages/post.html', {
+							post: stuffedPost,
+						}
+				)
+			]
 		children: {
 			'/edit':
 				methods:

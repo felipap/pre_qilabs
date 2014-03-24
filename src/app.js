@@ -107,6 +107,11 @@ app.use(function(req, res, next) {
 	};
 
 	req.paramToObjectId = function (param, callback) {
+		if (typeof req.params[param] === 'undefined') {
+			console.trace();
+			throw "Fatal error: parameter '"+param+"' doesn't belong to url.";
+		}
+
 		if (arguments.length === 2) { // Async call
 			try {
 				var id = mongoose.Types.ObjectId.createFromHexString(req.params[param]);

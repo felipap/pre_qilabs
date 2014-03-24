@@ -112,20 +112,21 @@ PostSchema.methods.stuff = (cb) ->
 
 PostSchema.methods.fillChildren = (cb) ->
 	self = @
-	if @type not in ['PlainPost', 'Answer']
+	if @type not in _.values(Types)
 		return cb(false, @toJSON())
 
 	Post.find {parentPost:@}
-	.populate 'author'
-	.exec (err, children) =>
-		comments = _.filter(children, (i) -> i.type is Types.Comment)
-		_answers = _.filter(children, (i) -> i.type is Types.Answer)
-		
-		async.forEach _answers, ((ans, done) ->
-			Post.find({parentPost:ans}).populate('author').exec (err, comments) ->
-				done(err, _.extend({},ans.toJSON(), { comments: comments }))
-		), (err, answers) ->
-			cb(err, _.extend({}, self.toJSON(), { comments:comments, answers:answers }))
+		.populate 'author'
+		.exec (err, children) =>
+			comments = _.filter(children, (i) -> i.type is Types.Comment)
+			_answers = _.filter(children, (i) -> i.type is Types.Answer)
+			
+			# Get answers' comments
+			async.map _answers, ((ans, done) ->
+				Post.find({parentPost:ans}).populate('author').exec (err, comments) ->
+					done(err, _.extend({},ans.toJSON(), { comments: comments }))
+			), (err, answers) ->
+				cb(err, _.extend({}, self.toJSON(), { comments:comments, answers:answers }))
 
 ################################################################################
 ## Statics #####################################################################
