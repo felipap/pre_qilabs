@@ -1,13 +1,13 @@
 /** @jsx React.DOM */
 
 /*
-** timeline.js
+** postViews.js
 ** Copyright QILabs.org
 ** BSD License
 ** by @f03lipe
 */
 
-define(['jquery', 'underscore', 'react'], function ($, _, React) {
+define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, React) {
 
 	/********************************************************************************/
 	/********************************************************************************/

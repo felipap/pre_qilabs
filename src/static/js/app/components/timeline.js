@@ -40,8 +40,8 @@ window.calcTimeFrom = function (arg, long) {
 	}
 };
 
-define(['jquery', 'backbone', 'components.postForms', 'components.postViews', 'underscore', 'react', 'showdown'],
-	function ($, Backbone, postForms, postViews, _, React, Showdown) {
+define(['jquery', 'backbone', 'components.postForms', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
+	function ($, Backbone, postForms, postModels, postViews, _, React, Showdown) {
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
@@ -67,224 +67,132 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postViews', 'u
 		return originalSync(method, model, options);
 	};
 
-	/************************************************************************************/
-	/************************************************************************************/
+	$('.header .textInput textarea').autosize();
 
-	var Post = (function () {
-		'use strict';
 
-		var GenericPostItem = Backbone.Model.extend({
-			url: function () {
-				return this.get('apiPath');
-			},
-		});
+	var ActivityView = React.createClass({displayName: 'ActivityView',
 
-		var PostItem = GenericPostItem.extend({
-			initialize: function () {
-				this.commentList = new CommentList(this.get('comments'));
-				this.commentList.postItem = this.postItem;
-				this.answerList = new AnswerList(this.get('answers'));
-				// if (this.get('hasComments')) {
-				// 	this.commentList.fetch({reset:true});
-				// }
-			},
-		});
-
-		var AnswerItem = GenericPostItem.extend({
-			initialize: function () {
-			}
-		});
-		
-		var AnswerList = Backbone.Collection.extend({
-			model: AnswerItem,	
-			comparator: function (i) {
-				// do votes here! :)
-				return -1*new Date(i.get('published'));
-			}
-		});
-
-		var PostList = Backbone.Collection.extend({
-			model: PostItem,
-
-			constructor: function (models, options) {
-				Backbone.Collection.apply(this, arguments);
-				this.url = options.url || app.postsRoot || '/api/me/timeline/posts';
-				this.EOF = false;
-			},
-			comparator: function (i) {
-				return -1*new Date(i.get('published'));
-			},
-			parse: function (response, options) {
-				if (response.minDate < 1) {
-					this.EOF = true;
-					this.trigger('statusChange');
-				}
-				this.minDate = 1*new Date(response.minDate);
-				var data = Backbone.Collection.prototype.parse.call(this, response.data, options);
-				// Filter for non-null results.
-				return _.filter(data, function (i) { return !!i; });
-			},
-			tryFetchMore: function () {
-				if (this.minDate < 1) {
-					return;
-				}
-				this.fetch({data: {maxDate:this.minDate-1}, remove:false});
-			},
-		});
-
-		var CommentItem = GenericPostItem.extend({});
-
-		var CommentList = Backbone.Collection.extend({
-			model: CommentItem,
-			endDate: new Date(),
-			comparator: function (i) {
-				return 1*new Date(i.get('published'));
-			},
-			url: function () {
-				return this.postItem.get('apiPath') + '/comments'; 
-			},
-			parse: function (response, options) {
-				this.endDate = new Date(response.endDate);
-				return Backbone.Collection.prototype.parse.call(this, response.data, options);
-			}
-		});
-
-		/************************************************************************************/
-		/************************************************************************************/
-
-		var ActivityView = React.createClass({displayName: 'ActivityView',
-
-			render: function () {
-				var post = this.props.model.attributes;
-				var mediaUserStyle = {
-					background: 'url('+post.actor.avatarUrl+')',
-				};
-				return (
-					React.DOM.div( {className:"activityView"}, 
-						React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('content')}} ),
-						React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
-							window.calcTimeFrom(post.published)
-						)
+		render: function () {
+			var post = this.props.model.attributes;
+			var mediaUserStyle = {
+				background: 'url('+post.actor.avatarUrl+')',
+			};
+			return (
+				React.DOM.div( {className:"activityView"}, 
+					React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('content')}} ),
+					React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
+						window.calcTimeFrom(post.published)
 					)
-				);
-			},
+				)
+			);
+		},
+	});
 
-		});
+	var PostView = React.createClass({displayName: 'PostView',
 
-		var PostView = React.createClass({displayName: 'PostView',
+		render: function () {
+			// test for type, QA for example
+			var postType = this.props.model.get('type');
+			if (postType in postViews) {
+				var postView = postViews[postType];
+			} else {
+				console.warn("Couldn't find view for post of type "+postType);
+				return React.DOM.div(null );
+			}
+			// console.log(this.props.model.get('type'))
+			return (
+				React.DOM.div( {className:"postView"}, 
+					postView( {model:this.props.model} )
+				)
+			);
+		},
+	});
 
-			render: function () {
-				// test for type, QA for example
-				var postType = this.props.model.get('type');
-				if (postType in postViews) {
-					var postView = postViews[postType];
-				} else {
-					console.warn("Couldn't find view for post of type "+postType);
-					return React.DOM.div(null );
-				}
-				// console.log(this.props.model.get('type'))
+	var StreamItemView = React.createClass({displayName: 'StreamItemView',
+		render: function () {
+			var itemType = this.props.model.get('__t');
+			return (
+				React.DOM.div( {className:"streamItem"}, 
+					(itemType==='Post')?
+					PostView( {model:this.props.model} )
+					:ActivityView( {model:this.props.model} )
+				)
+			);
+		},
+	});
+
+	var TimelineView = React.createClass({displayName: 'TimelineView',
+		getInitialState: function () {
+			return {selectedForm:null};
+		},
+		componentWillMount: function () {
+			function update (evt) {
+				// console.log('updatefired')
+				this.forceUpdate(function(){});
+			}
+			this.props.collection.on('add remove reset statusChange', update.bind(this));
+		},
+		// changeOptions: "change:name",
+		render: function () {
+			var postNodes = this.props.collection.map(function (post) {
 				return (
-					React.DOM.div( {className:"postView"}, 
-						postView( {model:this.props.model} )
-					)
+					StreamItemView( {model:post} )
 				);
-			},
-		});
+			});
 
-		var StreamItemView = React.createClass({displayName: 'StreamItemView',
-			render: function () {
-				var itemType = this.props.model.get('__t');
-				return (
-					React.DOM.div( {className:"streamItem"}, 
-						(itemType==='Post')?
-						PostView( {model:this.props.model} )
-						:ActivityView( {model:this.props.model} )
-					)
-				);
-			},
-		});
+			var self = this;
 
-		var TimelineView = React.createClass({displayName: 'TimelineView',
-			getInitialState: function () {
-				return {selectedForm:null};
-			},
-			componentWillMount: function () {
-				function update (evt) {
-					// console.log('updatefired')
-					this.forceUpdate(function(){});
-				}
-				this.props.collection.on('add remove reset statusChange', update.bind(this));
-			},
-			// changeOptions: "change:name",
-			render: function () {
-				var postNodes = this.props.collection.map(function (post) {
-					return (
-						StreamItemView( {model:post} )
-					);
+			function dismissForm () {
+				self.setState({selectedForm:'QA'}, function(){});
+			}
+
+			function selectForm (evt) {
+				var btn = evt.target;
+				self.setState({selectedForm:btn.dataset.form}, function(){
+					console.log('state set:', self.state)
 				});
+			}
 
-				var self = this;
+			switch (this.state.selectedForm) {
+				case 'QA':
+					var postForm = postForms.QA;
+					break;
+				case 'PlainText':
+					var postForm = postForms.PlainText;
+					break;
+				default:
+					var postForm = null;
+			}
 
-				function dismissForm () {
-					self.setState({selectedForm:'QA'}, function(){});
-				}
-
-				function selectForm (evt) {
-					var btn = evt.target;
-					self.setState({selectedForm:btn.dataset.form}, function(){
-						console.log('state set:', self.state)
-					});
-				}
-
-				switch (this.state.selectedForm) {
-					case 'QA':
-						var postForm = postForms.QA;
-						break;
-					case 'PlainText':
-						var postForm = postForms.PlainText;
-						break;
-					default:
-						var postForm = null;
-				}
-
-				return (
-					React.DOM.div( {className:"postListWrapper"}, 
-						this.props.canPostForm?
-							(
-								postForm?
-								postForm( {postUrl:this.props.collection.url})
-								:React.DOM.div( {className:""}, 
-									React.DOM.button( {onClick:selectForm, 'data-form':"QA"}, 
-										"Fazer uma pergunta"
-									),
-									React.DOM.button( {onClick:selectForm, 'data-form':"PlainText"}, 
-										"Escreva um texto"
-									)
+			return (
+				React.DOM.div( {className:"postListWrapper"}, 
+					this.props.canPostForm?
+						(
+							postForm?
+							postForm( {postUrl:this.props.collection.url})
+							:React.DOM.div( {className:""}, 
+								React.DOM.button( {onClick:selectForm, 'data-form':"QA"}, 
+									"Fazer uma pergunta"
+								),
+								React.DOM.button( {onClick:selectForm, 'data-form':"PlainText"}, 
+									"Escreva um texto"
 								)
 							)
-							:null,
-						
-						postNodes,
-						this.props.collection.EOF?
-						React.DOM.div( {className:"streamSign"}, 
-							React.DOM.i( {className:"icon-exclamation"}), " Nenhuma outra atividade encontrada."
 						)
-						:React.DOM.a( {className:"streamSign", href:"#", onClick:this.props.collection.tryFetchMore}, 
-							React.DOM.i( {className:"icon-cog"}),"Procurando mais atividades."
-						)
+						:null,
+					
+					postNodes,
+					this.props.collection.EOF?
+					React.DOM.div( {className:"streamSign"}, 
+						React.DOM.i( {className:"icon-exclamation"}), " Nenhuma outra atividade encontrada."
 					)
-				);
-			},
-		});
-
-		return {
-			item: PostItem,
-			list: PostList,
-			timelineView: TimelineView,
-			postView: StreamItemView,
-		};
-	})();
-
+					:React.DOM.a( {className:"streamSign", href:"#", onClick:this.props.collection.tryFetchMore}, 
+						React.DOM.i( {className:"icon-cog"}),"Procurando mais atividades."
+					)
+				)
+			);
+		},
+	});
 
 	// Central functionality of the app.
 	var WorkspaceRouter = Backbone.Router.extend({
@@ -297,8 +205,8 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postViews', 'u
 		routes: {
 			'posts/:postId':
 				 function (postId) {
-				 	this.postItem = new Post.item(window.conf.postData);
-				 	React.renderComponent(Post.postView({model:this.postItem}),
+				 	this.postItem = new postModels.postItem(window.conf.postData);
+				 	React.renderComponent(PostView({model:this.postItem}),
 				 		document.getElementById('postsPlacement'));
 				},
 			'labs/:labId':
@@ -316,8 +224,8 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postViews', 'u
 		},
 
 		renderList: function (url, opts) {
-			this.postList = new Post.list([], {url:url});
-			React.renderComponent(Post.timelineView(
+			this.postList = new postModels.postList([], {url:url});
+			React.renderComponent(TimelineView(
 				_.extend(opts,{collection:this.postList})),
 				document.getElementById('postsPlacement'));
 

@@ -137,7 +137,7 @@ nav.bar {
 					font-weight: bold;
 					padding: 10px;
 
-					color: #666;
+					color: #444;
 					&:hover{
 						color: #444;
 					}
@@ -254,6 +254,31 @@ nav.bar {
 
 		[data-action=send-post] {
 			.high-xbtn(white, @COLOR1);
+		}
+	}
+
+	.header {
+		position: relative;
+
+		.userAvatar {
+			height: 40px;
+			width: 40px;
+			.background-size(cover);
+			position: absolute;
+			border: 1px solid #ddd;
+			.rounded(4px);
+			left: 0;
+		}
+
+		.textInput {
+			padding-left: 50px;
+			textarea {
+				border: 1px solid #DDD;
+				width: 100%;
+				outline: none;
+				resize: none;
+				.rounded(2px);
+			}
 		}
 	}
 	

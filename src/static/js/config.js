@@ -18,6 +18,7 @@ requirejs.config({
 		'components.bell':		'app/components/bell',
 		'components.timeline':	'app/components/timeline',
 		'components.postForms':	'app/components/postForms',
+		'components.postModels':'app/components/postModels',
 		'components.postViews':	'app/components/postViews',
 		// Third-party
 		'jquery':			'vendor/jquery-2.0.3.min',

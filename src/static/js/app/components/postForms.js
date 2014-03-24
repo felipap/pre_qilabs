@@ -7,7 +7,7 @@
 ** by @f03lipe
 */
 
-define(['jquery', 'underscore', 'react'], function ($, _, React) {
+define(['jquery', 'underscore', 'react', 'components.postModels'], function ($, _, React, postModels) {
 
 	var PlainTextForm = React.createClass({displayName: 'PlainTextForm',
 		handleSubmit: function (evt) {
@@ -19,7 +19,7 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 				type: 'post', dataType: 'json', url: this.props.postUrl,
 				data: { content: { body: body }, groupId: window.groupId, type: 'PlainPost' }
 			}).done(function(response) {
-				app.postList.add(new Post.item(response.data));
+				app.postList.add(new postModels.postItem(response.data));
 			});
 			this.refs.postBody.getDOMNode().value = '';
 
@@ -57,7 +57,7 @@ define(['jquery', 'underscore', 'react'], function ($, _, React) {
 					type: 'QA'
 				},
 			}).done(function(response) {
-				app.postList.add(new Post.item(response.data));
+				app.postList.add(new postModels.postItem(response.data));
 			});
 			this.refs.postBody.getDOMNode().value = '';
 
