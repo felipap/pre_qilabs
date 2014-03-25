@@ -319,8 +319,8 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 								React.DOM.i( {className:"icon-comment-o"})," ",
 								
 									this.props.model.answerList.models.length===1?
-									this.props.model.answerList.models.length+" comentário"
-									:this.props.model.answerList.models.length+" comentários"
+									this.props.model.answerList.models.length+" resposta"
+									:this.props.model.answerList.models.length+" respostas"
 								
 							)
 							:null
