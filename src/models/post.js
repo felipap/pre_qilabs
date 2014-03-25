@@ -1,4 +1,4 @@
-var Notification, ObjectId, Post, PostSchema, Resource, Types, assert, assertArgs, async, mongoose, urlify, _,
+var Notification, ObjectId, Post, PostSchema, Resource, Types, assert, assertArgs, async, mongoose, smallify, urlify, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -108,11 +108,19 @@ PostSchema.virtual('apiPath').get(function() {
   return "/api/posts/{id}".replace(/{id}/, this.id);
 });
 
+smallify = function(url) {
+  if (url.length > 30) {
+    return '...' + /https?:(?:\/\/)?[A-Za-z0-9][A-Za-z0-9\-]*([A-Za-z0-9\-]{2}\.[A-Za-z0-9\.\-]+(\/.{0,20})?)/.exec(url)[1] + '...';
+  } else {
+    return url;
+  }
+};
+
 urlify = function(text) {
   var urlRegex;
   urlRegex = /(((https?:(?:\/\/)?)(?:www\.)?[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/;
   return text.replace(urlRegex, function(url) {
-    return "<a href=\"" + url + "\">" + url + "</a>";
+    return "<a href=\"" + url + "\">" + (smallify(url)) + "</a>";
   });
 };
 

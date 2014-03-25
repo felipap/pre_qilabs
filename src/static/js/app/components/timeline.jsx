@@ -34,9 +34,6 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 		return originalSync(method, model, options);
 	};
 
-	$('.header .textInput textarea').autosize();
-
-
 	var ActivityView = React.createClass({
 
 		render: function () {

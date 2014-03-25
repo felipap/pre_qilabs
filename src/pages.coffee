@@ -80,7 +80,7 @@ module.exports = {
 			get: (req, res) ->
 				unless req.params.username
 					return res.render404()
-				User.findOne {username: req.params.username},
+				User.findOne {username:req.params.username},
 					req.handleErrResult (pUser) ->
 						pUser.genProfile (err, profile) ->
 							if err or not profile

@@ -20,7 +20,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 
 		initialize: function () {
-			var children = this.get('children');
+			var children = this.get('children') || {};
 			this.commentList = new CommentList(children.Comment);
 			this.commentList.postItem = this.postItem;
 			this.answerList = new AnswerList(children.Answer);

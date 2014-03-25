@@ -63,10 +63,17 @@ PostSchema.virtual('path').get ->
 PostSchema.virtual('apiPath').get ->
 	"/api/posts/{id}".replace(/{id}/, @id)
 
+smallify = (url) ->
+	if url.length > 30
+	# src = /((https?:(?:\/\/)?)(?:www\.)?[A-Za-z0-9\.\-]+).{20}/.exec(url)[0]
+	# '...'+src.slice(src.length-30)
+		'...'+/https?:(?:\/\/)?[A-Za-z0-9][A-Za-z0-9\-]*([A-Za-z0-9\-]{2}\.[A-Za-z0-9\.\-]+(\/.{0,20})?)/.exec(url)[1]+'...'
+	else url
+
 urlify = (text) ->
 	urlRegex = /(((https?:(?:\/\/)?)(?:www\.)?[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/
 	return text.replace urlRegex, (url) ->
-	    return "<a href=\"#{url}\">#{url}</a>"
+	    return "<a href=\"#{url}\">#{smallify(url)}</a>"
 
 PostSchema.virtual('data.unescapedBody').get ->
 	urlify(@data.body)

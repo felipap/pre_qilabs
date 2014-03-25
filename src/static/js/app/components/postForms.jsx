@@ -25,6 +25,9 @@ define(['jquery', 'underscore', 'react', 'components.postModels'], function ($, 
 
 			return false;
 		},
+		componentDidMount: function () {
+			$(this.refs.postBody.getDOMNode()).autosize();
+		},
 		render: function () {
 			var styleMap = {
 				backgroundImage: 'url('+user.avatarUrl+')',
