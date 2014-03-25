@@ -316,7 +316,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 						{
 							post.type === "QA"?
 							<li onClick={function(){window.location.href = post.path+'#answers';}}>
-								<i className="icon-comment-o"></i>&nbsp;
+								<i className="icon-bulb"></i>&nbsp;
 								{
 									this.props.model.answerList.models.length===1?
 									this.props.model.answerList.models.length+" resposta"
