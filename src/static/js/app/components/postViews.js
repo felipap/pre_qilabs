@@ -307,13 +307,21 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 						),
 						React.DOM.li( {onClick:function(){window.location.href = post.path+'#comments';}}, 
 							React.DOM.i( {className:"icon-comment-o"})," ",
-							this.props.model.commentList.models.length, " comentários"
+							
+								this.props.model.commentList.models.length===1?
+								this.props.model.commentList.models.length+" comentário"
+								:this.props.model.commentList.models.length+" comentários"
+							
 						),
 						
-							post.children.Answer?
+							post.type === "QA"?
 							React.DOM.li( {onClick:function(){window.location.href = post.path+'#answers';}}, 
 								React.DOM.i( {className:"icon-comment-o"})," ",
-								this.props.model.answerList.models.length, " respostas"
+								
+									this.props.model.answerList.models.length===1?
+									this.props.model.answerList.models.length+" comentário"
+									:this.props.model.answerList.models.length+" comentários"
+								
 							)
 							:null
 						

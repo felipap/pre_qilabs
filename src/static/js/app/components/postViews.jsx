@@ -307,13 +307,21 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 						</li>
 						<li onClick={function(){window.location.href = post.path+'#comments';}}>
 							<i className="icon-comment-o"></i>&nbsp;
-							{this.props.model.commentList.models.length} comentários
+							{
+								this.props.model.commentList.models.length===1?
+								this.props.model.commentList.models.length+" comentário"
+								:this.props.model.commentList.models.length+" comentários"
+							}
 						</li>
 						{
-							post.children.Answer?
+							post.type === "QA"?
 							<li onClick={function(){window.location.href = post.path+'#answers';}}>
 								<i className="icon-comment-o"></i>&nbsp;
-								{this.props.model.answerList.models.length} respostas
+								{
+									this.props.model.answerList.models.length===1?
+									this.props.model.answerList.models.length+" comentário"
+									:this.props.model.answerList.models.length+" comentários"
+								}
 							</li>
 							:null
 						}
