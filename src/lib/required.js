@@ -98,7 +98,7 @@ module.exports = required = {
 	// Require user to be me. :D
 	isMe: function (req, res, next) {
 		if (!req.user || req.user.facebookId !== process.env.facebook_me)
-			next({permission:'isMe'});
+			next({permission:'isMe', args:[process.env.facebook_me, req.user.facebookId]});
 		else
 			next();
 	},

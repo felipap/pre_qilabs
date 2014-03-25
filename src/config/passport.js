@@ -16,7 +16,9 @@ function setUpPassport() {
 		function (accessToken, refreshToken, profile, done) {
 			var User = require('mongoose').model('Resource').model('User');
 
-			User.findOne({ facebookId: profile.id }, function (err, user) {
+			User.findOne({ facebookId: profile.id })
+				.select('facebookId')
+				.exec(function (err, user) {
 				if (err)
 				 	return done(err);
 				// console.log('user:', profile)
@@ -54,7 +56,7 @@ function setUpPassport() {
 				// 			// console.log(body.likes); // iei
 				// 		}
 				// })
-			})
+			});
 		}
 	));
 
@@ -64,7 +66,7 @@ function setUpPassport() {
 
 	passport.deserializeUser(function (id, done) {
 		var User = require('mongoose').model('Resource').model('User');
-		User.findOne({_id: id}, function (err, user) {
+		User.findOne({_id: id}).select('+facebookId +lastAccess +firstAccess').exec(function (err, user) {
 			return done(err, user);
 		});
 	})

@@ -63,6 +63,7 @@ module.exports = {
               return Post.findById(postId, req.handleErrResult((function(_this) {
                 return function(post) {
                   return req.user.upvotePost(post, function(err, doc) {
+                    console.log('arguments', arguments);
                     return res.endJson({
                       err: err,
                       doc: doc

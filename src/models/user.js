@@ -422,9 +422,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
         return Post.hydrateList(docs, next);
       }
     ], HandleLimit(function(err, results) {
-      var activities, all, posts;
-      activities = results[0];
-      posts = results[1];
+      var all;
       all = _.sortBy(posts.concat(activities), function(p) {
         return -p.published;
       });
@@ -465,9 +463,7 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
         return Post.hydrateList(docs, next);
       }
     ], function(err, results) {
-      var activities, all, posts;
-      activities = results[0];
-      posts = results[1];
+      var all;
       all = _.sortBy(results[1].concat(results[0]), function(p) {
         return p.published;
       });
@@ -647,17 +643,12 @@ UserSchema.methods.upvotePost = function(post, cb) {
     $isModel: Post
   }, '$isCb');
   return post.update({
-    $push: {
+    $addToSet: {
       'votes': {
         voter: self
       }
-    },
-    $inc: {
-      voteSum: 1
     }
-  }, function(err, doc) {
-    return console.log('arguments', arguments);
-  });
+  }, cb);
 };
 
 UserSchema.methods.downvotePost = function(post, cb) {

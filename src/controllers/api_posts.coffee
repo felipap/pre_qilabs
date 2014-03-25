@@ -35,6 +35,7 @@ module.exports = {
 						return if not postId = req.paramToObjectId('id')
 						Post.findById postId, req.handleErrResult (post) =>
 							req.user.upvotePost post, (err, doc) ->
+								console.log 'arguments', arguments
 								res.endJson { err: err, doc: doc }
 					]
 				'/comments':

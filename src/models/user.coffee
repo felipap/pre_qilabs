@@ -277,9 +277,6 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 				(next) ->
 					Post.hydrateList docs, next
 			], HandleLimit (err, results) -> # Merge results and call back
-				activities = results[0]
-				posts = results[1]
-				# Merge and sort by date.
 				all = _.sortBy(posts.concat(activities), (p) -> -p.published)
 				cb(err, all, minPostDate)
 
@@ -306,17 +303,12 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 				(next) ->
 					minDate = minPostDate
 					Activity
-						.find {group:group, updated: {
-							$lt:opts.maxDate, $gt:minDate}
-						}
+						.find {group:group, updated: {$lt:opts.maxDate, $gt:minDate}}
 						.populate 'resource actor target object'
 						.exec next
 				(next) ->
 					Post.hydrateList docs, next
 			], (err, results) ->
-				activities = results[0]
-				posts = results[1]
-				# merge results
 				all = _.sortBy(results[1].concat(results[0]), (p) -> p.published)
 				cb(err, all, minPostDate)
 
@@ -434,8 +426,7 @@ UserSchema.methods.createPost = (data, cb) ->
 UserSchema.methods.upvotePost = (post, cb) ->
 	self = @
 	assertArgs({$isModel:Post}, '$isCb')
-	post.update {$push: {'votes': {voter: self}}, $inc: {voteSum: 1}}, (err, doc) ->
-		console.log 'arguments', arguments
+	post.update {$addToSet: {'votes': {voter:self}}}, cb
 
 
 UserSchema.methods.downvotePost = (post, cb) ->

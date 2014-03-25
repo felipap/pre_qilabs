@@ -298,11 +298,11 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				window.location.href = post.path;
 			}
 
-			function voteUp () {
+			function upvote () {
 				$.ajax({
 					type: 'post',
 					dataType: 'json',
-					url: post.apiPath+'/voteup',
+					url: post.apiPath+'/upvote',
 				}).done(function (response) {
 					console.log('response', response);
 				});
@@ -311,7 +311,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			return (
 				<div className="postInfobar">
 					<ul className="left">
-						<li onClick={voteUp}>
+						<li onClick={upvote}>
 							<i className="icon-heart"></i>&nbsp;
 							{post.voteSum}
 						</li>
