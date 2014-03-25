@@ -20,9 +20,10 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 
 		initialize: function () {
-			this.commentList = new CommentList(this.get('comments'));
+			var children = this.get('children');
+			this.commentList = new CommentList(children.Comment);
 			this.commentList.postItem = this.postItem;
-			this.answerList = new AnswerList(this.get('answers'));
+			this.answerList = new AnswerList(children.Answer);
 			// if (this.get('hasComments')) {
 			// 	this.commentList.fetch({reset:true});
 			// }
@@ -61,9 +62,12 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 	var AnswerItem = GenericPostItem.extend({
 
 		initialize: function () {
-			this.commentList = new CommentList(this.get('comments'));
-			this.commentList.postItem = this.postItem;
-			this.answerList = new AnswerList(this.get('answers'));
+			var children = this.get('children');
+			if (children) {
+				this.commentList = new CommentList(children.Comment);
+				this.commentList.postItem = this.postItem;
+				this.answerList = new AnswerList(children.Answer);
+			}
 		}
 	});
 	

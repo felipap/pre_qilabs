@@ -289,6 +289,52 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 	});
 
+	var PostInfoBar = React.createClass({
+		render: function () {
+
+			var post = this.props.model.attributes;
+
+			function gotoPost () {
+				window.location.href = post.path;
+			}
+
+			return (
+				<div className="postInfobar">
+					<ul className="left">
+						<li>
+							<i className="icon-heart"></i>&nbsp;
+							{this.props.model.commentList.models.length}
+						</li>
+						<li onClick={function(){window.location.href = post.path+'#comments';}}>
+							<i className="icon-comment-o"></i>&nbsp;
+							{this.props.model.commentList.models.length} comentários
+						</li>
+						{
+							post.children.Answer?
+							<li onClick={function(){window.location.href = post.path+'#answers';}}>
+								<i className="icon-comment-o"></i>&nbsp;
+								{this.props.model.answerList.models.length} respostas
+							</li>
+							:null
+						}
+					</ul>
+					<ul className="right">
+						<li onClick={function(){window.location.href = post.path;}}>
+							<time data-time-count={1*new Date(post.published)} data-time-long="true">
+								{window.calcTimeFrom(post.published,true)}
+							</time>
+						</li>
+						<li>
+							<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
+								<i className="icon-flag"></i>
+							</span>
+						</li>
+					</ul>
+				</div>
+			);
+		}
+	})
+
 	var QAPostView = React.createClass({
 		mixins: [EditablePost],
 
@@ -298,9 +344,6 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				background: 'url('+post.author.avatarUrl+')',
 			};
 			var rawMarkup = post.data.unescapedBody;
-			function gotoPost () {
-				window.location.href = post.path;
-			}
 
 			return (
 				<div>
@@ -330,38 +373,17 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 								</div>
 								:undefined}
 						</div>
+
 						<div className="msgTitle">
 							<div className="arrow"></div>
 							<span>{post.data.title}</span>
 						</div>
+
 						<div className="msgBody">
 							<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
 						</div>
-						
-						<div className="postInfobar" onClick={gotoPost}>
-							<ul className="left">
-								<li>
-									<i className="icon-heart"></i>&nbsp;
-									{this.props.model.commentList.models.length}
-								</li>
-								<li>
-									<i className="icon-comment-o"></i>&nbsp;
-									{this.props.model.commentList.models.length} comentários
-								</li>
-								<li>
-									<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
-										<i className="icon-flag"></i>
-									</span>
-								</li>
-							</ul>
-							<ul className="right">
-								<li>
-									<time data-time-count={1*new Date(post.published)} data-time-long="true">
-										{window.calcTimeFrom(post.published,true)}
-									</time>
-								</li>
-							</ul>
-						</div>
+
+						<PostInfoBar model={this.props.model} />
 					</div>
 					<div className="postFoot">
 						{
@@ -389,8 +411,8 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			var rawMarkup = post.data.unescapedBody;
 
 			return (
-				<div className="postHead" data-post-type="QAPost">
-					<div className="opMessage">
+				<div>
+					<div className="postHead" data-post-type="QAPost">
 						<div className="msgHeader">
 							<div className="mediaUser">
 								<a href={post.author.profileUrl}>
@@ -403,12 +425,6 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 								</a> disse:
 							</div>
 							
-							<a href={post.path}>
-								<time data-time-count={1*new Date(post.published)}>
-									{window.calcTimeFrom(post.published)}
-								</time>
-							</a>
-
 							{(window.user && post.author.id === window.user.id)?
 								<div className="optionBtns">
 									<button	onClick={this.onClickTrash} title="Remover Post"
@@ -426,8 +442,17 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 							<div className="arrow"></div>
 							<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
 						</div>
+						<PostInfoBar model={this.props.model} />
 					</div>
-					<CommentSectionView model={this.props.model} />
+					<div className="postFoot">
+						{
+							app.postItem?
+							<div>
+								<AnswerSectionView model={this.props.model} />
+							</div>
+							:null
+						}
+					</div>
 				</div>
 			);
 		},

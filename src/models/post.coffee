@@ -118,40 +118,34 @@ PostSchema.methods.fillChildren = (cb) ->
 	Post.find {parentPost:@}
 		.populate 'author'
 		.exec (err, children) =>
-			comments = _.filter(children, (i) -> i.type is Types.Comment)
-			_answers = _.filter(children, (i) -> i.type is Types.Answer)
-			
-			# Get answers' comments
-			async.map _answers, ((ans, done) ->
-				Post.find({parentPost:ans}).populate('author').exec (err, comments) ->
-					done(err, _.extend({},ans.toJSON(), { comments: comments }))
-			), (err, answers) ->
-				cb(err, _.extend({}, self.toJSON(), { comments:comments, answers:answers }))
+			async.map children, ((c, done) ->
+				if c.type in [Types.Answer]
+					Post.find({parentPost:c}).populate('author').exec (err, comments) ->
+						done(err, _.extend({}, c.toJSON(), { comments: comments }))
+				else
+					done(null, c)
+			), (err, popChildren) ->
+				cb(err, _.extend(self.toJSON(), {children:_.groupBy(popChildren, (i) -> i.type)}))
 
 ################################################################################
 ## Statics #####################################################################
 
 PostSchema.statics.fillChildren = (docs, cb) ->
 	assertArgs({$isA:Array},'$isCb')
-	results = []
-	async.forEach _.filter(docs, (i) -> i), (post, done) ->
+
+	async.map _.filter(docs, (i) -> i), (post, done) ->
 			Post.find {parentPost:post}
 				.populate 'author'
 				.exec (err, children) ->
-					comments = _.filter(children, (i) -> i.type is Types.Comment)
-					answers = _.filter(children, (i) -> i.type is Types.Answer)
-					if post.toObject
-						results.push(_.extend({}, post.toObject(), {
-							comments: comments,
-							answers: answers
-						}))
-					else
-						results.push(_.extend({}, post, {
-							comments: comments
-							answers: answers
-						}))
-					done()
-		, (err) ->
+					async.map children, ((c, done) ->
+						if c.type in [Types.Answer]
+							Post.find({parentPost:c}).populate('author').exec (err, comments) ->
+								done(err, _.extend({}, c.toJSON(), { comments: comments }))
+						else
+							done(null, c)
+					), (err, popChildren) ->
+						done(err, _.extend(post.toJSON(), {children:_.groupBy(popChildren, (i) -> i.type)}))
+		, (err, results) ->
 			if err then console.log 'Error in fillinpostcomments', err
 			cb(err, results)
 

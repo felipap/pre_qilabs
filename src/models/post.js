@@ -185,25 +185,24 @@ PostSchema.methods.fillChildren = function(cb) {
     parentPost: this
   }).populate('author').exec((function(_this) {
     return function(err, children) {
-      var comments, _answers;
-      comments = _.filter(children, function(i) {
-        return i.type === Types.Comment;
-      });
-      _answers = _.filter(children, function(i) {
-        return i.type === Types.Answer;
-      });
-      return async.map(_answers, (function(ans, done) {
-        return Post.find({
-          parentPost: ans
-        }).populate('author').exec(function(err, comments) {
-          return done(err, _.extend({}, ans.toJSON(), {
-            comments: comments
-          }));
-        });
-      }), function(err, answers) {
-        return cb(err, _.extend({}, self.toJSON(), {
-          comments: comments,
-          answers: answers
+      return async.map(children, (function(c, done) {
+        var _ref1;
+        if ((_ref1 = c.type) === Types.Answer) {
+          return Post.find({
+            parentPost: c
+          }).populate('author').exec(function(err, comments) {
+            return done(err, _.extend({}, c.toJSON(), {
+              comments: comments
+            }));
+          });
+        } else {
+          return done(null, c);
+        }
+      }), function(err, popChildren) {
+        return cb(err, _.extend(self.toJSON(), {
+          children: _.groupBy(popChildren, function(i) {
+            return i.type;
+          })
         }));
       });
     };
@@ -211,38 +210,37 @@ PostSchema.methods.fillChildren = function(cb) {
 };
 
 PostSchema.statics.fillChildren = function(docs, cb) {
-  var results;
   assertArgs({
     $isA: Array
   }, '$isCb');
-  results = [];
-  return async.forEach(_.filter(docs, function(i) {
+  return async.map(_.filter(docs, function(i) {
     return i;
   }), function(post, done) {
     return Post.find({
       parentPost: post
     }).populate('author').exec(function(err, children) {
-      var answers, comments;
-      comments = _.filter(children, function(i) {
-        return i.type === Types.Comment;
-      });
-      answers = _.filter(children, function(i) {
-        return i.type === Types.Answer;
-      });
-      if (post.toObject) {
-        results.push(_.extend({}, post.toObject(), {
-          comments: comments,
-          answers: answers
+      return async.map(children, (function(c, done) {
+        var _ref;
+        if ((_ref = c.type) === Types.Answer) {
+          return Post.find({
+            parentPost: c
+          }).populate('author').exec(function(err, comments) {
+            return done(err, _.extend({}, c.toJSON(), {
+              comments: comments
+            }));
+          });
+        } else {
+          return done(null, c);
+        }
+      }), function(err, popChildren) {
+        return done(err, _.extend(post.toJSON(), {
+          children: _.groupBy(popChildren, function(i) {
+            return i.type;
+          })
         }));
-      } else {
-        results.push(_.extend({}, post, {
-          comments: comments,
-          answers: answers
-        }));
-      }
-      return done();
+      });
     });
-  }, function(err) {
+  }, function(err, results) {
     if (err) {
       console.log('Error in fillinpostcomments', err);
     }
