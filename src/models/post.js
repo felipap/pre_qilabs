@@ -70,23 +70,17 @@ PostSchema = new Resource.Schema({
       type: String
     }
   ],
-  voteSum: {
-    type: Number,
-    "default": 0
-  },
-  votes: [
-    {
-      voter: {
+  votes: {
+    type: [
+      {
         type: String,
         ref: 'User',
         required: true
-      },
-      when: {
-        type: Date,
-        "default": Date.now
       }
-    }
-  ]
+    ],
+    select: true,
+    "default": []
+  }
 }, {
   toObject: {
     virtuals: true
@@ -94,6 +88,10 @@ PostSchema = new Resource.Schema({
   toJSON: {
     virtuals: true
   }
+});
+
+PostSchema.virtual('voteSum').get(function() {
+  return this.votes.length;
 });
 
 PostSchema.virtual('path').get(function() {
@@ -124,7 +122,7 @@ urlify = function(text) {
   });
 };
 
-PostSchema.virtual('data.unescapedBody').get(function() {
+PostSchema.virtual('data.escapedBody').get(function() {
   return urlify(this.data.body);
 });
 
@@ -191,7 +189,7 @@ PostSchema.methods.fillChildren = function(cb) {
   }
   return Post.find({
     parentPost: this
-  }).populate('author', '-memberships').exec((function(_this) {
+  }).populate('author').exec((function(_this) {
     return function(err, children) {
       return async.map(children, (function(c, done) {
         var _ref1;
@@ -226,13 +224,13 @@ PostSchema.statics.hydrateList = function(docs, cb) {
   }), function(post, done) {
     return Post.find({
       parentPost: post
-    }).populate('author', '-memberships').exec(function(err, children) {
+    }).populate('author').exec(function(err, children) {
       return async.map(children, (function(c, done) {
         var _ref;
         if ((_ref = c.type) === Types.Answer) {
           return Post.find({
             parentPost: c
-          }).populate('author', '-memberships').exec(function(err, comments) {
+          }).populate('author').exec(function(err, comments) {
             return done(err, _.extend({}, c.toJSON(), {
               comments: comments
             }));

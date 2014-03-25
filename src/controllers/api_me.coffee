@@ -52,6 +52,17 @@ module.exports = {
 			}
 		}
 		'timeline/posts': {
+			get: (req, res) ->
+					if isNaN(maxDate = parseInt(req.query.maxDate))
+						maxDate = Date.now()
+					req.user.getTimeline { maxDate: maxDate },
+						req.handleErrResult((docs, minDate=-1) ->
+							res.endJson {
+								minDate: minDate
+								data: docs
+							}
+						)
+
 			post: (req, res) ->
 				if not req.body.type in _.values(Post.Types)
 					console.log 'typo', req.body.type, 'invalido', _.values(Post.Types)
@@ -67,18 +78,6 @@ module.exports = {
 					doc.populate 'author', (err, doc) ->
 						res.endJson {error:false, data:doc}
 				)
-
-			get: (req, res) ->
-					opts = { limit:10, maxDate:Date.now() }
-					if parseInt(req.query.maxDate)
-						opts.maxDate = parseInt(req.query.maxDate)
-					req.user.getTimeline opts,
-						req.handleErrResult((docs, minDate=-1) ->
-							res.endJson {
-								minDate: minDate
-								data: docs
-							}
-						)
 		}
 		'leave': {
 			name: 'user_quit'

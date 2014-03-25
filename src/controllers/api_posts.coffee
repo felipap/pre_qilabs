@@ -35,8 +35,7 @@ module.exports = {
 						return if not postId = req.paramToObjectId('id')
 						Post.findById postId, req.handleErrResult (post) =>
 							req.user.upvotePost post, (err, doc) ->
-								console.log 'arguments', arguments
-								res.endJson { err: err, doc: doc }
+								res.endJson { err: err, data: doc }
 					]
 				'/comments':
 					get: [required.posts.selfCanSee('id'), (req, res) ->
@@ -69,19 +68,6 @@ module.exports = {
 									)
 					]
 				'/answers':
-					# get: [required.posts.selfCanSee('id'), (req, res) ->
-					# 	return if not postId = req.paramToObjectId('id')
-					# 	Post.findById postId
-					# 		.populate 'author'
-					# 		.exec req.handleErrResult (post) ->
-					# 			post.getComments req.handleErrResult((comments) =>
-					# 				res.endJson {
-					# 					data: comments
-					# 					error: false
-					# 					page: -1 # sending all
-					# 				}
-					# 			)
-					# ]
 					post: [required.posts.selfCanComment('id'), (req, res) ->
 						return if not postId = req.paramToObjectId('id')
 						data = {

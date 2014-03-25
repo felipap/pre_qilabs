@@ -46,14 +46,14 @@ builtins = {
       if (expected instanceof Array) {
         keys = expected;
       } else if (typeof expected === 'string') {
-        keys = [expected];
+        keys = expected.split(' ');
       } else {
         return "Invalid expected value for assertion of type 'contains': " + expected;
       }
       for (_i = 0, _len = keys.length; _i < _len; _i++) {
         key = keys[_i];
         if (!(key in value)) {
-          return "Argument '" + value + "' doesn't match {$contains:" + expected + "}";
+          return "Argument '" + (JSON.stringify(value).slice(0, 100) + '...') + "' doesn't match {$contains:" + expected + "}";
         }
       }
       return false;

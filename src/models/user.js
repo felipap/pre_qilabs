@@ -3,7 +3,7 @@
 GUIDELINES for development:
 - Never utilize directly request parameters or data.
  */
-var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, PopulateFields, Post, Resource, User, UserSchema, assert, assertArgs, async, mongoose, _;
+var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, PopulateFields, Post, Resource, User, UserSchema, assert, assertArgs, async, fetchTimelinePostAndActivities, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -50,7 +50,7 @@ UserSchema = new mongoose.Schema({
   },
   facebookId: {
     type: String,
-    select: false
+    select: true
   },
   accessToken: {
     type: String,
@@ -69,25 +69,28 @@ UserSchema = new mongoose.Schema({
       type: String
     }
   ],
-  memberships: [
-    {
-      group: {
-        type: String,
-        required: true,
-        ref: 'Group'
-      },
-      since: {
-        type: Date,
-        "default": Date.now
-      },
-      permission: {
-        type: String,
-        "enum": _.values(Group.MembershipTypes),
-        required: true,
-        "default": 'Moderator'
+  memberships: {
+    type: [
+      {
+        group: {
+          type: String,
+          required: true,
+          ref: 'Group'
+        },
+        since: {
+          type: Date,
+          "default": Date.now
+        },
+        permission: {
+          type: String,
+          "enum": _.values(Group.MembershipTypes),
+          required: true,
+          "default": 'Moderator'
+        }
       }
-    }
-  ],
+    ],
+    select: false
+  },
   followingTags: [],
   lastUpdate: {
     type: Date,
@@ -343,6 +346,42 @@ HandleLimit = function(func) {
   };
 };
 
+fetchTimelinePostAndActivities = function(opts, postConds, actvConds, cb) {
+  assertArgs({
+    $contains: ['maxDate']
+  });
+  return Post.find(_.extend({
+    parentPost: null,
+    published: {
+      $lt: opts.maxDate - 1
+    }
+  }, postConds)).sort('-published').populate('author').limit(opts.limit || 10).exec(HandleLimit(function(err, docs) {
+    var minPostDate;
+    if (err) {
+      return cb(err);
+    }
+    minPostDate = 1 * (docs.length && docs[docs.length - 1].published) || 0;
+    return async.parallel([
+      function(next) {
+        return Activity.find(_.extend(actvConds, {
+          updated: {
+            $lt: opts.maxDate,
+            $gt: minPostDate
+          }
+        })).populate('resource actor target object').exec(next);
+      }, function(next) {
+        return Post.hydrateList(docs, next);
+      }
+    ], HandleLimit(function(err, results) {
+      var all;
+      all = _.sortBy((results[0] || []).concat(results[1]), function(p) {
+        return -p.published;
+      });
+      return cb(err, all, minPostDate);
+    }));
+  }));
+};
+
 
 /*
  * Behold.
@@ -351,7 +390,7 @@ HandleLimit = function(func) {
 UserSchema.methods.getTimeline = function(opts, callback) {
   var self;
   assertArgs({
-    $contains: ['limit', 'maxDate']
+    $contains: 'maxDate'
   }, '$isCb');
   self = this;
   return Inbox.find({
@@ -359,7 +398,7 @@ UserSchema.methods.getTimeline = function(opts, callback) {
     dateSent: {
       $lt: opts.maxDate
     }
-  }).sort('-dateSent').populate('resource', '-votes').limit(opts.limit).exec((function(_this) {
+  }).sort('-dateSent').populate('resource').limit(20).exec((function(_this) {
     return function(err, docs) {
       var minDate, posts;
       if (err) {
@@ -391,85 +430,43 @@ UserSchema.methods.getTimeline = function(opts, callback) {
 
 UserSchema.statics.PopulateFields = PopulateFields;
 
-UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
-  if (!opts.maxDate) {
-    opts.maxDate = Date.now();
-  }
-  return Post.find({
-    author: userId,
-    parentPost: null,
+UserSchema.statics.getUserTimeline = function(user, opts, cb) {
+  assertArgs({
+    $isModel: User
+  }, {
+    $contains: 'maxDate'
+  });
+  return fetchTimelinePostAndActivities({
+    maxDate: opts.maxDate
+  }, {
     group: null,
-    published: {
-      $lt: opts.maxDate - 1
-    }
-  }).sort('-published').populate('author').limit(opts.limit || 4).exec(HandleLimit(function(err, docs) {
-    var minPostDate;
-    if (err) {
-      return cb(err);
-    }
-    minPostDate = 1 * (docs.length && docs[docs.length - 1].published) || 0;
-    return async.parallel([
-      function(next) {
-        return Activity.find({
-          actor: userId,
-          group: null,
-          updated: {
-            $lt: opts.maxDate,
-            $gt: minPostDate
-          }
-        }).populate('resource actor target object').exec(next);
-      }, function(next) {
-        return Post.hydrateList(docs, next);
-      }
-    ], HandleLimit(function(err, results) {
-      var all;
-      all = _.sortBy(posts.concat(activities), function(p) {
-        return -p.published;
-      });
-      return cb(err, all, minPostDate);
-    }));
-  }));
+    author: userId,
+    parentPost: null
+  }, {
+    actor: userId,
+    group: null
+  }, function(err, all, minPostDate) {
+    return cb(err, all, minPostDate);
+  });
 };
 
-UserSchema.methods.getLabPosts = function(opts, group, cb) {
-  if (!opts.maxDate) {
-    opts.maxDate = Date.now();
-  }
-  return Post.find({
+UserSchema.methods.getLabTimeline = function(group, opts, cb) {
+  assertArgs({
+    $isModel: Group
+  }, {
+    $contains: 'maxDate'
+  });
+  return fetchTimelinePostAndActivities({
+    maxDate: opts.maxDate
+  }, {
     group: group,
-    parentPost: null,
-    published: {
-      $lt: opts.maxDate
-    }
-  }).sort('-published').limit(opts.limit || 10).populate('author', User.PopulateFields).exec(HandleLimit(function(err, docs) {
-    var minPostDate;
-    if (err) {
-      return cb(err);
-    }
-    console.log('docs', docs);
-    minPostDate = (docs.length && docs[docs.length - 1].published) || 0;
-    return async.parallel([
-      function(next) {
-        var minDate;
-        minDate = minPostDate;
-        return Activity.find({
-          group: group,
-          updated: {
-            $lt: opts.maxDate,
-            $gt: minDate
-          }
-        }).populate('resource actor target object').exec(next);
-      }, function(next) {
-        return Post.hydrateList(docs, next);
-      }
-    ], function(err, results) {
-      var all;
-      all = _.sortBy(results[1].concat(results[0]), function(p) {
-        return p.published;
-      });
-      return cb(err, all, minPostDate);
-    });
-  }));
+    parentPost: null
+  }, {
+    group: group
+  }, function(err, all, minPostDate) {
+    console.log('err', err);
+    return cb(err, all, minPostDate);
+  });
 };
 
 UserSchema.methods.createGroup = function(data, cb) {
@@ -637,34 +634,20 @@ UserSchema.methods.createPost = function(data, cb) {
 };
 
 UserSchema.methods.upvotePost = function(post, cb) {
-  var self;
-  self = this;
   assertArgs({
     $isModel: Post
   }, '$isCb');
-  return post.update({
-    $addToSet: {
-      'votes': {
-        voter: self
-      }
-    }
-  }, cb);
+  post.votes.addToSet('' + this.id);
+  return post.save(cb);
 };
 
-UserSchema.methods.downvotePost = function(post, cb) {
-  var self;
-  self = this;
+UserSchema.methods.unupvotePost = function(post, cb) {
   assertArgs({
     $isModel: Post
   }, '$isCb');
   return post.update({
-    $push: {
-      'votes': {
-        voter: self
-      }
-    },
-    $inc: {
-      voteSum: 1
+    $pull: {
+      votes: '' + this
     }
   }, function(err, doc) {
     return console.log('arguments', arguments);

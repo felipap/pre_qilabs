@@ -60,14 +60,13 @@ module.exports = {
         return Group.findOne({
           _id: labId
         }, req.handleErrResult(function(group) {
-          var opts;
-          opts = {
-            limit: 10
-          };
-          if (parseInt(req.query.page)) {
-            opts.maxDate = parseInt(req.query.maxDate);
+          var maxDate;
+          if (isNaN(maxDate = parseInt(req.query.maxDate))) {
+            maxDate = Date.now();
           }
-          return req.user.getLabPosts(opts, group, req.handleErrResult(function(docs, minDate) {
+          return req.user.getLabTimeline(group, {
+            maxDate: maxDate
+          }, req.handleErrResult(function(docs, minDate) {
             if (minDate == null) {
               minDate = -1;
             }

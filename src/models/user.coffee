@@ -39,7 +39,7 @@ UserSchema = new mongoose.Schema {
 
 	lastAccess:		{ type: Date, select: false }
 	firstAccess:	{ type: Date, select: false }
-	facebookId:		{ type: String, select: false }
+	facebookId:		{ type: String, select: true }
 	accessToken:	{ type: String, select: false }
 
 	profile: {
@@ -48,15 +48,15 @@ UserSchema = new mongoose.Schema {
 		email: 		String
 		city: 		''
 		avatarUrl: 	''
-		badges: 		[]
+		badges: 	[]
 	},
 
 	tags: [{ type: String }]
-	memberships: [{
+	memberships: { type: [{
 		group: { type: String, required: true, ref: 'Group' }
 		since: { type: Date, default: Date.now }
 		permission: { type: String, enum: _.values(Group.MembershipTypes), required:true, default:'Moderator' }
-	}]
+	}], select: false}
 
 	# I don't know what to do with these (2-mar-14)
 	followingTags: 	[]
@@ -218,19 +218,41 @@ HandleLimit = (func) ->
 		docs = _.filter(_docs, (e) -> e)
 		func(err,docs)
 
+fetchTimelinePostAndActivities = (opts, postConds, actvConds, cb) ->
+	assertArgs({$contains:['maxDate']})
+
+	Post
+		.find _.extend({parentPost:null, published:{$lt:opts.maxDate-1}}, postConds)
+		.sort '-published'
+		.populate 'author'
+		.limit opts.limit or 10
+		.exec HandleLimit (err, docs) ->
+			return cb(err) if err
+			minPostDate = 1*(docs.length and docs[docs.length-1].published) or 0
+			async.parallel [ # Fill post comments and get activities in that time.
+				(next) ->
+					Activity
+						.find _.extend(actvConds, updated:{$lt:opts.maxDate,$gt:minPostDate})
+						.populate 'resource actor target object'
+						.exec next
+				(next) ->
+					Post.hydrateList docs, next
+			], HandleLimit (err, results) -> # Merge results and call back
+				all = _.sortBy((results[0]||[]).concat(results[1]), (p) -> -p.published)
+				cb(err, all, minPostDate)
 ###
 # Behold.
 ###
 UserSchema.methods.getTimeline = (opts, callback) ->
-	assertArgs({$contains:['limit','maxDate']}, '$isCb')
+	assertArgs({$contains:'maxDate'}, '$isCb')
 	self = @
 	
 	# Get inboxed posts older than the opts.maxDate determined by the user.
 	Inbox
 		.find { recipient:self.id, dateSent:{ $lt:opts.maxDate }}
 		.sort '-dateSent' # tied to selection of oldest post below
-		.populate 'resource', '-votes'
-		.limit opts.limit
+		.populate 'resource'
+		.limit 20
 		.exec (err, docs) =>
 			return cb(err) if err
 			# Pluck resources from inbox docs. Remove null (deleted) resources.
@@ -253,64 +275,26 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 
 UserSchema.statics.PopulateFields = PopulateFields
 
-UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
-	if not opts.maxDate
-		opts.maxDate = Date.now()
+UserSchema.statics.getUserTimeline = (user, opts, cb) ->
+	assertArgs({$isModel:User}, {$contains:'maxDate'})
+	fetchTimelinePostAndActivities(
+		{maxDate: opts.maxDate},
+		{group:null, author:userId, parentPost:null},
+		{actor:userId, group:null},
+		(err, all, minPostDate) -> cb(err, all, minPostDate)
+	)
 
-	Post
-		.find {author:userId, parentPost:null, group:null, published:{$lt:opts.maxDate-1}}
-		.sort '-published'
-		.populate 'author'
-		.limit opts.limit or 4
-		.exec HandleLimit (err, docs) ->
-			return cb(err) if err
-			minPostDate = 1*(docs.length and docs[docs.length-1].published) or 0
-			async.parallel [ # Fill post comments and get activities in that time.
-				(next) ->
-					Activity
-						.find {actor:userId, group:null, updated: {
-							$lt:opts.maxDate,
-							$gt: minPostDate}
-						}
-						.populate 'resource actor target object'
-						.exec next
-				(next) ->
-					Post.hydrateList docs, next
-			], HandleLimit (err, results) -> # Merge results and call back
-				all = _.sortBy(posts.concat(activities), (p) -> -p.published)
-				cb(err, all, minPostDate)
+UserSchema.methods.getLabTimeline = (group, opts, cb) ->
+	assertArgs({$isModel:Group}, {$contains:'maxDate'}) # isId:'User', }
+	fetchTimelinePostAndActivities(
+		{maxDate: opts.maxDate},
+		{group:group, parentPost:null},
+		{group:group},
+		(err, all, minPostDate) -> console.log('err', err); cb(err, all, minPostDate)
+	)
 
 ################################################################################
 ## related to Groups ###########################################################
-
-# This is here because of authentication concerns
-UserSchema.methods.getLabPosts = (opts, group, cb) ->
-	if not opts.maxDate
-		opts.maxDate = Date.now()
-
-	Post
-		.find {group:group, parentPost:null, published:{$lt:opts.maxDate}}
-		.sort '-published'
-		.limit opts.limit or 10
-		.populate 'author', User.PopulateFields
-		.exec HandleLimit (err, docs) ->
-			return cb(err) if err
-
-			console.log('docs', docs)
-			minPostDate = (docs.length && docs[docs.length-1].published) or 0
-
-			async.parallel [ # Fill post comments and get activities in that time.
-				(next) ->
-					minDate = minPostDate
-					Activity
-						.find {group:group, updated: {$lt:opts.maxDate, $gt:minDate}}
-						.populate 'resource actor target object'
-						.exec next
-				(next) ->
-					Post.hydrateList docs, next
-			], (err, results) ->
-				all = _.sortBy(results[1].concat(results[0]), (p) -> p.published)
-				cb(err, all, minPostDate)
 
 UserSchema.methods.createGroup = (data, cb) ->
 	# assertArgs
@@ -424,17 +408,14 @@ UserSchema.methods.createPost = (data, cb) ->
 
 
 UserSchema.methods.upvotePost = (post, cb) ->
-	self = @
 	assertArgs({$isModel:Post}, '$isCb')
-	post.update {$addToSet: {'votes': {voter:self}}}, cb
+	post.votes.addToSet(''+@.id)
+	post.save(cb)
 
-
-UserSchema.methods.downvotePost = (post, cb) ->
-	self = @
+UserSchema.methods.unupvotePost = (post, cb) ->
 	assertArgs({$isModel:Post}, '$isCb')
-	post.update {$push: {'votes': {voter: self}}, $inc: {voteSum: 1}}, (err, doc) ->
+	post.update {$pull:{votes:''+@}}, (err, doc) ->
 		console.log 'arguments', arguments
-
 
 ################################################################################
 ## related to the generation of profiles #######################################

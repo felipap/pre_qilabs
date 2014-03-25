@@ -1,6 +1,6 @@
 
 /*
-** postViews.js
+** postModels.js
 ** Copyright QILabs.org
 ** BSD License
 ** by @f03lipe
@@ -19,8 +19,33 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			return this.get('apiPath');
 		},
 
+		handleToggleVote: function () {
+			var self = this;
+
+			if (this.get('meta').selfVoted)
+				var url = post.apiPath+'/upvote';
+			else
+				var url = post.apiPath+'/unupvote';
+
+			$.ajax({
+				type: 'post',
+				dataType: 'json',
+				url: url,
+			}).done(function (response) {
+				console.log('response', response);
+				if (!response.error) {
+					self.set(response.data);
+				}
+			});
+		},
+
 		initialize: function () {
 			var children = this.get('children') || {};
+
+			for (var k in children)
+			if (children.hasOwnProperty(k)) {
+			}
+			
 			this.commentList = new CommentList(children.Comment);
 			this.commentList.postItem = this.postItem;
 			this.answerList = new AnswerList(children.Answer);

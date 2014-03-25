@@ -50,19 +50,19 @@ module.exports = {
 			permissions: [required.labs.selfCanSee('labId')],
 			get: (req, res) ->
 				return unless labId = req.paramToObjectId('labId')
-				Group.findOne {_id: labId},
-					req.handleErrResult((group) ->
-						opts = { limit:10 }
-						if parseInt(req.query.page)
-							opts.maxDate = parseInt(req.query.maxDate)
-						req.user.getLabPosts opts, group,
-							req.handleErrResult((docs, minDate=-1) ->						
+
+				Group.findOne {_id: labId}, req.handleErrResult((group) ->
+						if isNaN(maxDate = parseInt(req.query.maxDate))
+							maxDate = Date.now()
+						req.user.getLabTimeline group, { maxDate: maxDate },
+							req.handleErrResult((docs, minDate=-1) ->
 								res.endJson {
 									data: docs
 									minDate: minDate
 								}
 							)
 					)
+
 			post: [required.labs.selfIsMember('labId'), (req, res) ->
 				return unless groupId = req.paramToObjectId('labId')
 				if not req.body.type in _.values(Post.Types)

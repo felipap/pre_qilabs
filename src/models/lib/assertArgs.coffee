@@ -45,12 +45,12 @@ builtins =
 			if expected instanceof Array
 				keys = expected
 			else if typeof expected is 'string'
-				keys = [expected]
+				keys = expected.split(' ')
 			else
 				return "Invalid expected value for assertion of type 'contains': #{expected}"
 			for key in keys
 				unless key of value
-					return "Argument '#{value}' doesn't match {$contains:#{expected}}" 
+					return "Argument '#{JSON.stringify(value).slice(0,100)+'...'}' doesn't match {$contains:#{expected}}" 
 			return false
 
 module.exports = assertArgs = (asserts...) -> # (asserts...)

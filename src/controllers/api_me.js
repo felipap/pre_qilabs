@@ -82,6 +82,23 @@ module.exports = {
       }
     },
     'timeline/posts': {
+      get: function(req, res) {
+        var maxDate;
+        if (isNaN(maxDate = parseInt(req.query.maxDate))) {
+          maxDate = Date.now();
+        }
+        return req.user.getTimeline({
+          maxDate: maxDate
+        }, req.handleErrResult(function(docs, minDate) {
+          if (minDate == null) {
+            minDate = -1;
+          }
+          return res.endJson({
+            minDate: minDate,
+            data: docs
+          });
+        }));
+      },
       post: function(req, res) {
         var _ref;
         if (_ref = !req.body.type, __indexOf.call(_.values(Post.Types), _ref) >= 0) {
@@ -104,25 +121,6 @@ module.exports = {
               error: false,
               data: doc
             });
-          });
-        }));
-      },
-      get: function(req, res) {
-        var opts;
-        opts = {
-          limit: 10,
-          maxDate: Date.now()
-        };
-        if (parseInt(req.query.maxDate)) {
-          opts.maxDate = parseInt(req.query.maxDate);
-        }
-        return req.user.getTimeline(opts, req.handleErrResult(function(docs, minDate) {
-          if (minDate == null) {
-            minDate = -1;
-          }
-          return res.endJson({
-            minDate: minDate,
-            data: docs
           });
         }));
       }

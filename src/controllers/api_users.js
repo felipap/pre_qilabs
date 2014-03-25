@@ -16,25 +16,27 @@ module.exports = {
       methods: {
         get: [
           required.login, function(req, res) {
-            var opts, userId;
+            var maxDate, userId;
             if (!(userId = req.paramToObjectId('userId'))) {
               return;
             }
-            opts = {
-              limit: 10
-            };
-            if (parseInt(req.query.maxDate)) {
-              opts.maxDate = parseInt(req.query.maxDate);
+            if (isNaN(maxDate = parseInt(req.query.maxDate))) {
+              maxDate = Date.now();
             }
-            return User.getPostsFromUser(userId, opts, req.handleErrResult(function(docs, minDate) {
-              if (minDate == null) {
-                minDate = -1;
-              }
-              console.log(minDate);
-              return res.endJson({
-                minDate: minDate,
-                data: docs
-              });
+            return User.findOne({
+              _id: userId
+            }, req.handleErrResult(function(user) {
+              return User.getUserTimeline(user, {
+                maxDate: maxDate
+              }, req.handleErrResult(function(docs, minDate) {
+                if (minDate == null) {
+                  minDate = -1;
+                }
+                return res.endJson({
+                  minDate: minDate,
+                  data: docs
+                });
+              }));
             }));
           }
         ]

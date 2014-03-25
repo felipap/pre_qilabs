@@ -14,20 +14,17 @@ module.exports = {
 					(req, res) ->
 						return unless userId = req.paramToObjectId('userId') 
 						# req.logMe("fetched board of user #{req.params.userId}")
-						opts = { limit: 10 }
-						
-						if parseInt(req.query.maxDate)
-							opts.maxDate = parseInt(req.query.maxDate)
-
-						User.getPostsFromUser userId, opts,
-							req.handleErrResult((docs, minDate=-1) ->
-								console.log(minDate)
-								res.endJson {
-									minDate: minDate
-									data: docs
-								}
-							)
-
+						if isNaN(maxDate = parseInt(req.query.maxDate))
+							maxDate = Date.now()
+						User.findOne {_id:userId}, req.handleErrResult((user) ->
+							User.getUserTimeline user, { maxDate: maxDate },
+								req.handleErrResult((docs, minDate=-1) ->
+									res.endJson {
+										minDate: minDate
+										data: docs
+									}
+								)
+						)
 				],
 			}
 		},

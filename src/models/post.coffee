@@ -41,11 +41,7 @@ PostSchema = new Resource.Schema {
 
 	tags:		[{ type: String }]
 	
-	voteSum:	{ type: Number, default: 0 }
-	votes: 	[{
-		voter: 	{ type: String, ref: 'User', required: true }
-		when:	{ type: Date, default: Date.now }
-	}]
+	votes: 		{ type: [{ type: String, ref: 'User', required: true }], select: true, default: [] }
 }, {
 	toObject:	{ virtuals: true }
 	toJSON: 	{ virtuals: true }
@@ -53,6 +49,12 @@ PostSchema = new Resource.Schema {
 
 ################################################################################
 ## Virtuals ####################################################################
+
+PostSchema.virtual('voteSum').get ->
+	# for m of @ when m isnt 'voteSum'
+	# 	console.log m
+	# console.log 'me', @id, 'votes' in @, @isSelected('votes')
+	@votes.length
 
 PostSchema.virtual('path').get ->
 	if @parentPost
@@ -75,7 +77,7 @@ urlify = (text) ->
 	return text.replace urlRegex, (url) ->
 	    return "<a href=\"#{url}\">#{smallify(url)}</a>"
 
-PostSchema.virtual('data.unescapedBody').get ->
+PostSchema.virtual('data.escapedBody').get ->
 	urlify(@data.body)
 
 ################################################################################
@@ -123,7 +125,7 @@ PostSchema.methods.fillChildren = (cb) ->
 		return cb(false, @toJSON())
 
 	Post.find {parentPost:@}
-		.populate 'author', '-memberships'
+		.populate 'author'
 		.exec (err, children) =>
 			async.map children, ((c, done) ->
 				if c.type in [Types.Answer]
@@ -142,11 +144,11 @@ PostSchema.statics.hydrateList = (docs, cb) ->
 
 	async.map _.filter(docs, (i) -> i), (post, done) ->
 			Post.find {parentPost:post}
-				.populate 'author', '-memberships'
+				.populate 'author'
 				.exec (err, children) ->
 					async.map children, ((c, done) ->
 						if c.type in [Types.Answer]
-							Post.find({parentPost:c}).populate('author','-memberships').exec (err, comments) ->
+							Post.find({parentPost:c}).populate('author').exec (err, comments) ->
 								done(err, _.extend({}, c.toJSON(), { comments: comments }))
 						else
 							done(null, c)

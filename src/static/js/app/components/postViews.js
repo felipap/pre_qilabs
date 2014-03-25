@@ -39,7 +39,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				React.DOM.div( {className:"commentWrapper"}, 
 					React.DOM.div( {className:"msgBody"}, 
 						React.DOM.div( {className:"arrow"}),
-						comment.data.unescapedBody
+						comment.data.escapedBody
 					),
 					React.DOM.div( {className:"infoBar"}, 
 						(window.user && window.user.id === comment.author.id)?
@@ -116,15 +116,29 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				)
 			);
 		},
-	})
+	});
 
-	var CommentListView = React.createClass({displayName: 'CommentListView',
+	var responsiveCollection = {
 		componentWillMount: function () {
 			var update = function () {
 				this.forceUpdate(function(){});
 			}
 			this.props.collection.on('add reset remove', update.bind(this));
 		},
+
+	};
+
+	var responsiveModel = {
+		componentWillMount: function () {
+			var update = function () {
+				this.forceUpdate(function(){});
+			}
+			this.props.model.on('add reset remove', update.bind(this));
+		},
+	};
+
+	var CommentListView = React.createClass({displayName: 'CommentListView',
+		mixins: [responsiveCollection],
 
 		render: function () {
 			var commentNodes = this.props.collection.map(function (comment) {
@@ -181,7 +195,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 						)
 					),
 					React.DOM.div( {className:(window.user && model.author.id===window.user.id)?'msgBody editable':'msgBody'}, 
-						model.data.unescapedBody,
+						model.data.escapedBody,
 						(window.user && window.user.id === model.author.id)?
 							React.DOM.div( {className:"arrow"})
 						:undefined
@@ -290,6 +304,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 	});
 
 	var PostInfoBar = React.createClass({displayName: 'PostInfoBar',
+		mixins: [responsiveModel],
 		render: function () {
 
 			var post = this.props.model.attributes;
@@ -298,20 +313,10 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				window.location.href = post.path;
 			}
 
-			function upvote () {
-				$.ajax({
-					type: 'post',
-					dataType: 'json',
-					url: post.apiPath+'/upvote',
-				}).done(function (response) {
-					console.log('response', response);
-				});
-			}
-
 			return (
 				React.DOM.div( {className:"postInfobar"}, 
 					React.DOM.ul( {className:"left"}, 
-						React.DOM.li( {onClick:upvote}, 
+						React.DOM.li( {onClick:this.props.model.handleToggleVote}, 
 							React.DOM.i( {className:"icon-heart"})," ",
 							post.voteSum
 						),
@@ -361,7 +366,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			var mediaUserStyle = {
 				background: 'url('+post.author.avatarUrl+')',
 			};
-			var rawMarkup = post.data.unescapedBody;
+			var rawMarkup = post.data.escapedBody;
 
 			return (
 				React.DOM.div(null, 
@@ -426,7 +431,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			var mediaUserStyle = {
 				background: 'url('+post.author.avatarUrl+')',
 			};
-			var rawMarkup = post.data.unescapedBody;
+			var rawMarkup = post.data.escapedBody;
 
 			return (
 				React.DOM.div(null, 
