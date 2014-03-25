@@ -29,7 +29,7 @@ Types = {
 PostSchema = new Resource.Schema({
   author: {
     type: ObjectId,
-    ref: 'Resource',
+    ref: 'User',
     required: true,
     indexed: 1
   },
@@ -166,7 +166,7 @@ PostSchema.pre('save', function(next) {
 PostSchema.methods.getComments = function(cb) {
   return Post.find({
     parentPost: this.id
-  }).populate('author').exec(function(err, docs) {
+  }).populate('author', '-memberships').exec(function(err, docs) {
     return cb(err, docs);
   });
 };
@@ -191,7 +191,7 @@ PostSchema.methods.fillChildren = function(cb) {
   }
   return Post.find({
     parentPost: this
-  }).populate('author').exec((function(_this) {
+  }).populate('author', '-memberships').exec((function(_this) {
     return function(err, children) {
       return async.map(children, (function(c, done) {
         var _ref1;
@@ -217,7 +217,7 @@ PostSchema.methods.fillChildren = function(cb) {
   })(this));
 };
 
-PostSchema.statics.fillChildren = function(docs, cb) {
+PostSchema.statics.hydrateList = function(docs, cb) {
   assertArgs({
     $isA: Array
   }, '$isCb');
@@ -226,13 +226,13 @@ PostSchema.statics.fillChildren = function(docs, cb) {
   }), function(post, done) {
     return Post.find({
       parentPost: post
-    }).populate('author').exec(function(err, children) {
+    }).populate('author', '-memberships').exec(function(err, children) {
       return async.map(children, (function(c, done) {
         var _ref;
         if ((_ref = c.type) === Types.Answer) {
           return Post.find({
             parentPost: c
-          }).populate('author').exec(function(err, comments) {
+          }).populate('author', '-memberships').exec(function(err, comments) {
             return done(err, _.extend({}, c.toJSON(), {
               comments: comments
             }));

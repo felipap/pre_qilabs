@@ -53,6 +53,26 @@ module.exports = {
         }));
       },
       children: {
+        '/upvote': {
+          post: [
+            required.posts.selfCanComment('id'), function(req, res) {
+              var postId;
+              if (!(postId = req.paramToObjectId('id'))) {
+                return;
+              }
+              return Post.findById(postId, req.handleErrResult((function(_this) {
+                return function(post) {
+                  return req.user.upvotePost(post, function(err, doc) {
+                    return res.endJson({
+                      err: err,
+                      doc: doc
+                    });
+                  });
+                };
+              })(this)));
+            }
+          ]
+        },
         '/comments': {
           get: [
             required.posts.selfCanSee('id'), function(req, res) {

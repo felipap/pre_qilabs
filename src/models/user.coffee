@@ -25,20 +25,22 @@ Follow 	= Resource.model 'Follow'
 Group 	= Resource.model 'Group'
 Post 	= Resource.model 'Post'
 
+# PopulateFields = 'name username path profileUrl avatarUrl data followee follower updated published parentPost type voteSum'
+PopulateFields = '-memberships -accesssToken -facebookId -firstAccess -lastAccess -lastUpdate -notifiable'
+
 ObjectId = mongoose.Types.ObjectId
 
 ################################################################################
 ## Schema ######################################################################
 
 UserSchema = new mongoose.Schema {
-	name:			String
-	username: 		String
+	name:			{ type: String }
+	username:		{ type: String }
 
-	lastAccess:		Date
-	firstAccess: 	Date
-
-	facebookId:		String
-	accessToken:	String
+	lastAccess:		{ type: Date, select: false }
+	firstAccess:	{ type: Date, select: false }
+	facebookId:		{ type: String, select: false }
+	accessToken:	{ type: String, select: false }
 
 	profile: {
 		fullName: 	''
@@ -49,15 +51,12 @@ UserSchema = new mongoose.Schema {
 		badges: 		[]
 	},
 
-	tags:	[{
-		type: String
-	}]
+	tags: [{ type: String }]
 	memberships: [{
 		group: { type: String, required: true, ref: 'Group' }
 		since: { type: Date, default: Date.now }
 		permission: { type: String, enum: _.values(Group.MembershipTypes), required:true, default:'Moderator' }
 	}]
-
 
 	# I don't know what to do with these (2-mar-14)
 	followingTags: 	[]
@@ -131,15 +130,19 @@ UserSchema.methods.getFollowsAsFollower = (cb) ->
 UserSchema.methods.getPopulatedFollowers = (cb) -> # Add opts to prevent getting all?
 	@getFollowsAsFollowee (err, docs) ->
 		return cb(err) if err
-		User.populate docs, { path: 'follower' }, (err, popFollows) ->
-			cb(err, _.filter(_.pluck(popFollows, 'follower'),(i)->i))
+		User.populate docs,
+			{ path: 'follower', select: User.PopulateFields },
+			(err, popFollows) ->
+				cb(err, _.filter(_.pluck(popFollows, 'follower'),(i)->i))
 
 # Get documents of users that follow @.
 UserSchema.methods.getPopulatedFollowing = (cb) -> # Add opts to prevent getting all?
 	@getFollowsAsFollower (err, docs) ->
 		return cb(err) if err
-		User.populate docs, { path: 'followee' }, (err, popFollows) ->
-			cb(err, _.filter(_.pluck(popFollows, 'followee'),(i)->i))
+		User.populate docs,
+			{ path: 'followee', select: User.PopulateFields },
+			(err, popFollows) ->
+				cb(err, _.filter(_.pluck(popFollows, 'followee'),(i)->i))
 
 #
 
@@ -226,7 +229,7 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 	Inbox
 		.find { recipient:self.id, dateSent:{ $lt:opts.maxDate }}
 		.sort '-dateSent' # tied to selection of oldest post below
-		.populate 'resource'
+		.populate 'resource', '-votes'
 		.limit opts.limit
 		.exec (err, docs) =>
 			return cb(err) if err
@@ -240,11 +243,15 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 			else# Pass minDate=oldestPostDate, to start newer fetches from there.
 				minDate = posts[posts.length-1].published
 			
-			Resource.populate posts, {path: 'author actor target object'}, (err, docs) =>
-				return callback(err) if err
-				Post.fillChildren docs, (err, docs) ->
-					callback(err, docs, minDate)
+			Resource
+				.populate posts, {
+					path: 'author actor target object', select: User.PopulateFields
+				}, (err, docs) =>
+					return callback(err) if err
+					Post.hydrateList docs, (err, docs) ->
+						callback(err, docs, minDate)
 
+UserSchema.statics.PopulateFields = PopulateFields
 
 UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 	if not opts.maxDate
@@ -268,7 +275,7 @@ UserSchema.statics.getPostsFromUser = (userId, opts, cb) ->
 						.populate 'resource actor target object'
 						.exec next
 				(next) ->
-					Post.fillChildren docs, next
+					Post.hydrateList docs, next
 			], HandleLimit (err, results) -> # Merge results and call back
 				activities = results[0]
 				posts = results[1]
@@ -288,7 +295,7 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 		.find {group:group, parentPost:null, published:{$lt:opts.maxDate}}
 		.sort '-published'
 		.limit opts.limit or 10
-		.populate 'author'
+		.populate 'author', User.PopulateFields
 		.exec HandleLimit (err, docs) ->
 			return cb(err) if err
 
@@ -305,7 +312,7 @@ UserSchema.methods.getLabPosts = (opts, group, cb) ->
 						.populate 'resource actor target object'
 						.exec next
 				(next) ->
-					Post.fillChildren docs, next
+					Post.hydrateList docs, next
 			], (err, results) ->
 				activities = results[0]
 				posts = results[1]
@@ -393,8 +400,8 @@ UserSchema.methods.postToParentPost = (parentPost, data, cb) ->
 Create a post object and fan out through inboxes.
 ###
 UserSchema.methods.createPost = (data, cb) ->
-	assertArgs({$contains:['content','type']}, '$isCb')
 	self = @
+	assertArgs({$contains:['content','type']}, '$isCb')
 	post = new Post {
 		author: self.id
 		data: {
@@ -422,6 +429,21 @@ UserSchema.methods.createPost = (data, cb) ->
 				type: Inbox.Types.Post,
 				author: self.id
 			}, () -> )
+
+
+UserSchema.methods.upvotePost = (post, cb) ->
+	self = @
+	assertArgs({$isModel:Post}, '$isCb')
+	post.update {$push: {'votes': {voter: self}}, $inc: {voteSum: 1}}, (err, doc) ->
+		console.log 'arguments', arguments
+
+
+UserSchema.methods.downvotePost = (post, cb) ->
+	self = @
+	assertArgs({$isModel:Post}, '$isCb')
+	post.update {$push: {'votes': {voter: self}}, $inc: {voteSum: 1}}, (err, doc) ->
+		console.log 'arguments', arguments
+
 
 ################################################################################
 ## related to the generation of profiles #######################################

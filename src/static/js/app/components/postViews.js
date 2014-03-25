@@ -298,12 +298,22 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				window.location.href = post.path;
 			}
 
+			function voteUp () {
+				$.ajax({
+					type: 'post',
+					dataType: 'json',
+					url: post.apiPath+'/voteup',
+				}).done(function (response) {
+					console.log('response', response);
+				});
+			}
+
 			return (
 				React.DOM.div( {className:"postInfobar"}, 
 					React.DOM.ul( {className:"left"}, 
-						React.DOM.li(null, 
+						React.DOM.li( {onClick:voteUp}, 
 							React.DOM.i( {className:"icon-heart"})," ",
-							this.props.model.commentList.models.length
+							post.voteSum
 						),
 						React.DOM.li( {onClick:function(){window.location.href = post.path+'#comments';}}, 
 							React.DOM.i( {className:"icon-comment-o"})," ",

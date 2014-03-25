@@ -298,12 +298,22 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				window.location.href = post.path;
 			}
 
+			function voteUp () {
+				$.ajax({
+					type: 'post',
+					dataType: 'json',
+					url: post.apiPath+'/voteup',
+				}).done(function (response) {
+					console.log('response', response);
+				});
+			}
+
 			return (
 				<div className="postInfobar">
 					<ul className="left">
-						<li>
+						<li onClick={voteUp}>
 							<i className="icon-heart"></i>&nbsp;
-							{this.props.model.commentList.models.length}
+							{post.voteSum}
 						</li>
 						<li onClick={function(){window.location.href = post.path+'#comments';}}>
 							<i className="icon-comment-o"></i>&nbsp;

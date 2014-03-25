@@ -30,6 +30,13 @@ module.exports = {
 							doc.remove()
 							res.endJson(doc)
 			children: {
+				'/upvote':
+					post: [required.posts.selfCanComment('id'), (req, res) ->
+						return if not postId = req.paramToObjectId('id')
+						Post.findById postId, req.handleErrResult (post) =>
+							req.user.upvotePost post, (err, doc) ->
+								res.endJson { err: err, doc: doc }
+					]
 				'/comments':
 					get: [required.posts.selfCanSee('id'), (req, res) ->
 						return if not postId = req.paramToObjectId('id')
@@ -52,14 +59,13 @@ module.exports = {
 							}
 							type: Post.Types.Comment
 						}
-						Post.findById postId,
-							req.handleErrResult (parentPost) =>
-								req.user.postToParentPost parentPost, data,
-									req.handleErrResult (doc) =>
-										doc.populate('author',
-											req.handleErrResult (doc) =>
-												res.endJson(error:false, data:doc)
-										)
+						Post.findById postId, req.handleErrResult (parentPost) =>
+							req.user.postToParentPost parentPost, data,
+								req.handleErrResult (doc) =>
+									doc.populate('author',
+										req.handleErrResult (doc) =>
+											res.endJson(error:false, data:doc)
+									)
 					]
 				'/answers':
 					# get: [required.posts.selfCanSee('id'), (req, res) ->

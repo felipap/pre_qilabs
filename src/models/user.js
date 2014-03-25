@@ -3,7 +3,7 @@
 GUIDELINES for development:
 - Never utilize directly request parameters or data.
  */
-var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, Post, Resource, User, UserSchema, assert, assertArgs, async, mongoose, _;
+var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, PopulateFields, Post, Resource, User, UserSchema, assert, assertArgs, async, mongoose, _;
 
 mongoose = require('mongoose');
 
@@ -29,15 +29,33 @@ Group = Resource.model('Group');
 
 Post = Resource.model('Post');
 
+PopulateFields = '-memberships -accesssToken -facebookId -firstAccess -lastAccess -lastUpdate -notifiable';
+
 ObjectId = mongoose.Types.ObjectId;
 
 UserSchema = new mongoose.Schema({
-  name: String,
-  username: String,
-  lastAccess: Date,
-  firstAccess: Date,
-  facebookId: String,
-  accessToken: String,
+  name: {
+    type: String
+  },
+  username: {
+    type: String
+  },
+  lastAccess: {
+    type: Date,
+    select: false
+  },
+  firstAccess: {
+    type: Date,
+    select: false
+  },
+  facebookId: {
+    type: String,
+    select: false
+  },
+  accessToken: {
+    type: String,
+    select: false
+  },
   profile: {
     fullName: '',
     birthday: Date,
@@ -190,7 +208,8 @@ UserSchema.methods.getPopulatedFollowers = function(cb) {
       return cb(err);
     }
     return User.populate(docs, {
-      path: 'follower'
+      path: 'follower',
+      select: User.PopulateFields
     }, function(err, popFollows) {
       return cb(err, _.filter(_.pluck(popFollows, 'follower'), function(i) {
         return i;
@@ -205,7 +224,8 @@ UserSchema.methods.getPopulatedFollowing = function(cb) {
       return cb(err);
     }
     return User.populate(docs, {
-      path: 'followee'
+      path: 'followee',
+      select: User.PopulateFields
     }, function(err, popFollows) {
       return cb(err, _.filter(_.pluck(popFollows, 'followee'), function(i) {
         return i;
@@ -339,7 +359,7 @@ UserSchema.methods.getTimeline = function(opts, callback) {
     dateSent: {
       $lt: opts.maxDate
     }
-  }).sort('-dateSent').populate('resource').limit(opts.limit).exec((function(_this) {
+  }).sort('-dateSent').populate('resource', '-votes').limit(opts.limit).exec((function(_this) {
     return function(err, docs) {
       var minDate, posts;
       if (err) {
@@ -355,18 +375,21 @@ UserSchema.methods.getTimeline = function(opts, callback) {
         minDate = posts[posts.length - 1].published;
       }
       return Resource.populate(posts, {
-        path: 'author actor target object'
+        path: 'author actor target object',
+        select: User.PopulateFields
       }, function(err, docs) {
         if (err) {
           return callback(err);
         }
-        return Post.fillChildren(docs, function(err, docs) {
+        return Post.hydrateList(docs, function(err, docs) {
           return callback(err, docs, minDate);
         });
       });
     };
   })(this));
 };
+
+UserSchema.statics.PopulateFields = PopulateFields;
 
 UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
   if (!opts.maxDate) {
@@ -396,7 +419,7 @@ UserSchema.statics.getPostsFromUser = function(userId, opts, cb) {
           }
         }).populate('resource actor target object').exec(next);
       }, function(next) {
-        return Post.fillChildren(docs, next);
+        return Post.hydrateList(docs, next);
       }
     ], HandleLimit(function(err, results) {
       var activities, all, posts;
@@ -420,7 +443,7 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
     published: {
       $lt: opts.maxDate
     }
-  }).sort('-published').limit(opts.limit || 10).populate('author').exec(HandleLimit(function(err, docs) {
+  }).sort('-published').limit(opts.limit || 10).populate('author', User.PopulateFields).exec(HandleLimit(function(err, docs) {
     var minPostDate;
     if (err) {
       return cb(err);
@@ -439,7 +462,7 @@ UserSchema.methods.getLabPosts = function(opts, group, cb) {
           }
         }).populate('resource actor target object').exec(next);
       }, function(next) {
-        return Post.fillChildren(docs, next);
+        return Post.hydrateList(docs, next);
       }
     ], function(err, results) {
       var activities, all, posts;
@@ -581,10 +604,10 @@ Create a post object and fan out through inboxes.
 
 UserSchema.methods.createPost = function(data, cb) {
   var post, self;
+  self = this;
   assertArgs({
     $contains: ['content', 'type']
   }, '$isCb');
-  self = this;
   post = new Post({
     author: self.id,
     data: {
@@ -615,6 +638,46 @@ UserSchema.methods.createPost = function(data, cb) {
       });
     };
   })(this));
+};
+
+UserSchema.methods.upvotePost = function(post, cb) {
+  var self;
+  self = this;
+  assertArgs({
+    $isModel: Post
+  }, '$isCb');
+  return post.update({
+    $push: {
+      'votes': {
+        voter: self
+      }
+    },
+    $inc: {
+      voteSum: 1
+    }
+  }, function(err, doc) {
+    return console.log('arguments', arguments);
+  });
+};
+
+UserSchema.methods.downvotePost = function(post, cb) {
+  var self;
+  self = this;
+  assertArgs({
+    $isModel: Post
+  }, '$isCb');
+  return post.update({
+    $push: {
+      'votes': {
+        voter: self
+      }
+    },
+    $inc: {
+      voteSum: 1
+    }
+  }, function(err, doc) {
+    return console.log('arguments', arguments);
+  });
 };
 
 

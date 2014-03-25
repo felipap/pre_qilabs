@@ -27,7 +27,7 @@ Types =
 ## Schema ######################################################################
 
 PostSchema = new Resource.Schema {
-	author:		{ type: ObjectId, ref: 'Resource', required: true, indexed: 1 }
+	author:		{ type: ObjectId, ref: 'User', required: true, indexed: 1 }
 	group:		{ type: ObjectId, ref: 'Group', required: false }
 	type: 		{ type: String, required: true, enum:_.values(Types) }
 	parentPost:	{ type: ObjectId, ref: 'Post', required: false }
@@ -104,7 +104,7 @@ PostSchema.pre 'save', (next) ->
 
 PostSchema.methods.getComments = (cb) ->
 	Post.find { parentPost: @id }
-		.populate 'author'
+		.populate 'author', '-memberships'
 		.exec (err, docs) ->
 			cb(err, docs)
 
@@ -123,7 +123,7 @@ PostSchema.methods.fillChildren = (cb) ->
 		return cb(false, @toJSON())
 
 	Post.find {parentPost:@}
-		.populate 'author'
+		.populate 'author', '-memberships'
 		.exec (err, children) =>
 			async.map children, ((c, done) ->
 				if c.type in [Types.Answer]
@@ -137,16 +137,16 @@ PostSchema.methods.fillChildren = (cb) ->
 ################################################################################
 ## Statics #####################################################################
 
-PostSchema.statics.fillChildren = (docs, cb) ->
+PostSchema.statics.hydrateList = (docs, cb) ->
 	assertArgs({$isA:Array},'$isCb')
 
 	async.map _.filter(docs, (i) -> i), (post, done) ->
 			Post.find {parentPost:post}
-				.populate 'author'
+				.populate 'author', '-memberships'
 				.exec (err, children) ->
 					async.map children, ((c, done) ->
 						if c.type in [Types.Answer]
-							Post.find({parentPost:c}).populate('author').exec (err, comments) ->
+							Post.find({parentPost:c}).populate('author','-memberships').exec (err, comments) ->
 								done(err, _.extend({}, c.toJSON(), { comments: comments }))
 						else
 							done(null, c)
