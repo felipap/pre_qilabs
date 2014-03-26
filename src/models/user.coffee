@@ -225,7 +225,7 @@ fetchTimelinePostAndActivities = (opts, postConds, actvConds, cb) ->
 		.find _.extend({parentPost:null, published:{$lt:opts.maxDate-1}}, postConds)
 		.sort '-published'
 		.populate 'author'
-		.limit opts.limit or 10
+		.limit opts.limit or 20
 		.exec HandleLimit (err, docs) ->
 			return cb(err) if err
 			minPostDate = 1*(docs.length and docs[docs.length-1].published) or 0
@@ -279,8 +279,8 @@ UserSchema.statics.getUserTimeline = (user, opts, cb) ->
 	assertArgs({$isModel:User}, {$contains:'maxDate'})
 	fetchTimelinePostAndActivities(
 		{maxDate: opts.maxDate},
-		{group:null, author:userId, parentPost:null},
-		{actor:userId, group:null},
+		{group:null, author:user, parentPost:null},
+		{actor:user, group:null},
 		(err, all, minPostDate) -> cb(err, all, minPostDate)
 	)
 

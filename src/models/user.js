@@ -355,7 +355,7 @@ fetchTimelinePostAndActivities = function(opts, postConds, actvConds, cb) {
     published: {
       $lt: opts.maxDate - 1
     }
-  }, postConds)).sort('-published').populate('author').limit(opts.limit || 10).exec(HandleLimit(function(err, docs) {
+  }, postConds)).sort('-published').populate('author').limit(opts.limit || 20).exec(HandleLimit(function(err, docs) {
     var minPostDate;
     if (err) {
       return cb(err);
@@ -440,10 +440,10 @@ UserSchema.statics.getUserTimeline = function(user, opts, cb) {
     maxDate: opts.maxDate
   }, {
     group: null,
-    author: userId,
+    author: user,
     parentPost: null
   }, {
-    actor: userId,
+    actor: user,
     group: null
   }, function(err, all, minPostDate) {
     return cb(err, all, minPostDate);
