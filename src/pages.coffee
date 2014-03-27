@@ -19,19 +19,17 @@ Subscriber = mongoose.model 'Subscriber'
 module.exports = {
 	'/':
 		name: 'index'
-		methods: {
-			get: (req, res) ->
-				if req.user
-					req.user.lastUpdate = new Date()
-					req.user.save()
-					req.user.genProfile (err, profile) ->
-						if err then console.log 'Serving /. err:', err
-						# res.endJson profile
-						res.render 'pages/timeline',
-							user_profile: profile
-				else
-					res.render 'pages/frontpage'
-		}
+		get: (req, res) ->
+			if req.user
+				req.user.lastUpdate = new Date()
+				req.user.save()
+				req.user.genProfile (err, profile) ->
+					if err then console.log 'Serving /. err:', err
+					# res.endJson profile
+					res.render 'pages/timeline',
+						user_profile: profile
+			else
+				res.render 'pages/frontpage'
 
 	'/feed':
 		name: 'feed'
@@ -46,11 +44,9 @@ module.exports = {
 
 	'/painel':
 		name: 'panel'
-		methods: {
-			get: [required.login, (req, res) ->
-				res.render 'pages/panel', {}
-			]
-		}
+		permissions: [required.login]
+		get: (req, res) ->
+			res.render 'pages/panel', {}
 
 	'/labs':
 		permissions: [required.login],

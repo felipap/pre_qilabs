@@ -215,41 +215,17 @@ PostSchema.methods.fillChildren = function(cb) {
   })(this));
 };
 
-PostSchema.statics.hydrateList = function(docs, cb) {
+PostSchema.statics.stuffList = function(docs, cb) {
   assertArgs({
     $isA: Array
   }, '$isCb');
-  return async.map(_.filter(docs, function(i) {
-    return i;
-  }), function(post, done) {
-    return Post.find({
-      parentPost: post
-    }).populate('author').exec(function(err, children) {
-      return async.map(children, (function(c, done) {
-        var _ref;
-        if ((_ref = c.type) === Types.Answer) {
-          return Post.find({
-            parentPost: c
-          }).populate('author').exec(function(err, comments) {
-            return done(err, _.extend({}, c.toJSON(), {
-              comments: comments
-            }));
-          });
-        } else {
-          return done(null, c);
-        }
-      }), function(err, popChildren) {
-        return done(err, _.extend(post.toJSON(), {
-          children: _.groupBy(popChildren, function(i) {
-            return i.type;
-          })
-        }));
-      });
-    });
-  }, function(err, results) {
-    if (err) {
-      console.log('Error in fillinpostcomments', err);
+  return async.map(docs, function(post, done) {
+    if (post instanceof Post) {
+      return post.fillChildren(done);
+    } else {
+      return done(null, post);
     }
+  }, function(err, results) {
     return cb(err, results);
   });
 };

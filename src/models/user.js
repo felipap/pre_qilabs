@@ -29,7 +29,7 @@ Group = Resource.model('Group');
 
 Post = Resource.model('Post');
 
-PopulateFields = '-memberships -accesssToken -facebookId -firstAccess -lastAccess -lastUpdate -notifiable';
+PopulateFields = '-memberships -accesssToken -firstAccess -lastAccess -lastUpdate -notifiable';
 
 ObjectId = mongoose.Types.ObjectId;
 
@@ -49,8 +49,7 @@ UserSchema = new mongoose.Schema({
     select: false
   },
   facebookId: {
-    type: String,
-    select: true
+    type: String
   },
   accessToken: {
     type: String,
@@ -239,7 +238,6 @@ UserSchema.methods.getPopulatedFollowing = function(cb) {
 
 UserSchema.methods.getFollowersIds = function(cb) {
   return this.getFollowsAsFollowee(function(err, docs) {
-    console.log(docs, _.pluck(docs || [], 'follower'));
     return cb(err, _.pluck(docs || [], 'follower'));
   });
 };
@@ -370,7 +368,7 @@ fetchTimelinePostAndActivities = function(opts, postConds, actvConds, cb) {
           }
         })).populate('resource actor target object').exec(next);
       }, function(next) {
-        return Post.hydrateList(docs, next);
+        return Post.stuffList(docs, next);
       }
     ], HandleLimit(function(err, results) {
       var all;
@@ -420,7 +418,7 @@ UserSchema.methods.getTimeline = function(opts, callback) {
         if (err) {
           return callback(err);
         }
-        return Post.hydrateList(docs, function(err, docs) {
+        return Post.stuffList(docs, function(err, docs) {
           return callback(err, docs, minDate);
         });
       });
@@ -443,7 +441,7 @@ UserSchema.statics.getUserTimeline = function(user, opts, cb) {
     author: user,
     parentPost: null
   }, {
-    actor: user,
+    actor: userId,
     group: null
   }, function(err, all, minPostDate) {
     return cb(err, all, minPostDate);
@@ -597,7 +595,6 @@ Create a post object and fan out through inboxes.
 
 UserSchema.methods.createPost = function(data, cb) {
   var post, self;
-  self = this;
   assertArgs({
     $contains: ['content', 'type']
   }, '$isCb');
@@ -612,6 +609,7 @@ UserSchema.methods.createPost = function(data, cb) {
   if (data.groupId) {
     post.group = data.groupId;
   }
+  self = this;
   return post.save((function(_this) {
     return function(err, post) {
       console.log('post save:', err, post);
@@ -671,6 +669,7 @@ UserSchema.methods.genProfile = function(cb) {
         if (err) {
           return cb(err);
         }
+        console.log('following', following);
         return self.populate('memberships.group', function(err, me) {
           var groups, profile;
           if (err) {

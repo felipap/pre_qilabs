@@ -44,8 +44,8 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 			return (
 				<div className="activityView">
 					<span dangerouslySetInnerHTML={{__html: this.props.model.get('content')}} />
-					<time data-time-count={1*new Date(post.published)}>
-						{window.calcTimeFrom(post.published)}
+					<time data-time-count={1*new Date(post.published)} data-time-long="true">
+						{window.calcTimeFrom(post.published, true)}
 					</time>
 				</div>
 			);

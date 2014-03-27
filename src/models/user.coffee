@@ -26,7 +26,7 @@ Group 	= Resource.model 'Group'
 Post 	= Resource.model 'Post'
 
 # PopulateFields = 'name username path profileUrl avatarUrl data followee follower updated published parentPost type voteSum'
-PopulateFields = '-memberships -accesssToken -facebookId -firstAccess -lastAccess -lastUpdate -notifiable'
+PopulateFields = '-memberships -accesssToken -firstAccess -lastAccess -lastUpdate -notifiable'
 
 ObjectId = mongoose.Types.ObjectId
 
@@ -39,7 +39,7 @@ UserSchema = new mongoose.Schema {
 
 	lastAccess:		{ type: Date, select: false }
 	firstAccess:	{ type: Date, select: false }
-	facebookId:		{ type: String, select: true }
+	facebookId:		{ type: String }
 	accessToken:	{ type: String, select: false }
 
 	profile: {
@@ -149,7 +149,6 @@ UserSchema.methods.getPopulatedFollowing = (cb) -> # Add opts to prevent getting
 # Get id of users that @ follows.
 UserSchema.methods.getFollowersIds = (cb) ->
 	@getFollowsAsFollowee (err, docs) ->
-		console.log docs, _.pluck(docs or [], 'follower')
 		cb(err, _.pluck(docs or [], 'follower'))
 
 # Get id of users that follow @.
@@ -236,7 +235,7 @@ fetchTimelinePostAndActivities = (opts, postConds, actvConds, cb) ->
 						.populate 'resource actor target object'
 						.exec next
 				(next) ->
-					Post.hydrateList docs, next
+					Post.stuffList docs, next
 			], HandleLimit (err, results) -> # Merge results and call back
 				all = _.sortBy((results[0]||[]).concat(results[1]), (p) -> -p.published)
 				cb(err, all, minPostDate)
@@ -270,7 +269,7 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 					path: 'author actor target object', select: User.PopulateFields
 				}, (err, docs) =>
 					return callback(err) if err
-					Post.hydrateList docs, (err, docs) ->
+					Post.stuffList docs, (err, docs) ->
 						callback(err, docs, minDate)
 
 UserSchema.statics.PopulateFields = PopulateFields
@@ -280,7 +279,7 @@ UserSchema.statics.getUserTimeline = (user, opts, cb) ->
 	fetchTimelinePostAndActivities(
 		{maxDate: opts.maxDate},
 		{group:null, author:user, parentPost:null},
-		{actor:user, group:null},
+		{actor:userId, group:null},
 		(err, all, minPostDate) -> cb(err, all, minPostDate)
 	)
 
@@ -350,6 +349,7 @@ UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
 			}, ->)
 
 
+
 ################################################################################
 ## related to the Posting ######################################################
 
@@ -369,14 +369,12 @@ UserSchema.methods.postToParentPost = (parentPost, data, cb) ->
 		type: data.type
 	}
 	comment.save cb
-
 	Notification.Trigger(@, Notification.Types.PostComment)(comment, parentPost, ->)
 
 ###
 Create a post object and fan out through inboxes.
 ###
 UserSchema.methods.createPost = (data, cb) ->
-	self = @
 	assertArgs({$contains:['content','type']}, '$isCb')
 	post = new Post {
 		author: self.id
@@ -389,6 +387,7 @@ UserSchema.methods.createPost = (data, cb) ->
 	if data.groupId
 		post.group = data.groupId
 
+	self = @
 	post.save (err, post) =>
 		console.log('post save:', err, post)
 		# use asunc.parallel to run a job
@@ -409,7 +408,7 @@ UserSchema.methods.createPost = (data, cb) ->
 
 UserSchema.methods.upvotePost = (post, cb) ->
 	assertArgs({$isModel:Post}, '$isCb')
-	post.votes.addToSet(''+@.id)
+	post.votes.addToSet(''+@id)
 	post.save(cb)
 
 UserSchema.methods.unupvotePost = (post, cb) ->
@@ -430,6 +429,7 @@ UserSchema.methods.genProfile = (cb) ->
 
 		@getPopulatedFollowing (err, following) =>
 			if err then return cb(err)
+			console.log 'following', following
 
 			self.populate 'memberships.group', (err, me) =>
 				if err then return cb(err)

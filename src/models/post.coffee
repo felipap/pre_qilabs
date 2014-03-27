@@ -119,43 +119,34 @@ PostSchema.methods.stuff = (cb) ->
 		else
 			cb(false,null)
 
-PostSchema.methods.fillChildren = (cb) ->
-	self = @
+PostSchema.methods.fillChildren = (me, cb) ->
+
 	if @type not in _.values(Types)
 		return cb(false, @toJSON())
 
 	Post.find {parentPost:@}
 		.populate 'author'
 		.exec (err, children) =>
-			async.map children, ((c, done) ->
+			async.map children, ((c, done) =>
 				if c.type in [Types.Answer]
 					Post.find({parentPost:c}).populate('author').exec (err, comments) ->
 						done(err, _.extend({}, c.toJSON(), { comments: comments }))
 				else
 					done(null, c)
-			), (err, popChildren) ->
-				cb(err, _.extend(self.toJSON(), {children:_.groupBy(popChildren, (i) -> i.type)}))
+			), (err, popChildren) =>
+				cb(err, _.extend(@toJSON(), {children:_.groupBy(popChildren, (i) -> i.type)}))
 
 ################################################################################
 ## Statics #####################################################################
 
-PostSchema.statics.hydrateList = (docs, cb) ->
+PostSchema.statics.stuffList = (docs, me, cb) ->
 	assertArgs({$isA:Array},'$isCb')
 
-	async.map _.filter(docs, (i) -> i), (post, done) ->
-			Post.find {parentPost:post}
-				.populate 'author'
-				.exec (err, children) ->
-					async.map children, ((c, done) ->
-						if c.type in [Types.Answer]
-							Post.find({parentPost:c}).populate('author').exec (err, comments) ->
-								done(err, _.extend({}, c.toJSON(), { comments: comments }))
-						else
-							done(null, c)
-					), (err, popChildren) ->
-						done(err, _.extend(post.toJSON(), {children:_.groupBy(popChildren, (i) -> i.type)}))
+	async.map docs, (post, done) ->
+			if post instanceof Post
+				post.fillChildren(m e, done)
+			else done(null, post)
 		, (err, results) ->
-			if err then console.log 'Error in fillinpostcomments', err
 			cb(err, results)
 
 PostSchema.statics.Types = Types

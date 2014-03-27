@@ -19,22 +19,20 @@ Subscriber = mongoose.model('Subscriber');
 module.exports = {
   '/': {
     name: 'index',
-    methods: {
-      get: function(req, res) {
-        if (req.user) {
-          req.user.lastUpdate = new Date();
-          req.user.save();
-          return req.user.genProfile(function(err, profile) {
-            if (err) {
-              console.log('Serving /. err:', err);
-            }
-            return res.render('pages/timeline', {
-              user_profile: profile
-            });
+    get: function(req, res) {
+      if (req.user) {
+        req.user.lastUpdate = new Date();
+        req.user.save();
+        return req.user.genProfile(function(err, profile) {
+          if (err) {
+            console.log('Serving /. err:', err);
+          }
+          return res.render('pages/timeline', {
+            user_profile: profile
           });
-        } else {
-          return res.render('pages/frontpage');
-        }
+        });
+      } else {
+        return res.render('pages/frontpage');
       }
     }
   },
@@ -53,12 +51,9 @@ module.exports = {
   },
   '/painel': {
     name: 'panel',
-    methods: {
-      get: [
-        required.login, function(req, res) {
-          return res.render('pages/panel', {});
-        }
-      ]
+    permissions: [required.login],
+    get: function(req, res) {
+      return res.render('pages/panel', {});
     }
   },
   '/labs': {

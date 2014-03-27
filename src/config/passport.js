@@ -66,7 +66,7 @@ function setUpPassport() {
 
 	passport.deserializeUser(function (id, done) {
 		var User = require('mongoose').model('Resource').model('User');
-		User.findOne({_id: id}).select('+facebookId +lastAccess +firstAccess').exec(function (err, user) {
+		User.findOne({_id: id}).select('+lastAccess +firstAccess').exec(function (err, user) {
 			return done(err, user);
 		});
 	})
