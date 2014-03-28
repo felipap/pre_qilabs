@@ -447,7 +447,38 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				React.DOM.div( {className:"cardView", onClick:gotoPost}, 
 					
 					React.DOM.div( {className:"cardHeader"}, 
-						React.DOM.div( {className:"author"}, 
+						React.DOM.span( {className:"cardType"}, 
+						
+							post.type === "QA"?
+							"PERGUNTA"
+							:"PUBLICAÇÃO"
+						
+						),
+						React.DOM.div( {className:"iconStats"}, 
+							React.DOM.div( {onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
+								this.props.model.liked?React.DOM.i( {className:"icon-heart icon-red"}):React.DOM.i( {className:"icon-heart"}),
+								" ",
+								post.voteSum
+							),
+							React.DOM.div(null, 
+								React.DOM.i( {className:"icon-comment-o"})," ",
+								this.props.model.commentList.models.length
+							),
+							post.type === "QA"?
+								React.DOM.div(null, 
+									React.DOM.i( {className:"icon-bulb"})," ",
+									this.props.model.answerList.models.length
+								)
+								:null
+						)
+					),
+
+					React.DOM.div( {className:"cardBody"}, 
+						React.DOM.span( {dangerouslySetInnerHTML:{__html: post.data.title || post.data.escapedBody}} )
+					),
+
+					React.DOM.div( {className:"cardFoot"}, 
+						React.DOM.div( {className:"authorship"}, 
 							React.DOM.div( {className:"avatarWrapper"}, 
 								React.DOM.a( {href:post.author.profileUrl}, 
 									React.DOM.div( {className:"avatar", style:mediaUserStyle})
@@ -457,38 +488,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 								post.author.name
 							)
 						),
-						React.DOM.span( {className:"action"}, "escreveu")
-					),
 
-					React.DOM.div( {className:"cardBody"}, 
-						React.DOM.span( {dangerouslySetInnerHTML:{__html: post.data.title || post.data.escapedBody}} )
-					),
-
-					React.DOM.div( {className:"cardFoot"}, 
-
-						React.DOM.ul( {className:"left"}, 
-							React.DOM.li( {onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
-							
-								this.props.model.liked?
-								React.DOM.i( {className:"icon-heart icon-red"})
-								:React.DOM.i( {className:"icon-heart"}),
-							
-							" ",
-								post.voteSum
-							),
-							React.DOM.li( {onClick:function(){window.location.href = post.path+'#comments';}}, 
-								React.DOM.i( {className:"icon-comment-o"})," ",
-								this.props.model.commentList.models.length
-							),
-							
-								post.type === "QA"?
-								React.DOM.li( {onClick:function(){window.location.href = post.path+'#answers';}}, 
-									React.DOM.i( {className:"icon-bulb"})," ",
-									this.props.model.answerList.models.length
-								)
-								:null
-							
-						),
 						React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
 							window.calcTimeFrom(post.published,true)
 						)

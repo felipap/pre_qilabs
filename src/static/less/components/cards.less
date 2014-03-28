@@ -8,88 +8,101 @@
 
 		display: inline-block;
 		width: 250px; margin-right: 30px;
-		height: 240px; margin-bottom: 30px;
+		height: 200px; margin-bottom: 30px;
 		vertical-align: top;
+		
+		cursor: pointer;
 
 		padding: 10px;
 
 		// border: 1px solid #DDD;
 		background: white;
 
-		time {
-			font-size: 12px;
-			float: right;
-		}
+		font-family: museo-sans;
+
 
 		.cardHeader {
 			font-size: 12px;
 			height: 30px;
 			vertical-align: middle;
 
-			.author {
-				display: inline-block;
-				margin-right: 5px;
+			.cardType {
+				color: #888;
+				&:hover { color: #666 };
+			}
 
-				.username {
-					text-decoration: none;
-					font-size: 13px;
-					color: #444;
+			.iconStats {
+				float: right;
+
+				& > div {
+					display: inline-block;
+					cursor: pointer;
+					vertical-align: bottom;
+					color: #888;
+					font-size: 12px;
+					margin-right: 7px;
+					list-style: none;
+					&:hover {
+						color: #444;
+					}
+
+					.tooltip {
+						font-size: 11px;
+						.tooltip-inner {
+							.rounded(2px);
+							padding-top: 1px;
+						}
+					}
 				}
 
-				.avatarWrapper {
-					margin-right: 5px;
-					border: 1px solid #EFEFEF;
-					.rounded(20px);
-					width: 30px;
-					height: 30px;
+				i { font-size: 13px; }
+
+				.icon-red {
+					color: red;
 				}
+
 			}
 		}
 
 		.cardBody {
 			width: 100%;
 			word-wrap: break-word;
-			height: 150px;
+			height: 110px;
 			overflow: hidden;
 			padding: 10px 0;
 			font-size: 17px;
 		}
 
 		.cardFoot {
-			
-			li {
-				cursor: pointer;
-				vertical-align: bottom;
+
+			time {
+				position: absolute;
+				bottom: 7px;
+				left: 10px;
 				color: #888;
-				font-size: 11px;
+				font-size: 12px;
+			}
+
+			.authorship {
+				position: absolute;
+				bottom: 8px;
+				right: 10px;
+				display: table;
 				margin-right: 5px;
-				list-style: none;
-				display: inline-block;
-				&:hover {
+				font-size: 13px;
+
+				.username {
+					text-decoration: none;
 					color: #444;
 				}
 
-				.tooltip {
-					font-size: 11px;
-					.tooltip-inner {
-						.rounded(2px);
-						padding-top: 1px;
-					}
+				.avatarWrapper {
+					margin: 0 5px;
+					border: 1px solid #EFEFEF;
+					.rounded(20px);
+					width: 30px;
+					height: 30px;
 				}
-			}
-
-			i { font-size: 12px; }
-
-			.icon-red {
-				color: red;
-			}
-
-			height: 40px;
-
-			li {
-				font-size: ;
-				list-style: none;
-				display: inline-block;
 			}
 		}
 	}

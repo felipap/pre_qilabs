@@ -447,7 +447,38 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				<div className="cardView" onClick={gotoPost}>
 					
 					<div className="cardHeader">
-						<div className="author">
+						<span className="cardType">
+						{
+							post.type === "QA"?
+							"PERGUNTA"
+							:"PUBLICAÇÃO"
+						}
+						</span>
+						<div className="iconStats">
+							<div onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
+								{this.props.model.liked?<i className="icon-heart icon-red"></i>:<i className="icon-heart"></i>}
+								&nbsp;
+								{post.voteSum}
+							</div>
+							<div>
+								<i className="icon-comment-o"></i>&nbsp;
+								{this.props.model.commentList.models.length}
+							</div>
+							{post.type === "QA"?
+								<div>
+									<i className="icon-bulb"></i>&nbsp;
+									{this.props.model.answerList.models.length}
+								</div>
+								:null}
+						</div>
+					</div>
+
+					<div className="cardBody">
+						<span dangerouslySetInnerHTML={{__html: post.data.title || post.data.escapedBody}} />
+					</div>
+
+					<div className="cardFoot">
+						<div className="authorship">
 							<div className="avatarWrapper">
 								<a href={post.author.profileUrl}>
 									<div className="avatar" style={mediaUserStyle}></div>
@@ -457,38 +488,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 								{post.author.name}
 							</a>
 						</div>
-						<span className="action">escreveu</span>
-					</div>
 
-					<div className="cardBody">
-						<span dangerouslySetInnerHTML={{__html: post.data.title || post.data.escapedBody}} />
-					</div>
-
-					<div className="cardFoot">
-
-						<ul className="left">
-							<li onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
-							{
-								this.props.model.liked?
-								<i className="icon-heart icon-red"></i>
-								:<i className="icon-heart"></i>
-							}
-							&nbsp;
-								{post.voteSum}
-							</li>
-							<li onClick={function(){window.location.href = post.path+'#comments';}}>
-								<i className="icon-comment-o"></i>&nbsp;
-								{this.props.model.commentList.models.length}
-							</li>
-							{
-								post.type === "QA"?
-								<li onClick={function(){window.location.href = post.path+'#answers';}}>
-									<i className="icon-bulb"></i>&nbsp;
-									{this.props.model.answerList.models.length}
-								</li>
-								:null
-							}
-						</ul>
 						<time data-time-count={1*new Date(post.published)} data-time-long="true">
 							{window.calcTimeFrom(post.published,true)}
 						</time>
