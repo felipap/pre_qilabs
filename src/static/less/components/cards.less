@@ -2,12 +2,12 @@
 .cardsContainer ()
 {
 	@card-width: 245px;
-	@card-margin-right: 20px;
+	@card-margin: 19px;
 	@cpr: 4; // cards-per-row
 	text-align: center;
 
 	// width: (@cpr*@card-width+((@cpr)-1)*@card-margin-right);
-	margin-left: @card-margin-right;
+	margin-left: @card-margin;
 
 	.postInputForm { display: none; }
 
@@ -16,13 +16,12 @@
 		text-align: left;
 
 		display: inline-block;
-		width: @card-width; margin-right: @card-margin-right;
-		height: 200px; margin-bottom: 30px;
+		width: @card-width; margin-right: @card-margin;
+		height: 200px; margin-bottom: @card-margin;
 		vertical-align: top;
 	
 		cursor: pointer;
 		
-		padding: 10px;
 		border: 1px solid #EEE;
 		border-bottom: 1px solid #DDD;
 		background: white;
@@ -34,6 +33,7 @@
 		}
 
 		.cardHeader {
+			padding: 10px;
 			font-size: 12px;
 			height: 30px;
 			vertical-align: middle;
@@ -79,9 +79,9 @@
 		.cardBody {
 			width: 100%;
 			word-wrap: break-word;
-			height: 110px;
+			height: 120px;
 			overflow: hidden;
-			// padding: 10px 0;
+			padding: 5px 10px;
 			font-size: 20px;
 			font-weight: 500;
 
@@ -91,19 +91,18 @@
 		}
 
 		.cardFoot {
+			margin-top: 10px;
+			border-top: 1px solid #EEE;
+			padding: 0 10px;
+			line-height: 36px;
 
 			time {
-				position: absolute;
-				bottom: 7px;
-				left: 10px;
 				color: #888;
 				font-size: 12px;
 			}
 
 			.authorship {
-				position: absolute;
-				bottom: 8px;
-				right: 10px;
+				float: right;
 				display: table;
 				margin-right: 5px;
 				font-size: 12px;
