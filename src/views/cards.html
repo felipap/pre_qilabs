@@ -1,0 +1,35 @@
+
+{% extends 'stdbody.html' %}
+
+{% import 'macros/tags.html' as tagMacros %}
+
+{% block head %}
+{% parent %}
+	{% if user %}
+		<script>window.loggedUser=true;</script>
+		<script>window.user = {id: '{{user.id}}', avatarUrl: '{{user.avatarUrl}}'}</script>
+	{% else %}
+		<script>window.loggedUser=false;</script>
+		<script>window.user = {}</script>
+	{% endif %}
+	{{ tagMacros.stylesheet(getMediaUrl('css','sn_pages.min.css')) }}
+{% endblock %}
+
+
+{% block body %}
+	<div class="bg-img half-opacity" id="page-bg"></div>
+
+	{% include 'layouts/navbar.html' %}
+	<div id="globalContainer">
+		<div class="flash-msgs"></div>
+		<div id="cards">
+			<div id="resultsContainer">
+			{% block mainContent %}
+			{% endblock %}
+			</div>
+		</div>
+	</div>
+	
+	{% block bodyEnd %}
+	{% endblock %}
+{% endblock %}
