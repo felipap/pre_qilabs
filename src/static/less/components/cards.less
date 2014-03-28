@@ -36,12 +36,13 @@
 			padding: 10px;
 			font-size: 12px;
 			height: 30px;
-			vertical-align: middle;
 
 			.cardType {
 				color: #888;
 				&:hover { color: #666 };
 			}
+
+			.icon-comment-o {margin-top: -3px;}
 
 			.iconStats {
 				float: right;
@@ -49,11 +50,12 @@
 				& > div {
 					display: inline-block;
 					cursor: pointer;
-					vertical-align: bottom;
+					vertical-align: middle;
 					color: #888;
 					font-size: 12px;
 					margin-right: 7px;
 					list-style: none;
+
 					&:hover {
 						color: #444;
 					}
@@ -67,7 +69,7 @@
 					}
 				}
 
-				i { font-size: 13px; }
+				i { font-size: 13px; vertical-align: middle; }
 
 				.icon-red {
 					color: red;
