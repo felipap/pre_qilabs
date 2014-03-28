@@ -118,7 +118,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 	});
 
-	var responsiveCollection = {
+	var backboneCollection = {
 		componentWillMount: function () {
 			var update = function () {
 				this.forceUpdate(function(){});
@@ -128,17 +128,17 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 
 	};
 
-	var responsiveModel = {
+	var backboneModel = {
 		componentWillMount: function () {
 			var update = function () {
 				this.forceUpdate(function(){});
 			}
-			this.props.model.on('add reset remove', update.bind(this));
+			this.props.model.on('add reset remove change', update.bind(this));
 		},
 	};
 
 	var CommentListView = React.createClass({displayName: 'CommentListView',
-		mixins: [responsiveCollection],
+		mixins: [backboneCollection],
 
 		render: function () {
 			var commentNodes = this.props.collection.map(function (comment) {
@@ -303,8 +303,9 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 	});
 
+
 	var PostInfoBar = React.createClass({displayName: 'PostInfoBar',
-		mixins: [responsiveModel],
+		mixins: [backboneModel],
 		render: function () {
 
 			var post = this.props.model.attributes;
@@ -316,8 +317,13 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			return (
 				React.DOM.div( {className:"postInfobar"}, 
 					React.DOM.ul( {className:"left"}, 
-						React.DOM.li( {onClick:this.props.model.handleToggleVote}, 
-							React.DOM.i( {className:"icon-heart"})," ",
+						React.DOM.li( {onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
+						
+							this.props.model.liked?
+							React.DOM.i( {className:"icon-heart icon-red"})
+							:React.DOM.i( {className:"icon-heart"}),
+						
+						" ",
 							post.voteSum
 						),
 						React.DOM.li( {onClick:function(){window.location.href = post.path+'#comments';}}, 
@@ -423,6 +429,74 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 	});
 
+	var CardView = React.createClass({displayName: 'CardView',
+		mixins: [backboneModel],
+		render: function () {
+
+			function gotoPost () {
+				window.location.href = post.path;
+			}
+			var post = this.props.model.attributes;
+			var mediaUserStyle = {
+				background: 'url('+post.author.avatarUrl+')',
+			};
+			var rawMarkup = post.data.escapedBody;
+
+			return (
+				React.DOM.div( {className:"cardView"}, 
+					
+					React.DOM.div( {className:"cardHeader"}, 
+						React.DOM.div( {className:"author"}, 
+							React.DOM.div( {className:"avatarWrapper"}, 
+								React.DOM.a( {href:post.author.profileUrl}, 
+									React.DOM.div( {className:"avatar", style:mediaUserStyle})
+								)
+							),
+							React.DOM.a( {href:post.author.profileUrl, className:"username"}, 
+								post.author.name
+							)
+						),
+						React.DOM.span( {className:"action"}, "escreveu")
+					),
+
+					React.DOM.div( {className:"cardBody"}, 
+						React.DOM.span( {dangerouslySetInnerHTML:{__html: post.data.title || post.data.escapedBody}} )
+					),
+
+					React.DOM.div( {className:"cardFoot"}, 
+
+						React.DOM.ul( {className:"left"}, 
+							React.DOM.li( {onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
+							
+								this.props.model.liked?
+								React.DOM.i( {className:"icon-heart icon-red"})
+								:React.DOM.i( {className:"icon-heart"}),
+							
+							" ",
+								post.voteSum
+							),
+							React.DOM.li( {onClick:function(){window.location.href = post.path+'#comments';}}, 
+								React.DOM.i( {className:"icon-comment-o"})," ",
+								this.props.model.commentList.models.length
+							),
+							
+								post.type === "QA"?
+								React.DOM.li( {onClick:function(){window.location.href = post.path+'#answers';}}, 
+									React.DOM.i( {className:"icon-bulb"})," ",
+									this.props.model.answerList.models.length
+								)
+								:null
+							
+						),
+						React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
+							window.calcTimeFrom(post.published,true)
+						)
+					)
+				)
+			);
+		}
+	});
+
 	var PlainPostView = React.createClass({displayName: 'PlainPostView',
 		mixins: [EditablePost],
 
@@ -483,6 +557,8 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 
 	return {
 		'PlainPost': PlainPostView,
+		'CardView': CardView,
 		'QA': QAPostView,
 	};
 });
+

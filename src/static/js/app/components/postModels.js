@@ -20,21 +20,22 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 
 		handleToggleVote: function () {
+
 			var self = this;
-
-			if (this.get('meta').selfVoted)
-				var url = post.apiPath+'/upvote';
-			else
-				var url = post.apiPath+'/unupvote';
-
 			$.ajax({
 				type: 'post',
 				dataType: 'json',
-				url: url,
+				url: this.get('apiPath')+(this.liked?'/unupvote':'/upvote'),
 			}).done(function (response) {
 				console.log('response', response);
 				if (!response.error) {
+					self.liked = !self.liked;
+					// console.log('setting', response.data)
+					// self.set(response.data);
 					self.set(response.data);
+					self.trigger('change');
+
+					console.log('change triggered', response.data)
 				}
 			});
 		},
@@ -44,6 +45,10 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 
 			for (var k in children)
 			if (children.hasOwnProperty(k)) {
+			}
+
+			if (this.get('votes')) {
+				this.liked = !!~this.get('votes').indexOf(user.id);
 			}
 			
 			this.commentList = new CommentList(children.Comment);

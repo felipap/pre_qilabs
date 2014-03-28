@@ -73,6 +73,26 @@ module.exports = {
             }
           ]
         },
+        '/unupvote': {
+          post: [
+            required.posts.selfCanComment('id'), function(req, res) {
+              var postId;
+              if (!(postId = req.paramToObjectId('id'))) {
+                return;
+              }
+              return Post.findById(postId, req.handleErrResult((function(_this) {
+                return function(post) {
+                  return req.user.unupvotePost(post, function(err, doc) {
+                    return res.endJson({
+                      err: err,
+                      data: doc
+                    });
+                  });
+                };
+              })(this)));
+            }
+          ]
+        },
         '/comments': {
           get: [
             required.posts.selfCanSee('id'), function(req, res) {

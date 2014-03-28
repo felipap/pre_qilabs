@@ -55,10 +55,12 @@ PostSchema = new Resource.Schema({
     type: Date,
     indexed: 1
   },
+  title: {
+    type: String
+  },
   data: {
     title: {
-      type: String,
-      required: false
+      type: String
     },
     body: {
       type: String,
@@ -182,8 +184,7 @@ PostSchema.methods.stuff = function(cb) {
 };
 
 PostSchema.methods.fillChildren = function(cb) {
-  var self, _ref;
-  self = this;
+  var _ref;
   if (_ref = this.type, __indexOf.call(_.values(Types), _ref) < 0) {
     return cb(false, this.toJSON());
   }
@@ -205,7 +206,7 @@ PostSchema.methods.fillChildren = function(cb) {
           return done(null, c);
         }
       }), function(err, popChildren) {
-        return cb(err, _.extend(self.toJSON(), {
+        return cb(err, _.extend(_this.toJSON(), {
           children: _.groupBy(popChildren, function(i) {
             return i.type;
           })

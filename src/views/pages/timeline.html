@@ -1,4 +1,4 @@
-{% extends '../sidebared.html' %}
+{% extends '../cards.html' %}
 {% set requireView="timeline" %}
 
 {% import '../macros/user.html' as userMacros %}
@@ -8,9 +8,8 @@
 	<script>conf={postsRoot:'/api/me/timeline/posts'};</script>
 {% endblock %}
 
-{% block sidebarContent %}
-
 {#
+{% block sidebarContent %}
 	<div class="box labList">
 		<div class="head">
 			Laboratórios: <div class="right">{{ user_profile.groups.count }}</div>
@@ -25,7 +24,6 @@
 			<div class="emptyBoxMsg">Você não está em nenhum laboratório.</div>
 		{% endif %}
 	</div>
-#}
 
 	<div class="box tagList">
 		<div class="head">
@@ -50,34 +48,5 @@
 			</a></li>
 		</ul>
 	</div>
-
-	<div class="box userList">
-		<div class="head">
-			Seguindo: <div class="right">{{ user_profile.following.count }}</div>
-		</div>
-		{% if user_profile.following.docs.length %}
-			<ul class="body">
-			{% for person in user_profile.following.docs %}
-				<li>{{ userMacros.renderUser(person) }}</li>
-			{% endfor %}
-			</ul>
-		{% else %}
-			<div class="emptyBoxMsg">Você ainda não segue ninguém.</div>
-		{% endif %}
-	</div>
-
-	<div class="box userList">
-		<div class="head">
-			Seguidores: <div class="right">{{ user_profile.followers.count }}</div>
-		</div>
-		{% if user_profile.followers.docs.length %}
-			<ul class="body">
-			{% for person in user_profile.followers.docs %}
-				<li>{{ userMacros.renderUser(person) }}</li>
-			{% endfor %}
-			</ul>
-		{% else %}
-			<div class="emptyBoxMsg">Você ainda não tem nenhum seguidor.</div>
-		{% endif %}
-	</div>
 {% endblock %}
+#}

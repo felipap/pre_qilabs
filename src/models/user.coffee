@@ -405,7 +405,6 @@ UserSchema.methods.createPost = (data, cb) ->
 				author: self.id
 			}, () -> )
 
-
 UserSchema.methods.upvotePost = (post, cb) ->
 	assertArgs({$isModel:Post}, '$isCb')
 	post.votes.addToSet(''+@id)
@@ -413,8 +412,7 @@ UserSchema.methods.upvotePost = (post, cb) ->
 
 UserSchema.methods.unupvotePost = (post, cb) ->
 	assertArgs({$isModel:Post}, '$isCb')
-	post.update {$pull:{votes:''+@}}, (err, doc) ->
-		console.log 'arguments', arguments
+	post.update {$pull:{votes:''+@id}}, (err, count, status) -> cb(err, post)
 
 ################################################################################
 ## related to the generation of profiles #######################################

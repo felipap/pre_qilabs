@@ -645,10 +645,10 @@ UserSchema.methods.unupvotePost = function(post, cb) {
   }, '$isCb');
   return post.update({
     $pull: {
-      votes: '' + this
+      votes: '' + this.id
     }
-  }, function(err, doc) {
-    return console.log('arguments', arguments);
+  }, function(err, count, status) {
+    return cb(err, post);
   });
 };
 

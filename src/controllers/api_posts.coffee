@@ -37,6 +37,13 @@ module.exports = {
 							req.user.upvotePost post, (err, doc) ->
 								res.endJson { err: err, data: doc }
 					]
+				'/unupvote':
+					post: [required.posts.selfCanComment('id'), (req, res) ->
+						return if not postId = req.paramToObjectId('id')
+						Post.findById postId, req.handleErrResult (post) =>
+							req.user.unupvotePost post, (err, doc) ->
+								res.endJson { err: err, data: doc }
+					]
 				'/comments':
 					get: [required.posts.selfCanSee('id'), (req, res) ->
 						return if not postId = req.paramToObjectId('id')

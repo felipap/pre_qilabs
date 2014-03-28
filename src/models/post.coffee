@@ -34,8 +34,10 @@ PostSchema = new Resource.Schema {
 	
 	updated:	{ type: Date }
 	published:	{ type: Date, indexed: 1 }
+	
+	title:		{ type: String }
 	data: {
-		title:	{ type: String, required: false }
+		title:		{ type: String }
 		body:	{ type: String, required: true }
 	},
 
@@ -119,7 +121,7 @@ PostSchema.methods.stuff = (cb) ->
 		else
 			cb(false,null)
 
-PostSchema.methods.fillChildren = (me, cb) ->
+PostSchema.methods.fillChildren = (cb) ->
 
 	if @type not in _.values(Types)
 		return cb(false, @toJSON())
@@ -139,12 +141,12 @@ PostSchema.methods.fillChildren = (me, cb) ->
 ################################################################################
 ## Statics #####################################################################
 
-PostSchema.statics.stuffList = (docs, me, cb) ->
+PostSchema.statics.stuffList = (docs, cb) ->
 	assertArgs({$isA:Array},'$isCb')
 
 	async.map docs, (post, done) ->
 			if post instanceof Post
-				post.fillChildren(m e, done)
+				post.fillChildren(done)
 			else done(null, post)
 		, (err, results) ->
 			cb(err, results)

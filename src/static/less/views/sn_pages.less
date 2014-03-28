@@ -6,6 +6,8 @@
 
 @import "../common.less";
 
+@page-width: 960px;
+
 @sidebar-width: 280px;
 @results-container-width: 960px-@sidebar-width;
 @sidebar-gap: 25px;
@@ -22,8 +24,8 @@ nav.bar {
 }
 
 .bg-img#page-bg {
-	background: #EEE;
-	background: url(/static/images/cubes.png);
+	background: #FAFAFA;
+	// background: url(/static/images/cubes.png);
 }
 
 .mediaUser {
@@ -40,6 +42,27 @@ nav.bar {
 		background-size: cover !important;
 	}
 }
+
+.avatarWrapper {
+	display: inline-block;
+	vertical-align: middle;
+	width: 50px;
+	height: 50px;
+	text-decoration: none;
+	overflow: hidden;
+
+	.avatar {
+		vertical-align: middle;
+		width: 100%;
+		height: 100%;
+		background-size: cover !important;
+	}
+
+	& + .username {
+		vertical-align: middle;
+	}
+}
+
 
 .scrollbared () {
 
@@ -64,182 +87,333 @@ nav.bar {
 	}
 }
 
-.sidebar (@width: @sidebar-width) 
+.cardsContainer ()
 {
-	width: @width;
-	float: left;
+	width: 1000px;
 
-	h1 { font-size: 25px; }
-	h2 { font-size: 23px; }
-	h3 { font-size: 19px; }
-	h4 { font-size: 16px; }
-	h5 { font-size: 14px; font-weight: bold; }
+	.postInputForm { display: none; }
 
-	.btnGoBack {
-		.high-xbtn(white, @COLOR4);
-	}
+	.cardView {
+		position: relative;
 
-	.box {
-		margin-bottom: 10px;
+		display: inline-block;
+		width: 250px; margin-right: 30px;
+		height: 240px; margin-bottom: 30px;
+		vertical-align: top;
+
+		padding: 10px;
+
+		// border: 1px solid #DDD;
 		background: white;
-		border: 1px solid #DDD; /// #EAEAEA;
-		.rounded(3px);
-		font-size: 12px;
 
-		.head {
-			border-bottom: 1px solid #EAEAEA;
-			padding: 7px 10px;
-			color: #666;
-			font-size: 11px;
-			background: #F3F3F3;
-			font-weight: bold;
-			position: relative;
-
-			a {
-				text-decoration: none;
-			}
-
-			.right {
-				float: right;
-				font-size: 11px;
-				font-weight: normal;
-			}
-		}
-
-		.emptyBoxMsg {
-			color: #AAA;
-			padding: 5px;
-			// font-size: 12px;
-			text-align: center;
-		}
-
-		.body {
+		time {
 			font-size: 12px;
-			list-style: none;
+			float: right;
 		}
-	
-		&.userList .body
-		{
-			padding: 5px;
 
+		.cardHeader {
+			font-size: 12px;
+			height: 30px;
+			vertical-align: middle;
+
+			.author {
+				display: inline-block;
+				margin-right: 5px;
+
+				.username {
+					text-decoration: none;
+					font-size: 13px;
+					color: #444;
+				}
+
+				.avatarWrapper {
+					margin-right: 5px;
+					border: 1px solid #EFEFEF;
+					.rounded(20px);
+					width: 30px;
+					height: 30px;
+				}
+			}
+		}
+
+		.cardBody {
+			width: 100%;
+			word-wrap: break-word;
+			height: 150px;
+			overflow: hidden;
+			padding: 10px 0;
+			font-size: 17px;
+		}
+
+		.cardFoot {
+			
 			li {
+				cursor: pointer;
+				vertical-align: bottom;
+				color: #888;
+				font-size: 11px;
+				margin-right: 5px;
 				list-style: none;
 				display: inline-block;
-				margin-bottom: 3px;
-				margin-right: 3px;
-			}
-		}
-
-		&.labList .body,
-		&.tagList .body
-		{
-			li {
-				a {
-					display: block;
-					text-decoration: none;
-					font-weight: bold;
-					padding: 10px;
-
+				&:hover {
 					color: #444;
-					&:hover{
-						color: #444;
-						background: #FAFAFA;
+				}
+
+				.tooltip {
+					font-size: 11px;
+					.tooltip-inner {
+						.rounded(2px);
+						padding-top: 1px;
 					}
 				}
-			} 
-
-			li:not(:last-child) {
-				border-bottom: 1px solid #DDD;
 			}
-		}
 
-		&.tagList .body {
+			i { font-size: 12px; }
+
+			.icon-red {
+				color: red;
+			}
+
+			height: 40px;
+
 			li {
-				.tagIcon { margin-right: 3px; }
-				&:nth-child(1) a .tagIcon { color: @COLOR1; }
-				&:nth-child(2) a .tagIcon { color: @COLOR2; }
-				&:nth-child(3) a .tagIcon { color: @COLOR3; }
-				&:nth-child(4) a .tagIcon { color: @COLOR4; }
-			}
-		}
-
-		&.userProfile {
-
-			.head {
-				.btn-follow {
-					font-size: 12px;
-					width: 72px;
-					position: absolute;
-					top: 6px;
-					right: 10px;
-				}
-			}
-
-			.mediaUser {
-				width: 30px;
-				height: 30px;
-				.rounded(20px);
-				margin-right: 5px;
-			}
-			.name {
-				font-size: 14px;
-				vertical-align: middle;
-				max-width: 135px;
-				overflow: hidden;
+				font-size: ;
+				list-style: none;
 				display: inline-block;
-				text-overflow: ellipsis;
-			}
-
-			.body {
-				padding: 10px;
-
-				.info-group {
-					font-size: 13px;
-					label { display: inline-block; font-weight: 600; }
-					.answer { font-weight: normal; }
-				}
-			}
-		}
-
-		&.groupProfile {
-
-			// .head {
-			// 	.btn-follow {
-			// 		font-size: 12px;
-			// 		width: 72px;
-			// 		position: absolute;
-			// 		top: 6px;
-			// 		right: 10px;
-			// 	}
-			// }
-
-			.name {
-				font-size: 14px;
-				vertical-align: middle;
-				max-width: 135px;
-				overflow: hidden;
-				display: inline-block;
-				text-overflow: ellipsis;
-			}
-
-			.body {
-				padding: 10px;
-
-				.info-group {
-					font-size: 13px;
-					label { display: inline-block; font-weight: 600; }
-					.answer { font-weight: normal; }
-				}
 			}
 		}
 	}
 
-	.mediaUser {
-		.mediaUserAvatar {
+	.postView {
+		font-size: 13px;
+		border: 1px solid #DDD;
+		.rounded(4px);
+
+		width: 200px;
+		margin-left: 30px;
+		margin-bottom: 30px;
+
+		.postHead {
+			background: white;
 			.rounded(3px);
+
+			// background: white;
+			border-bottom: none;
+
+			.msgHeader {
+				padding: 5px;
+				height: 55px;
+				.mediaUser {
+					width: 40px;
+					height: 40px;
+					.rounded(0);
+					// border: 1px solid #DDD;
+				}
+				.headline {
+					margin-left: 5px;
+					display: inline-block;
+					font: 13px "Open Sans";
+					.authorUsername {
+						color: #666;
+						&:hover {
+							color: #444;
+						}
+						text-decoration: none;
+						display: inline;
+						font-weight: bold;
+					}
+					width: 450px;
+				}
+				time {
+					position: absolute;
+					right: 13px;
+					top: 45px;
+					font-size: 12px;
+					color: #888;
+					float: right;
+				}
+			}
+
+			.msgBody, .msgTitle {
+				margin: 5px;
+				padding: 10px;
+				position: relative;
+				background: white;
+				border: 1px solid #DDD;
+				overflow-wrap: break-word;
+				.arrow {
+					content: '';
+					border: 7px solid transparent;
+					border-bottom-color: #EFEFEF;
+					top: -14px;
+					position: absolute;
+					left: 5px+14px;
+				}
+			
+			}
+			.msgTitle {
+				font-size: 14px;
+				font-weight: 600;
+			}
+			.msgBody {
+				font-size: 13px;
+				font-weight: normal;
+			}
+
+			.postInfobar {
+				position: relative;
+				margin-top: 10px;
+				border-top: 1px solid #DDD;
+				
+				li {
+					cursor: pointer;
+					vertical-align: bottom;
+					padding: 5px 8px 6px;
+					color: #888;
+					font-size: 11px;
+					list-style: none;
+					display: inline-block;
+					&:hover {
+						color: #444;
+					}
+
+					.tooltip {
+						font-size: 11px;
+						.tooltip-inner {
+							.rounded(2px);
+							padding-top: 1px;
+						}
+					}
+				}
+
+				i { font-size: 12px; }
+
+				.icon-red {
+					color: red;
+				}
+
+				ul.right {
+					position: absolute;
+					top: 0;
+					right: 0;
+					li { border-left: 1px solid #DDD; }
+				}
+
+				ul.left{
+					li { border-right: 1px solid #DDD; }
+				}
+			}
 		}
-		width: 40px;
-		height: 40px;
+
+		.postFoot {
+
+			.commentInputSection .mediaUser,
+			.commentWrapper .mediaUser {
+				.rounded(0);
+				width: 30px;
+				height: 30px;
+			}
+
+		}
+
+		.optionBtns {
+			float: right;
+			display: inline-block;
+			position: absolute;
+			right: 5px; top: 0px;
+			z-index: 4;
+			
+			.transition(all, .2s, linear);
+			opacity: .5;
+			&:hover {
+				opacity: 1;
+			}
+
+			[data-action=remove-post],
+			[data-action=edit-post] {
+				.full-reset-button;
+				padding-left: 3px;
+				vertical-align: middle;
+				padding-right: 3px;
+				font-size: 105%;
+				font-weight: bolder;
+				color: #888;
+				opacity: .6;
+				&:hover {
+					color: #444;
+				}
+				&:active {
+					outline: none;
+				}
+			}
+		}
+
+		[data-post-type=QAPost] {
+			
+			.postHead {
+				.msgTitle {
+					font-size: 13px;
+					padding: 10px;
+					position: relative;
+					background: white;
+					border: 1px solid #DDD;
+					overflow-wrap: break-word;
+					.arrow {
+						content: '';
+						border: 7px solid transparent;
+						border-bottom-color: #EFEFEF;
+						top: -14px;
+						position: absolute;
+						left: 5px+14px;
+					}
+					margin-bottom: 10px;
+					&::after {
+						content: '?';
+						float: right;
+						font-size: 20px;
+
+					}
+				}
+				.msgBody {
+					font-size: 13px;
+				}
+			}
+
+			.answerView {
+				background: #FAFAFA;
+				padding: 10px;
+
+				.leftCol {
+					float: left;
+
+					.mediaUser {
+						vertical-align: top;
+						border: 1px solid #DDD;
+						height: 35px;
+						width: 35px;
+					}
+				}
+
+				.msgBody {
+					font-size: 14px;
+					padding: 10px;
+					position: relative;
+					margin-left: 60px;
+					background: white;
+					border: 1px solid #DDD;
+					overflow-wrap: break-word;
+
+					.arrow {
+						content: '';
+						border: 7px solid transparent;
+						border-right-color: #EFEFEF;
+						top: 14px;
+						position: absolute;
+						left: -15px;
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -348,7 +522,6 @@ nav.bar {
 			padding-bottom: 10px;
 		}
 	}
-
 
 	.postView {
 		font-size: 13px;
@@ -721,6 +894,21 @@ body {
 		bottom: 0;
 		width: 100%;
 
+		#cards {
+			margin: 0 auto;
+			width: @results-container-width+@sidebar-width+@sidebar-gap;
+			// // padding-top: 20px;
+			// #sidebar {
+			// 	.sidebar;
+			// }
+			// #resultsContainer {
+			// 	.resultsContainer;
+			// }
+			#resultsContainer {
+				.cardsContainer;
+			}
+		}
+
 		#content {
 			margin: 0 auto;
 			width: @results-container-width+@sidebar-width+@sidebar-gap;
@@ -785,5 +973,184 @@ body {
 	#resultsContainer {
 
 	}
+}
 
+.sidebar (@width: @sidebar-width) 
+{
+	width: @width;
+	float: left;
+
+	h1 { font-size: 25px; }
+	h2 { font-size: 23px; }
+	h3 { font-size: 19px; }
+	h4 { font-size: 16px; }
+	h5 { font-size: 14px; font-weight: bold; }
+
+	.btnGoBack {
+		.high-xbtn(white, @COLOR4);
+	}
+
+	.box {
+		margin-bottom: 10px;
+		background: white;
+		border: 1px solid #DDD; /// #EAEAEA;
+		.rounded(3px);
+		font-size: 12px;
+
+		.head {
+			border-bottom: 1px solid #EAEAEA;
+			padding: 7px 10px;
+			color: #666;
+			font-size: 11px;
+			background: #F3F3F3;
+			font-weight: bold;
+			position: relative;
+
+			a {
+				text-decoration: none;
+			}
+
+			.right {
+				float: right;
+				font-size: 11px;
+				font-weight: normal;
+			}
+		}
+
+		.emptyBoxMsg {
+			color: #AAA;
+			padding: 5px;
+			// font-size: 12px;
+			text-align: center;
+		}
+
+		.body {
+			font-size: 12px;
+			list-style: none;
+		}
+	
+		&.userList .body
+		{
+			padding: 5px;
+
+			li {
+				list-style: none;
+				display: inline-block;
+				margin-bottom: 3px;
+				margin-right: 3px;
+			}
+		}
+
+		&.labList .body,
+		&.tagList .body
+		{
+			li {
+				a {
+					display: block;
+					text-decoration: none;
+					font-weight: bold;
+					padding: 10px;
+
+					color: #444;
+					&:hover{
+						color: #444;
+						background: #FAFAFA;
+					}
+				}
+			} 
+
+			li:not(:last-child) {
+				border-bottom: 1px solid #DDD;
+			}
+		}
+
+		&.tagList .body {
+			li {
+				.tagIcon { margin-right: 3px; }
+				&:nth-child(1) a .tagIcon { color: @COLOR1; }
+				&:nth-child(2) a .tagIcon { color: @COLOR2; }
+				&:nth-child(3) a .tagIcon { color: @COLOR3; }
+				&:nth-child(4) a .tagIcon { color: @COLOR4; }
+			}
+		}
+
+		&.userProfile {
+
+			.head {
+				.btn-follow {
+					font-size: 12px;
+					width: 72px;
+					position: absolute;
+					top: 6px;
+					right: 10px;
+				}
+			}
+
+			.mediaUser {
+				width: 30px;
+				height: 30px;
+				.rounded(20px);
+				margin-right: 5px;
+			}
+			.name {
+				font-size: 14px;
+				vertical-align: middle;
+				max-width: 135px;
+				overflow: hidden;
+				display: inline-block;
+				text-overflow: ellipsis;
+			}
+
+			.body {
+				padding: 10px;
+
+				.info-group {
+					font-size: 13px;
+					label { display: inline-block; font-weight: 600; }
+					.answer { font-weight: normal; }
+				}
+			}
+		}
+
+		&.groupProfile {
+
+			// .head {
+			// 	.btn-follow {
+			// 		font-size: 12px;
+			// 		width: 72px;
+			// 		position: absolute;
+			// 		top: 6px;
+			// 		right: 10px;
+			// 	}
+			// }
+
+			.name {
+				font-size: 14px;
+				vertical-align: middle;
+				max-width: 135px;
+				overflow: hidden;
+				display: inline-block;
+				text-overflow: ellipsis;
+			}
+
+			.body {
+				padding: 10px;
+
+				.info-group {
+					font-size: 13px;
+					label { display: inline-block; font-weight: 600; }
+					.answer { font-weight: normal; }
+				}
+			}
+		}
+	}
+
+	.mediaUser {
+		.mediaUserAvatar {
+			.rounded(3px);
+		}
+		overflow: hidden;
+		width: 40px;
+		height: 40px;
+	}
 }

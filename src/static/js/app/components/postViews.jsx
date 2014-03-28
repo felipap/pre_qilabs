@@ -118,7 +118,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 	});
 
-	var responsiveCollection = {
+	var backboneCollection = {
 		componentWillMount: function () {
 			var update = function () {
 				this.forceUpdate(function(){});
@@ -128,17 +128,17 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 
 	};
 
-	var responsiveModel = {
+	var backboneModel = {
 		componentWillMount: function () {
 			var update = function () {
 				this.forceUpdate(function(){});
 			}
-			this.props.model.on('add reset remove', update.bind(this));
+			this.props.model.on('add reset remove change', update.bind(this));
 		},
 	};
 
 	var CommentListView = React.createClass({
-		mixins: [responsiveCollection],
+		mixins: [backboneCollection],
 
 		render: function () {
 			var commentNodes = this.props.collection.map(function (comment) {
@@ -303,8 +303,9 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 	});
 
+
 	var PostInfoBar = React.createClass({
-		mixins: [responsiveModel],
+		mixins: [backboneModel],
 		render: function () {
 
 			var post = this.props.model.attributes;
@@ -316,8 +317,13 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			return (
 				<div className="postInfobar">
 					<ul className="left">
-						<li onClick={this.props.model.handleToggleVote}>
-							<i className="icon-heart"></i>&nbsp;
+						<li onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
+						{
+							this.props.model.liked?
+							<i className="icon-heart icon-red"></i>
+							:<i className="icon-heart"></i>
+						}
+						&nbsp;
 							{post.voteSum}
 						</li>
 						<li onClick={function(){window.location.href = post.path+'#comments';}}>
@@ -423,6 +429,74 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 	});
 
+	var CardView = React.createClass({
+		mixins: [backboneModel],
+		render: function () {
+
+			function gotoPost () {
+				window.location.href = post.path;
+			}
+			var post = this.props.model.attributes;
+			var mediaUserStyle = {
+				background: 'url('+post.author.avatarUrl+')',
+			};
+			var rawMarkup = post.data.escapedBody;
+
+			return (
+				<div className="cardView">
+					
+					<div className="cardHeader">
+						<div className="author">
+							<div className="avatarWrapper">
+								<a href={post.author.profileUrl}>
+									<div className="avatar" style={mediaUserStyle}></div>
+								</a>
+							</div>
+							<a href={post.author.profileUrl} className="username">
+								{post.author.name}
+							</a>
+						</div>
+						<span className="action">escreveu</span>
+					</div>
+
+					<div className="cardBody">
+						<span dangerouslySetInnerHTML={{__html: post.data.title || post.data.escapedBody}} />
+					</div>
+
+					<div className="cardFoot">
+
+						<ul className="left">
+							<li onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
+							{
+								this.props.model.liked?
+								<i className="icon-heart icon-red"></i>
+								:<i className="icon-heart"></i>
+							}
+							&nbsp;
+								{post.voteSum}
+							</li>
+							<li onClick={function(){window.location.href = post.path+'#comments';}}>
+								<i className="icon-comment-o"></i>&nbsp;
+								{this.props.model.commentList.models.length}
+							</li>
+							{
+								post.type === "QA"?
+								<li onClick={function(){window.location.href = post.path+'#answers';}}>
+									<i className="icon-bulb"></i>&nbsp;
+									{this.props.model.answerList.models.length}
+								</li>
+								:null
+							}
+						</ul>
+						<time data-time-count={1*new Date(post.published)} data-time-long="true">
+							{window.calcTimeFrom(post.published,true)}
+						</time>
+					</div>
+				</div>
+			);
+		}
+	});
+
 	var PlainPostView = React.createClass({
 		mixins: [EditablePost],
 
@@ -483,6 +557,8 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 
 	return {
 		'PlainPost': PlainPostView,
+		'CardView': CardView,
 		'QA': QAPostView,
 	};
 });
+
