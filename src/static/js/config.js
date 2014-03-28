@@ -9,6 +9,7 @@ requirejs.config({
 		// App
 		'views.common':		'app/views/common',
 		'views.timeline':	'app/views/timeline',
+		'views.cards':		'app/views/cards',
 		'views.profile':	'app/views/profile',
 		'views.lab':		'app/views/lab',
 		'views.panel':		'app/views/panel',
@@ -16,6 +17,7 @@ requirejs.config({
 		// 'app.mural':		'app/app/mural',
 		// Components
 		'components.bell':		'app/components/bell',
+		'components.cards':		'app/components/cards',
 		'components.timeline':	'app/components/timeline',
 		'components.postForms':	'app/components/postForms',
 		'components.postModels':'app/components/postModels',

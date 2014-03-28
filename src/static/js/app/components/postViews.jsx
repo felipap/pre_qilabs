@@ -434,7 +434,8 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		render: function () {
 
 			function gotoPost () {
-				window.location.href = post.path;
+				app.navigate('#posts/'+post.id, {trigger:true});
+				// app.navigate('')
 			}
 			var post = this.props.model.attributes;
 			var mediaUserStyle = {
@@ -443,7 +444,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			var rawMarkup = post.data.escapedBody;
 
 			return (
-				<div className="cardView">
+				<div className="cardView" onClick={gotoPost}>
 					
 					<div className="cardHeader">
 						<div className="author">

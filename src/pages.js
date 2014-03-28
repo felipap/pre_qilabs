@@ -27,7 +27,7 @@ module.exports = {
           if (err) {
             console.log('Serving /. err:', err);
           }
-          return res.render('pages/timeline', {
+          return res.render('pages/main', {
             user_profile: profile
           });
         });

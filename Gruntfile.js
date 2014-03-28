@@ -94,6 +94,7 @@ module.exports = function(grunt) {
 					modules: [
 						{name: 'app/views/panel'},
 						{name: 'app/views/timeline'},
+						{name: 'app/views/cards'},
 						{name: 'app/views/lab'},
 						{name: 'app/views/profile'},
 						// {name: 'app/views/panel'},

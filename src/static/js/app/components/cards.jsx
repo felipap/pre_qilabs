@@ -1,13 +1,14 @@
 /** @jsx React.DOM */
 
 /*
-** timeline.js
+** cards.js
 ** Copyright QILabs.org
 ** BSD License
 ** by @f03lipe
 */
 
-define(['jquery', 'backbone', 'components.postForms', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
+define([
+	'jquery', 'backbone', 'components.postForms', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
 	function ($, Backbone, postForms, postModels, postViews, _, React, Showdown) {
 
 	setTimeout(function updateCounters () {
@@ -34,25 +35,7 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 		return originalSync(method, model, options);
 	};
 
-	var ActivityView = React.createClass({displayName: 'ActivityView',
-
-		render: function () {
-			var post = this.props.model.attributes;
-			var mediaUserStyle = {
-				background: 'url('+post.actor.avatarUrl+')',
-			};
-			return (
-				React.DOM.div( {className:"activityView"}, 
-					React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('content')}} ),
-					React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
-						window.calcTimeFrom(post.published, true)
-					)
-				)
-			);
-		},
-	});
-
-	var PostView = React.createClass({displayName: 'PostView',
+	var PostView = React.createClass({
 
 		render: function () {
 			// test for type, QA for example
@@ -61,18 +44,23 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 				var postView = postViews[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
-				return React.DOM.div(null );
+				return <div />;
 			}
 			// console.log(this.props.model.get('type'))
 			return (
-				React.DOM.div( {className:"postView"}, 
-					postView( {model:this.props.model} )
-				)
+				<div className="postView">
+					<postView model={this.props.model} />
+				</div>
 			);
 		},
 	});
 
-	var FullPostView = React.createClass({displayName: 'FullPostView',
+	var FullPostView = React.createClass({
+
+		destroy: function () {
+			React.unmountComponentAtNode(document.getElementById('fullPageContainer'));
+			app.navigate('/', {trigger:true});
+		},
 
 		render: function () {
 			// test for type, QA for example
@@ -81,34 +69,34 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 				var postView = postViews[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
-				return React.DOM.div(null );
+				return <div />;
 			}
 			// console.log(this.props.model.get('type'))
 			return (
-				React.DOM.div( {className:"fullPostView"}, 
-					React.DOM.div( {className:"postView"}, 
-						postView( {model:this.props.model} )
-					),
-					React.DOM.div( {className:"blackout"})
-				)
+				<div className="fullPostView">
+					<div className="postView">
+						<postView model={this.props.model} />
+					</div>
+					<div onClick={this.destroy} className="blackout"></div>
+				</div>
 			);
 		},
 	});
 
-	var StreamItemView = React.createClass({displayName: 'StreamItemView',
+	var StreamItemView = React.createClass({
 		render: function () {
 			var itemType = this.props.model.get('__t');
 			return (
-				React.DOM.div( {className:"streamItem"}, 
-					(itemType==='Post')?
-					PostView( {model:this.props.model} )
-					:ActivityView( {model:this.props.model} )
-				)
+				<div className="streamItem">
+					{(itemType==='Post')?
+					<PostView model={this.props.model} />
+					:<ActivityView model={this.props.model} />}
+				</div>
 			);
 		},
 	});
 
-	var CardsPanelView = React.createClass({displayName: 'CardsPanelView',
+	var CardsPanelView = React.createClass({
 		getInitialState: function () {
 			return {selectedForm:null};
 		},
@@ -129,21 +117,21 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 			var postForm = postForms.Plain;
 
 			return (
-				React.DOM.div( {className:"timeline"}, 
-					cards,
-					this.props.collection.EOF?
-					React.DOM.div( {className:"streamSign"}, 
-						React.DOM.i( {className:"icon-exclamation"}), " Nenhuma outra atividade encontrada."
-					)
-					:React.DOM.a( {className:"streamSign", href:"#", onClick:this.props.collection.tryFetchMore}, 
-						React.DOM.i( {className:"icon-cog"}),"Procurando mais atividades."
-					)
-				)
+				<div className="timeline">
+					{cards}
+					{this.props.collection.EOF?
+					<div className="streamSign">
+						<i className="icon-exclamation"></i> Nenhuma outra atividade encontrada.
+					</div>
+					:<a className="streamSign" href="#" onClick={this.props.collection.tryFetchMore}>
+						<i className="icon-cog"></i>Procurando mais atividades.
+					</a>}
+				</div>
 			);
 		},
 	});
 
-	var TimelineView = React.createClass({displayName: 'TimelineView',
+	var TimelineView = React.createClass({
 		getInitialState: function () {
 			return {selectedForm:null};
 		},
@@ -158,7 +146,7 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 			var postNodes = this.props.collection.map(function (post) {
 				if (post.get('__t') === 'Post')
 					return (
-						StreamItemView( {model:post} )
+						<StreamItemView model={post} />
 					);
 				return null;
 			});
@@ -166,23 +154,23 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 			var postForm = postForms.Plain;
 
 			return (
-				React.DOM.div( {className:"timeline"}, 
-					this.props.canPostForm?
-						React.DOM.div( {className:"header"}, 
-							postForm( {postUrl:this.props.collection.url}),
-							React.DOM.hr(null )
-						)
-						:null,
-					
-					postNodes,
-					this.props.collection.EOF?
-					React.DOM.div( {className:"streamSign"}, 
-						React.DOM.i( {className:"icon-exclamation"}), " Nenhuma outra atividade encontrada."
-					)
-					:React.DOM.a( {className:"streamSign", href:"#", onClick:this.props.collection.tryFetchMore}, 
-						React.DOM.i( {className:"icon-cog"}),"Procurando mais atividades."
-					)
-				)
+				<div className="timeline">
+					{this.props.canPostForm?
+						<div className="header">
+							<postForm postUrl={this.props.collection.url}/>
+							<hr />
+						</div>
+						:null
+					}
+					{postNodes}
+					{this.props.collection.EOF?
+					<div className="streamSign">
+						<i className="icon-exclamation"></i> Nenhuma outra atividade encontrada.
+					</div>
+					:<a className="streamSign" href="#" onClick={this.props.collection.tryFetchMore}>
+						<i className="icon-cog"></i>Procurando mais atividades.
+					</a>}
+				</div>
 			);
 		},
 	});
@@ -193,32 +181,24 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 		initialize: function () {
 			console.log('initialized')
 			window.app = this;
+			this.renderList('/api/me/timeline/posts',{canPostForm:true});
 		},
 
 		routes: {
 			'posts/:postId':
 				 function (postId) {
-				 	this.postItem = new postModels.postItem(window.conf.postData);
-				 	React.renderComponent(FullPostView({model:this.postItem}),
-				 		document.getElementById('fullPageContainer'));
-				},
-			'labs/:labId':
-				function (labId) {					
-					this.renderList('/api/labs/'+labId+'/posts',{canPostForm:true});
-				},
-			'p/:profileId':
-				function () {
-					this.renderList(window.conf.postsRoot,{canPostForm:false});
-				},
-			'':
-				function () {
-					this.renderList('/api/me/timeline/posts',{canPostForm:true});
+				 	$.getJSON('/api/posts/'+postId, function (response) {
+				 		console.log('response, data', response)
+					 	this.postItem = new postModels.postItem(response.data);
+					 	React.renderComponent(FullPostView({model:this.postItem}),
+					 		document.getElementById('fullPageContainer'));
+				 	});
 				},
 		},
 
 		renderList: function (url, opts) {
 			this.postList = new postModels.postList([], {url:url});
-			React.renderComponent(TimelineView(
+			React.renderComponent(CardsPanelView(
 				_.extend(opts,{collection:this.postList})),
 				document.getElementById('resultsContainer'));
 
@@ -239,7 +219,7 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 	return {
 		initialize: function () {
 			new WorkspaceRouter;
-			Backbone.history.start({ pushState:false, hashChange:false });
+			Backbone.history.start({ pushState:false, hashChange:true });
 		}
 	};
 });

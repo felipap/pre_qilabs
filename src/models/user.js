@@ -441,7 +441,7 @@ UserSchema.statics.getUserTimeline = function(user, opts, cb) {
     author: user,
     parentPost: null
   }, {
-    actor: userId,
+    actor: user,
     group: null
   }, function(err, all, minPostDate) {
     return cb(err, all, minPostDate);

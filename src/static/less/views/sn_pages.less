@@ -89,7 +89,7 @@ nav.bar {
 
 .cardsContainer ()
 {
-	// width: 1000px;
+
 
 	.postInputForm { display: none; }
 
@@ -184,236 +184,25 @@ nav.bar {
 		}
 	}
 
+}
+
+.fullPostView {
+	position: relative;
+	z-index: 1000;
+	margin: 0 auto;
+	width: 1000px;
+	
 	.postView {
-		font-size: 13px;
-		border: 1px solid #DDD;
-		.rounded(4px);
+		position: relative;
+		z-index: 1001;
+		width: 1000px;
+	}
 
-		width: 200px;
-		margin-left: 30px;
-		margin-bottom: 30px;
-
-		.postHead {
-			background: white;
-			.rounded(3px);
-
-			// background: white;
-			border-bottom: none;
-
-			.msgHeader {
-				padding: 5px;
-				height: 55px;
-				.mediaUser {
-					width: 40px;
-					height: 40px;
-					.rounded(0);
-					// border: 1px solid #DDD;
-				}
-				.headline {
-					margin-left: 5px;
-					display: inline-block;
-					font: 13px "Open Sans";
-					.authorUsername {
-						color: #666;
-						&:hover {
-							color: #444;
-						}
-						text-decoration: none;
-						display: inline;
-						font-weight: bold;
-					}
-					width: 450px;
-				}
-				time {
-					position: absolute;
-					right: 13px;
-					top: 45px;
-					font-size: 12px;
-					color: #888;
-					float: right;
-				}
-			}
-
-			.msgBody, .msgTitle {
-				margin: 5px;
-				padding: 10px;
-				position: relative;
-				background: white;
-				border: 1px solid #DDD;
-				overflow-wrap: break-word;
-				.arrow {
-					content: '';
-					border: 7px solid transparent;
-					border-bottom-color: #EFEFEF;
-					top: -14px;
-					position: absolute;
-					left: 5px+14px;
-				}
-			
-			}
-			.msgTitle {
-				font-size: 14px;
-				font-weight: 600;
-			}
-			.msgBody {
-				font-size: 13px;
-				font-weight: normal;
-			}
-
-			.postInfobar {
-				position: relative;
-				margin-top: 10px;
-				border-top: 1px solid #DDD;
-				
-				li {
-					cursor: pointer;
-					vertical-align: bottom;
-					padding: 5px 8px 6px;
-					color: #888;
-					font-size: 11px;
-					list-style: none;
-					display: inline-block;
-					&:hover {
-						color: #444;
-					}
-
-					.tooltip {
-						font-size: 11px;
-						.tooltip-inner {
-							.rounded(2px);
-							padding-top: 1px;
-						}
-					}
-				}
-
-				i { font-size: 12px; }
-
-				.icon-red {
-					color: red;
-				}
-
-				ul.right {
-					position: absolute;
-					top: 0;
-					right: 0;
-					li { border-left: 1px solid #DDD; }
-				}
-
-				ul.left{
-					li { border-right: 1px solid #DDD; }
-				}
-			}
-		}
-
-		.postFoot {
-
-			.commentInputSection .mediaUser,
-			.commentWrapper .mediaUser {
-				.rounded(0);
-				width: 30px;
-				height: 30px;
-			}
-
-		}
-
-		.optionBtns {
-			float: right;
-			display: inline-block;
-			position: absolute;
-			right: 5px; top: 0px;
-			z-index: 4;
-			
-			.transition(all, .2s, linear);
-			opacity: .5;
-			&:hover {
-				opacity: 1;
-			}
-
-			[data-action=remove-post],
-			[data-action=edit-post] {
-				.full-reset-button;
-				padding-left: 3px;
-				vertical-align: middle;
-				padding-right: 3px;
-				font-size: 105%;
-				font-weight: bolder;
-				color: #888;
-				opacity: .6;
-				&:hover {
-					color: #444;
-				}
-				&:active {
-					outline: none;
-				}
-			}
-		}
-
-		[data-post-type=QAPost] {
-			
-			.postHead {
-				.msgTitle {
-					font-size: 13px;
-					padding: 10px;
-					position: relative;
-					background: white;
-					border: 1px solid #DDD;
-					overflow-wrap: break-word;
-					.arrow {
-						content: '';
-						border: 7px solid transparent;
-						border-bottom-color: #EFEFEF;
-						top: -14px;
-						position: absolute;
-						left: 5px+14px;
-					}
-					margin-bottom: 10px;
-					&::after {
-						content: '?';
-						float: right;
-						font-size: 20px;
-
-					}
-				}
-				.msgBody {
-					font-size: 13px;
-				}
-			}
-
-			.answerView {
-				background: #FAFAFA;
-				padding: 10px;
-
-				.leftCol {
-					float: left;
-
-					.mediaUser {
-						vertical-align: top;
-						border: 1px solid #DDD;
-						height: 35px;
-						width: 35px;
-					}
-				}
-
-				.msgBody {
-					font-size: 14px;
-					padding: 10px;
-					position: relative;
-					margin-left: 60px;
-					background: white;
-					border: 1px solid #DDD;
-					overflow-wrap: break-word;
-
-					.arrow {
-						content: '';
-						border: 7px solid transparent;
-						border-right-color: #EFEFEF;
-						top: 14px;
-						position: absolute;
-						left: -15px;
-					}
-				}
-			}
-		}
+	.blackout {
+		z-index: 1000;
+		position: fixed;
+		top: 0; right: 0; bottom: 0; left: 0;
+		background: rgba(0,0,0,.5);
 	}
 }
 
@@ -522,55 +311,300 @@ nav.bar {
 			padding-bottom: 10px;
 		}
 	}
+}
 
-	.postView {
-		font-size: 13px;
-		border: 1px solid #DDD;
-		.rounded(4px);
+.postView {
+	font-size: 13px;
+	border: 1px solid #DDD;
+	.rounded(4px);
 
-		.postHead {
-			background: white;
-			.rounded(3px);
+	.postHead {
+		background: white;
+		.rounded(3px);
 
-			// background: white;
-			border-bottom: none;
+		// background: white;
+		border-bottom: none;
 
-			.msgHeader {
-				padding: 5px;
-				height: 55px;
-				.mediaUser {
-					width: 40px;
-					height: 40px;
-					.rounded(0);
-					// border: 1px solid #DDD;
-				}
-				.headline {
-					margin-left: 5px;
-					display: inline-block;
-					font: 13px "Open Sans";
-					.authorUsername {
-						color: #666;
-						&:hover {
-							color: #444;
-						}
-						text-decoration: none;
-						display: inline;
-						font-weight: bold;
+		.msgHeader {
+			padding: 5px;
+			height: 55px;
+			.mediaUser {
+				width: 40px;
+				height: 40px;
+				.rounded(0);
+				// border: 1px solid #DDD;
+			}
+			.headline {
+				margin-left: 5px;
+				display: inline-block;
+				font: 13px "Open Sans";
+				.authorUsername {
+					color: #666;
+					&:hover {
+						color: #444;
 					}
-					width: 450px;
+					text-decoration: none;
+					display: inline;
+					font-weight: bold;
 				}
-				time {
-					position: absolute;
-					right: 13px;
-					top: 45px;
-					font-size: 12px;
-					color: #888;
-					float: right;
+				width: 450px;
+			}
+			time {
+				position: absolute;
+				right: 13px;
+				top: 45px;
+				font-size: 12px;
+				color: #888;
+				float: right;
+			}
+		}
+
+		.msgBody, .msgTitle {
+			margin: 5px;
+			padding: 10px;
+			position: relative;
+			background: white;
+			border: 1px solid #DDD;
+			overflow-wrap: break-word;
+			.arrow {
+				content: '';
+				border: 7px solid transparent;
+				border-bottom-color: #EFEFEF;
+				top: -14px;
+				position: absolute;
+				left: 5px+14px;
+			}
+		
+		}
+		.msgTitle {
+			font-size: 14px;
+			font-weight: 600;
+		}
+		.msgBody {
+			font-size: 13px;
+			font-weight: normal;
+		}
+
+		.postInfobar {
+			position: relative;
+			margin-top: 10px;
+			border-top: 1px solid #DDD;
+			
+			li {
+				cursor: pointer;
+				vertical-align: bottom;
+				padding: 5px 8px 6px;
+				color: #888;
+				font-size: 11px;
+				list-style: none;
+				display: inline-block;
+				&:hover {
+					color: #444;
+				}
+
+				.tooltip {
+					font-size: 11px;
+					.tooltip-inner {
+						.rounded(2px);
+						padding-top: 1px;
+					}
 				}
 			}
 
-			.msgBody, .msgTitle {
-				margin: 5px;
+			i { font-size: 12px; }
+
+			.icon-red {
+				color: red;
+			}
+
+			ul.right {
+				position: absolute;
+				top: 0;
+				right: 0;
+				li { border-left: 1px solid #DDD; }
+			}
+
+			ul.left{
+				li { border-right: 1px solid #DDD; }
+			}
+		}
+	}
+
+	.postFoot {
+
+		.commentInputSection .mediaUser,
+		.commentWrapper .mediaUser {
+			.rounded(0);
+			width: 30px;
+			height: 30px;
+		}
+
+		.commentSection {
+			background: white;
+			font-size: 13px;
+
+			.commentList {
+				list-style: none;
+				padding: 0 5px;
+
+				.commentWrapper:last-child {
+					padding-bottom: 5px;
+				}
+				.commentWrapper {
+					padding-top: 5px;
+					overflow-wrap: break-word;
+					border-top: 1px dashed #DDD;
+
+					.msgBody {
+						vertical-align: middle;
+						display: inline-block;
+						.no-box-shadow;
+						outline: none;
+						font-size: 13px;
+						padding: 5px;
+						width: 100%;
+						position: relative;
+
+						border: 1px solid #DDD;
+
+						.arrow {
+							content: '';
+							border: 5px solid transparent;
+							border-top-color: #DDD;
+							bottom: -10px;
+							position: absolute;
+							left: 8px;
+						}
+					}
+
+					.infoBar {
+						position: relative;
+						padding: 5px;
+						font-size: 12px;
+
+						.author {
+							color: #666;
+							text-decoration: none;
+
+							&:hover {
+								color: #333;
+							}
+
+							.mediaUser {
+								height: 20px;
+								width: 20px;
+								vertical-align: middle;
+								margin-right: 5px;
+								border: 1px solid #DDD;
+								.rounded(15px);
+
+								.mediaUserAvatar {
+									.rounded(15px);
+								}
+							}
+
+							.name {
+								vertical-align: middle;
+							}
+						}
+
+						.time {
+							font-size: 11px;
+						}
+					}
+				}
+				.commentWrapper:target {
+					background: yellow;
+				}
+			}
+
+			.commentInputSection {
+				padding: 3px 5px 3px 5px;
+				border-top: 1px solid #DDD;
+				// background: #EEE;
+
+				td {
+					vertical-align: top;
+				}
+
+				td:not(:last-child) {
+					padding-right: 5px;
+				}
+				
+				.mediaUser {
+					border: 1px solid #DDD;
+				}
+
+				.commentInputTd {
+					width: 100%;
+				}
+				.commentInput {
+
+					vertical-align: middle;
+					display: inline-block;
+					border: 1px solid #DDD;
+					.no-box-shadow;
+					outline: none;
+					font-size: 13px;
+					padding: 5px;
+
+					width: 100%;
+					height: 30px;
+					&:focus {
+						border-color: #08C;
+						height: 35px;
+					}
+					resize: vertical;
+				}
+
+				[data-action=send-comment] {
+					display: inline-block;
+					.high-xbtn(white, @COLOR2);
+					font-size: 12px;
+					.high-xbtn-padding(4px, 10px, 2px);
+				}
+			}
+		}
+	}
+
+	.optionBtns {
+		float: right;
+		display: inline-block;
+		position: absolute;
+		right: 5px; top: 0px;
+		z-index: 4;
+		
+		.transition(all, .2s, linear);
+		opacity: .5;
+		&:hover {
+			opacity: 1;
+		}
+
+		[data-action=remove-post],
+		[data-action=edit-post] {
+			.full-reset-button;
+			padding-left: 3px;
+			vertical-align: middle;
+			padding-right: 3px;
+			font-size: 105%;
+			font-weight: bolder;
+			color: #888;
+			opacity: .6;
+			&:hover {
+				color: #444;
+			}
+			&:active {
+				outline: none;
+			}
+		}
+	}
+
+	[data-post-type=QAPost] {
+		
+
+		.postHead {
+			.msgTitle {
+				font-size: 13px;
 				padding: 10px;
 				position: relative;
 				background: white;
@@ -584,301 +618,56 @@ nav.bar {
 					position: absolute;
 					left: 5px+14px;
 				}
-			
-			}
-			.msgTitle {
-				font-size: 14px;
-				font-weight: 600;
+				margin-bottom: 10px;
+				&::after {
+					content: '?';
+					float: right;
+					font-size: 20px;
+
+				}
 			}
 			.msgBody {
 				font-size: 13px;
-				font-weight: normal;
-			}
-
-			.postInfobar {
-				position: relative;
-				margin-top: 10px;
-				border-top: 1px solid #DDD;
-				
-				li {
-					cursor: pointer;
-					vertical-align: bottom;
-					padding: 5px 8px 6px;
-					color: #888;
-					font-size: 11px;
-					list-style: none;
-					display: inline-block;
-					&:hover {
-						color: #444;
-					}
-
-					.tooltip {
-						font-size: 11px;
-						.tooltip-inner {
-							.rounded(2px);
-							padding-top: 1px;
-						}
-					}
-				}
-
-				i { font-size: 12px; }
-
-				.icon-red {
-					color: red;
-				}
-
-				ul.right {
-					position: absolute;
-					top: 0;
-					right: 0;
-					li { border-left: 1px solid #DDD; }
-				}
-
-				ul.left{
-					li { border-right: 1px solid #DDD; }
-				}
 			}
 		}
 
-		.postFoot {
+		.answerView {
+			background: #FAFAFA;
+			padding: 10px;
 
-			.commentInputSection .mediaUser,
-			.commentWrapper .mediaUser {
-				.rounded(0);
-				width: 30px;
-				height: 30px;
-			}
+			.leftCol {
+				float: left;
 
-			.commentSection {
-				background: white;
-				font-size: 13px;
-
-				.commentList {
-					list-style: none;
-					padding: 0 5px;
-
-					.commentWrapper:last-child {
-						padding-bottom: 5px;
-					}
-					.commentWrapper {
-						padding-top: 5px;
-						overflow-wrap: break-word;
-						border-top: 1px dashed #DDD;
-
-						.msgBody {
-							vertical-align: middle;
-							display: inline-block;
-							.no-box-shadow;
-							outline: none;
-							font-size: 13px;
-							padding: 5px;
-							width: 100%;
-							position: relative;
-
-							border: 1px solid #DDD;
-
-							.arrow {
-								content: '';
-								border: 5px solid transparent;
-								border-top-color: #DDD;
-								bottom: -10px;
-								position: absolute;
-								left: 8px;
-							}
-						}
-
-						.infoBar {
-							position: relative;
-							padding: 5px;
-							font-size: 12px;
-
-							.author {
-								color: #666;
-								text-decoration: none;
-
-								&:hover {
-									color: #333;
-								}
-
-								.mediaUser {
-									height: 20px;
-									width: 20px;
-									vertical-align: middle;
-									margin-right: 5px;
-									border: 1px solid #DDD;
-									.rounded(15px);
-
-									.mediaUserAvatar {
-										.rounded(15px);
-									}
-								}
-
-								.name {
-									vertical-align: middle;
-								}
-							}
-
-							.time {
-								font-size: 11px;
-							}
-						}
-					}
-					.commentWrapper:target {
-						background: yellow;
-					}
-				}
-
-				.commentInputSection {
-					padding: 3px 5px 3px 5px;
-					border-top: 1px solid #DDD;
-					// background: #EEE;
-
-					td {
-						vertical-align: top;
-					}
-
-					td:not(:last-child) {
-						padding-right: 5px;
-					}
-					
-					.mediaUser {
-						border: 1px solid #DDD;
-					}
-
-					.commentInputTd {
-						width: 100%;
-					}
-					.commentInput {
-
-						vertical-align: middle;
-						display: inline-block;
-						border: 1px solid #DDD;
-						.no-box-shadow;
-						outline: none;
-						font-size: 13px;
-						padding: 5px;
-
-						width: 100%;
-						height: 30px;
-						&:focus {
-							border-color: #08C;
-							height: 35px;
-						}
-						resize: vertical;
-					}
-
-					[data-action=send-comment] {
-						display: inline-block;
-						.high-xbtn(white, @COLOR2);
-						font-size: 12px;
-						.high-xbtn-padding(4px, 10px, 2px);
-					}
-				}
-			}
-		}
-
-		.optionBtns {
-			float: right;
-			display: inline-block;
-			position: absolute;
-			right: 5px; top: 0px;
-			z-index: 4;
-			
-			.transition(all, .2s, linear);
-			opacity: .5;
-			&:hover {
-				opacity: 1;
-			}
-
-			[data-action=remove-post],
-			[data-action=edit-post] {
-				.full-reset-button;
-				padding-left: 3px;
-				vertical-align: middle;
-				padding-right: 3px;
-				font-size: 105%;
-				font-weight: bolder;
-				color: #888;
-				opacity: .6;
-				&:hover {
-					color: #444;
-				}
-				&:active {
-					outline: none;
-				}
-			}
-		}
-
-		[data-post-type=QAPost] {
-			
-
-			.postHead {
-				.msgTitle {
-					font-size: 13px;
-					padding: 10px;
-					position: relative;
-					background: white;
+				.mediaUser {
+					vertical-align: top;
 					border: 1px solid #DDD;
-					overflow-wrap: break-word;
-					.arrow {
-						content: '';
-						border: 7px solid transparent;
-						border-bottom-color: #EFEFEF;
-						top: -14px;
-						position: absolute;
-						left: 5px+14px;
-					}
-					margin-bottom: 10px;
-					&::after {
-						content: '?';
-						float: right;
-						font-size: 20px;
-
-					}
-				}
-				.msgBody {
-					font-size: 13px;
+					height: 35px;
+					width: 35px;
 				}
 			}
 
-			.answerView {
-				background: #FAFAFA;
+			.msgBody {
+				font-size: 14px;
 				padding: 10px;
+				position: relative;
+				margin-left: 60px;
+				background: white;
+				border: 1px solid #DDD;
+				overflow-wrap: break-word;
 
-				.leftCol {
-					float: left;
-
-					.mediaUser {
-						vertical-align: top;
-						border: 1px solid #DDD;
-						height: 35px;
-						width: 35px;
-					}
-				}
-
-				.msgBody {
-					font-size: 14px;
-					padding: 10px;
-					position: relative;
-					margin-left: 60px;
-					background: white;
-					border: 1px solid #DDD;
-					overflow-wrap: break-word;
-
-					.arrow {
-						content: '';
-						border: 7px solid transparent;
-						border-right-color: #EFEFEF;
-						top: 14px;
-						position: absolute;
-						left: -15px;
-					}
+				.arrow {
+					content: '';
+					border: 7px solid transparent;
+					border-right-color: #EFEFEF;
+					top: 14px;
+					position: absolute;
+					left: -15px;
 				}
 			}
+		}
 
-			.showMorePrompt {
-				background: #DDD;
-			}
+		.showMorePrompt {
+			background: #DDD;
 		}
 	}
 }
@@ -896,7 +685,6 @@ body {
 
 		#cards {
 			margin: 0 auto;
-			width: @results-container-width+@sidebar-width+@sidebar-gap;
 			width: 1120px;
 			// // padding-top: 20px;
 			// #sidebar {

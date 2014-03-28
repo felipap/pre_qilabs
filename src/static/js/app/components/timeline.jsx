@@ -72,6 +72,29 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 		},
 	});
 
+	var FullPostView = React.createClass({
+
+		render: function () {
+			// test for type, QA for example
+			var postType = this.props.model.get('type');
+			if (postType in postViews) {
+				var postView = postViews[postType];
+			} else {
+				console.warn("Couldn't find view for post of type "+postType);
+				return <div />;
+			}
+			// console.log(this.props.model.get('type'))
+			return (
+				<div className="fullPostView">
+					<div className="postView">
+						<postView model={this.props.model} />
+					</div>
+					<div className="blackout"></div>
+				</div>
+			);
+		},
+	});
+
 	var StreamItemView = React.createClass({
 		render: function () {
 			var itemType = this.props.model.get('__t');
@@ -176,8 +199,8 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 			'posts/:postId':
 				 function (postId) {
 				 	this.postItem = new postModels.postItem(window.conf.postData);
-				 	React.renderComponent(PostView({model:this.postItem}),
-				 		document.getElementById('resultsContainer'));
+				 	React.renderComponent(FullPostView({model:this.postItem}),
+				 		document.getElementById('fullPageContainer'));
 				},
 			'labs/:labId':
 				function (labId) {					
@@ -189,22 +212,15 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 				},
 			'':
 				function () {
-					this.cardPage = true;
 					this.renderList('/api/me/timeline/posts',{canPostForm:true});
 				},
 		},
 
 		renderList: function (url, opts) {
 			this.postList = new postModels.postList([], {url:url});
-			if (this.cardPage) {
-				React.renderComponent(CardsPanelView(
-					_.extend(opts,{collection:this.postList})),
-					document.getElementById('resultsContainer'));
-			} else {
-				React.renderComponent(TimelineView(
-					_.extend(opts,{collection:this.postList})),
-					document.getElementById('resultsContainer'));
-			}
+			React.renderComponent(TimelineView(
+				_.extend(opts,{collection:this.postList})),
+				document.getElementById('resultsContainer'));
 
 			this.postList.fetch({reset:true});
 

@@ -1,13 +1,14 @@
 /** @jsx React.DOM */
 
 /*
-** timeline.js
+** cards.js
 ** Copyright QILabs.org
 ** BSD License
 ** by @f03lipe
 */
 
-define(['jquery', 'backbone', 'components.postForms', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
+define([
+	'jquery', 'backbone', 'components.postForms', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
 	function ($, Backbone, postForms, postModels, postViews, _, React, Showdown) {
 
 	setTimeout(function updateCounters () {
@@ -34,24 +35,6 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 		return originalSync(method, model, options);
 	};
 
-	var ActivityView = React.createClass({displayName: 'ActivityView',
-
-		render: function () {
-			var post = this.props.model.attributes;
-			var mediaUserStyle = {
-				background: 'url('+post.actor.avatarUrl+')',
-			};
-			return (
-				React.DOM.div( {className:"activityView"}, 
-					React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('content')}} ),
-					React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
-						window.calcTimeFrom(post.published, true)
-					)
-				)
-			);
-		},
-	});
-
 	var PostView = React.createClass({displayName: 'PostView',
 
 		render: function () {
@@ -74,6 +57,11 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 
 	var FullPostView = React.createClass({displayName: 'FullPostView',
 
+		destroy: function () {
+			React.unmountComponentAtNode(document.getElementById('fullPageContainer'));
+			app.navigate('/', {trigger:true});
+		},
+
 		render: function () {
 			// test for type, QA for example
 			var postType = this.props.model.get('type');
@@ -89,7 +77,7 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 					React.DOM.div( {className:"postView"}, 
 						postView( {model:this.props.model} )
 					),
-					React.DOM.div( {className:"blackout"})
+					React.DOM.div( {onClick:this.destroy, className:"blackout"})
 				)
 			);
 		},
@@ -193,32 +181,24 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 		initialize: function () {
 			console.log('initialized')
 			window.app = this;
+			this.renderList('/api/me/timeline/posts',{canPostForm:true});
 		},
 
 		routes: {
 			'posts/:postId':
 				 function (postId) {
-				 	this.postItem = new postModels.postItem(window.conf.postData);
-				 	React.renderComponent(FullPostView({model:this.postItem}),
-				 		document.getElementById('fullPageContainer'));
-				},
-			'labs/:labId':
-				function (labId) {					
-					this.renderList('/api/labs/'+labId+'/posts',{canPostForm:true});
-				},
-			'p/:profileId':
-				function () {
-					this.renderList(window.conf.postsRoot,{canPostForm:false});
-				},
-			'':
-				function () {
-					this.renderList('/api/me/timeline/posts',{canPostForm:true});
+				 	$.getJSON('/api/posts/'+postId, function (response) {
+				 		console.log('response, data', response)
+					 	this.postItem = new postModels.postItem(response.data);
+					 	React.renderComponent(FullPostView({model:this.postItem}),
+					 		document.getElementById('fullPageContainer'));
+				 	});
 				},
 		},
 
 		renderList: function (url, opts) {
 			this.postList = new postModels.postList([], {url:url});
-			React.renderComponent(TimelineView(
+			React.renderComponent(CardsPanelView(
 				_.extend(opts,{collection:this.postList})),
 				document.getElementById('resultsContainer'));
 
@@ -239,7 +219,7 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 	return {
 		initialize: function () {
 			new WorkspaceRouter;
-			Backbone.history.start({ pushState:false, hashChange:false });
+			Backbone.history.start({ pushState:false, hashChange:true });
 		}
 	};
 });

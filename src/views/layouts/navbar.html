@@ -100,7 +100,7 @@
 </div>
 </nav>
 
-
+{% if !user %}
 <div class="dialog" id="signin">
 	<div class="box">
 		<button type="button" data-action="close-dialog" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
@@ -119,15 +119,4 @@
 	</div>
 	<div class="box-blackout" data-action="close-dialog"></div>
 </div>
-
-
-<div class="dialog" id="nos-avisa">
-	<div class="box">
-		<button type="button" data-action="close-dialog" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
-		<div class="content">
-			<h1>Tem notícia pra gente?</h1>
-			<small>Manda um email para <strong>piresafelipe[arroba]gmail[ponto]com</strong> o assunto 'Me Avisa'.</small>
-		</div>
-	</div>
-	<div class="box-blackout" data-action="close-dialog"></div>
-</div>
+{% endif %}

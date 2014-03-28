@@ -27,7 +27,7 @@ module.exports = {
           }, req.handleErrResult(function(post) {
             return post.stuff(req.handleErrResult(function(stuffedPost) {
               return res.endJson({
-                post: stuffedPost
+                data: stuffedPost
               });
             }));
           }));

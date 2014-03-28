@@ -279,7 +279,7 @@ UserSchema.statics.getUserTimeline = (user, opts, cb) ->
 	fetchTimelinePostAndActivities(
 		{maxDate: opts.maxDate},
 		{group:null, author:user, parentPost:null},
-		{actor:userId, group:null},
+		{actor:user, group:null},
 		(err, all, minPostDate) -> cb(err, all, minPostDate)
 	)
 

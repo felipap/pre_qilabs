@@ -17,7 +17,7 @@ module.exports = {
 					return unless postId = req.paramToObjectId('id')
 					Post.findOne { _id:postId }, req.handleErrResult((post) ->
 						post.stuff req.handleErrResult (stuffedPost) ->
-							res.endJson( post: stuffedPost )
+							res.endJson( data: stuffedPost )
 					)
 				]
 			post: (req, res) ->
