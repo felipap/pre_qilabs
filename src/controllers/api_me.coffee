@@ -67,13 +67,14 @@ module.exports = {
 				if not req.body.type in _.values(Post.Types)
 					console.log 'typo', req.body.type, 'invalido', _.values(Post.Types)
 					return res.endJSON {error:true,type:'InvalidPostType'}
+				console.log req.body.type
 
 				req.user.createPost {
 					groupId: null
 					type: req.body.type
 					content:
-						title: req.body.content.title
-						body: req.body.content.body
+						title: req.body.post_title
+						body: req.body.post_body
 				}, req.handleErrResult((doc) ->
 					doc.populate 'author', (err, doc) ->
 						res.endJson {error:false, data:doc}

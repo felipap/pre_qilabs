@@ -21,6 +21,15 @@
 		<meta property="og:description" content="" />
 
 		<link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Lato|Londrina+Solid|Ubuntu:400,500|Open+Sans:400,500,600,700,800|Londrina+Sketch' />
+
+		{% if user %}
+			<script>window.loggedUser=true;</script>
+			<script>window.user = {id: '{{user.id}}', avatarUrl: '{{user.avatarUrl}}'}</script>
+		{% else %}
+			<script>window.loggedUser=false;</script>
+			<script>window.user = {}</script>
+		{% endif %}
+		
 		{% block head %}{% endblock %}
 		{% block stylesheets %}{% endblock %}
 		{% block templates %}{% endblock %}

@@ -4,13 +4,6 @@
 
 {% block head %}
 {% parent %}
-	{% if user %}
-		<script>window.loggedUser=true;</script>
-		<script>window.user = {id: '{{user.id}}', avatarUrl: '{{user.avatarUrl}}'}</script>
-	{% else %}
-		<script>window.loggedUser=false;</script>
-		<script>window.user = {}</script>
-	{% endif %}
 	{{ tagMacros.stylesheet(getMediaUrl('css','sn_pages.min.css')) }}
 {% endblock %}
 

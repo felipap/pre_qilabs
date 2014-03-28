@@ -108,12 +108,13 @@ module.exports = {
             type: 'InvalidPostType'
           });
         }
+        console.log(req.body.type);
         return req.user.createPost({
           groupId: null,
           type: req.body.type,
           content: {
-            title: req.body.content.title,
-            body: req.body.content.body
+            title: req.body.post_title,
+            body: req.body.post_body
           }
         }, req.handleErrResult(function(doc) {
           return doc.populate('author', function(err, doc) {

@@ -11,7 +11,7 @@
 			<h2><em>{{ error_code }}</em></h2>
 			<small>{{ error_msg }}</small>
 			<ul>
-				<small>{{ error_stack }}</small>
+				<small>{{ error_stack|safe }}</small>
 			</ul>
 		</div>
 		{% endif %}

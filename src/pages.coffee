@@ -70,7 +70,7 @@ module.exports = {
 			}
 		}
 
-	'/p/:username':
+	'/u/:username':
 		name: 'profile'
 		methods: {
 			get: (req, res) ->
@@ -86,6 +86,12 @@ module.exports = {
 								res.render 'pages/profile', 
 									profile: profile
 									follows: bool
+		}
+
+	'/p/create':
+		methods: {
+			get: (req, res) ->
+				res.render 'pages/post_create'
 		}
 
 	'/posts/:postId':

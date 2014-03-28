@@ -206,7 +206,7 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 				function (labId) {					
 					this.renderList('/api/labs/'+labId+'/posts',{canPostForm:true});
 				},
-			'p/:profileId':
+			'u/:profileId':
 				function () {
 					this.renderList(window.conf.postsRoot,{canPostForm:false});
 				},

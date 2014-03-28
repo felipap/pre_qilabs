@@ -54,7 +54,6 @@ define([
 				return React.DOM.div(null );
 			}
 
-
 			var mediaUserStyle = {
 				background: 'url('+post.author.avatarUrl+')',
 			};

@@ -26,11 +26,6 @@ nav.bar {
 	}
 }
 
-.bg-img#page-bg {
-	background: #FAFAFA;
-	// background: url(/static/images/cubes.png);
-}
-
 .mediaUser {
 	display: inline-block;
 	vertical-align: middle;
@@ -162,6 +157,9 @@ nav.bar {
 }
 
 body {
+	background: #FAFAFA url(/static/images/cubes.png);
+
+
 	#globalContainer {
 		.scrollbared;
 
@@ -234,4 +232,53 @@ body {
 			}
 		}
 	}
+}
+
+[data-page=postCreate] {
+	
+	#globalContainer #content {
+		width: 800px;
+	}
+
+	#formCreatePost {
+		background: white;
+		padding: 20px;
+		.box-shadow(10px, 0.3);
+
+		.title, .body {
+			display: block;
+			outline: none;
+			border: none;
+			width: 100%;
+
+			&:focus {
+				border-bottom-color: #CCC;
+			}
+
+			padding: 15px;
+			background: white;
+	
+			font-family: "Open Sans";
+			font-size: 16px;
+			margin-bottom: 10px;
+		}
+
+		.title {
+			border-bottom: 2px dotted #DDD;
+			padding: 5px;
+		}
+
+		.body {
+			border: 1px solid #EAEAEA;
+			border-bottom: 1px solid #DDD;
+			padding: 10px;
+			resize: vertical;
+		}
+
+		button {
+			.btn-block;
+			.high-xbtn(white, @COLOR1);
+		}
+	}
+
 }

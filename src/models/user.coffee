@@ -74,10 +74,10 @@ UserSchema.virtual('avatarUrl').get ->
 	'https://graph.facebook.com/'+@facebookId+'/picture'
 
 UserSchema.virtual('profileUrl').get ->
-	'/p/'+@username
+	'/u/'+@username
 
 UserSchema.virtual('path').get ->
-	'/p/'+@username
+	'/u/'+@username
 
 ################################################################################
 ## Middlewares #################################################################
@@ -375,7 +375,9 @@ UserSchema.methods.postToParentPost = (parentPost, data, cb) ->
 Create a post object and fan out through inboxes.
 ###
 UserSchema.methods.createPost = (data, cb) ->
+	self = @
 	assertArgs({$contains:['content','type']}, '$isCb')
+	console.log('type', data.type)
 	post = new Post {
 		author: self.id
 		data: {

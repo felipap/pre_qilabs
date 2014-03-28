@@ -1,0 +1,32 @@
+{% extends '../stdbody.html' %}
+{% import '../macros/tags.html' as tagMacros %}
+{% import '../macros/ubgs.html' as ubgs %}
+{% set requireView="cards" %}
+
+{% block head %}
+{% parent %}
+	{{ tagMacros.stylesheet(getMediaUrl('css','sn_pages.min.css')) }}
+{% endblock %}
+
+{% block body %}
+<div data-page="postCreate">
+
+	{% include '../layouts/navbar.html' %}
+	<div id="globalContainer">
+		{{ ubgs.selectUBg() }}
+		<div class="bg-cover" style="background-image: url({{ getMediaUrl('images/', sel_bg.source) }});"></div>
+
+		<div class="flash-msgs"></div>
+		<div id="content">
+			<form id="formCreatePost" action="/api/me/timeline/posts" method="POST">
+				<input class="title" name="post_title" placeholder="Dê um título para a sua publicação" type="text" />
+				<textarea class="body" name="post_body" rows="10" placeholder="Desenvolvimento"></textarea>
+				<input type="hidden" name="type" value="PlainPost" />
+				<input type="hidden" name="_csrf" value="{{ token }}" />
+				<button data-action="send">Enviar Publicação</button>
+			</form>
+		</div>
+	</div>
+
+</div>
+{% endblock %}

@@ -54,7 +54,6 @@ define([
 				return <div />;
 			}
 
-
 			var mediaUserStyle = {
 				background: 'url('+post.author.avatarUrl+')',
 			};

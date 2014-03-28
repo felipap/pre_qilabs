@@ -86,7 +86,7 @@ module.exports = {
       }
     }
   },
-  '/p/:username': {
+  '/u/:username': {
     name: 'profile',
     methods: {
       get: function(req, res) {
@@ -108,6 +108,13 @@ module.exports = {
             });
           });
         }));
+      }
+    }
+  },
+  '/p/create': {
+    methods: {
+      get: function(req, res) {
+        return res.render('pages/post_create');
       }
     }
   },

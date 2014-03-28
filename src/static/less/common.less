@@ -91,7 +91,7 @@ body {
 
 .bg-cover {
 	@blur: 2px;
-	position: absolute;
+	position: fixed;
 	top: -@blur; bottom: -@blur;
 	left: -@blur; right: -@blur;
 
@@ -100,6 +100,7 @@ body {
 	-o-filter: blur(@blur);
 	-ms-filter: blur(@blur);
 	filter: blur(@blur);
+	z-index: -1;
 
 	background: #FFFFFF no-repeat center bottom;
 	background-clip: content-box;

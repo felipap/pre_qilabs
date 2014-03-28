@@ -113,11 +113,11 @@ UserSchema.virtual('avatarUrl').get(function() {
 });
 
 UserSchema.virtual('profileUrl').get(function() {
-  return '/p/' + this.username;
+  return '/u/' + this.username;
 });
 
 UserSchema.virtual('path').get(function() {
-  return '/p/' + this.username;
+  return '/u/' + this.username;
 });
 
 UserSchema.pre('remove', function(next) {
@@ -595,9 +595,11 @@ Create a post object and fan out through inboxes.
 
 UserSchema.methods.createPost = function(data, cb) {
   var post, self;
+  self = this;
   assertArgs({
     $contains: ['content', 'type']
   }, '$isCb');
+  console.log('type', data.type);
   post = new Post({
     author: self.id,
     data: {
