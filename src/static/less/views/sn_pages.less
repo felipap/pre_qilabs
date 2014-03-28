@@ -27,6 +27,29 @@ nav.bar {
 	}
 }
 
+.tag {
+	display: inline-block;
+	background: 40px;
+	padding: 4px 6px;
+	// .rounded(5px);
+	font-size: 11px;
+	margin-right: 5px;
+	color: white;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-family: "Lato";
+	// font-size: ;
+	background: @COLOR1;
+	cursor: pointer;
+	&:hover {
+		background: darken(@COLOR1, 20%);
+	}
+}
+
+[data-tag-bg=application] { background: @COLOR2; }
+[data-tag-bg=vestibular] { background: @COLOR3; }
+[data-tag-bg=olimpiada] { background: @COLOR4; }
+
 .mediaUser {
 	display: inline-block;
 	vertical-align: middle;

@@ -78,12 +78,32 @@
 			}
 		}
 
+		.cardCover {
+			position: absolute;
+			top: 0px;
+			left: 0;
+			// height: 160px;
+			bottom: 0;
+			right: 0;
+			// background: rgba(0,0,0,.5);
+			// display: none;
+			opacity: 0;
+			.transition;
+			padding: 5px;
+
+			.tag {
+
+			}
+		}
+
+		&:hover .cardCover { opacity: 1; }
+
 		.cardBody {
 			width: 100%;
 			word-wrap: break-word;
-			height: 120px;
+			height: 130px;
 			overflow: hidden;
-			padding: 5px 10px;
+			padding: 10px 10px;
 			font-size: 20px;
 			font-weight: 500;
 
@@ -93,7 +113,6 @@
 		}
 
 		.cardFoot {
-			margin-top: 10px;
 			border-top: 1px solid #EEE;
 			padding: 0 10px;
 			line-height: 36px;
@@ -123,6 +142,21 @@
 				}
 			}
 		}
+
 	}
+
+	// [data-tag=application] {
+	// 	&:hover {
+	// 		border-color: @COLOR3;
+	// 		// outline: 2px solid @COLOR3;
+	// 	}
+	// }
+
+	// [data-tag=olimpiada] {
+	// 	&:hover {
+	// 		border-color: transparent;
+	// 		outline: 2px solid @COLOR4;
+	// 	}
+	// }
 
 }
