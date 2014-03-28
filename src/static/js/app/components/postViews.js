@@ -588,7 +588,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 								PostInfoBar( {model:this.props.model} )
 							),
 							React.DOM.div( {className:"postFoot"}, 
-								AnswerSectionView( {model:this.props.model} )
+								CommentSectionView( {model:this.props.model} )
 							)
 						)
 					);
