@@ -599,7 +599,6 @@ UserSchema.methods.createPost = function(data, cb) {
   assertArgs({
     $contains: ['content', 'type']
   }, '$isCb');
-  console.log('type', data.type);
   post = new Post({
     author: self.id,
     data: {

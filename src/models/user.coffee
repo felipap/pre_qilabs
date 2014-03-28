@@ -377,7 +377,6 @@ Create a post object and fan out through inboxes.
 UserSchema.methods.createPost = (data, cb) ->
 	self = @
 	assertArgs({$contains:['content','type']}, '$isCb')
-	console.log('type', data.type)
 	post = new Post {
 		author: self.id
 		data: {

@@ -573,20 +573,17 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 
 					return (
 						React.DOM.div(null, 
-							React.DOM.div( {className:"postHead", 'data-post-type':"QAPost"}, 
-								React.DOM.div( {className:"msgBody"}, 
+							React.DOM.div( {className:"postContent"}, 
+								React.DOM.div( {className:"postTitle"}, 
+									post.data.title
+								),
+								React.DOM.div( {className:"postBody"}, 
 									React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
 								),
 								PostInfoBar( {model:this.props.model} )
 							),
 							React.DOM.div( {className:"postFoot"}, 
-								
-									app.postItem?
-									React.DOM.div(null, 
-										AnswerSectionView( {model:this.props.model} )
-									)
-									:null
-								
+								AnswerSectionView( {model:this.props.model} )
 							)
 						)
 					);

@@ -67,8 +67,6 @@ module.exports = {
 				if not req.body.type in _.values(Post.Types)
 					console.log 'typo', req.body.type, 'invalido', _.values(Post.Types)
 					return res.endJSON {error:true,type:'InvalidPostType'}
-				console.log req.body.type
-
 				req.user.createPost {
 					groupId: null
 					type: req.body.type

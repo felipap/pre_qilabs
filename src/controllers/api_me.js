@@ -108,7 +108,6 @@ module.exports = {
             type: 'InvalidPostType'
           });
         }
-        console.log(req.body.type);
         return req.user.createPost({
           groupId: null,
           type: req.body.type,

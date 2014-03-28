@@ -21,10 +21,13 @@
 		<meta property="og:description" content="" />
 
 		<link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Lato|Londrina+Solid|Ubuntu:400,500|Open+Sans:400,500,600,700,800|Londrina+Sketch' />
+		<link rel="stylesheet" href='/static/css/fonts.css' />
+
+		<!-- {{_.pluck(user_profile.following.docs, '_id')}} -->
 
 		{% if user %}
 			<script>window.loggedUser=true;</script>
-			<script>window.user = {id: '{{user.id}}', avatarUrl: '{{user.avatarUrl}}'}</script>
+			<script>window.user = {id: '{{user.id}}', avatarUrl: '{{user.avatarUrl}}', following: '{{user_profile.following.docs}}'}</script>
 		{% else %}
 			<script>window.loggedUser=false;</script>
 			<script>window.user = {}</script>

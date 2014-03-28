@@ -76,11 +76,13 @@ define([
 								<a href={post.profileUrl} className="username">
 									{post.author.name}
 								</a>
+									<button className="btn-follow btn-follow-small" data-action="unfollow" data-user="{{ profile.id }}"></button>
 							</div>
 						
 							<div className="bio">
 								Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
 							</div>
+
 						</div>
 					</div>
 					<div onClick={this.destroy} className="blackout"></div>

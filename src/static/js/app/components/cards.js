@@ -75,12 +75,14 @@ define([
 								),
 								React.DOM.a( {href:post.profileUrl, className:"username"}, 
 									post.author.name
-								)
+								),
+									React.DOM.button( {className:"btn-follow btn-follow-small", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
 							),
 						
 							React.DOM.div( {className:"bio"}, 
 								"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam."
 							)
+
 						)
 					),
 					React.DOM.div( {onClick:this.destroy, className:"blackout"})
