@@ -560,6 +560,76 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		'PlainPost': PlainPostView,
 		'CardView': CardView,
 		'QA': QAPostView,
+		full: {
+			'PlainPost': React.createClass({
+				mixins: [EditablePost],
+
+				render: function () {
+					var post = this.props.model.attributes;
+					var mediaUserStyle = {
+						background: 'url('+post.author.avatarUrl+')',
+					};
+					var rawMarkup = post.data.escapedBody;
+
+					return (
+						React.DOM.div(null, 
+							React.DOM.div( {className:"postHead", 'data-post-type':"QAPost"}, 
+								React.DOM.div( {className:"msgBody"}, 
+									React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
+								),
+								PostInfoBar( {model:this.props.model} )
+							),
+							React.DOM.div( {className:"postFoot"}, 
+								
+									app.postItem?
+									React.DOM.div(null, 
+										AnswerSectionView( {model:this.props.model} )
+									)
+									:null
+								
+							)
+						)
+					);
+				},
+			}),
+			'QA': React.createClass({
+				mixins: [EditablePost],
+
+				render: function () {
+					var post = this.props.model.attributes;
+					var mediaUserStyle = {
+						background: 'url('+post.author.avatarUrl+')',
+					};
+					var rawMarkup = post.data.escapedBody;
+
+					return (
+						React.DOM.div(null, 
+							React.DOM.div( {className:"postHead", 'data-post-type':"QAPost"}, 
+								React.DOM.div( {className:"msgTitle"}, 
+									React.DOM.span(null, post.data.title)
+								),
+
+								React.DOM.div( {className:"msgBody"}, 
+									React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
+								),
+
+								PostInfoBar( {model:this.props.model} )
+							),
+							React.DOM.div( {className:"postFoot"}, 
+								
+									app.postItem?
+									React.DOM.div(null, 
+										AnswerSectionView( {model:this.props.model} ),
+										CommentSectionView( {model:this.props.model} )
+									)
+									:null
+								
+							)
+						)
+					);
+				},
+			}),
+		}
 	};
 });
 

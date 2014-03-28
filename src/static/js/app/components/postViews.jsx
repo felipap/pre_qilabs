@@ -560,6 +560,76 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		'PlainPost': PlainPostView,
 		'CardView': CardView,
 		'QA': QAPostView,
+		full: {
+			'PlainPost': React.createClass({
+				mixins: [EditablePost],
+
+				render: function () {
+					var post = this.props.model.attributes;
+					var mediaUserStyle = {
+						background: 'url('+post.author.avatarUrl+')',
+					};
+					var rawMarkup = post.data.escapedBody;
+
+					return (
+						<div>
+							<div className="postHead" data-post-type="QAPost">
+								<div className="msgBody">
+									<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+								</div>
+								<PostInfoBar model={this.props.model} />
+							</div>
+							<div className="postFoot">
+								{
+									app.postItem?
+									<div>
+										<AnswerSectionView model={this.props.model} />
+									</div>
+									:null
+								}
+							</div>
+						</div>
+					);
+				},
+			}),
+			'QA': React.createClass({
+				mixins: [EditablePost],
+
+				render: function () {
+					var post = this.props.model.attributes;
+					var mediaUserStyle = {
+						background: 'url('+post.author.avatarUrl+')',
+					};
+					var rawMarkup = post.data.escapedBody;
+
+					return (
+						<div>
+							<div className="postHead" data-post-type="QAPost">
+								<div className="msgTitle">
+									<span>{post.data.title}</span>
+								</div>
+
+								<div className="msgBody">
+									<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+								</div>
+
+								<PostInfoBar model={this.props.model} />
+							</div>
+							<div className="postFoot">
+								{
+									app.postItem?
+									<div>
+										<AnswerSectionView model={this.props.model} />
+										<CommentSectionView model={this.props.model} />
+									</div>
+									:null
+								}
+							</div>
+						</div>
+					);
+				},
+			}),
+		}
 	};
 });
 

@@ -1,10 +1,13 @@
 
 /* sn_pages.less
-** Copyright qilabs.org
-** Styles of social network pages (sidebars included).
+** Copyright QIlabs.org
+** Styles of social network pages.
 */
 
 @import "../common.less";
+@import "../components/sidebar.less";
+@import "../components/timeline.less";
+@import "../components/cards.less";
 
 @page-width: 960px;
 
@@ -87,115 +90,67 @@ nav.bar {
 	}
 }
 
-.cardsContainer ()
-{
-
-
-	.postInputForm { display: none; }
-
-	.cardView {
-		position: relative;
-
-		display: inline-block;
-		width: 250px; margin-right: 30px;
-		height: 240px; margin-bottom: 30px;
-		vertical-align: top;
-
-		padding: 10px;
-
-		// border: 1px solid #DDD;
-		background: white;
-
-		time {
-			font-size: 12px;
-			float: right;
-		}
-
-		.cardHeader {
-			font-size: 12px;
-			height: 30px;
-			vertical-align: middle;
-
-			.author {
-				display: inline-block;
-				margin-right: 5px;
-
-				.username {
-					text-decoration: none;
-					font-size: 13px;
-					color: #444;
-				}
-
-				.avatarWrapper {
-					margin-right: 5px;
-					border: 1px solid #EFEFEF;
-					.rounded(20px);
-					width: 30px;
-					height: 30px;
-				}
-			}
-		}
-
-		.cardBody {
-			width: 100%;
-			word-wrap: break-word;
-			height: 150px;
-			overflow: hidden;
-			padding: 10px 0;
-			font-size: 17px;
-		}
-
-		.cardFoot {
-			
-			li {
-				cursor: pointer;
-				vertical-align: bottom;
-				color: #888;
-				font-size: 11px;
-				margin-right: 5px;
-				list-style: none;
-				display: inline-block;
-				&:hover {
-					color: #444;
-				}
-
-				.tooltip {
-					font-size: 11px;
-					.tooltip-inner {
-						.rounded(2px);
-						padding-top: 1px;
-					}
-				}
-			}
-
-			i { font-size: 12px; }
-
-			.icon-red {
-				color: red;
-			}
-
-			height: 40px;
-
-			li {
-				font-size: ;
-				list-style: none;
-				display: inline-block;
-			}
-		}
-	}
-
-}
 
 .fullPostView {
 	position: relative;
 	z-index: 1000;
 	margin: 0 auto;
 	width: 1000px;
-	
+	top: 20px;
+
 	.postView {
 		position: relative;
 		z-index: 1001;
-		width: 1000px;
+		width: 660px;
+		float: left;
+		background: white;
+		padding: 20px;
+	}
+
+	.postSidebar {
+		position: relative;
+		padding: 20px;
+
+		z-index: 1001;
+		float: left;
+		width: 340px;
+		background: #444;
+
+		color: white;
+
+		.authorInfo {
+			background: #444;
+	
+			.identification {
+
+				.avatarWrapper {
+					height: 35px;
+					width: 35px;
+					.rounded(20px);
+					margin-right: 10px;
+				}
+
+				.username {
+					font-weight: bold;
+					color: white;
+					text-decoration: none;
+					vertical-align: middle;
+				}
+			}
+
+			.bio {
+				margin: 10px 0;
+				.text-shadow(3px,.5);
+				font-family: Lato;
+				font-size: 13px;
+			}
+		}
+
+
+		.footer {
+			background: #888;
+		}
+
 	}
 
 	.blackout {
@@ -203,472 +158,6 @@ nav.bar {
 		position: fixed;
 		top: 0; right: 0; bottom: 0; left: 0;
 		background: rgba(0,0,0,.5);
-	}
-}
-
-.resultsContainer (@width: @results-container-width) {
-	width: @width;
-	min-height: 600px;
-	margin-left: @sidebar-width+@sidebar-gap;
-	margin-bottom: 20px;
-
-	.postInputForm {
-		textarea {
-			display: block;
-			width: 100%;
-			border-color: #DDD;
-		}
-
-		[data-action=send-post] {
-			.high-xbtn(white, @COLOR1);
-		}
-	}
-
-	.header {
-		position: relative;
-	
-		.userAvatar {
-			height: 40px;
-			width: 40px;
-			.background-size(cover);
-			position: absolute;
-			border: 1px solid #CCC;
-			.rounded(4px);
-			left: 0;
-		}
-
-		.textInput {
-			padding-left: 50px;
-			textarea {
-				.transition(border-color, .2s, linear);
-				.rounded(3px);
-				&:focus {
-					border-color: #08C;
-				}
-				padding: 10px;
-				border: 1px solid #DDD;
-				width: 100%;
-				outline: none;
-				resize: none;
-				font-size: 13px;
-				height: 50px;
-			}
-
-			.arrow {
-				content: '';
-				border: 6px solid transparent;
-				border-right-color: #CCC;
-				top: 14px;
-				position: absolute;
-				left: 38px;
-			}
-
-			[data-action=send] {
-				.xbtn(white, @COLOR1);
-				.small-xbtn;
-				font-size: 12px;
-			}
-		}
-	}
-	
-	.streamSign {
-		color: #AAA;
-		border: 1px dashed #AAA;
-		width: 100%;
-		font-weight: 13px;
-		font-weight: bold;
-		padding: 20px;
-		.rounded(4px);
-		display: block;
-		text-align: center;
-
-		&a {
-			color: #AAA;
-			text-decoration: none;
-		}
-	}
-
-	.streamItem {
-		position: relative;
-		margin-bottom: 15px;
-
-		.activityView {
-			font-size: 13px;
-			a {
-				text-decoration: none;
-				color: #666;
-				&:hover {
-					color: #08C;
-				}
-				font-weight: bold;
-			}	
-			time {
-				font-size: 11px;
-				margin-left: 5px;
-			}
-
-			// border-bottom: 1px dashed #DDD;
-			padding-bottom: 10px;
-		}
-	}
-}
-
-.postView {
-	font-size: 13px;
-	border: 1px solid #DDD;
-	.rounded(4px);
-
-	.postHead {
-		background: white;
-		.rounded(3px);
-
-		// background: white;
-		border-bottom: none;
-
-		.msgHeader {
-			padding: 5px;
-			height: 55px;
-			.mediaUser {
-				width: 40px;
-				height: 40px;
-				.rounded(0);
-				// border: 1px solid #DDD;
-			}
-			.headline {
-				margin-left: 5px;
-				display: inline-block;
-				font: 13px "Open Sans";
-				.authorUsername {
-					color: #666;
-					&:hover {
-						color: #444;
-					}
-					text-decoration: none;
-					display: inline;
-					font-weight: bold;
-				}
-				width: 450px;
-			}
-			time {
-				position: absolute;
-				right: 13px;
-				top: 45px;
-				font-size: 12px;
-				color: #888;
-				float: right;
-			}
-		}
-
-		.msgBody, .msgTitle {
-			margin: 5px;
-			padding: 10px;
-			position: relative;
-			background: white;
-			border: 1px solid #DDD;
-			overflow-wrap: break-word;
-			.arrow {
-				content: '';
-				border: 7px solid transparent;
-				border-bottom-color: #EFEFEF;
-				top: -14px;
-				position: absolute;
-				left: 5px+14px;
-			}
-		
-		}
-		.msgTitle {
-			font-size: 14px;
-			font-weight: 600;
-		}
-		.msgBody {
-			font-size: 13px;
-			font-weight: normal;
-		}
-
-		.postInfobar {
-			position: relative;
-			margin-top: 10px;
-			border-top: 1px solid #DDD;
-			
-			li {
-				cursor: pointer;
-				vertical-align: bottom;
-				padding: 5px 8px 6px;
-				color: #888;
-				font-size: 11px;
-				list-style: none;
-				display: inline-block;
-				&:hover {
-					color: #444;
-				}
-
-				.tooltip {
-					font-size: 11px;
-					.tooltip-inner {
-						.rounded(2px);
-						padding-top: 1px;
-					}
-				}
-			}
-
-			i { font-size: 12px; }
-
-			.icon-red {
-				color: red;
-			}
-
-			ul.right {
-				position: absolute;
-				top: 0;
-				right: 0;
-				li { border-left: 1px solid #DDD; }
-			}
-
-			ul.left{
-				li { border-right: 1px solid #DDD; }
-			}
-		}
-	}
-
-	.postFoot {
-
-		.commentInputSection .mediaUser,
-		.commentWrapper .mediaUser {
-			.rounded(0);
-			width: 30px;
-			height: 30px;
-		}
-
-		.commentSection {
-			background: white;
-			font-size: 13px;
-
-			.commentList {
-				list-style: none;
-				padding: 0 5px;
-
-				.commentWrapper:last-child {
-					padding-bottom: 5px;
-				}
-				.commentWrapper {
-					padding-top: 5px;
-					overflow-wrap: break-word;
-					border-top: 1px dashed #DDD;
-
-					.msgBody {
-						vertical-align: middle;
-						display: inline-block;
-						.no-box-shadow;
-						outline: none;
-						font-size: 13px;
-						padding: 5px;
-						width: 100%;
-						position: relative;
-
-						border: 1px solid #DDD;
-
-						.arrow {
-							content: '';
-							border: 5px solid transparent;
-							border-top-color: #DDD;
-							bottom: -10px;
-							position: absolute;
-							left: 8px;
-						}
-					}
-
-					.infoBar {
-						position: relative;
-						padding: 5px;
-						font-size: 12px;
-
-						.author {
-							color: #666;
-							text-decoration: none;
-
-							&:hover {
-								color: #333;
-							}
-
-							.mediaUser {
-								height: 20px;
-								width: 20px;
-								vertical-align: middle;
-								margin-right: 5px;
-								border: 1px solid #DDD;
-								.rounded(15px);
-
-								.mediaUserAvatar {
-									.rounded(15px);
-								}
-							}
-
-							.name {
-								vertical-align: middle;
-							}
-						}
-
-						.time {
-							font-size: 11px;
-						}
-					}
-				}
-				.commentWrapper:target {
-					background: yellow;
-				}
-			}
-
-			.commentInputSection {
-				padding: 3px 5px 3px 5px;
-				border-top: 1px solid #DDD;
-				// background: #EEE;
-
-				td {
-					vertical-align: top;
-				}
-
-				td:not(:last-child) {
-					padding-right: 5px;
-				}
-				
-				.mediaUser {
-					border: 1px solid #DDD;
-				}
-
-				.commentInputTd {
-					width: 100%;
-				}
-				.commentInput {
-
-					vertical-align: middle;
-					display: inline-block;
-					border: 1px solid #DDD;
-					.no-box-shadow;
-					outline: none;
-					font-size: 13px;
-					padding: 5px;
-
-					width: 100%;
-					height: 30px;
-					&:focus {
-						border-color: #08C;
-						height: 35px;
-					}
-					resize: vertical;
-				}
-
-				[data-action=send-comment] {
-					display: inline-block;
-					.high-xbtn(white, @COLOR2);
-					font-size: 12px;
-					.high-xbtn-padding(4px, 10px, 2px);
-				}
-			}
-		}
-	}
-
-	.optionBtns {
-		float: right;
-		display: inline-block;
-		position: absolute;
-		right: 5px; top: 0px;
-		z-index: 4;
-		
-		.transition(all, .2s, linear);
-		opacity: .5;
-		&:hover {
-			opacity: 1;
-		}
-
-		[data-action=remove-post],
-		[data-action=edit-post] {
-			.full-reset-button;
-			padding-left: 3px;
-			vertical-align: middle;
-			padding-right: 3px;
-			font-size: 105%;
-			font-weight: bolder;
-			color: #888;
-			opacity: .6;
-			&:hover {
-				color: #444;
-			}
-			&:active {
-				outline: none;
-			}
-		}
-	}
-
-	[data-post-type=QAPost] {
-		
-
-		.postHead {
-			.msgTitle {
-				font-size: 13px;
-				padding: 10px;
-				position: relative;
-				background: white;
-				border: 1px solid #DDD;
-				overflow-wrap: break-word;
-				.arrow {
-					content: '';
-					border: 7px solid transparent;
-					border-bottom-color: #EFEFEF;
-					top: -14px;
-					position: absolute;
-					left: 5px+14px;
-				}
-				margin-bottom: 10px;
-				&::after {
-					content: '?';
-					float: right;
-					font-size: 20px;
-
-				}
-			}
-			.msgBody {
-				font-size: 13px;
-			}
-		}
-
-		.answerView {
-			background: #FAFAFA;
-			padding: 10px;
-
-			.leftCol {
-				float: left;
-
-				.mediaUser {
-					vertical-align: top;
-					border: 1px solid #DDD;
-					height: 35px;
-					width: 35px;
-				}
-			}
-
-			.msgBody {
-				font-size: 14px;
-				padding: 10px;
-				position: relative;
-				margin-left: 60px;
-				background: white;
-				border: 1px solid #DDD;
-				overflow-wrap: break-word;
-
-				.arrow {
-					content: '';
-					border: 7px solid transparent;
-					border-right-color: #EFEFEF;
-					top: 14px;
-					position: absolute;
-					left: -15px;
-				}
-			}
-		}
-
-		.showMorePrompt {
-			background: #DDD;
-		}
 	}
 }
 
@@ -686,28 +175,15 @@ body {
 		#cards {
 			margin: 0 auto;
 			width: 1120px;
-			// // padding-top: 20px;
-			// #sidebar {
-			// 	.sidebar;
-			// }
-			// #resultsContainer {
-			// 	.resultsContainer;
-			// }
-			#resultsContainer {
-				.cardsContainer;
-			}
+			#resultsContainer { .cardsContainer; }
 		}
 
 		#content {
 			margin: 0 auto;
 			width: @results-container-width+@sidebar-width+@sidebar-gap;
-			// padding-top: 20px;
-			#sidebar {
-				.sidebar;
-			}
-			#resultsContainer {
-				.resultsContainer;
-			}
+			padding-top: 20px;
+			#sidebar { .sidebar; }
+			#resultsContainer { .timelineContainer; }
 		}
 	}
 }
@@ -757,189 +233,5 @@ body {
 				padding: 5px 6px;
 			}
 		}
-	}
-
-	#resultsContainer {
-
-	}
-}
-
-.sidebar (@width: @sidebar-width) 
-{
-	width: @width;
-	float: left;
-
-	h1 { font-size: 25px; }
-	h2 { font-size: 23px; }
-	h3 { font-size: 19px; }
-	h4 { font-size: 16px; }
-	h5 { font-size: 14px; font-weight: bold; }
-
-	.btnGoBack {
-		.high-xbtn(white, @COLOR4);
-	}
-
-	.box {
-		margin-bottom: 10px;
-		background: white;
-		border: 1px solid #DDD; /// #EAEAEA;
-		.rounded(3px);
-		font-size: 12px;
-
-		.head {
-			border-bottom: 1px solid #EAEAEA;
-			padding: 7px 10px;
-			color: #666;
-			font-size: 11px;
-			background: #F3F3F3;
-			font-weight: bold;
-			position: relative;
-
-			a {
-				text-decoration: none;
-			}
-
-			.right {
-				float: right;
-				font-size: 11px;
-				font-weight: normal;
-			}
-		}
-
-		.emptyBoxMsg {
-			color: #AAA;
-			padding: 5px;
-			// font-size: 12px;
-			text-align: center;
-		}
-
-		.body {
-			font-size: 12px;
-			list-style: none;
-		}
-	
-		&.userList .body
-		{
-			padding: 5px;
-
-			li {
-				list-style: none;
-				display: inline-block;
-				margin-bottom: 3px;
-				margin-right: 3px;
-			}
-		}
-
-		&.labList .body,
-		&.tagList .body
-		{
-			li {
-				a {
-					display: block;
-					text-decoration: none;
-					font-weight: bold;
-					padding: 10px;
-
-					color: #444;
-					&:hover{
-						color: #444;
-						background: #FAFAFA;
-					}
-				}
-			} 
-
-			li:not(:last-child) {
-				border-bottom: 1px solid #DDD;
-			}
-		}
-
-		&.tagList .body {
-			li {
-				.tagIcon { margin-right: 3px; }
-				&:nth-child(1) a .tagIcon { color: @COLOR1; }
-				&:nth-child(2) a .tagIcon { color: @COLOR2; }
-				&:nth-child(3) a .tagIcon { color: @COLOR3; }
-				&:nth-child(4) a .tagIcon { color: @COLOR4; }
-			}
-		}
-
-		&.userProfile {
-
-			.head {
-				.btn-follow {
-					font-size: 12px;
-					width: 72px;
-					position: absolute;
-					top: 6px;
-					right: 10px;
-				}
-			}
-
-			.mediaUser {
-				width: 30px;
-				height: 30px;
-				.rounded(20px);
-				margin-right: 5px;
-			}
-			.name {
-				font-size: 14px;
-				vertical-align: middle;
-				max-width: 135px;
-				overflow: hidden;
-				display: inline-block;
-				text-overflow: ellipsis;
-			}
-
-			.body {
-				padding: 10px;
-
-				.info-group {
-					font-size: 13px;
-					label { display: inline-block; font-weight: 600; }
-					.answer { font-weight: normal; }
-				}
-			}
-		}
-
-		&.groupProfile {
-
-			// .head {
-			// 	.btn-follow {
-			// 		font-size: 12px;
-			// 		width: 72px;
-			// 		position: absolute;
-			// 		top: 6px;
-			// 		right: 10px;
-			// 	}
-			// }
-
-			.name {
-				font-size: 14px;
-				vertical-align: middle;
-				max-width: 135px;
-				overflow: hidden;
-				display: inline-block;
-				text-overflow: ellipsis;
-			}
-
-			.body {
-				padding: 10px;
-
-				.info-group {
-					font-size: 13px;
-					label { display: inline-block; font-weight: 600; }
-					.answer { font-weight: normal; }
-				}
-			}
-		}
-	}
-
-	.mediaUser {
-		.mediaUserAvatar {
-			.rounded(3px);
-		}
-		overflow: hidden;
-		width: 40px;
-		height: 40px;
 	}
 }

@@ -35,26 +35,6 @@ define([
 		return originalSync(method, model, options);
 	};
 
-	var PostView = React.createClass({displayName: 'PostView',
-
-		render: function () {
-			// test for type, QA for example
-			var postType = this.props.model.get('type');
-			if (postType in postViews) {
-				var postView = postViews[postType];
-			} else {
-				console.warn("Couldn't find view for post of type "+postType);
-				return React.DOM.div(null );
-			}
-			// console.log(this.props.model.get('type'))
-			return (
-				React.DOM.div( {className:"postView"}, 
-					postView( {model:this.props.model} )
-				)
-			);
-		},
-	});
-
 	var FullPostView = React.createClass({displayName: 'FullPostView',
 
 		destroy: function () {
@@ -63,34 +43,48 @@ define([
 		},
 
 		render: function () {
+			var post = this.props.model.attributes;
+
 			// test for type, QA for example
 			var postType = this.props.model.get('type');
 			if (postType in postViews) {
-				var postView = postViews[postType];
+				var postView = postViews.full[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
 				return React.DOM.div(null );
 			}
+
+
+			var mediaUserStyle = {
+				background: 'url('+post.author.avatarUrl+')',
+			};
 			// console.log(this.props.model.get('type'))
 			return (
 				React.DOM.div( {className:"fullPostView"}, 
 					React.DOM.div( {className:"postView"}, 
 						postView( {model:this.props.model} )
 					),
-					React.DOM.div( {onClick:this.destroy, className:"blackout"})
-				)
-			);
-		},
-	});
 
-	var StreamItemView = React.createClass({displayName: 'StreamItemView',
-		render: function () {
-			var itemType = this.props.model.get('__t');
-			return (
-				React.DOM.div( {className:"streamItem"}, 
-					(itemType==='Post')?
-					PostView( {model:this.props.model} )
-					:ActivityView( {model:this.props.model} )
+					React.DOM.div( {className:"postSidebar"}, 
+						React.DOM.div( {className:"authorInfo"}, 
+
+							React.DOM.div( {className:"identification"}, 
+								React.DOM.div( {className:"avatarWrapper"}, 
+									React.DOM.a( {href:post.profileUrl}, 
+										React.DOM.div( {className:"avatar", style:mediaUserStyle})
+									)
+								),
+								React.DOM.a( {href:post.profileUrl, className:"username"}, 
+									post.author.name
+								)
+							),
+						
+							React.DOM.div( {className:"bio"}, 
+								"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam."
+							)
+						)
+					),
+					React.DOM.div( {onClick:this.destroy, className:"blackout"})
 				)
 			);
 		},
@@ -119,50 +113,6 @@ define([
 			return (
 				React.DOM.div( {className:"timeline"}, 
 					cards,
-					this.props.collection.EOF?
-					React.DOM.div( {className:"streamSign"}, 
-						React.DOM.i( {className:"icon-exclamation"}), " Nenhuma outra atividade encontrada."
-					)
-					:React.DOM.a( {className:"streamSign", href:"#", onClick:this.props.collection.tryFetchMore}, 
-						React.DOM.i( {className:"icon-cog"}),"Procurando mais atividades."
-					)
-				)
-			);
-		},
-	});
-
-	var TimelineView = React.createClass({displayName: 'TimelineView',
-		getInitialState: function () {
-			return {selectedForm:null};
-		},
-		componentWillMount: function () {
-			function update (evt) {
-				// console.log('updatefired')
-				this.forceUpdate(function(){});
-			}
-			this.props.collection.on('add remove reset statusChange', update.bind(this));
-		},
-		render: function () {
-			var postNodes = this.props.collection.map(function (post) {
-				if (post.get('__t') === 'Post')
-					return (
-						StreamItemView( {model:post} )
-					);
-				return null;
-			});
-
-			var postForm = postForms.Plain;
-
-			return (
-				React.DOM.div( {className:"timeline"}, 
-					this.props.canPostForm?
-						React.DOM.div( {className:"header"}, 
-							postForm( {postUrl:this.props.collection.url}),
-							React.DOM.hr(null )
-						)
-						:null,
-					
-					postNodes,
 					this.props.collection.EOF?
 					React.DOM.div( {className:"streamSign"}, 
 						React.DOM.i( {className:"icon-exclamation"}), " Nenhuma outra atividade encontrada."

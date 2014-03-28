@@ -35,26 +35,6 @@ define([
 		return originalSync(method, model, options);
 	};
 
-	var PostView = React.createClass({
-
-		render: function () {
-			// test for type, QA for example
-			var postType = this.props.model.get('type');
-			if (postType in postViews) {
-				var postView = postViews[postType];
-			} else {
-				console.warn("Couldn't find view for post of type "+postType);
-				return <div />;
-			}
-			// console.log(this.props.model.get('type'))
-			return (
-				<div className="postView">
-					<postView model={this.props.model} />
-				</div>
-			);
-		},
-	});
-
 	var FullPostView = React.createClass({
 
 		destroy: function () {
@@ -63,34 +43,48 @@ define([
 		},
 
 		render: function () {
+			var post = this.props.model.attributes;
+
 			// test for type, QA for example
 			var postType = this.props.model.get('type');
 			if (postType in postViews) {
-				var postView = postViews[postType];
+				var postView = postViews.full[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
 				return <div />;
 			}
+
+
+			var mediaUserStyle = {
+				background: 'url('+post.author.avatarUrl+')',
+			};
 			// console.log(this.props.model.get('type'))
 			return (
 				<div className="fullPostView">
 					<div className="postView">
 						<postView model={this.props.model} />
 					</div>
-					<div onClick={this.destroy} className="blackout"></div>
-				</div>
-			);
-		},
-	});
 
-	var StreamItemView = React.createClass({
-		render: function () {
-			var itemType = this.props.model.get('__t');
-			return (
-				<div className="streamItem">
-					{(itemType==='Post')?
-					<PostView model={this.props.model} />
-					:<ActivityView model={this.props.model} />}
+					<div className="postSidebar">
+						<div className="authorInfo">
+
+							<div className="identification">
+								<div className="avatarWrapper">
+									<a href={post.profileUrl}>
+										<div className="avatar" style={mediaUserStyle}></div>
+									</a>
+								</div>
+								<a href={post.profileUrl} className="username">
+									{post.author.name}
+								</a>
+							</div>
+						
+							<div className="bio">
+								Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+							</div>
+						</div>
+					</div>
+					<div onClick={this.destroy} className="blackout"></div>
 				</div>
 			);
 		},
@@ -119,50 +113,6 @@ define([
 			return (
 				<div className="timeline">
 					{cards}
-					{this.props.collection.EOF?
-					<div className="streamSign">
-						<i className="icon-exclamation"></i> Nenhuma outra atividade encontrada.
-					</div>
-					:<a className="streamSign" href="#" onClick={this.props.collection.tryFetchMore}>
-						<i className="icon-cog"></i>Procurando mais atividades.
-					</a>}
-				</div>
-			);
-		},
-	});
-
-	var TimelineView = React.createClass({
-		getInitialState: function () {
-			return {selectedForm:null};
-		},
-		componentWillMount: function () {
-			function update (evt) {
-				// console.log('updatefired')
-				this.forceUpdate(function(){});
-			}
-			this.props.collection.on('add remove reset statusChange', update.bind(this));
-		},
-		render: function () {
-			var postNodes = this.props.collection.map(function (post) {
-				if (post.get('__t') === 'Post')
-					return (
-						<StreamItemView model={post} />
-					);
-				return null;
-			});
-
-			var postForm = postForms.Plain;
-
-			return (
-				<div className="timeline">
-					{this.props.canPostForm?
-						<div className="header">
-							<postForm postUrl={this.props.collection.url}/>
-							<hr />
-						</div>
-						:null
-					}
-					{postNodes}
 					{this.props.collection.EOF?
 					<div className="streamSign">
 						<i className="icon-exclamation"></i> Nenhuma outra atividade encontrada.
