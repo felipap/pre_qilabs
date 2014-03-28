@@ -66,7 +66,6 @@ define([
 
 					<div className="postSidebar">
 						<div className="authorInfo">
-
 							<div className="identification">
 								<div className="avatarWrapper">
 									<a href={post.profileUrl}>
@@ -76,7 +75,7 @@ define([
 								<a href={post.profileUrl} className="username">
 									{post.author.name}
 								</a>
-									<button className="btn-follow btn-follow-small" data-action="unfollow" data-user="{{ profile.id }}"></button>
+									<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
 							</div>
 						
 							<div className="bio">

@@ -66,7 +66,6 @@ define([
 
 					React.DOM.div( {className:"postSidebar"}, 
 						React.DOM.div( {className:"authorInfo"}, 
-
 							React.DOM.div( {className:"identification"}, 
 								React.DOM.div( {className:"avatarWrapper"}, 
 									React.DOM.a( {href:post.profileUrl}, 
@@ -76,7 +75,7 @@ define([
 								React.DOM.a( {href:post.profileUrl, className:"username"}, 
 									post.author.name
 								),
-									React.DOM.button( {className:"btn-follow btn-follow-small", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
+									React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
 							),
 						
 							React.DOM.div( {className:"bio"}, 

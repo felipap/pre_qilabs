@@ -437,13 +437,14 @@ UserSchema.methods.genProfile = (cb) ->
 
 				profile = _.extend(self.toJSON(), {
 					followers: {
-						docs: followers.slice(0,20)
+						docs: followers
 						count: followers.length
 					}
 					following: {
-						docs: following.slice(0,20)
+						docs: following
 						count: following.length
 					}
+					followingIds: _.pluck(following, '_id')
 					groups: {
 						docs: _.pluck(groups,'group').slice(0,20)
 						count: _.pluck(groups,'group').length

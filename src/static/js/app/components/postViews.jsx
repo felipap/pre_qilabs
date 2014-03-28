@@ -577,6 +577,11 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 								<div className="postTitle">
 									{post.data.title}
 								</div>
+								<div className="postStats">
+									<span className="hits">81 visualizações</span>
+									<div className="tag">Application</div>
+									<div className="tag">Olimpíadas de Matemática</div>
+								</div>
 								<div className="postBody">
 									<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
 								</div>

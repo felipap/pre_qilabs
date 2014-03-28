@@ -92,6 +92,7 @@ nav.bar {
 	margin: 0 auto;
 	width: 1000px;
 	top: 20px;
+	font-family: museo-sans;
 
 	.postView {
 		position: relative;
@@ -99,19 +100,40 @@ nav.bar {
 		width: 660px;
 		float: left;
 		background: white;
-		padding: 30px;
+		padding: 30px 50px;
+	}
+
+	.postStats {
+		font-size: 14px;
+		margin-bottom: 20px;
+		
+		.tag {
+			display: inline-block;
+			background: 40px;
+			padding: 4px 6px;
+			// .rounded(5px);
+			font-size: 11px;
+			margin-left: 5px;
+			color: white;
+			font-weight: bold;
+			text-transform: uppercase;
+			font-family: "Lato";
+			// font-size: ;
+			background: @COLOR1;
+		}
 	}
 
 	.postContent {
 		.postTitle, .postBody {
-			font-family: museo-sans;
 			margin-bottom: 20px;
 		}
 		
 		.postTitle {
-			font-size: 30px;
+			color: #444;
+			font-size: 37px;
 		}
 		.postBody {
+			color: black;
 			font-size: 16px;
 		}
 
@@ -153,7 +175,6 @@ nav.bar {
 			.bio {
 				margin: 10px 0;
 				.text-shadow(3px,.5);
-				font-family: "Open Sans";
 				font-size: 13px;
 			}
 		}
@@ -169,7 +190,7 @@ nav.bar {
 		z-index: 1000;
 		position: fixed;
 		top: 0; right: 0; bottom: 0; left: 0;
-		background: rgba(0,0,0,.5);
+		background: rgba(0,0,0,0.9);
 	}
 }
 
