@@ -20,7 +20,6 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 
 		handleToggleVote: function () {
-
 			var self = this;
 			$.ajax({
 				type: 'post',
@@ -30,12 +29,8 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				console.log('response', response);
 				if (!response.error) {
 					self.liked = !self.liked;
-					// console.log('setting', response.data)
-					// self.set(response.data);
 					self.set(response.data);
 					self.trigger('change');
-
-					console.log('change triggered', response.data)
 				}
 			});
 		},

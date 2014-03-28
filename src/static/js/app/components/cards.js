@@ -81,7 +81,12 @@ define([
 							React.DOM.div( {className:"bio"}, 
 								"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam."
 							)
-
+						),
+						React.DOM.div( {className:"flagOption"}, 
+							"Denunciar essa publicação como imprópria",
+							React.DOM.span( {'data-toggle':"tooltip", title:"Denunciar publicação", 'data-placement':"bottom"}, 
+								React.DOM.i( {className:"icon-flag"})
+							)
 						)
 					),
 					React.DOM.div( {onClick:this.destroy, className:"blackout"})

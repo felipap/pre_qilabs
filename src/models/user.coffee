@@ -413,7 +413,13 @@ UserSchema.methods.upvotePost = (post, cb) ->
 
 UserSchema.methods.unupvotePost = (post, cb) ->
 	assertArgs({$isModel:Post}, '$isCb')
-	post.update {$pull:{votes:''+@id}}, (err, count, status) -> cb(err, post)
+	if (i = post.votes.indexOf(@.id)) > -1
+		console.log('oi', i)
+		post.votes.splice(i,1)
+		console.log('oi', post.votes)
+		post.save(cb)
+	else
+		return cb(null, post)
 
 ################################################################################
 ## related to the generation of profiles #######################################

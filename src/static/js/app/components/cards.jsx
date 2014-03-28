@@ -81,7 +81,12 @@ define([
 							<div className="bio">
 								Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
 							</div>
-
+						</div>
+						<div className="flagOption">
+							Denunciar essa publicação como imprópria
+							<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
+								<i className="icon-flag"></i>
+							</span>
 						</div>
 					</div>
 					<div onClick={this.destroy} className="blackout"></div>

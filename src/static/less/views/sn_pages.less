@@ -85,14 +85,31 @@ nav.bar {
 	}
 }
 
+.icon-red {
+	color: @COLOR4;
+}
 
 .fullPostView {
 	position: relative;
 	z-index: 1000;
 	margin: 0 auto;
+	margin-bottom: 20px;
 	width: 1000px;
 	top: 20px;
 	font-family: museo-sans;
+
+	.likeBox {
+		position: absolute;
+		width: 100px;
+		left: -105px;
+		text-align: right;
+		color: white;
+		cursor: pointer;
+		opacity: .9;
+		&:hover {
+			opacity: 1;
+		}
+	}
 
 	.postView {
 		position: relative;
@@ -103,6 +120,11 @@ nav.bar {
 	}
 	.postContent {
 		padding: 30px 50px;
+
+		& > time {
+			float: right;
+		}
+		
 		.postTitle, .postBody {
 			margin-bottom: 20px;
 		}
@@ -122,13 +144,17 @@ nav.bar {
 				padding: 4px 6px;
 				// .rounded(5px);
 				font-size: 11px;
-				margin-left: 5px;
+				margin-right: 5px;
 				color: white;
 				font-weight: bold;
 				text-transform: uppercase;
 				font-family: "Lato";
 				// font-size: ;
 				background: @COLOR1;
+				cursor: pointer;
+				&:hover {
+					background: darken(@COLOR1, 20%);
+				}
 			}
 		}
 
@@ -141,6 +167,7 @@ nav.bar {
 	}
 
 	.postFoot {
+		padding: 10px;
 
 		.commentInputSection .mediaUser,
 		.commentWrapper .mediaUser {
@@ -275,7 +302,7 @@ nav.bar {
 				}
 			}
 		}
-		
+
 		.optionBtns {
 			float: right;
 			display: inline-block;
@@ -311,18 +338,21 @@ nav.bar {
 
 	.postSidebar {
 		position: relative;
-		padding: 20px;
 		font-family: museo-sans;
+		padding-bottom: 20px;
 
 		z-index: 1001;
 		float: left;
 		width: 340px;
 		background: #444;
-
+		text-align: center;
 		color: white;
 
 		.authorInfo {
-			background: #444;
+			padding: 20px;
+			text-align: left;
+			background: #666;
+			margin-bottom: 20px;
 	
 			.identification {
 
@@ -348,11 +378,16 @@ nav.bar {
 			}
 		}
 
-
 		.footer {
 			background: #888;
 		}
 
+		.flagOption {
+			cursor: pointer;
+			color: #222;
+		}
+
+		i { margin: 0 5px; }
 	}
 
 	.blackout {

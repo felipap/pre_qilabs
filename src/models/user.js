@@ -641,16 +641,18 @@ UserSchema.methods.upvotePost = function(post, cb) {
 };
 
 UserSchema.methods.unupvotePost = function(post, cb) {
+  var i;
   assertArgs({
     $isModel: Post
   }, '$isCb');
-  return post.update({
-    $pull: {
-      votes: '' + this.id
-    }
-  }, function(err, count, status) {
-    return cb(err, post);
-  });
+  if ((i = post.votes.indexOf(this.id)) > -1) {
+    console.log('oi', i);
+    post.votes.splice(i, 1);
+    console.log('oi', post.votes);
+    return post.save(cb);
+  } else {
+    return cb(null, post);
+  }
 };
 
 

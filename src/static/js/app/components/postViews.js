@@ -7,7 +7,7 @@
 ** by @f03lipe
 */
 
-define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, React) {
+define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], function ($, Backbone, _, postModels, React) {
 
 	/********************************************************************************/
 	/********************************************************************************/
@@ -88,7 +88,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			}).done(function(response) {
 				bodyEl.val('');
 				console.log('response', response);
-				self.props.model.commentList.add(new CommentItem(response.data));
+				self.props.model.commentList.add(new postModels.commentItem(response.data));
 			});
 		},
 
@@ -266,7 +266,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			}).done(function(response) {
 				bodyEl.val('');
 				console.log('response', response);
-				self.props.model.answerList.add(new AnswerItem(response.data));
+				self.props.model.answerList.add(new postModels.answerItem(response.data));
 			});
 		},
 
@@ -562,7 +562,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		'QA': QAPostView,
 		full: {
 			'PlainPost': React.createClass({
-				mixins: [EditablePost],
+				mixins: [EditablePost, backboneModel],
 
 				render: function () {
 					var post = this.props.model.attributes;
@@ -573,21 +573,51 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 
 					return (
 						React.DOM.div(null, 
+							React.DOM.div( {className:"likeBox", onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
+								
+									this.props.model.liked?
+									React.DOM.i( {className:"icon-heart icon-red"})
+									:React.DOM.i( {className:"icon-heart-o"}),
+								
+								" ",
+									post.voteSum
+							),
 							React.DOM.div( {className:"postContent"}, 
+
+								React.DOM.span( {className:"hits"}, "81 visualizações"),
+								React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
+									window.calcTimeFrom(post.published,true)
+								),
 								React.DOM.div( {className:"postTitle"}, 
 									post.data.title
 								),
 								React.DOM.div( {className:"postStats"}, 
-									React.DOM.span( {className:"hits"}, "81 visualizações"),
 									React.DOM.div( {className:"tag"}, "Application"),
 									React.DOM.div( {className:"tag"}, "Olimpíadas de Matemática")
 								),
 								React.DOM.div( {className:"postBody"}, 
 									React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
-								),
-								PostInfoBar( {model:this.props.model} )
+								)
+							),
+							React.DOM.div( {className:"postInfobar"}, 
+								React.DOM.ul( {className:"left"}, 
+									
+										post.type === "QA"?
+										React.DOM.li(null, 
+											React.DOM.i( {className:"icon-bulb"})," ",
+											
+												this.props.model.answerList.models.length===1?
+												this.props.model.answerList.models.length+" resposta"
+												:this.props.model.answerList.models.length+" respostas"
+											
+										)
+										:null
+									
+								)
 							),
 							React.DOM.div( {className:"postFoot"}, 
+								React.DOM.h4(null, "Comentários (",this.props.model.commentList.models.length,")"),
+								React.DOM.br(null ),
 								CommentSectionView( {model:this.props.model} )
 							)
 						)
@@ -595,7 +625,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				},
 			}),
 			'QA': React.createClass({
-				mixins: [EditablePost],
+				mixins: [EditablePost, backboneModel],
 
 				render: function () {
 					var post = this.props.model.attributes;
