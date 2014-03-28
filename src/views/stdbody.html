@@ -27,7 +27,7 @@
 
 		{% if user %}
 			<script>window.loggedUser=true;</script>
-			<script>window.user = {id: '{{user.id}}', avatarUrl: '{{user.avatarUrl}}', following: '{{user_profile.following.docs}}'}</script>
+			<script>window.user = {id: '{{user.id}}', avatarUrl: '{{user.avatarUrl}}', following: '{{user_profile.following}}'}</script>
 		{% else %}
 			<script>window.loggedUser=false;</script>
 			<script>window.user = {}</script>
