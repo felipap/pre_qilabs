@@ -11,16 +11,6 @@
 	{% if user %}
 
 		<ul>
-			<li>
-				<a href="#" class="model-link guia">
-					Guias
-				</a>
-			</li>
-			<li>
-				<a href="#" class="model-link board">
-					Oportunidades <!-- <i class="icon-board"></i> -->
-				</a>
-			</li>
 		</ul>
 		<ul class="pull-right">
 			{#
@@ -37,10 +27,24 @@
 			</li>
 			<div class="separator"></div>
 			#}
-			<li>
-				<a class="plain-btn" href="/p/create">
-					<i class="icon-plus"></i>
-				</a>
+		 	<li class="menu-dd" class="dropdown" id="ddNewPost">
+			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle">
+					<a class="plain-btn" href="/p/create">
+						<i class="icon-plus"></i>
+					</a>
+				</div>
+				<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" href="/p/create/tip">
+							Dica
+						</a>
+					</li>
+					<li role="presentation">
+						<a role="menuitem" tabindex="-1" href="/p/create/question">
+							Pergunta
+						</a>
+					</li>
+				</ul>
 			</li>
 			<li>
 				<button class="plain-btn">

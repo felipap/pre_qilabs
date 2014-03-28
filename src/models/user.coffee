@@ -251,7 +251,7 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 		.find { recipient:self.id, dateSent:{ $lt:opts.maxDate }}
 		.sort '-dateSent' # tied to selection of oldest post below
 		.populate 'resource'
-		.limit 20
+		# .limit 30
 		.exec (err, docs) =>
 			return cb(err) if err
 			# Pluck resources from inbox docs. Remove null (deleted) resources.
@@ -414,9 +414,7 @@ UserSchema.methods.upvotePost = (post, cb) ->
 UserSchema.methods.unupvotePost = (post, cb) ->
 	assertArgs({$isModel:Post}, '$isCb')
 	if (i = post.votes.indexOf(@.id)) > -1
-		console.log('oi', i)
 		post.votes.splice(i,1)
-		console.log('oi', post.votes)
 		post.save(cb)
 	else
 		return cb(null, post)
@@ -443,11 +441,11 @@ UserSchema.methods.genProfile = (cb) ->
 
 				profile = _.extend(self.toJSON(), {
 					followers: {
-						docs: followers
+						docs: followers.slice(0,20)
 						count: followers.length
 					}
 					following: {
-						docs: following
+						docs: following.slice(0,20)
 						count: following.length
 					}
 					followingIds: _.pluck(following, '_id')

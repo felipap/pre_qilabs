@@ -396,7 +396,7 @@ UserSchema.methods.getTimeline = function(opts, callback) {
     dateSent: {
       $lt: opts.maxDate
     }
-  }).sort('-dateSent').populate('resource').limit(20).exec((function(_this) {
+  }).sort('-dateSent').populate('resource').exec((function(_this) {
     return function(err, docs) {
       var minDate, posts;
       if (err) {
@@ -646,9 +646,7 @@ UserSchema.methods.unupvotePost = function(post, cb) {
     $isModel: Post
   }, '$isCb');
   if ((i = post.votes.indexOf(this.id)) > -1) {
-    console.log('oi', i);
     post.votes.splice(i, 1);
-    console.log('oi', post.votes);
     return post.save(cb);
   } else {
     return cb(null, post);
@@ -683,11 +681,11 @@ UserSchema.methods.genProfile = function(cb) {
           });
           profile = _.extend(self.toJSON(), {
             followers: {
-              docs: followers,
+              docs: followers.slice(0, 20),
               count: followers.length
             },
             following: {
-              docs: following,
+              docs: following.slice(0, 20),
               count: following.length
             },
             followingIds: _.pluck(following, '_id'),

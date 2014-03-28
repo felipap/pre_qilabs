@@ -1,6 +1,8 @@
 
 @import "../common.less";
 
+@navbar-height: 60px;
+
 @-navbar-padding: 0;
 @real-navbar-height: (@navbar-height+(2*@-navbar-padding));
 
@@ -34,16 +36,16 @@ nav.bar {
 		}
 	}
 
-	@compColor: white;
-	@brandColor: white;
-	@borderColor: #222;
-	background: #31322E;
+	// @compColor: white;
+	// @brandColor: white;
+	// @borderColor: #222;
+	// background: #31322E;
 	
-	// background: white;
-	// @borderColor: #DADADA;
-	// border-bottom: 1px solid #DDD;
-	// @brandColor: @COLOR1;
-	// @compColor: #444;
+	background: white;
+	@borderColor: #DADADA;
+	border-bottom: 1px solid #DDD;
+	@brandColor: #08C;
+	@compColor: #444;
 
 	.navcontent {
 		margin: 0 auto;
@@ -200,6 +202,19 @@ nav.bar {
 			height: 100%;
 			border-left: 1px solid @borderColor;
 		}
+	
+		#ddNewPost {
+
+			.dropdown-menu {
+				min-width: inherit;
+				margin-left: -25px;
+				&::after {
+					position: relative;
+					border: 7px solid transparent;
+					border-bottom-color: white;
+				}
+			}
+		}
 
 		.menu-dd {
 			display: inline-block;
@@ -227,6 +242,7 @@ nav.bar {
 			}
 
 			.dropdown-menu {
+
 				left: auto;
 				padding: 3px;
 				.rounded(3px);

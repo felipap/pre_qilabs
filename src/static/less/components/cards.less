@@ -1,25 +1,37 @@
 
 .cardsContainer ()
 {
+	@card-width: 245px;
+	@card-margin-right: 20px;
+	@cpr: 4; // cards-per-row
+	text-align: center;
+
+	// width: (@cpr*@card-width+((@cpr)-1)*@card-margin-right);
+	margin-left: @card-margin-right;
+
 	.postInputForm { display: none; }
 
 	.cardView {
 		position: relative;
+		text-align: left;
 
 		display: inline-block;
-		width: 250px; margin-right: 30px;
+		width: @card-width; margin-right: @card-margin-right;
 		height: 200px; margin-bottom: 30px;
 		vertical-align: top;
-		
+	
 		cursor: pointer;
-
+		
 		padding: 10px;
-
-		// border: 1px solid #DDD;
+		border: 1px solid #EEE;
+		border-bottom: 1px solid #DDD;
 		background: white;
-
 		font-family: museo-sans;
 
+		&:hover {
+			border-color: #DDD;
+			border-bottom-color: #BBB;
+		}
 
 		.cardHeader {
 			font-size: 12px;
@@ -69,8 +81,13 @@
 			word-wrap: break-word;
 			height: 110px;
 			overflow: hidden;
-			padding: 10px 0;
-			font-size: 17px;
+			// padding: 10px 0;
+			font-size: 20px;
+			font-weight: 500;
+
+			a {
+				text-decoration: none;
+			}
 		}
 
 		.cardFoot {
@@ -89,7 +106,7 @@
 				right: 10px;
 				display: table;
 				margin-right: 5px;
-				font-size: 13px;
+				font-size: 12px;
 
 				.username {
 					text-decoration: none;
@@ -99,9 +116,9 @@
 				.avatarWrapper {
 					margin: 0 5px;
 					border: 1px solid #EFEFEF;
-					.rounded(20px);
-					width: 30px;
-					height: 30px;
+					.rounded(5px);
+					width: 25px;
+					height: 25px;
 				}
 			}
 		}

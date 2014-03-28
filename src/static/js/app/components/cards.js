@@ -83,7 +83,7 @@ define([
 							)
 						),
 						React.DOM.div( {className:"flagOption"}, 
-							"Denunciar essa publicação como imprópria",
+							"Pulicação Imprópria?",
 							React.DOM.span( {'data-toggle':"tooltip", title:"Denunciar publicação", 'data-placement':"bottom"}, 
 								React.DOM.i( {className:"icon-flag"})
 							)
@@ -107,14 +107,17 @@ define([
 			this.props.collection.on('add remove reset statusChange', update.bind(this));
 		},
 		render: function () {
+			var self = this;
+			var postForm = postForms.Plain;
+			function fetchMore () {
+				self.props.collection.tryFetchMore();
+			}
+
 			var cards = this.props.collection.map(function (post) {
 				if (post.get('__t') === 'Post')
 					return postViews.CardView( {model:post} );
 				return null;
 			});
-
-			var postForm = postForms.Plain;
-
 			return (
 				React.DOM.div( {className:"timeline"}, 
 					cards,
@@ -122,8 +125,8 @@ define([
 					React.DOM.div( {className:"streamSign"}, 
 						React.DOM.i( {className:"icon-exclamation"}), " Nenhuma outra atividade encontrada."
 					)
-					:React.DOM.a( {className:"streamSign", href:"#", onClick:this.props.collection.tryFetchMore}, 
-						React.DOM.i( {className:"icon-cog"}),"Procurando mais atividades."
+					:React.DOM.a( {className:"streamSign", href:"#", onClick:fetchMore}, 
+						"Procurando mais atividades."
 					)
 				)
 			);

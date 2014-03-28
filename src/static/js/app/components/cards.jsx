@@ -83,7 +83,7 @@ define([
 							</div>
 						</div>
 						<div className="flagOption">
-							Denunciar essa publicação como imprópria
+							Pulicação Imprópria?
 							<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
 								<i className="icon-flag"></i>
 							</span>
@@ -107,14 +107,17 @@ define([
 			this.props.collection.on('add remove reset statusChange', update.bind(this));
 		},
 		render: function () {
+			var self = this;
+			var postForm = postForms.Plain;
+			function fetchMore () {
+				self.props.collection.tryFetchMore();
+			}
+
 			var cards = this.props.collection.map(function (post) {
 				if (post.get('__t') === 'Post')
 					return postViews.CardView( {model:post} );
 				return null;
 			});
-
-			var postForm = postForms.Plain;
-
 			return (
 				<div className="timeline">
 					{cards}
@@ -122,8 +125,8 @@ define([
 					<div className="streamSign">
 						<i className="icon-exclamation"></i> Nenhuma outra atividade encontrada.
 					</div>
-					:<a className="streamSign" href="#" onClick={this.props.collection.tryFetchMore}>
-						<i className="icon-cog"></i>Procurando mais atividades.
+					:<a className="streamSign" href="#" onClick={fetchMore}>
+						Procurando mais atividades.
 					</a>}
 				</div>
 			);
