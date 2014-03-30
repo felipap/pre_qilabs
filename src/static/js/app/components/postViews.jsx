@@ -706,7 +706,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 									{window.calcTimeFrom(post.published,true)}
 								</time>
 								<div className="postTitle">
-									{post.data.title}
+									From OCW fanatic to MIT undergrad: my 5 year journey
 								</div>
 								{postBody}
 							</div>
