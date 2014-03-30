@@ -160,6 +160,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 		render: function () {
 			return (
 				<div className="commentSection">
+					<div className="info">{this.props.model.commentList.models.length} Comentários</div>
+					<br />
 					<CommentListView collection={this.props.model.commentList} />
 					{window.user?
 					<CommentInputForm model={this.props.model} />
@@ -571,53 +573,148 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 					};
 					var rawMarkup = post.data.escapedBody;
 
+					// <div>
+					// 	<div className="likeBox" onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
+					// 		{
+					// 			this.props.model.liked?
+					// 			<i className="icon-heart icon-red"></i>
+					// 			:<i className="icon-heart-o"></i>
+					// 		}
+					// 		&nbsp;
+					// 			{post.voteSum}
+					// 	</div>
+					// 	<div className="postContent">
+
+					// 		<div className="postTitle">
+					// 			{post.data.title}
+					// 		</div>
+					// 		<span className="hits">81 visualizações</span>
+					// 		<time data-time-count={1*new Date(post.published)} data-time-long="true">
+					// 			{window.calcTimeFrom(post.published,true)}
+					// 		</time>
+					// 		<div className="postStats">
+					// 			<div className="tag">Application</div>
+					// 			<div className="tag">Olimpíadas de Matemática</div>
+					// 		</div>
+					// 		<div className="postBody">
+					// 			<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+					// 		</div>
+					// 	</div>
+					// 	<div className="postInfobar">
+					// 		<ul className="left">
+					// 			{
+					// 				post.type === "QA"?
+					// 				<li>
+					// 					<i className="icon-bulb"></i>&nbsp;
+					// 					{
+					// 						this.props.model.answerList.models.length===1?
+					// 						this.props.model.answerList.models.length+" resposta"
+					// 						:this.props.model.answerList.models.length+" respostas"
+					// 					}
+					// 				</li>
+					// 				:null
+					// 			}
+					// 		</ul>
+					// 	</div>
+					// 	<div className="postFoot">
+					// 		<CommentSectionView model={this.props.model} />
+					// 	</div>
+					// </div>
+					// <div className="postBody">
+					// </div>
+
+					var postBody = (
+						<div className="postBody">
+							<p>
+								It&apos;s been over five years since the day I first learned about the existence of MIT.
+							</p>
+							You know MIT, right?
+
+							<img src="http://sloansocialimpact.mit.edu/wp-content/uploads/2014/02/MIT_Dome_night1_Edit.jpg" />
+
+							<small>The pornographically-cool MIT Dome.</small>
+
+							<blockquote>
+								Massachusetts Institute of Technology (MIT) is a private research university in Cambridge, Massachusetts known traditionally for research and education in the physical sciences and engineering
+								<footer><a href="http://en.wikipedia.org/wiki/Massachusetts_Institute_of_Technology">Wikipedia</a></footer>
+							</blockquote>
+
+							<p>
+								But MIT isn't just any "private research university", though: it's arguably the best technology
+								university in the world.
+							</p>
+							<hr />
+							<p>
+								Someday in 2009, while surfing around the internet, in an uncalculated move, I clicked a link on Info Magazine homepage,
+								taking me to <a href="http://info.abril.com.br/noticias/internet/aulas-do-mit-e-de-harvard-gratis-no-youtube-09042009-18.shl">this post</a>.
+								"Free MIT and Harvard classes on Youtube", it said.
+							</p>
+							<h2><q>MIT??</q></h2>
+							<p>Harvard I had heard of, sure. But <q>what is MIT?</q> The choice to google it (rather than just leaving it be), was one that changed my life.
+							</p>
+							<p>
+								No... <em>seriously</em>.<br />
+								I kept reading about it for hours, days even, I presume, because next thing you know MIT was my obsession.
+								I began collecting MIT wallpapers – admittedly I still do that –,
+								and videos related to the institution, including one of <a href="https://www.youtube.com/watch?v=jJ5EwCA2H4Y">Burton Conner students singing Switch</a>.
+							</p>
+							<h2>MIT OpenCourseWare</h2>
+							<p>
+								Another important MIT-related collection was one of CD-ROMs filled with OCW classes. The MIT OpenCourseWare is an MIT project lauched in 2002 that aims at providing MIT courses videolectured for free (as in beer). The first video I watched was a 2007 version of Gilbert Strang's Linear Algebra lectures. I didn't get past the 6th video. I also watched Single Variable Calculus course, and, of course, Walter Lewin's Classical Mechanics. I must have burned half a dozen CDs with these video-lectures. I don't know why.
+							</p>
+							<iframe width="720" height="495" src="//www.youtube.com/embed/ZK3O402wf1c" frameborder="0" allowfullscreen></iframe>
+							<small>Seriously, what a sweet guy.</small>
+
+							
+							<h2>MIT Media Lab</h2>
+							<img src="http://upload.wikimedia.org/wikipedia/commons/b/ba/The_MIT_Media_Lab_-_Flickr_-_Knight_Foundation.jpg" />
+							
+							<h1></h1>
+							<code>
+								oi
+							</code>
+
+							<pre>var postType = this.props.model.get('type')</pre>
+
+						</div>
+					);
+					// " ' 
 					return (
 						<div>
-							<div className="likeBox" onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
-								{
-									this.props.model.liked?
-									<i className="icon-heart icon-red"></i>
-									:<i className="icon-heart-o"></i>
-								}
-								&nbsp;
+							<div className="leftOutBox">
+								<div className="likeBox" onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
 									{post.voteSum}
+									&nbsp;
+									{
+										this.props.model.liked?
+										<i className="icon-heart icon-red"></i>
+										:<i className="icon-heart-o"></i>
+									}
+								</div>
+								<div className="eyeBox">
+									81&nbsp;
+									<i className="icon-eye"></i>
+								</div>
+								<div onClick="">
+									5&nbsp;
+									<i className="icon-share"></i>
+								</div>
 							</div>
 							<div className="postContent">
 
-								<span className="hits">81 visualizações</span>
 								<time data-time-count={1*new Date(post.published)} data-time-long="true">
 									{window.calcTimeFrom(post.published,true)}
 								</time>
 								<div className="postTitle">
 									{post.data.title}
 								</div>
-								<div className="postStats">
-									<div className="tag">Application</div>
-									<div className="tag">Olimpíadas de Matemática</div>
-								</div>
-								<div className="postBody">
-									<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
-								</div>
+								{postBody}
 							</div>
 							<div className="postInfobar">
 								<ul className="left">
-									{
-										post.type === "QA"?
-										<li>
-											<i className="icon-bulb"></i>&nbsp;
-											{
-												this.props.model.answerList.models.length===1?
-												this.props.model.answerList.models.length+" resposta"
-												:this.props.model.answerList.models.length+" respostas"
-											}
-										</li>
-										:null
-									}
 								</ul>
 							</div>
 							<div className="postFoot">
-								<h4>Comentários ({this.props.model.commentList.models.length})</h4>
-								<br />
 								<CommentSectionView model={this.props.model} />
 							</div>
 						</div>

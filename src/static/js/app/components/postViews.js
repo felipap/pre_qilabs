@@ -160,6 +160,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 		render: function () {
 			return (
 				React.DOM.div( {className:"commentSection"}, 
+					React.DOM.div( {className:"info"}, this.props.model.commentList.models.length, " Comentários"),
+					React.DOM.br(null ),
 					CommentListView( {collection:this.props.model.commentList} ),
 					window.user?
 					CommentInputForm( {model:this.props.model} )
@@ -571,53 +573,148 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 					};
 					var rawMarkup = post.data.escapedBody;
 
+					// <div>
+					// 	<div className="likeBox" onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
+					// 		{
+					// 			this.props.model.liked?
+					// 			<i className="icon-heart icon-red"></i>
+					// 			:<i className="icon-heart-o"></i>
+					// 		}
+					// 		&nbsp;
+					// 			{post.voteSum}
+					// 	</div>
+					// 	<div className="postContent">
+
+					// 		<div className="postTitle">
+					// 			{post.data.title}
+					// 		</div>
+					// 		<span className="hits">81 visualizações</span>
+					// 		<time data-time-count={1*new Date(post.published)} data-time-long="true">
+					// 			{window.calcTimeFrom(post.published,true)}
+					// 		</time>
+					// 		<div className="postStats">
+					// 			<div className="tag">Application</div>
+					// 			<div className="tag">Olimpíadas de Matemática</div>
+					// 		</div>
+					// 		<div className="postBody">
+					// 			<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+					// 		</div>
+					// 	</div>
+					// 	<div className="postInfobar">
+					// 		<ul className="left">
+					// 			{
+					// 				post.type === "QA"?
+					// 				<li>
+					// 					<i className="icon-bulb"></i>&nbsp;
+					// 					{
+					// 						this.props.model.answerList.models.length===1?
+					// 						this.props.model.answerList.models.length+" resposta"
+					// 						:this.props.model.answerList.models.length+" respostas"
+					// 					}
+					// 				</li>
+					// 				:null
+					// 			}
+					// 		</ul>
+					// 	</div>
+					// 	<div className="postFoot">
+					// 		<CommentSectionView model={this.props.model} />
+					// 	</div>
+					// </div>
+					// <div className="postBody">
+					// </div>
+
+					var postBody = (
+						React.DOM.div( {className:"postBody"}, 
+							React.DOM.p(null, 
+								"It's been over five years since the day I first learned about the existence of MIT."
+							),
+							"You know MIT, right?",
+
+							React.DOM.img( {src:"http://sloansocialimpact.mit.edu/wp-content/uploads/2014/02/MIT_Dome_night1_Edit.jpg"} ),
+
+							React.DOM.small(null, "The pornographically-cool MIT Dome."),
+
+							React.DOM.blockquote(null, 
+								"Massachusetts Institute of Technology (MIT) is a private research university in Cambridge, Massachusetts known traditionally for research and education in the physical sciences and engineering",
+								React.DOM.footer(null, React.DOM.a( {href:"http://en.wikipedia.org/wiki/Massachusetts_Institute_of_Technology"}, "Wikipedia"))
+							),
+
+							React.DOM.p(null, 
+								"But MIT isn't just any \"private research university\", though: it's arguably the best technology"+' '+
+								"university in the world."
+							),
+							React.DOM.hr(null ),
+							React.DOM.p(null, 
+								"Someday in 2009, while surfing around the internet, in an uncalculated move, I clicked a link on Info Magazine homepage,"+' '+
+								"taking me to ", React.DOM.a( {href:"http://info.abril.com.br/noticias/internet/aulas-do-mit-e-de-harvard-gratis-no-youtube-09042009-18.shl"}, "this post"),"."+' '+
+								"\"Free MIT and Harvard classes on Youtube\", it said."
+							),
+							React.DOM.h2(null, React.DOM.q(null, "MIT??")),
+							React.DOM.p(null, "Harvard I had heard of, sure. But ", React.DOM.q(null, "what is MIT?"), " The choice to google it (rather than just leaving it be), was one that changed my life."
+							),
+							React.DOM.p(null, 
+								"No... ", React.DOM.em(null, "seriously"),".",React.DOM.br(null ),
+								"I kept reading about it for hours, days even, I presume, because next thing you know MIT was my obsession."+' '+
+								"I began collecting MIT wallpapers – admittedly I still do that –,"+' '+
+								"and videos related to the institution, including one of ", React.DOM.a( {href:"https://www.youtube.com/watch?v=jJ5EwCA2H4Y"}, "Burton Conner students singing Switch"),"."
+							),
+							React.DOM.h2(null, "MIT OpenCourseWare"),
+							React.DOM.p(null, 
+								"Another important MIT-related collection was one of CD-ROMs filled with OCW classes. The MIT OpenCourseWare is an MIT project lauched in 2002 that aims at providing MIT courses videolectured for free (as in beer). The first video I watched was a 2007 version of Gilbert Strang's Linear Algebra lectures. I didn't get past the 6th video. I also watched Single Variable Calculus course, and, of course, Walter Lewin's Classical Mechanics. I must have burned half a dozen CDs with these video-lectures. I don't know why."
+							),
+							React.DOM.iframe( {width:"720", height:"495", src:"//www.youtube.com/embed/ZK3O402wf1c", frameborder:"0", allowfullscreen:true}),
+							React.DOM.small(null, "Seriously, what a sweet guy."),
+
+							
+							React.DOM.h2(null, "MIT Media Lab"),
+							React.DOM.img( {src:"http://upload.wikimedia.org/wikipedia/commons/b/ba/The_MIT_Media_Lab_-_Flickr_-_Knight_Foundation.jpg"} ),
+							
+							React.DOM.h1(null),
+							React.DOM.code(null, 
+								"oi"
+							),
+
+							React.DOM.pre(null, "var postType = this.props.model.get('type')")
+
+						)
+					);
+					// " ' 
 					return (
 						React.DOM.div(null, 
-							React.DOM.div( {className:"likeBox", onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
-								
-									this.props.model.liked?
-									React.DOM.i( {className:"icon-heart icon-red"})
-									:React.DOM.i( {className:"icon-heart-o"}),
-								
-								" ",
-									post.voteSum
+							React.DOM.div( {className:"leftOutBox"}, 
+								React.DOM.div( {className:"likeBox", onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
+									post.voteSum,
+									" ",
+									
+										this.props.model.liked?
+										React.DOM.i( {className:"icon-heart icon-red"})
+										:React.DOM.i( {className:"icon-heart-o"})
+									
+								),
+								React.DOM.div( {className:"eyeBox"}, 
+									"81 ",
+									React.DOM.i( {className:"icon-eye"})
+								),
+								React.DOM.div( {onClick:""}, 
+									"5 ",
+									React.DOM.i( {className:"icon-share"})
+								)
 							),
 							React.DOM.div( {className:"postContent"}, 
 
-								React.DOM.span( {className:"hits"}, "81 visualizações"),
 								React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
 									window.calcTimeFrom(post.published,true)
 								),
 								React.DOM.div( {className:"postTitle"}, 
 									post.data.title
 								),
-								React.DOM.div( {className:"postStats"}, 
-									React.DOM.div( {className:"tag"}, "Application"),
-									React.DOM.div( {className:"tag"}, "Olimpíadas de Matemática")
-								),
-								React.DOM.div( {className:"postBody"}, 
-									React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
-								)
+								postBody
 							),
 							React.DOM.div( {className:"postInfobar"}, 
-								React.DOM.ul( {className:"left"}, 
-									
-										post.type === "QA"?
-										React.DOM.li(null, 
-											React.DOM.i( {className:"icon-bulb"})," ",
-											
-												this.props.model.answerList.models.length===1?
-												this.props.model.answerList.models.length+" resposta"
-												:this.props.model.answerList.models.length+" respostas"
-											
-										)
-										:null
-									
+								React.DOM.ul( {className:"left"}
 								)
 							),
 							React.DOM.div( {className:"postFoot"}, 
-								React.DOM.h4(null, "Comentários (",this.props.model.commentList.models.length,")"),
-								React.DOM.br(null ),
 								CommentSectionView( {model:this.props.model} )
 							)
 						)

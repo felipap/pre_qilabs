@@ -37,6 +37,10 @@ define([
 
 	var FullPostView = React.createClass({displayName: 'FullPostView',
 
+		getInitialState: function () {
+			return {full:false};
+		},
+
 		destroy: function () {
 			React.unmountComponentAtNode(document.getElementById('fullPageContainer'));
 			app.navigate('/', {trigger:true});
@@ -54,17 +58,34 @@ define([
 				return React.DOM.div(null );
 			}
 
+			var self = this;
+
+			function toggleSidebar () {
+				self.setState({full:!self.state.full});
+			}
+
 			var mediaUserStyle = {
 				background: 'url('+post.author.avatarUrl+')',
 			};
 			// console.log(this.props.model.get('type'))
 			return (
-				React.DOM.div( {className:"fullPostView"}, 
+				React.DOM.div( {className:"fullPostView "+(this.state.full?'full':'')}, 
+					React.DOM.div( {className:"sidebarToggle", onClick:toggleSidebar}, 
+						React.DOM.i( {className:"icon-plus"})
+					),
 					React.DOM.div( {className:"postView"}, 
 						postView( {model:this.props.model} )
 					),
 
-					React.DOM.div( {className:"postSidebar"}, 
+					React.DOM.div( {className:"postSidebar", ref:"sidebar"}, 
+						React.DOM.div( {className:"tags"}, 
+							React.DOM.div( {className:"postStats"}, 
+								React.DOM.i( {className:"icon-tags"}), "  ",
+								React.DOM.div( {className:"tag"}, "Application"),
+								React.DOM.div( {className:"tag"}, "MIT")
+							)
+						),
+
 						React.DOM.div( {className:"authorInfo"}, 
 							React.DOM.div( {className:"identification"}, 
 								React.DOM.div( {className:"avatarWrapper"}, 
@@ -75,7 +96,7 @@ define([
 								React.DOM.a( {href:post.profileUrl, className:"username"}, 
 									post.author.name
 								),
-									React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
+								React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
 							),
 						
 							React.DOM.div( {className:"bio"}, 
@@ -155,7 +176,6 @@ define([
 		},
 
 		renderList: function (url, opts) {
-			return;
 			this.postList = new postModels.postList([], {url:url});
 			React.renderComponent(CardsPanelView(
 				_.extend(opts,{collection:this.postList})),

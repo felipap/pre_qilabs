@@ -85,13 +85,14 @@ nav.bar {
 		&:extend(.navbar-nav);
 
 		margin: 0 !important;
-		height: @navbar-height;
+		height: @real-navbar-height;
 
 		& > li {
 			display: inline-block;
 			vertical-align: top;
 			list-style: none;
 			height: 100%;
+			line-height: @real-navbar-height;
 		}
 
 		.searchInput {
@@ -150,6 +151,14 @@ nav.bar {
 				display: none;
 			}
 		}
+
+		.plain-link {
+			font-weight: 700;
+			.high-xbtn(white, @COLOR1);
+			.high-xbtn-padding(5px, 9px, 10px);
+			font-size: 14px;
+			vertical-align: middle;
+		}
 		
 		.plain-btn {
 			.btn0;
@@ -166,7 +175,7 @@ nav.bar {
 			background: none;
 		}
 
-		i[class*="icon-"] {
+		.plain-btn i[class*="icon-"] {
 			font-size: 17px;
 		}
 

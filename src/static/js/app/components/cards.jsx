@@ -37,6 +37,10 @@ define([
 
 	var FullPostView = React.createClass({
 
+		getInitialState: function () {
+			return {full:false};
+		},
+
 		destroy: function () {
 			React.unmountComponentAtNode(document.getElementById('fullPageContainer'));
 			app.navigate('/', {trigger:true});
@@ -54,17 +58,34 @@ define([
 				return <div />;
 			}
 
+			var self = this;
+
+			function toggleSidebar () {
+				self.setState({full:!self.state.full});
+			}
+
 			var mediaUserStyle = {
 				background: 'url('+post.author.avatarUrl+')',
 			};
 			// console.log(this.props.model.get('type'))
 			return (
-				<div className="fullPostView">
+				<div className={"fullPostView "+(this.state.full?'full':'')}>
+					<div className="sidebarToggle" onClick={toggleSidebar}>
+						<i className="icon-plus"></i>
+					</div>
 					<div className="postView">
 						<postView model={this.props.model} />
 					</div>
 
-					<div className="postSidebar">
+					<div className="postSidebar" ref="sidebar">
+						<div className="tags">
+							<div className="postStats">
+								<i className="icon-tags"></i> &nbsp;
+								<div className="tag">Application</div>
+								<div className="tag">MIT</div>
+							</div>
+						</div>
+
 						<div className="authorInfo">
 							<div className="identification">
 								<div className="avatarWrapper">
@@ -75,7 +96,7 @@ define([
 								<a href={post.profileUrl} className="username">
 									{post.author.name}
 								</a>
-									<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+								<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
 							</div>
 						
 							<div className="bio">
@@ -155,7 +176,6 @@ define([
 		},
 
 		renderList: function (url, opts) {
-			return;
 			this.postList = new postModels.postList([], {url:url});
 			React.renderComponent(CardsPanelView(
 				_.extend(opts,{collection:this.postList})),

@@ -97,6 +97,7 @@ define([
 		var self = this;
 		switch (this.dataset.action) {
 			case 'unfollow':
+				self.dataset.action = 'follow';
 				$.post('/api/users/'+this.dataset.user+'/unfollow',
 					function (data) {
 						if (data.error) {
@@ -107,6 +108,7 @@ define([
 				});
 				break;
 			case 'follow':
+				self.dataset.action = 'unfollow';
 				$.post('/api/users/'+this.dataset.user+'/follow',
 					function (data) {
 						if (data.error) {
