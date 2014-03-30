@@ -176,6 +176,7 @@ define([
 		},
 
 		renderList: function (url, opts) {
+			return;
 			this.postList = new postModels.postList([], {url:url});
 			React.renderComponent(CardsPanelView(
 				_.extend(opts,{collection:this.postList})),
