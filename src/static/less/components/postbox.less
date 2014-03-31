@@ -33,6 +33,10 @@
 		margin-bottom: 10px;
 	}
 
+	.tag {
+		border-bottom: 2px solid darken(@COLOR2, 20%);
+	}
+
 	.postView {
 		@postWidth: 760px;
 
@@ -47,14 +51,17 @@
 			overflow: hidden;
 			padding: 30px 50px;
 
-			.postTitle, .postBody {
-				margin-bottom: 20px;
-			}
-			
 			.postTitle {
 				color: #222;
 				font-size: 40px;
+				margin-bottom: 15px;
 				padding-bottom: 10px;
+				border-bottom: 1px solid #EEE;
+			}
+
+			.tags {
+				padding-bottom: 10px;
+				margin-bottom: 20px;
 				border-bottom: 1px solid #EEE;
 			}
 
@@ -65,10 +72,11 @@
 
 			.postBody {
 				.postBodyView;
-	
+				margin-bottom: 20px;
+
 				& > img, & > iframe {
 					width: @postWidth;
-					margin: 20px -50px;
+					margin: 30px -50px;
 					border: none;
 
 					& + small {
@@ -83,6 +91,13 @@
 					width: 700px;
 					margin: 15px -20px;
 				}
+				
+				h1 + img, .h1 + img, h1 + iframe, .h1 + iframe, 
+				h2 + img, .h2 + img, h2 + iframe, .h2 + iframe
+				{
+					margin-top: 0px;
+				}
+
 				pre {
 					border: 1px solid #EEE;
 					background: #FAFAFA;
@@ -177,6 +192,17 @@
 								}
 							}
 
+							.voteOptions {
+								display: inline-block;
+								vertical-align: middle;
+								margin: 0 10px;
+								cursor: pointer;
+								i { font-size: 14px; }
+								&:hover {
+									color: #222;
+								}
+							}
+
 							.time {
 								font-size: 11px;
 							}
@@ -188,27 +214,16 @@
 				}
 
 				.commentInputSection {
-					padding: 3px 5px 3px 5px;
+					padding: 10px;
 					border-top: 1px solid #DDD;
-					// background: #EEE;
-
-					td {
-						vertical-align: top;
-					}
-
-					td:not(:last-child) {
-						padding-right: 5px;
-					}
+					display: table;
+					width: 100%;
 					
 					.mediaUser {
 						border: 1px solid #DDD;
 					}
 
-					.commentInputTd {
-						width: 100%;
-					}
 					.commentInput {
-
 						vertical-align: middle;
 						display: inline-block;
 						border: 1px solid #DDD;
@@ -216,24 +231,28 @@
 						outline: none;
 						font-size: 13px;
 						padding: 5px;
+						text-align: left;
 
 						width: 100%;
-						height: 30px;
+						height: 50px;
 						&:focus {
-							border-color: #08C;
+							border-color: #444;
 							height: 35px;
 						}
 						resize: vertical;
 					}
 
 					[data-action=send-comment] {
-						display: inline-block;
 						.high-xbtn(white, @COLOR2);
-						font-size: 12px;
 						.high-xbtn-padding(4px, 10px, 2px);
+						display: inline-block;
+						margin-top: 10px;
+						float: right;
+						font-size: 13px;
 					}
 				}
 			}
+
 
 			.optionBtns {
 				float: right;
@@ -296,45 +315,48 @@
 	.postSidebar {
 		position: relative;
 		font-family: museo-sans;
-		padding-bottom: 20px;
 
 		z-index: 1001;
 		float: left;
 		width: 340px;
-		background: #333;
+		background: #444;
 		text-align: left;
 		color: white;
-		& > div {
-			padding: 10px;
+
+		& > .box {
+			// padding: 30px;
+			padding: 20px;
+		}
+
+		.cardType {
+			margin-bottom: 20px;
+			// font-weight: bold;
+
 		}
 
 		.transition(margin-left, 500ms, linear);
 			
 		.postStats {
 			font-size: 14px;
-
-			.tag {
-				border-bottom: 2px solid darken(@COLOR2, 30%);
-			}
 		}
 
 		.tags {
-			// background: #EFEFEF;
+			background: #222;
 			// color: #444;
 			// border-left: 1px solid #DDD;
 			// border-bottom: 1px dashed #666;
 		}
 
 		.authorInfo {
-			padding: 20px;
+			padding: 30px;
 			text-align: left;
-			background: #666;
-			background: #222;
-			margin-bottom: 20px;
+			background: #313133;
 			// border-bottom: 1px dashed #444;
 			// border-top: 1px dashed #444;
 	
 			.identification {
+
+				border: ;
 
 				.avatarWrapper {
 					height: 35px;
@@ -349,12 +371,14 @@
 					text-decoration: none;
 					vertical-align: middle;
 				}
+
+				.bio {
+					margin: 20px 0 0;
+					font-size: 14px;
+					line-height: 20px;
+				}
 			}
 
-			.bio {
-				margin: 10px 0;
-				font-size: 13px;
-			}
 			.btn-follow { float: right; }
 		}
 

@@ -61,6 +61,11 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 
 						React.DOM.time( {'data-time-count':1*new Date(comment.published), 'data-time-long':"true"}, 
 							window.calcTimeFrom(comment.published)
+						),
+						
+						React.DOM.div( {className:"voteOptions"}, 
+							React.DOM.i( {className:"icon-tup"}), " 4  ",
+							React.DOM.i( {className:"icon-tdown"}), " 20"
 						)
 					
 					)
@@ -87,7 +92,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				data: { content: { body: bodyEl.val() } }
 			}).done(function(response) {
 				bodyEl.val('');
-				console.log('response', response);
 				self.props.model.commentList.add(new postModels.commentItem(response.data));
 			});
 		},
@@ -102,16 +106,10 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			return (
 				React.DOM.div( {className:"commentInputSection"}, 
 					React.DOM.form( {className:"formPostComment", onSubmit:this.handleSubmit}, 
-						React.DOM.table(null, 
-							React.DOM.tbody(null, 
-								React.DOM.tr(null, React.DOM.td( {className:"commentInputTd"}, 
-									React.DOM.textarea( {required:"required", className:"commentInput", ref:"input", type:"text", placeholder:"Faça um comentário sobre essa publicação."}
-									)
-								),React.DOM.td(null, 
-									React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
-								))
-							)
-						)
+						React.DOM.h4(null, "Comente essa publicação"),
+						React.DOM.textarea( {required:"required", className:"commentInput", ref:"input", type:"text", placeholder:""}
+						),
+						React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
 					)
 				)
 			);
@@ -708,6 +706,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 								React.DOM.div( {className:"postTitle"}, 
 									"From OCW fanatic to MIT undergrad: my 5 year journey"
 								),
+
 								postBody
 							),
 							React.DOM.div( {className:"postInfobar"}, 

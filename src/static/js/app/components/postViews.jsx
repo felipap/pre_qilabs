@@ -62,6 +62,11 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 						<time data-time-count={1*new Date(comment.published)} data-time-long="true">
 							{window.calcTimeFrom(comment.published)}
 						</time>
+						
+						<div className="voteOptions">
+							<i className="icon-tup"></i> 4 &nbsp;
+							<i className="icon-tdown"></i> 20
+						</div>
 					
 					</div>
 				</div>
@@ -87,7 +92,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				data: { content: { body: bodyEl.val() } }
 			}).done(function(response) {
 				bodyEl.val('');
-				console.log('response', response);
 				self.props.model.commentList.add(new postModels.commentItem(response.data));
 			});
 		},
@@ -102,16 +106,10 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			return (
 				<div className="commentInputSection">
 					<form className="formPostComment" onSubmit={this.handleSubmit}>
-						<table>
-							<tbody>
-								<tr><td className="commentInputTd">
-									<textarea required="required" className="commentInput" ref="input" type="text" placeholder="Faça um comentário sobre essa publicação.">
-									</textarea>
-								</td><td>
-									<button data-action="send-comment" onClick={this.handleSubmit}>Enviar</button>
-								</td></tr>
-							</tbody>
-						</table>
+						<h4>Comente essa publicação</h4>
+						<textarea required="required" className="commentInput" ref="input" type="text" placeholder="">
+						</textarea>
+						<button data-action="send-comment" onClick={this.handleSubmit}>Enviar</button>
 					</form>
 				</div>
 			);
@@ -708,6 +706,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 								<div className="postTitle">
 									From OCW fanatic to MIT undergrad: my 5 year journey
 								</div>
+
 								{postBody}
 							</div>
 							<div className="postInfobar">

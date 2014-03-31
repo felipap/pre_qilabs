@@ -78,15 +78,8 @@ define([
 					</div>
 
 					<div className="postSidebar" ref="sidebar">
-						<div className="tags">
-							<div className="postStats">
-								<i className="icon-tags"></i> &nbsp;
-								<div className="tag">Application</div>
-								<div className="tag">MIT</div>
-							</div>
-						</div>
-
-						<div className="authorInfo">
+						<div className="box authorInfo">
+							{/* <div className="cardType"><strong>DICA</strong> por</div> */}
 							<div className="identification">
 								<div className="avatarWrapper">
 									<a href={post.profileUrl}>
@@ -97,17 +90,26 @@ define([
 									{post.author.name}
 								</a>
 								<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+
+								<div className="bio">
+									QI Labs Founder &amp; CEO. <br />MIT freshman. Open source enthusiast. I believe I can program my way into changing the world.
+								</div>
 							</div>
 						
-							<div className="bio">
-								Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+						</div>
+						
+						<div className="box tags">
+							<div className="postStats">
+								<i className="icon-tags"></i> &nbsp;
+								<div className="tag">Application</div>
+								<div className="tag">MIT</div>
 							</div>
 						</div>
-						<div className="flagOption">
-							Pulicação Imprópria?
+						<div className="box flagOption">
 							<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
 								<i className="icon-flag"></i>
 							</span>
+							Sinalizar publicação imprópria.
 						</div>
 					</div>
 					<div onClick={this.destroy} className="blackout"></div>

@@ -78,15 +78,8 @@ define([
 					),
 
 					React.DOM.div( {className:"postSidebar", ref:"sidebar"}, 
-						React.DOM.div( {className:"tags"}, 
-							React.DOM.div( {className:"postStats"}, 
-								React.DOM.i( {className:"icon-tags"}), "  ",
-								React.DOM.div( {className:"tag"}, "Application"),
-								React.DOM.div( {className:"tag"}, "MIT")
-							)
-						),
-
-						React.DOM.div( {className:"authorInfo"}, 
+						React.DOM.div( {className:"box authorInfo"}, 
+							/* <div className="cardType"><strong>DICA</strong> por</div> */
 							React.DOM.div( {className:"identification"}, 
 								React.DOM.div( {className:"avatarWrapper"}, 
 									React.DOM.a( {href:post.profileUrl}, 
@@ -96,18 +89,27 @@ define([
 								React.DOM.a( {href:post.profileUrl, className:"username"}, 
 									post.author.name
 								),
-								React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
-							),
+								React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"}),
+
+								React.DOM.div( {className:"bio"}, 
+									"QI Labs Founder & CEO. ", React.DOM.br(null ),"MIT freshman. Open source enthusiast. I believe I can program my way into changing the world."
+								)
+							)
 						
-							React.DOM.div( {className:"bio"}, 
-								"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam."
+						),
+						
+						React.DOM.div( {className:"box tags"}, 
+							React.DOM.div( {className:"postStats"}, 
+								React.DOM.i( {className:"icon-tags"}), "  ",
+								React.DOM.div( {className:"tag"}, "Application"),
+								React.DOM.div( {className:"tag"}, "MIT")
 							)
 						),
-						React.DOM.div( {className:"flagOption"}, 
-							"Pulicação Imprópria?",
+						React.DOM.div( {className:"box flagOption"}, 
 							React.DOM.span( {'data-toggle':"tooltip", title:"Denunciar publicação", 'data-placement':"bottom"}, 
 								React.DOM.i( {className:"icon-flag"})
-							)
+							),
+							"Sinalizar publicação imprópria."
 						)
 					),
 					React.DOM.div( {onClick:this.destroy, className:"blackout"})
