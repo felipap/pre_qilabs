@@ -1,5 +1,5 @@
-{% extends '../sidebared.html' %}
-{% set requireView="profile" %}
+{% extends '../cards.html' %}
+{% set requireView="cards" %}
 
 {% import '../macros/user.html' as userMacros %}
 
@@ -8,135 +8,187 @@
 	<script>conf={postsRoot:'/api/users/{{ profile.id }}/posts'};</script>
 {% endblock %}
 
-{% block sidebarContent %}
+{% block globalHeader %}
+<div class="globalHead">
+	<div class="bg-cover" style="background-image: url({{ getMediaUrl('images/u/mit.jpg') }});"></div>
+	<div class="bg-blackout"></div>
 
-	<div class="box userProfile">
-		<div class="head">
-			{{ userMacros.renderUser(profile) }}
-			<span class="name">{{ profile.name }}</span>
-			{% if user.id != profile.id %}
+	<div class="profileWrapper">
+		<table>
+		<tr>
+			<td class="left">
+			<div class="profileUser">
+				<div class="avatarWrapper">
+					<div class="avatar" style="background: url({{ profile.avatarUrl }})"></div>
+				</div>
+					<span class="name">{{ profile.name }}</span>
 				{% if follows %}
 					<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
 				{% else %}
 					<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
 				{% endif %}
-			{% endif %}
-		</div>
-
-		<div class="body">
-			<div class="info-group">
-				<label>Origem:</label>
-				<span class="answer">Honolulu, Hawaii, US</span>
 			</div>
-			<div class="info-group">
-				<label>Idade:</label>
-				<span class="answer">18 anos</span>
+			<div class="bio">
+				QI Labs Founder. Open source enthusiast. I believe I can program my way into changing the world.
+				<div class="where">
+					<div class="">
+						<i class="icon-map-marker"></i>Massachusetts Institute of Technology, Cambridge, US
+					</div>
+					<div class="">
+						<i class="icon-home"></i>18 anos, Rio de Janeiro, Brasil
+					</div>
+					<div class="">
+						<i class="icon-link"></i><a href="#">twitter</a> ·
+						<a href="#">facebook</a> · 
+						<a href="#">github</a> ·
+						<a href="#">google plus</a>
+					</div>
+				</div>
 			</div>
-		</div>
-	</div>
+		</td>
 
-	<div class="box userList">
-		<div class="head">
-			Seguindo: <div class="right">{{ profile.following.count }}</div>
-		</div>
-		<ul class="body">
-			{% if profile.following.docs.length %}
-				{% for person in profile.following.docs %}
-					<li>{{ userMacros.renderUser(person) }}</li>
-				{% endfor %}
-			{% else %}
-				<div class="emptyBoxMsg">{{profile.name.split(' ')[0] }} ainda não segue ninguém.</div>
-			{% endif %}
-		</ul>
-	</div>
+		<td class="middle">
+			<div>
+				<h5><i class="icon-tags"></i>&nbsp;<strong>Interesses</strong></h5>
+				<div class="tag">Application</div>
+				<div class="tag">SAT</div>
+				<div class="tag">Olimpíadas de Informática</div>
+				<div class="tag">Intercâmbio</div>
+				<div class="tag unknown">Programação</div>
+				<div class="tag">Voluntariado</div>
+			</div>
+			<div>
+				<h5><i class="icon-trophy icon-silvser"></i>&nbsp;<strong>Destaques</strong></h5>
+				<div>Medalha de Ouro, OBXXX 2014</div>
+				<div>Prêmio Jovens Procrastinadores, 2014</div>
+			</div>
+		</td>
 
-	<div class="box userList">
-		<div class="head">
-			Seguidores: <div class="right">{{ profile.following.count }}</div>
-		</div>
-		<ul class="body">
-			{% if profile.followers.docs.length %}
-				{% for person in profile.followers.docs %}
-					<li>{{ userMacros.renderUser(person) }}</li>
-				{% endfor %}
-			{% else %}
-				<div class="emptyBoxMsg">{{profile.name.split(' ')[0] }} ainda não tem seguidores.</div>
-			{% endif %}
-		</ul>
+		<td class="right">
+			<div class="userList">
+				<h5>
+					<!-- <span class="detail">18</span> Seguindo -->
+					15 Seguindo
+				</h5>
+				<ul>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/jonnyguio">
+							<div class="avatar" style="background: url(https://graph.facebook.com/100001737803256/picture)" data-toggle="tooltip" title="João Guio" data-placement="bottom"></div>
+							</a>
+						</div>
+					</li>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/michelle.malher">
+							<div class="avatar" style="background: url(https://graph.facebook.com/100002234680040/picture)" data-toggle="tooltip" title="Michelle Malher" data-placement="bottom"></div>
+							</a>
+						</div>
+					</li>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/vivianeplobo">
+							<div class="avatar" style="background: url(https://graph.facebook.com/100001840252092/picture)" data-toggle="tooltip" title="Viviane Da Paixão Lobo" data-placement="bottom"></div>
+							</a>
+						</div>
+					</li>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/mariitope">
+							<div class="avatar" style="background: url(https://graph.facebook.com/100001115788168/picture)" data-toggle="tooltip" title="Mariam Topeshashvili" data-placement="bottom"></div>
+							</a>
+						</div>
+					</li>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/luizfernando.gomes.581">
+							<div class="avatar" style="background: url(https://graph.facebook.com/luizfernando.gomes.581/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Luiz Fernando Leal"></div>
+							</a>
+						</div>
+					</li>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/luizfernando.gomes.581">
+							<div class="avatar" style="background: url(https://graph.facebook.com/ivo.paulo.lima/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Ivo Eu"></div>
+							</a>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="userList">
+				<h5>
+					<!-- <span class="detail">18</span> Seguidores -->
+					23 Seguidores
+				</h5>
+				<ul>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/jonnyguio">
+							<div class="avatar" style="background: url(https://graph.facebook.com/100001737803256/picture)" data-toggle="tooltip" title="João Guio" data-placement="bottom"></div>
+							</a>
+						</div>
+					</li>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/michelle.malher">
+							<div class="avatar" style="background: url(https://graph.facebook.com/100002234680040/picture)" data-toggle="tooltip" title="Michelle Malher" data-placement="bottom"></div>
+							</a>
+						</div>
+					</li>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/vivianeplobo">
+							<div class="avatar" style="background: url(https://graph.facebook.com/100001840252092/picture)" data-toggle="tooltip" title="Viviane Da Paixão Lobo" data-placement="bottom"></div>
+							</a>
+						</div>
+					</li>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/mariitope">
+							<div class="avatar" style="background: url(https://graph.facebook.com/100001115788168/picture)" data-toggle="tooltip" title="Mariam Topeshashvili" data-placement="bottom"></div>
+							</a>
+						</div>
+					</li>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/luizfernando.gomes.581">
+							<div class="avatar" style="background: url(https://graph.facebook.com/luizfernando.gomes.581/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Luiz Fernando Leal"></div>
+							</a>
+						</div>
+					</li>
+					<li>
+						<div class="avatarWrapper">
+							<a href="/u/luizfernando.gomes.581">
+							<div class="avatar" style="background: url(https://graph.facebook.com/rennan.gaio/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Garoto Precoce"></div>
+							</a>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</td>
+		</tr>
+		</table>
 	</div>
+</div>
 
-	<div class="box tagList">
-		<div class="head">
-			Interesses: <div class="right"> 4</div>
-		</div>
-		<ul class="body">
-			<li><a href="#">
-				<i class="tagIcon icon-square"></i>
-				<span class="tagName">Application</span>
-			</a></li>
-			<li><a href="#">
-				<i class="tagIcon icon-square"></i>
-				<span class="tagName">Intercâmbio</span>
-			</a></li>
-			<li><a href="#">
-				<i class="tagIcon icon-square"></i>
-				<span class="tagName">Olimpíadas de Matemática</span>
-			</a></li>
-			<li><a href="#">
-				<i class="tagIcon icon-square"></i>
-				<span class="tagName">Vestibular</span>
-			</a></li>
-		</ul>
-	</div>
-	
-	<div class="box labList">
-		<div class="head">
-			Laboratórios: <div class="right">{{ profile.groups.count }}</div>
-		</div>
-		<ul class="body groupList">
-			{% if profile.groups.docs.length %}
-				{% for group in profile.groups.docs %}
-					<li><a href="{{ group.path }}">{{ group.name }}</a></li>
-				{% endfor %}
-			{% else %}
-				<div class="emptyBoxMsg">{{profile.name.split(' ')[0]}} não está em nenhum laboratório.</div>
-			{% endif %}
-		</ul>
-	</div>
+<nav class="cardsNav">
+	<li class="active">
+		Todas de Felipe
+		<div class="arrow"></div>
+	</li>
+	<li>
+		Populares
+		<div class="arrow"></div>
+	</li>
+	<li>
+		Atividade
+		<div class="arrow"></div>
+	</li>
+	<li>
+		<i class="icon-heart icon-red"></i>s
+		<div class="arrow"></div>
+	</li>
+</nav>
 
-	<div class="social">
-		<a href="#" data-toggle="tooltip" title="Personal website">
-			<i class="icon-home"></i>
-		</a>
-		<a href="#" data-toggle="tooltip" title="Twitter">
-			<i class="icon-twitter"></i>
-		</a>
-		<a href="#" data-toggle="tooltip" title="Facebook">
-			<i class="icon-facebook"></i>
-		</a>
-		<a href="#" data-toggle="tooltip" title="Github">
-			<i class="icon-github"></i>
-		</a>
-		<a href="#" data-toggle="tooltip" title="Google+">
-			<i class="icon-google-plus"></i>
-		</a>
-		<a href="#" data-toggle="tooltip" title="LinkedIn">
-			<i class="icon-linkedin"></i>
-		</a>
-	</div>
 
-	<div class="badges">
-		<a href="#" data-toggle="tooltip" title="Peace Nobel 2010">
-			<i class="icon-certificate gold"></i>
-		</a><br>
-		<a href="#" data-toggle="tooltip" title="Medalha de Prata - OBQ 2013">
-			<i class="icon-certificate silver"></i>
-		</a>
-		<a href="#" data-toggle="tooltip" title="Medalha de Ouro - OBMEP 2011">
-			<i class="icon-certificate gold"></i>
-		</a>
-		<a href="#" data-toggle="tooltip" title="Medalha de Bronze - OBA 2010">
-			<i class="icon-certificate copper"></i>
-		</a>
-	</div>
 {% endblock %}

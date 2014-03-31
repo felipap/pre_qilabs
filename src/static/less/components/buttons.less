@@ -157,7 +157,14 @@
 .btn0 {
 	.btn;
 	.button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
-	.navbar-btn;
+	.navbar-vertical-align(@input-height-base);
+
+	&.btn-sm {
+	.navbar-vertical-align(@input-height-small);
+	}
+	&.btn-xs {
+	.navbar-vertical-align(22);
+	}
 
 	// font-size: 13px;
 	font-weight: bold;

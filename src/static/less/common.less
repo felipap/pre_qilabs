@@ -5,6 +5,8 @@
 */
 
 @import (reference) "mixins.less";
+// @import (reference) "variables.less";
+// @import (reference) "btspmixins.less";
 @import "bstp.less";
 
 // @import "plugins/scrollbars.less";
@@ -90,22 +92,33 @@ body {
 }
 
 
-.bg-cover {
-	@blur: 2px;
-	position: fixed;
-	top: -@blur; bottom: -@blur;
-	left: -@blur; right: -@blur;
-
-	-webkit-filter: blur(@blur);
-	-moz-filter: blur(@blur);
-	-o-filter: blur(@blur);
-	-ms-filter: blur(@blur);
-	filter: blur(@blur);
+.cover (@blur: 2) {
+	position: absolute;
+	top: -2*@blur; bottom: -2*@blur;
+	left: -2*@blur; right: -2*@blur;
+	.blur(@blur);
 	z-index: -1;
 
 	background: #FFFFFF no-repeat center bottom;
 	background-clip: content-box;
 	.background-size(cover);
+}
+
+.blackout (@opacity: .6) {
+	z-index: -1;
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: black;
+	opacity: @opacity;
+}
+
+.bg-cover {
+	.cover(3px);
+}
+
+body > .bg-cover {
+	position: fixed;
+	.cover(2px);
 }
 
 .bg-img {

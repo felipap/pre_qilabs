@@ -16,8 +16,19 @@
 }
 
 nav.bar {
-	.navbar;
-	&:extend(.navbar);
+	// .navbar;
+	// &:extend(.navbar);
+	position: relative;
+	min-height: @navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
+	margin-bottom: @navbar-margin-bottom;
+	border: 1px solid transparent;
+
+	// Prevent floats from breaking the navbar
+	&:extend(.clearfix all);
+
+	// @media (min-width: @grid-float-breakpoint) {
+	// border-radius: @navbar-border-radius;
+	// }
 	
 	border-radius: 0 !important;
 	margin-top: -1px;
@@ -26,6 +37,14 @@ nav.bar {
 	z-index: 5;
 	width: 100%;
 	top: 0;
+
+	.pull-right {
+		float: right !important;
+	}
+
+	.pull-left {
+		float: left !important;
+	}
 
 	.tooltip {
 		margin-top: 6px;
@@ -39,7 +58,7 @@ nav.bar {
 	@compColor: white;
 	@brandColor: white;
 	@borderColor: #222;
-	background: #31322E;
+	background: #31302E;
 	
 	// background: white;
 	// @borderColor: #DADADA;
@@ -49,6 +68,10 @@ nav.bar {
 
 	.navcontent {
 		margin: 0 auto;
+	}
+
+	.navcontent > ul:not(.pull-right) {
+		.pull-left;
 	}
 
 	.brand {

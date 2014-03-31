@@ -166,6 +166,10 @@ define([
 		},
 
 		routes: {
+			'u/:profileId':
+				function () {
+					this.renderList(window.conf.postsRoot,{canPostForm:false});
+				},
 			'posts/:postId':
 				 function (postId) {
 				 	$.getJSON('/api/posts/'+postId, function (response) {
@@ -178,7 +182,6 @@ define([
 		},
 
 		renderList: function (url, opts) {
-			return;
 			this.postList = new postModels.postList([], {url:url});
 			React.renderComponent(CardsPanelView(
 				_.extend(opts,{collection:this.postList})),
@@ -197,6 +200,24 @@ define([
 		},
 
 	});
+
+	var originalOffset = $(".cardsNav").offset().top;
+
+	$('#globalContainer').scroll(function() {
+		console.log($('#globalContainer').scrollTop() - originalOffset+60+1)
+		if ($('#globalContainer').scrollTop() > originalOffset-60) {
+			$(".cardsNav").addClass('fixed');
+		} else {
+			$(".cardsNav").removeClass('fixed');
+		}
+	});
+
+
+	function onResize () {
+		$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top)
+	}
+	$(window).resize(onResize);
+	onResize();
 
 	return {
 		initialize: function () {

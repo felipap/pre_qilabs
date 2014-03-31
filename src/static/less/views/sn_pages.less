@@ -39,11 +39,21 @@ nav.bar {
 	font-weight: bold;
 	text-transform: uppercase;
 	font-family: "Lato";
+	margin-bottom: 5px;
 	// font-size: ;
 	background: @COLOR2;
 	cursor: pointer;
 	&:hover {
 		background: darken(@COLOR2, 5%);
+	}
+	border-bottom: 2px solid darken(@COLOR2, 20%);
+
+	&.unknown {
+		background: #AAA;
+		// &:hover {
+		// 	background: darken(#AAA, 5%);
+		// }
+		border-bottom: 2px solid darken(#AAA, 20%);
 	}
 }
 
@@ -82,7 +92,7 @@ nav.bar {
 		background-size: cover !important;
 	}
 
-	& + .username {
+	& + .username, & + .name, & + span {
 		vertical-align: middle;
 	}
 }
@@ -109,27 +119,173 @@ nav.bar {
 			background-color: rgba(0,0,0,.3);
 		}
 	}
+
+	&::-webkit-scrollbar * {
+		background: transparent;
+	}
 }
 
-.icon-red {
-	color: @COLOR4;
-}
 
 body {
 	background: #F0F0F0 url(/static/images/cubes.png);
+	overflow: hidden;
 
+	.globalHead {
+		background: #444;
+		position: relative;
+		overflow: hidden;
+		margin: 10px 10px 0;
+
+		.bg-blackout { .blackout(.7); }
+		.bg-cover, .bg-blackout { z-index: 2; }
+
+		.profileWrapper, nav { position: relative; z-index: 10; }
+		
+		.profileWrapper {
+			width: 100%;
+			min-width: 1200px;
+			display: table;
+			margin: auto;
+			color: white;
+			font-family: museo-sans;
+			padding: 50px;
+			
+			table {
+				width: 100%;
+			}
+
+			.left {
+				padding-right: 20px;
+				vertical-align: top;
+
+				.profileUser {
+					margin-top: 10px;
+					.avatarWrapper {
+						.rounded(3px);
+						margin-right: 5px;
+						height: 45px;
+						width: 45px;
+					}
+					.name {
+						font-size: 20px;
+						font-weight: bold;
+					}
+				}
+
+				.where {
+					margin-top: 10px;
+					font-size: 13px;
+					font-weight: bold;
+
+					& > div {
+						i { width: 16px; }
+						margin-top: 5px;
+					}
+
+					a { color: white; }
+				}
+
+				.bio {
+					padding: 20px 0;
+					// width: 600px;
+
+				}
+			}
+
+			.middle {
+
+				width: 30%;
+				// vertical-align: top;
+				padding-right: 20px;
+
+				.tag {
+				}
+			}
+
+			.right {
+				width: 260px;
+
+				.userList {
+					margin-bottom: 20px;
+					label {
+						text-align: left;
+						display: block;
+						font-size: 13px;
+						font-weight: bold;
+						font-family: museo-sans;
+
+						& > .detail {
+							// float: right;
+							color: #EEE;
+							font-size: 12px;
+							font-weight: normal;
+							margin: 0 5px;
+						}
+					}
+					li {
+						margin-right: 4px;
+						list-style: none;
+						display: inline-block;
+					}
+					.avatarWrapper {
+						.rounded(2px);
+						height: 35px;
+						width: 35px;
+					}
+				}
+			}
+		}
+	}
+
+	.cardsNav {
+		position: relative;
+
+		background: white;
+		text-align: center;
+		margin: 0 10px;
+		padding: 10px;
+		color: #555;
+		font-family: museo-sans;
+		border-bottom: 1px solid #DDD;
+
+		li {
+			position: relative;
+			margin: 0 20px;
+			list-style: none;
+			display: inline-block;
+		}
+
+		li .arrow {
+			content: '';
+			border: 8px solid transparent;
+			// border-bottom-color: #F0F0F0;
+			position: absolute;
+			top: 14px;
+			display: inline;
+			margin-left: -7px;
+		}
+		li.active .arrow { border-bottom-color: #DDD; }
+	}
+
+	.cardsNav.fixed {
+		position: fixed;
+		top: @navbar-height;
+		z-index: 100;
+		width: 100%;
+		margin: 0;
+	}
 
 	#globalContainer {
-		.scrollbared;
-
-		padding-top: 20px;
 		overflow: auto;
-		position: absolute;
+		// position: absolute;
 		top: @real-navbar-height;
 		bottom: 0;
+		height: 100%;
 		width: 100%;
+		.scrollbared;
 
 		#cards {
+			padding-top: 20px;
 			margin: 0 auto;
 			.cardsContainer;
 		}
