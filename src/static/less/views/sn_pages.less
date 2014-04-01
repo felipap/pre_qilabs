@@ -46,14 +46,13 @@ nav.bar {
 	&:hover {
 		background: darken(@COLOR2, 5%);
 	}
-	border-bottom: 2px solid darken(@COLOR2, 20%);
+	border-bottom: 2px solid rgba(0,0,0,.3);
 
 	&.unknown {
 		background: #AAA;
 		// &:hover {
 		// 	background: darken(#AAA, 5%);
 		// }
-		border-bottom: 2px solid darken(#AAA, 20%);
 	}
 }
 
@@ -242,7 +241,6 @@ body {
 
 		background: white;
 		text-align: center;
-		margin: 0 10px;
 		padding: 10px;
 		color: #555;
 		font-family: museo-sans;
@@ -267,10 +265,15 @@ body {
 		li.active .arrow { border-bottom-color: #DDD; }
 	}
 
+	.globalHead + .cardsNav {
+		margin: 0 10px;
+	}
+
 	.cardsNav.fixed {
 		position: fixed;
 		top: @navbar-height;
 		z-index: 100;
+		padding-right: 18px;
 		width: 100%;
 		margin: 0;
 	}

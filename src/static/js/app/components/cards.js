@@ -202,9 +202,7 @@ define([
 	});
 
 	var originalOffset = $(".cardsNav").offset().top;
-
 	$('#globalContainer').scroll(function() {
-		console.log($('#globalContainer').scrollTop() - originalOffset+60+1)
 		if ($('#globalContainer').scrollTop() > originalOffset-60) {
 			$(".cardsNav").addClass('fixed');
 		} else {
