@@ -34,7 +34,7 @@ nav.bar {
 	margin-top: -1px;
 	padding: @-navbar-padding 10px;
 	margin-bottom: 0;
-	z-index: 5;
+	z-index: 20;
 	width: 100%;
 	top: 0;
 
@@ -60,11 +60,11 @@ nav.bar {
 	@borderColor: #222;
 	background: #31302E;
 	
-	// background: white;
-	// @borderColor: #DADADA;
-	// border-bottom: 1px solid #DDD;
-	// @brandColor: #444; // #08C;
-	// @compColor: #444;
+	background: white;
+	@borderColor: #DADADA;
+	border-bottom: 1px solid #DDD;
+	@brandColor: #444; // #08C;
+	@compColor: #444;
 
 	.navcontent {
 		margin: 0 auto;
@@ -118,45 +118,45 @@ nav.bar {
 			line-height: @real-navbar-height;
 		}
 
-		.searchInput {
-			line-height: @navbar-height;
-			// width: 0;
-			// overflow: hidden;
-			vertical-align: middle;
+		// .searchInput {
+		// 	line-height: @navbar-height;
+		// 	// width: 0;
+		// 	// overflow: hidden;
+		// 	vertical-align: middle;
 
-			input {
-				line-height: 30px;
-				.rounded(3px);
-				font: 12px "Open Sans";
-				color: #444;
-				border: none;
-				.no-box-shadow();
-				padding: 5px 8px;
-				padding-right: 20px;
-				width: 200px;
-				outline: none;
-				border: 1px solid #444;
-				.transition();
-				&:focus {
-					border: 1px solid black;
-					width: 250px;
-				}
-			}
+		// 	input {
+		// 		line-height: 30px;
+		// 		.rounded(3px);
+		// 		font: 12px "Open Sans";
+		// 		color: #444;
+		// 		border: none;
+		// 		.no-box-shadow();
+		// 		padding: 5px 8px;
+		// 		padding-right: 20px;
+		// 		width: 200px;
+		// 		outline: none;
+		// 		border: 1px solid #444;
+		// 		.transition();
+		// 		&:focus {
+		// 			border: 1px solid black;
+		// 			width: 250px;
+		// 		}
+		// 	}
 
-			i {
-				cursor: pointer;
-				position: relative;
-				right: 23px;
-				top: -1px;
-				color: #888;
-				&::before {
-					font-size: 14px;
-				}
-				&:hover {
-					color: #444;
-				}
-			}
-		}
+		// 	i {
+		// 		cursor: pointer;
+		// 		position: relative;
+		// 		right: 23px;
+		// 		top: -1px;
+		// 		color: #888;
+		// 		&::before {
+		// 			font-size: 14px;
+		// 		}
+		// 		&:hover {
+		// 			color: #444;
+		// 		}
+		// 	}
+		// }
 	
 		.bell-btn {
 			position: relative;
@@ -175,12 +175,30 @@ nav.bar {
 			}
 		}
 
+		.postIcon {
+			font-size: 16px;
+			color: #08C;
+		}
+
 		.plain-link {
+			.btn0;
+			color: @compColor;
+			opacity: .9;
 			font-weight: 700;
-			.high-xbtn(white, @COLOR1);
-			.high-xbtn-padding(5px, 9px, 10px);
-			font-size: 14px;
-			vertical-align: middle;
+			font-size:;
+			&:hover, &:focus, &:active {
+				background: none;
+				box-shadow: none;
+				color: @compColor;
+			}
+			padding: 8px;
+			vertical-align: top;
+			box-shadow: none;
+			background: none;
+
+			&:hover {
+				opacity: 1;
+			}
 		}
 		
 		.plain-btn {
@@ -240,15 +258,6 @@ nav.bar {
 	
 		#ddNewPost {
 
-			.dropdown-menu {
-				min-width: inherit;
-				margin-left: -25px;
-				&::after {
-					position: relative;
-					border: 7px solid transparent;
-					border-bottom-color: white;
-				}
-			}
 		}
 
 		.menu-dd {
