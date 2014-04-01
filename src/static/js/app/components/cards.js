@@ -202,14 +202,19 @@ define([
 	});
 
 	var originalOffset = $(".cardsNav").offset().top;
-	$('#globalContainer').scroll(function() {
-		if ($('#globalContainer').scrollTop() > originalOffset-60) {
-			$(".cardsNav").addClass('fixed');
-		} else {
-			$(".cardsNav").removeClass('fixed');
-		}
-	});
-
+	var hasHead = !!$(".globalHead").length;
+	if (hasHead) {
+		$('#globalContainer').scroll(function() {
+			if (!hasHead && $("#globalContainer").scrollTop()) {
+				$(".cardsNav").addClass('fixed');
+			} else if (hasHead && 61 > $(".globalHead").offset().top+$(".globalHead").outerHeight()) {
+				$(".cardsNav").addClass('fixed');
+			} else {
+				$(".cardsNav").removeClass('fixed');
+			}
+		});
+	}
+		
 
 	function onResize () {
 		$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top)
