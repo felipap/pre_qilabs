@@ -204,13 +204,7 @@ PostSchema.methods.fillChildren = function(cb) {
       return async.map(children, (function(c, done) {
         var _ref1;
         if ((_ref1 = c.type) === Types.Answer) {
-          return Post.find({
-            parentPost: c
-          }).populate('author').exec(function(err, comments) {
-            return done(err, _.extend({}, c.toJSON(), {
-              comments: comments
-            }));
-          });
+          return c.fillChildren(done);
         } else {
           return done(null, c);
         }
@@ -225,15 +219,30 @@ PostSchema.methods.fillChildren = function(cb) {
   })(this));
 };
 
-PostSchema.statics.stuffList = function(docs, cb) {
+PostSchema.statics.countList = function(docs, cb) {
   assertArgs({
     $isA: Array
   }, '$isCb');
   return async.map(docs, function(post, done) {
     if (post instanceof Post) {
-      return post.fillChildren(done);
+      return Post.count({
+        type: 'Comment',
+        parentPost: post
+      }, function(err, ccount) {
+        return Post.count({
+          type: 'Answer',
+          parentPost: post
+        }, function(err, acount) {
+          return done(err, _.extend(post.toJSON(), {
+            childrenCount: {
+              Answer: acount,
+              Comment: ccount
+            }
+          }));
+        });
+      });
     } else {
-      return done(null, post);
+      return done(null, post.toJSON);
     }
   }, function(err, results) {
     return cb(err, results);

@@ -68,28 +68,6 @@ UserSchema = new mongoose.Schema({
       type: String
     }
   ],
-  memberships: {
-    type: [
-      {
-        group: {
-          type: String,
-          required: true,
-          ref: 'Group'
-        },
-        since: {
-          type: Date,
-          "default": Date.now
-        },
-        permission: {
-          type: String,
-          "enum": _.values(Group.MembershipTypes),
-          required: true,
-          "default": 'Moderator'
-        }
-      }
-    ],
-    select: false
-  },
   followingTags: [],
   lastUpdate: {
     type: Date,
@@ -368,7 +346,7 @@ fetchTimelinePostAndActivities = function(opts, postConds, actvConds, cb) {
           }
         })).populate('resource actor target object').exec(next);
       }, function(next) {
-        return Post.stuffList(docs, next);
+        return Post.countList(docs, next);
       }
     ], HandleLimit(function(err, results) {
       var all;
@@ -418,8 +396,29 @@ UserSchema.methods.getTimeline = function(opts, callback) {
         if (err) {
           return callback(err);
         }
-        return Post.stuffList(docs, function(err, docs) {
-          return callback(err, docs, minDate);
+        return async.map(docs, function(post, done) {
+          if (post instanceof Post) {
+            return Post.count({
+              type: 'Comment',
+              parentPost: post
+            }, function(err, ccount) {
+              return Post.count({
+                type: 'Answer',
+                parentPost: post
+              }, function(err, acount) {
+                return done(err, _.extend(post.toJSON(), {
+                  childrenCount: {
+                    Answer: acount,
+                    Comment: ccount
+                  }
+                }));
+              });
+            });
+          } else {
+            return done(null, post.toJSON);
+          }
+        }, function(err, results) {
+          return callback(err, results, minDate);
         });
       });
     };
@@ -446,121 +445,6 @@ UserSchema.statics.getUserTimeline = function(user, opts, cb) {
   }, function(err, all, minPostDate) {
     return cb(err, all, minPostDate);
   });
-};
-
-UserSchema.methods.getLabTimeline = function(group, opts, cb) {
-  assertArgs({
-    $isModel: Group
-  }, {
-    $contains: 'maxDate'
-  });
-  return fetchTimelinePostAndActivities({
-    maxDate: opts.maxDate
-  }, {
-    group: group,
-    parentPost: null
-  }, {
-    group: group
-  }, function(err, all, minPostDate) {
-    console.log('err', err);
-    return cb(err, all, minPostDate);
-  });
-};
-
-UserSchema.methods.createGroup = function(data, cb) {
-  var group, self;
-  self = this;
-  group = new Group({
-    name: data.profile.name,
-    profile: {
-      name: data.profile.name
-    }
-  });
-  return group.save((function(_this) {
-    return function(err, group) {
-      console.log(err, group);
-      if (err) {
-        return cb(err);
-      }
-      return self.update({
-        $push: {
-          memberships: {
-            member: self,
-            permission: Group.MembershipTypes.Moderator,
-            group: group.id
-          }
-        }
-      }, function() {
-        cb(null, group);
-        return Activity.Trigger(this, Activity.Types.GroupCreated)({
-          group: group,
-          creator: self
-        }, function() {});
-      });
-    };
-  })(this));
-};
-
-UserSchema.methods.addUserToGroup = function(user, group, cb) {
-  var mem, self;
-  self = this;
-  assertArgs({
-    $isModel: 'User'
-  }, {
-    $isModel: 'Group'
-  }, '$isCb');
-  if (mem = _.findWhere(user.memberships, {
-    group: group.id
-  })) {
-    return cb();
-  } else {
-    return user.update({
-      $push: {
-        memberships: {
-          member: user,
-          permission: Group.MembershipTypes.Member,
-          group: group.id
-        }
-      }
-    }, (function(_this) {
-      return function(err) {
-        cb(err, mem);
-        return Activity.Trigger(_this, Activity.Types.GroupMemberAdded)({
-          group: group,
-          actor: _this,
-          member: user
-        }, function() {});
-      };
-    })(this));
-  }
-};
-
-UserSchema.methods.removeUserFromGroup = function(member, group, type, cb) {
-  var mem, self;
-  self = this;
-  mem = _.findWhere(user.memberships, {
-    group: group.id
-  });
-  if (mem) {
-    return cb();
-  } else {
-    return user.update({
-      $pull: {
-        memberships: {
-          group: group.id
-        }
-      }
-    }, (function(_this) {
-      return function(err) {
-        cb(err, mem);
-        return Activity.Trigger(_this, Activity.Types.GroupMemberAdded)({
-          group: group,
-          actor: _this,
-          member: user
-        }, function() {});
-      };
-    })(this));
-  }
 };
 
 

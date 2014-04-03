@@ -12,9 +12,15 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		url: function () {
 			return this.get('apiPath');
 		},
+		constructor: function () {
+			Backbone.Model.apply(this, arguments);
+			if (this.get('votes')) {
+				this.liked = !!~this.get('votes').indexOf(user.id);
+			}
+		}
 	});
 
-	var PostItem = Backbone.Model.extend({
+	var PostItem = GenericPostItem.extend({
 		url: function () {
 			return this.get('apiPath');
 		},
@@ -38,20 +44,13 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		initialize: function () {
 			var children = this.get('children') || {};
 
-			for (var k in children)
-			if (children.hasOwnProperty(k)) {
-			}
-
-			if (this.get('votes')) {
-				this.liked = !!~this.get('votes').indexOf(user.id);
-			}
-			
-			this.commentList = new CommentList(children.Comment);
-			this.commentList.postItem = this.postItem;
-			this.answerList = new AnswerList(children.Answer);
-			// if (this.get('hasComments')) {
-			// 	this.commentList.fetch({reset:true});
+			this.children = {};
+			// for (var k in children)
+			// if (children.hasOwnProperty(k)) {
+			// 	this.children[k] = new ChildrenCollections[k](children[k]);
 			// }
+			this.children.Answer = new ChildrenCollections.Answer(children.Answer);
+			this.children.Comment = new ChildrenCollections.Comment(children.Comment);
 		},
 	});
 
@@ -84,42 +83,33 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		},
 	});
 
-	var AnswerItem = GenericPostItem.extend({
-
-		initialize: function () {
-			var children = this.get('children');
-			if (children) {
-				this.commentList = new CommentList(children.Comment);
-				this.commentList.postItem = this.postItem;
-				this.answerList = new AnswerList(children.Answer);
-			}
-		}
-	});
-	
-	var AnswerList = Backbone.Collection.extend({
-		model: AnswerItem,	
-		comparator: function (i) {
-			// do votes here! :)
-			return -1*new Date(i.get('published'));
-		}
-	});
-
 	var CommentItem = GenericPostItem.extend({});
 
-	var CommentList = Backbone.Collection.extend({
-		model: CommentItem,
-		endDate: new Date(),
-		comparator: function (i) {
-			return 1*new Date(i.get('published'));
-		},
-		url: function () {
-			return this.postItem.get('apiPath') + '/comments'; 
-		},
-		parse: function (response, options) {
-			this.endDate = new Date(response.endDate);
-			return Backbone.Collection.prototype.parse.call(this, response.data, options);
-		}
-	});
+	var AnswerItem = PostItem.extend({});
+
+	var ChildrenCollections = {
+		Answer: Backbone.Collection.extend({
+			model: AnswerItem,	
+			comparator: function (i) {
+				// do votes here! :)
+				return -1*new Date(i.get('published'));
+			}
+		}),
+		Comment: Backbone.Collection.extend({
+			model: CommentItem,
+			endDate: new Date(),
+			comparator: function (i) {
+				return 1*new Date(i.get('published'));
+			},
+			url: function () {
+				return this.postItem.get('apiPath') + '/comments'; 
+			},
+			parse: function (response, options) {
+				this.endDate = new Date(response.endDate);
+				return Backbone.Collection.prototype.parse.call(this, response.data, options);
+			}
+		}),
+	};
 
 	return {
 		postItem: PostItem,

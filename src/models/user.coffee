@@ -52,11 +52,11 @@ UserSchema = new mongoose.Schema {
 	},
 
 	tags: [{ type: String }]
-	memberships: { type: [{
-		group: { type: String, required: true, ref: 'Group' }
-		since: { type: Date, default: Date.now }
-		permission: { type: String, enum: _.values(Group.MembershipTypes), required:true, default:'Moderator' }
-	}], select: false}
+	# memberships: { type: [{
+	# 	group: { type: String, required: true, ref: 'Group' }
+	# 	since: { type: Date, default: Date.now }
+	# 	permission: { type: String, enum: _.values(Group.MembershipTypes), required:true, default:'Moderator' }
+	# }], select: false}
 
 	# I don't know what to do with these (2-mar-14)
 	followingTags: 	[]
@@ -235,7 +235,7 @@ fetchTimelinePostAndActivities = (opts, postConds, actvConds, cb) ->
 						.populate 'resource actor target object'
 						.exec next
 				(next) ->
-					Post.stuffList docs, next
+					Post.countList docs, next
 			], HandleLimit (err, results) -> # Merge results and call back
 				all = _.sortBy((results[0]||[]).concat(results[1]), (p) -> -p.published)
 				cb(err, all, minPostDate)
@@ -269,8 +269,14 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 					path: 'author actor target object', select: User.PopulateFields
 				}, (err, docs) =>
 					return callback(err) if err
-					Post.stuffList docs, (err, docs) ->
-						callback(err, docs, minDate)
+					async.map docs, (post, done) ->
+						if post instanceof Post
+							Post.count {type:'Comment', parentPost:post}, (err, ccount) ->
+								Post.count {type:'Answer', parentPost:post}, (err, acount) ->
+									done(err, _.extend(post.toJSON(), {childrenCount:{Answer:acount,Comment:ccount}}))
+						else done(null, post.toJSON)
+					, (err, results) ->
+						callback(err, results, minDate)
 
 UserSchema.statics.PopulateFields = PopulateFields
 
@@ -283,70 +289,70 @@ UserSchema.statics.getUserTimeline = (user, opts, cb) ->
 		(err, all, minPostDate) -> cb(err, all, minPostDate)
 	)
 
-UserSchema.methods.getLabTimeline = (group, opts, cb) ->
-	assertArgs({$isModel:Group}, {$contains:'maxDate'}) # isId:'User', }
-	fetchTimelinePostAndActivities(
-		{maxDate: opts.maxDate},
-		{group:group, parentPost:null},
-		{group:group},
-		(err, all, minPostDate) -> console.log('err', err); cb(err, all, minPostDate)
-	)
+# UserSchema.methods.getLabTimeline = (group, opts, cb) ->
+# 	assertArgs({$isModel:Group}, {$contains:'maxDate'}) # isId:'User', }
+# 	fetchTimelinePostAndActivities(
+# 		{maxDate: opts.maxDate},
+# 		{group:group, parentPost:null},
+# 		{group:group},
+# 		(err, all, minPostDate) -> console.log('err', err); cb(err, all, minPostDate)
+# 	)
 
 ################################################################################
 ## related to Groups ###########################################################
 
-UserSchema.methods.createGroup = (data, cb) ->
-	# assertArgs
-	self = @
-	group = new Group {
-		name: data.profile.name
-		profile: {
-			name: data.profile.name
-		}
-	}
-	group.save (err, group) =>
-		console.log(err, group)
-		return cb(err) if err
-		self.update {$push: {
-			memberships: {
-				member: self
-				permission: Group.MembershipTypes.Moderator
-				group: group.id
-			}
-		}}, () ->
-			cb(null, group)
-			Activity.Trigger(@, Activity.Types.GroupCreated)({group:group, creator:self}, ->)
+# UserSchema.methods.createGroup = (data, cb) ->
+# 	# assertArgs
+# 	self = @
+# 	group = new Group {
+# 		name: data.profile.name
+# 		profile: {
+# 			name: data.profile.name
+# 		}
+# 	}
+# 	group.save (err, group) =>
+# 		console.log(err, group)
+# 		return cb(err) if err
+# 		self.update {$push: {
+# 			memberships: {
+# 				member: self
+# 				permission: Group.MembershipTypes.Moderator
+# 				group: group.id
+# 			}
+# 		}}, () ->
+# 			cb(null, group)
+# 			Activity.Trigger(@, Activity.Types.GroupCreated)({group:group, creator:self}, ->)
 
-UserSchema.methods.addUserToGroup = (user, group, cb) ->
-	self = @
-	assertArgs({$isModel:'User'}, {$isModel:'Group'}, '$isCb')
-	if mem = _.findWhere(user.memberships, {group:group.id})
-		return cb()
-	else
-		user.update {$push: {
-			memberships: {
-				member: user
-				permission: Group.MembershipTypes.Member
-				group: group.id
-			}
-		}}, (err) =>
-			cb(err, mem)
-			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
-				group:group, actor:@, member:user
-			}, ->)
+# UserSchema.methods.addUserToGroup = (user, group, cb) ->
+# 	self = @
+# 	assertArgs({$isModel:'User'}, {$isModel:'Group'}, '$isCb')
+# 	if mem = _.findWhere(user.memberships, {group:group.id})
+# 		return cb()
+# 	else
+# 		user.update {$push: {
+# 			memberships: {
+# 				member: user
+# 				permission: Group.MembershipTypes.Member
+# 				group: group.id
+# 			}
+# 		}}, (err) =>
+# 			cb(err, mem)
+# 			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
+# 				group:group, actor:@, member:user
+# 			}, ->)
 
 
-UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
-	self = @
-	mem = _.findWhere(user.memberships, {group:group.id})
-	if mem
-		return cb()
-	else
-		user.update {$pull: { memberships: { group: group.id } }}, (err) =>
-			cb(err, mem)
-			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
-				group:group, actor:@, member:user
-			}, ->)
+# UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
+# 	self = @
+# 	mem = _.findWhere(user.memberships, {group:group.id})
+# 	if mem
+# 		return cb()
+# 	else
+# 		user.update {$pull: { memberships: { group: group.id } }}, (err) =>
+# 			cb(err, mem)
+# 			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
+# 				group:group, actor:@, member:user
+# 			}, ->)
 
 
 

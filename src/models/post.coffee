@@ -138,8 +138,7 @@ PostSchema.methods.fillChildren = (cb) ->
 		.exec (err, children) =>
 			async.map children, ((c, done) =>
 				if c.type in [Types.Answer]
-					Post.find({parentPost:c}).populate('author').exec (err, comments) ->
-						done(err, _.extend({}, c.toJSON(), { comments: comments }))
+					c.fillChildren(done)
 				else
 					done(null, c)
 			), (err, popChildren) =>
@@ -148,15 +147,28 @@ PostSchema.methods.fillChildren = (cb) ->
 ################################################################################
 ## Statics #####################################################################
 
-PostSchema.statics.stuffList = (docs, cb) ->
+# PostSchema.statics.stuffList = (docs, cb) ->
+# 	assertArgs({$isA:Array},'$isCb')
+
+# 	async.map docs, (post, done) ->
+# 			if post instanceof Post
+# 				post.fillChildren(done)
+# 			else done(null, post)
+# 		, (err, results) ->
+# 			cb(err, results)
+
+PostSchema.statics.countList = (docs, cb) ->
 	assertArgs({$isA:Array},'$isCb')
 
 	async.map docs, (post, done) ->
-			if post instanceof Post
-				post.fillChildren(done)
-			else done(null, post)
-		, (err, results) ->
-			cb(err, results)
+		if post instanceof Post
+			Post.count {type:'Comment', parentPost:post}, (err, ccount) ->
+				Post.count {type:'Answer', parentPost:post}, (err, acount) ->
+					done(err, _.extend(post.toJSON(), {childrenCount:{Answer:acount,Comment:ccount}}))
+		else done(null, post.toJSON)
+	, (err, results) ->
+		cb(err, results)
+
 
 PostSchema.statics.Types = Types
 
