@@ -2,14 +2,17 @@
 .cardsContainer ()
 {
 	@card-width: 245px;
-	@card-margin: 19px;
+	@card-height: 200px;
+	@card-margin: 20px;
+	@card-body-fontsize: 20px;
 	@cpr: 4; // cards-per-row
 	text-align: center;
 
+	@header-height: 30px;
+	@footer-height: 36px;
+
 	// width: (@cpr*@card-width+((@cpr)-1)*@card-margin-right);
 	margin-left: @card-margin;
-
-	.postInputForm { display: none; }
 
 	.cardView {
 		position: relative;
@@ -17,25 +20,25 @@
 
 		display: inline-block;
 		width: @card-width; margin-right: @card-margin;
-		height: 200px; margin-bottom: @card-margin;
+		height: @card-height; margin-bottom: @card-margin;
 		vertical-align: top;
 	
 		cursor: pointer;
 		
-		border: 1px solid #EEE;
-		border-bottom: 1px solid #DDD;
 		background: white;
 		font-family: museo-sans;
 
+		border: 1px solid #EEE;
+		border-bottom: 1px solid #CCC;
 		&:hover {
-			border-color: #DDD;
-			border-bottom-color: #BBB;
+			// border-color: #D5d5d5;
+			border-bottom-color: #AAA;
 		}
 
 		.cardHeader {
 			padding: 10px;
 			font-size: 12px;
-			height: 30px;
+			height: @header-height;
 
 			.cardType {
 				text-transform: uppercase;
@@ -79,33 +82,13 @@
 			}
 		}
 
-		.cardCover {
-			position: absolute;
-			top: 0px;
-			left: 0;
-			// height: 160px;
-			bottom: 0;
-			right: 0;
-			// background: rgba(0,0,0,.5);
-			// display: none;
-			opacity: 0;
-			.transition;
-			padding: 5px;
-
-			.tag {
-
-			}
-		}
-
-		&:hover .cardCover { opacity: 1; }
-
 		.cardBody {
 			width: 100%;
 			word-wrap: break-word;
-			height: 130px;
+			height: @card-height - @header-height - @footer-height - 4;
 			overflow: hidden;
 			padding: 10px 10px;
-			font-size: 20px;
+			font-size: @card-body-fontsize;
 			font-weight: 500;
 
 			a {
@@ -116,7 +99,7 @@
 		.cardFoot {
 			border-top: 1px solid #EEE;
 			padding: 0 10px;
-			line-height: 36px;
+			line-height: @footer-height;
 
 			time {
 				color: #888;
@@ -144,20 +127,26 @@
 			}
 		}
 
+
+		.cardCover {
+			position: absolute;
+			top: 0px;
+			left: 0;
+			// height: 160px;
+			bottom: 0;
+			right: 0;
+			// background: rgba(0,0,0,.5);
+			// display: none;
+			opacity: 0;
+			.transition;
+			padding: 5px;
+
+			.tag {
+
+			}
+		}
+
+		&:hover .cardCover { opacity: 1; }
+
 	}
-
-	// [data-tag=application] {
-	// 	&:hover {
-	// 		border-color: @COLOR3;
-	// 		// outline: 2px solid @COLOR3;
-	// 	}
-	// }
-
-	// [data-tag=olimpiada] {
-	// 	&:hover {
-	// 		border-color: transparent;
-	// 		outline: 2px solid @COLOR4;
-	// 	}
-	// }
-
 }

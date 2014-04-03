@@ -52,7 +52,7 @@ define([
 			// test for type, QA for example
 			var postType = this.props.model.get('type');
 			if (postType in postViews) {
-				var postView = postViews.full[postType];
+				var postView = postViews[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
 				return <div />;
@@ -69,11 +69,11 @@ define([
 			};
 			// console.log(this.props.model.get('type'))
 			return (
-				<div className={"fullPostView "+(this.state.full?'full':'')}>
+				<div className={"postBox "+(this.state.full?'full':'')} data-post={this.props.model.get('type')}>
 					<div className="sidebarToggle" onClick={toggleSidebar}>
 						<i className="icon-plus"></i>
 					</div>
-					<div className="postView">
+					<div className="postCol">
 						<postView model={this.props.model} />
 					</div>
 
@@ -92,7 +92,8 @@ define([
 								<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
 
 								<div className="bio">
-									QI Labs Founder &amp; CEO. <br />MIT freshman. Open source enthusiast. I believe I can program my way into changing the world.
+									<div className="specialized">MIT Freshman</div>
+									QI Labs Founder &amp; CEO. Open source enthusiast. I believe I can program my way into changing the world.
 								</div>
 							</div>
 						

@@ -69,7 +69,7 @@ module.exports = {
 					return res.endJSON {error:true,type:'InvalidPostType'}
 				req.user.createPost {
 					groupId: null
-					type: req.body.type
+					type: 'Question' # req.body.type
 					content:
 						title: req.body.post_title
 						body: req.body.post_body

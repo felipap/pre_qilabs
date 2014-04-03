@@ -10,72 +10,6 @@
 @import "../components/cards.less";
 @import "../components/postbox.less";
 
-@page-width: 960px;
-
-@sidebar-width: 280px;
-@results-container-width: 960px-@sidebar-width;
-@sidebar-gap: 25px;
-
-body { 
-	margin: 0;
-	-webkit-font-smoothing: antialiased;
-}
-
-nav.bar {
-	.navcontent {
-		// width: 980px;
-		padding: 0 20px;
-	}
-}
-
-.tag {
-	display: inline-block;
-	background: 40px;
-	padding: 4px 6px;
-	// .rounded(5px);
-	font-size: 11px;
-	margin-right: 5px;
-	color: white;
-	font-weight: bold;
-	text-transform: uppercase;
-	font-family: "Lato";
-	margin-bottom: 5px;
-	// font-size: ;
-	background: @COLOR2;
-	cursor: pointer;
-	&:hover {
-		background: darken(@COLOR2, 5%);
-	}
-	border-bottom: 2px solid rgba(0,0,0,.3);
-
-	&.unknown {
-		background: #AAA;
-		// &:hover {
-		// 	background: darken(#AAA, 5%);
-		// }
-	}
-}
-
-
-[data-tag-bg=application] { background: @COLOR2; }
-[data-tag-bg=vestibular] { background: @COLOR3; }
-[data-tag-bg=olimpiada] { background: @COLOR4; }
-
-.mediaUser {
-	display: inline-block;
-	vertical-align: middle;
-	width: 50px;
-	height: 50px;
-	text-decoration: none;
-
-	.mediaUserAvatar {
-		vertical-align: middle;
-		width: 100%;
-		height: 100%;
-		background-size: cover !important;
-	}
-}
-
 .avatarWrapper {
 	display: inline-block;
 	vertical-align: middle;
@@ -95,7 +29,6 @@ nav.bar {
 		vertical-align: middle;
 	}
 }
-
 
 .scrollbared () {
 
@@ -124,12 +57,10 @@ nav.bar {
 	}
 }
 
-
 body {
 	background: #F0F0F0 url(/static/images/cubes.png);
-	overflow: hidden;
 
-	.globalHead {
+	#globalHead {
 		background: #444;
 		position: relative;
 		overflow: hidden;
@@ -238,8 +169,8 @@ body {
 
 	.cardsNav {
 		position: relative;
-		background: white;
-		color: #555;
+		color: white;
+		background: #444;
 
 		text-align: center;
 		padding: 10px;
@@ -265,13 +196,12 @@ body {
 		li.active .arrow { border-bottom-color: #DDD; }
 	}
 
-	.globalHead + .cardsNav {
+	#globalHead + .cardsNav {
 		margin: 0 10px;
 	}
 
 	.cardsNav.fixed {
 		position: fixed;
-		background: #444;
 		top: @navbar-height;
 		z-index: 4;
 		padding-right: 18px;
@@ -306,19 +236,12 @@ body {
 			#resultsContainer { .timelineContainer; }
 		}
 	}
-}
 
-[data-page=profile] {
-
-		.badges {
-			.gold { color: #FDE910; }
-			.silver { color: #E3E4E5; }
-			.copper { color: #CB6D51; }
-			[class*=icon] {
-				font-size: 35px;
-				padding: 5px 6px;
-			}
-		}
+	#fullPageContainer {
+		position: absolute;
+		top: 0;
+		width: 100%;
+	}
 }
 
 [data-page=postCreate] {

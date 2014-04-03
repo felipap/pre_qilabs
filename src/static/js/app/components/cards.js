@@ -52,7 +52,7 @@ define([
 			// test for type, QA for example
 			var postType = this.props.model.get('type');
 			if (postType in postViews) {
-				var postView = postViews.full[postType];
+				var postView = postViews[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
 				return React.DOM.div(null );
@@ -69,11 +69,11 @@ define([
 			};
 			// console.log(this.props.model.get('type'))
 			return (
-				React.DOM.div( {className:"fullPostView "+(this.state.full?'full':'')}, 
+				React.DOM.div( {className:"postBox "+(this.state.full?'full':''), 'data-post':this.props.model.get('type')}, 
 					React.DOM.div( {className:"sidebarToggle", onClick:toggleSidebar}, 
 						React.DOM.i( {className:"icon-plus"})
 					),
-					React.DOM.div( {className:"postView"}, 
+					React.DOM.div( {className:"postCol"}, 
 						postView( {model:this.props.model} )
 					),
 
@@ -92,7 +92,8 @@ define([
 								React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"}),
 
 								React.DOM.div( {className:"bio"}, 
-									"QI Labs Founder & CEO. ", React.DOM.br(null ),"MIT freshman. Open source enthusiast. I believe I can program my way into changing the world."
+									React.DOM.div( {className:"specialized"}, "MIT Freshman"),
+									"QI Labs Founder & CEO. Open source enthusiast. I believe I can program my way into changing the world."
 								)
 							)
 						

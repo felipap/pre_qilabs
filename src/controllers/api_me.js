@@ -110,7 +110,7 @@ module.exports = {
         }
         return req.user.createPost({
           groupId: null,
-          type: req.body.type,
+          type: 'Question',
           content: {
             title: req.body.post_title,
             body: req.body.post_body

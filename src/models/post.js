@@ -1,4 +1,4 @@
-var Notification, ObjectId, Post, PostSchema, Resource, Types, assert, assertArgs, async, mongoose, smallify, urlify, _,
+var Notification, ObjectId, Post, PostSchema, Resource, TransTypes, Types, assert, assertArgs, async, mongoose, smallify, urlify, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -22,9 +22,14 @@ Types = {
   Answer: 'Answer',
   PlainPost: 'PlainPost',
   QA: 'QA',
+  Question: 'Question',
   VideoPost: 'VideoPost',
   Notification: 'Notification'
 };
+
+TransTypes = {};
+
+TransTypes[Types.Question] = 'Pergunta';
 
 PostSchema = new Resource.Schema({
   author: {
@@ -37,11 +42,6 @@ PostSchema = new Resource.Schema({
     type: ObjectId,
     ref: 'Group',
     required: false
-  },
-  type: {
-    type: String,
-    required: true,
-    "enum": _.values(Types)
   },
   parentPost: {
     type: ObjectId,
@@ -57,6 +57,11 @@ PostSchema = new Resource.Schema({
   },
   title: {
     type: String
+  },
+  type: {
+    type: String,
+    required: true,
+    "enum": _.values(Types)
   },
   data: {
     title: {
@@ -90,6 +95,10 @@ PostSchema = new Resource.Schema({
   toJSON: {
     virtuals: true
   }
+});
+
+PostSchema.virtual('translatedType').get(function() {
+  return TransTypes[this.type] || 'Publicação';
 });
 
 PostSchema.virtual('voteSum').get(function() {

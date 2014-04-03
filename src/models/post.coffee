@@ -19,9 +19,13 @@ Types =
 	Answer: 'Answer'
 	PlainPost: 'PlainPost'
 	QA: 'QA'
+	Question: 'Question'
 	VideoPost: 'VideoPost'
 	Notification: 'Notification'
 	# QuizPost: 'QuizPost'
+
+TransTypes = {}
+TransTypes[Types.Question] = 'Pergunta'
 
 ################################################################################
 ## Schema ######################################################################
@@ -29,13 +33,13 @@ Types =
 PostSchema = new Resource.Schema {
 	author:		{ type: ObjectId, ref: 'User', required: true, indexed: 1 }
 	group:		{ type: ObjectId, ref: 'Group', required: false }
-	type: 		{ type: String, required: true, enum:_.values(Types) }
 	parentPost:	{ type: ObjectId, ref: 'Post', required: false }
 	
 	updated:	{ type: Date }
 	published:	{ type: Date, indexed: 1 }
 	
 	title:		{ type: String }
+	type: 		{ type: String, required: true, enum:_.values(Types) }
 	data: {
 		title:		{ type: String }
 		body:	{ type: String, required: true }
@@ -51,6 +55,9 @@ PostSchema = new Resource.Schema {
 
 ################################################################################
 ## Virtuals ####################################################################
+
+PostSchema.virtual('translatedType').get ->
+	TransTypes[@type] or 'Publicação'
 
 PostSchema.virtual('voteSum').get ->
 	# for m of @ when m isnt 'voteSum'

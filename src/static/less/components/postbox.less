@@ -1,43 +1,41 @@
 
-@import "../components/postbody.less";
+.optionBtns {
+	display: inline-block;
 
-.fullPostView {
-	position: relative;
+	[data-action=remove-post],
+	[data-action=edit-post] {
+		.full-reset-button;
+		padding-left: 3px;
+		vertical-align: middle;
+		padding-right: 3px;
+		font-size: 105%;
+		font-weight: bolder;
+		color: #888;
+		opacity: .6;
+		&:hover {
+			color: #444;
+		}
+		&:active {
+			outline: none;
+		}
+	}
+}
+
+.postBox {
 	z-index: 1000;
+	position: relative;
 
-	margin: 0 auto;
+	margin: 35px auto;
 	padding-bottom: 20px;
 	display: table;
 	top: -20px;
 
-	.sidebarToggle {
-		position: absolute; 
-		right: -30px;
-		z-index: 1002;
-		top: 5px;
-		width: 30px;
-		color: white;
-		opacity: .8;
-		text-align: center;
-		cursor: pointer;
-		&:hover { opacity: 1};
-		font-size: 17px;
-		i:before { content: @fa-var-minus; }
-	}
-	&.full .sidebarToggle i:before {
-		content: @fa-var-plus;
-	}
+	.postCol {
 
-	h1, .h1, h2, .h2 {
-		margin-top: 25px;
-		margin-bottom: 10px;
-	}
-
-	.tag {
-		border-bottom: 2px solid darken(@COLOR2, 20%);
-	}
-
-	.postView {
+		h1, .h1, h2, .h2 {
+			margin-top: 25px;
+			margin-bottom: 10px;
+		}
 		@postWidth: 760px;
 
 		font-family: museo-sans;
@@ -71,7 +69,14 @@
 			}
 
 			.postBody {
-				.postBodyView;
+				color: black;
+				font-size: 16px;
+				color: #333;
+
+				p {
+					margin: 0 0 20px;
+					line-height: 24px;
+				}
 				margin-bottom: 20px;
 
 				& > img, & > iframe {
@@ -110,10 +115,9 @@
 			border-top: 1px solid #DDD;
 
 			overflow: hidden;
-			background: #EEE;
-
-			.commentInputSection .mediaUser,
-			.commentWrapper .mediaUser {
+			
+			.commentInputSection .avatarWrapper,
+			.commentWrapper .avatarWrapper {
 				.rounded(0);
 				width: 30px;
 				height: 30px;
@@ -126,6 +130,8 @@
 			.commentSection {
 				// background: white;
 				font-size: 13px;
+				background: #EEE;
+				overflow: hidden;
 
 				.commentList {
 					list-style: none;
@@ -167,14 +173,14 @@
 							font-size: 12px;
 
 							.author {
-								color: #666;
+								color: #333;
 								text-decoration: none;
 
 								&:hover {
 									color: #333;
 								}
 
-								.mediaUser {
+								.avatarWrapper {
 									height: 20px;
 									width: 20px;
 									vertical-align: middle;
@@ -182,7 +188,7 @@
 									border: 1px solid #DDD;
 									.rounded(15px);
 
-									.mediaUserAvatar {
+									.avatar {
 										.rounded(15px);
 									}
 								}
@@ -216,14 +222,15 @@
 				.commentInputSection {
 					padding: 10px;
 					border-top: 1px solid #DDD;
+					position: relative;
 					display: table;
 					width: 100%;
 					
-					.mediaUser {
+					.avatarWrapper {
 						border: 1px solid #DDD;
 					}
 
-					.commentInput {
+					textarea {
 						vertical-align: middle;
 						display: inline-block;
 						border: 1px solid #DDD;
@@ -251,66 +258,198 @@
 						font-size: 13px;
 					}
 				}
-			}
 
+				.commentInputSection.small {
+					width: 100%;
+					padding: 5px;
+					padding-right: 70px;
+					border-bottom: 1px solid #DDD;
+					
+					.avatarWrapper {
+						border: 1px solid #DDD;
+					}
 
-			.optionBtns {
-				float: right;
-				display: inline-block;
-				position: absolute;
-				right: 5px; top: 0px;
-				z-index: 4;
-				
-				.transition(all, .2s, linear);
-				opacity: .5;
-				&:hover {
-					opacity: 1;
+					textarea { width: 100%; height: 30px; }
+
+					[data-action=send-comment] {
+						.high-xbtn-padding(4px, 6px, 2px);
+						display: inline-block;
+						position: absolute;
+						right: 10px;
+						top: 4px;
+						float: right;
+						font-size: 13px;
+					}	
 				}
 
-				[data-action=remove-post],
-				[data-action=edit-post] {
-					.full-reset-button;
-					padding-left: 3px;
-					vertical-align: middle;
-					padding-right: 3px;
-					font-size: 105%;
-					font-weight: bolder;
-					color: #888;
-					opacity: .6;
+				.showCommentInput {
+					padding: 5px;
+					font-size: 13px;
+					color: #AAA;
+					background: white;
+					margin: 5px;
+					border: 1px solid #DDD;
+					cursor: pointer;
+				}
+
+				.optionBtns {
+					float: right;
+					display: inline-block;
+					position: absolute;
+					right: 5px; top: 0px;
+					z-index: 4;
+					
+					.transition(all, .2s, linear);
+					opacity: .5;
 					&:hover {
-						color: #444;
+						opacity: 1;
 					}
-					&:active {
 
+					[data-action=remove-post],
+					[data-action=edit-post] {
+						.full-reset-button;
+						padding-left: 3px;
+						vertical-align: middle;
+						padding-right: 3px;
+						font-size: 105%;
+						font-weight: bolder;
+						color: #888;
+						opacity: .6;
+						&:hover {
+							color: #444;
+						}
+						&:active {
+
+							outline: none;
+						}
+					}
+				}
+			}
+
+			.answerSection {
+				overflow: hidden;
+
+				.answerList {
+					.answerView {
+						position: relative;
+						border-top: 1px solid #DDD;
+
+						table { width: 100%; }
+
+						td { vertical-align: top; }
+
+						padding: 20px;
+
+						.answerHeader {
+							position: relative;
+
+							.avatarWrapper {
+								height: 25px; width: 25px; .rounded(5px);
+								margin-right: 10px;
+								margin-top: -2px;
+								border: 1px solid #DDD;
+							}
+							.username {
+								font-weight: bold;
+								vertical-align: middle;
+							}
+							padding-right: 20px;
+							padding-bottom: 10px;
+							time {
+								position: absolute;
+								right: 3px;
+								top: 0;
+								line-height: 14px;
+								font-size: 12px;
+								margin-top: 3px;
+							}
+						}
+
+						.left {
+							width: 30px;
+							font-size: 12px;
+							padding: 0 10px 0 5px;
+							
+							.voteControl {
+								text-align: center;
+								.voteResult {
+									font-size: 23px;
+								}
+
+								.control {
+									.btn();
+									.reset-button;
+									font-size: 18px;
+									line-height: 16px;
+									i { vertical-align: middle; }
+								}
+							}
+						}
+
+						.right {
+
+							.answerBody {
+								background: white;
+								padding: 10px;
+								border: 1px solid #DDD;
+							}
+						}
+
+					}
+				}
+
+				.showAnswerInput {
+					padding: 5px;
+					font-size: 13px;
+					color: #AAA;
+					background: white;
+					margin: 5px;
+					border: 1px solid #DDD;
+					cursor: pointer;
+				}
+
+				.answerInputSection {
+					padding: 10px;
+					border-top: 1px solid #DDD;
+					position: relative;
+					display: table;
+					width: 100%;
+					
+					.avatarWrapper {
+						border: 1px solid #DDD;
+					}
+
+					textarea {
+						vertical-align: middle;
+						display: inline-block;
+						border: 1px solid #DDD;
+						.no-box-shadow;
 						outline: none;
+						font-size: 13px;
+						padding: 5px;
+						text-align: left;
+
+						width: 100%;
+						height: 50px;
+						&:focus {
+							border-color: #444;
+							height: 35px;
+						}
+						resize: vertical;
+					}
+
+					[data-action=send-answer] {
+						.high-xbtn(white, @COLOR2);
+						.high-xbtn-padding(4px, 10px, 2px);
+						display: inline-block;
+						margin-top: 10px;
+						float: right;
+						font-size: 13px;
 					}
 				}
 			}
 		}
 	}
-	
-	.leftOutBox {
-		position: absolute;
-		width: 100px;
-		left: -105px;
-		top: 19px;
-
-		& > * {
-			text-align: right;
-			opacity: .9;
-			line-height: 23px;
-			color: white;
-			cursor: pointer;
-			&:hover {
-				opacity: 1;
-			}
-		}
-		
-		.eyeBox {
-			cursor: default;
-		}
-	}
-
 
 	.postSidebar {
 		position: relative;
@@ -377,6 +516,10 @@
 					font-size: 14px;
 					line-height: 21px;
 				}
+
+				.specialized {
+					font-weight: bold;
+				}
 			}
 
 			.btn-follow { float: right; }
@@ -395,8 +538,50 @@
 		i { margin: 0 5px; }
 	}
 
+	// misc bellow
+
 	&.full .postSidebar {
 		margin-left: -400px;
+	}
+
+	.sidebarToggle {
+		position: absolute; 
+		right: -30px;
+		z-index: 1002;
+		top: 5px;
+		width: 30px;
+		color: white;
+		opacity: .8;
+		text-align: center;
+		cursor: pointer;
+		&:hover { opacity: 1};
+		font-size: 17px;
+		i:before { content: @fa-var-minus; }
+	}
+	&.full .sidebarToggle i:before {
+		content: @fa-var-plus;
+	}
+
+	.leftOutBox {
+		position: absolute;
+		width: 100px;
+		left: -105px;
+		top: 19px;
+
+		& > * {
+			text-align: right;
+			opacity: .9;
+			line-height: 23px;
+			color: white;
+			cursor: pointer;
+			&:hover {
+				opacity: 1;
+			}
+		}
+		
+		.eyeBox {
+			cursor: default;
+		}
 	}
 
 	.blackout {

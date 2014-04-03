@@ -25,6 +25,27 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 		},
 	};
 
+	var backboneCollection = {
+		componentWillMount: function () {
+			var update = function () {
+				this.forceUpdate(function(){});
+			}
+			this.props.collection.on('add reset remove', update.bind(this));
+		},
+	};
+
+	var backboneModel = {
+		componentWillMount: function () {
+			var update = function () {
+				this.forceUpdate(function(){});
+			}
+			this.props.model.on('add reset remove change', update.bind(this));
+		},
+	};
+
+	///
+
+
 	var CommentView = React.createClass({displayName: 'CommentView',
 		mixins: [EditablePost],
 		render: function () {
@@ -50,8 +71,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							)
 						:undefined,
 						React.DOM.a( {className:"userLink author", href:comment.author.profileUrl}, 
-							React.DOM.div( {className:"mediaUser"}, 
-								React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle, title:comment.author.username}
+							React.DOM.div( {className:"avatarWrapper"}, 
+								React.DOM.div( {className:"avatar", style:mediaUserAvatarStyle, title:comment.author.username}
 								)
 							),
 							React.DOM.span( {className:"name"}, 
@@ -104,36 +125,21 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			};
 
 			return (
-				React.DOM.div( {className:"commentInputSection"}, 
+				React.DOM.div( {className:"commentInputSection "+(this.props.small?"small":'')}, 
 					React.DOM.form( {className:"formPostComment", onSubmit:this.handleSubmit}, 
-						React.DOM.h4(null, "Comente essa publicação"),
-						React.DOM.textarea( {required:"required", className:"commentInput", ref:"input", type:"text", placeholder:""}
-						),
-						React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
+					
+						this.props.small?
+						null
+						:React.DOM.h4(null, "Comente essa publicação"),
+					
+					React.DOM.textarea( {required:"required", ref:"input", type:"text", placeholder:"Sua mensagem aqui..."}
+					),
+					React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
 					)
 				)
 			);
 		},
 	});
-
-	var backboneCollection = {
-		componentWillMount: function () {
-			var update = function () {
-				this.forceUpdate(function(){});
-			}
-			this.props.collection.on('add reset remove', update.bind(this));
-		},
-
-	};
-
-	var backboneModel = {
-		componentWillMount: function () {
-			var update = function () {
-				this.forceUpdate(function(){});
-			}
-			this.props.model.on('add reset remove change', update.bind(this));
-		},
-	};
 
 	var CommentListView = React.createClass({displayName: 'CommentListView',
 		mixins: [backboneCollection],
@@ -155,15 +161,34 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 
 	var CommentSectionView = React.createClass({displayName: 'CommentSectionView',
 
+		getInitialState: function () {
+			return {showInput:false};
+		},
+
+		showInput: function() {
+			this.setState({showInput:true});
+		},
+
 		render: function () {
+			if (!this.props.model.commentList)
+				return React.DOM.div(null);
 			return (
 				React.DOM.div( {className:"commentSection"}, 
-					React.DOM.div( {className:"info"}, this.props.model.commentList.models.length, " Comentários"),
-					React.DOM.br(null ),
+					
+						this.props.small === 'true'?
+						null
+						:React.DOM.div( {className:"info"}, this.props.model.commentList.models.length, " Comentários"),
+					
+				
 					CommentListView( {collection:this.props.model.commentList} ),
-					window.user?
-					CommentInputForm( {model:this.props.model} )
-					:null
+					
+						this.props.small === 'true'? (
+							this.state.showInput?
+							CommentInputForm( {small:true, model:this.props.model} )
+							:React.DOM.div( {className:"showCommentInput", onClick:this.showInput}, "Fazer comentário")
+						)
+						:CommentInputForm( {model:this.props.model} )
+					
 				)
 			);
 		},
@@ -181,30 +206,71 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 
 			return (
 				React.DOM.div( {className:"answerView"}, 
-					React.DOM.div( {className:"leftCol"}, 
-						React.DOM.div( {className:"mediaUser"}, 
+					React.DOM.div( {className:"answerHeader"}, 
+						React.DOM.div( {className:"avatarWrapper"}, 
 							React.DOM.a( {href:model.author.profileUrl}, 
-								React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle, title:model.author.username}
+								React.DOM.div( {className:"avatar", style:mediaUserAvatarStyle, title:model.author.username}
 								)
 							)
 						),
-						React.DOM.div( {className:"optionBtns"}, 
-							React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
-								React.DOM.i( {className:"icon-trash"})
-							)
+						React.DOM.span( {className:"username"}, 
+							"Felipe Aragão"
+						),React.DOM.span(null, ", Egg-head enthusiast. Head of Political Science Center."),
+						React.DOM.time( {'data-time-count':1*new Date(model.published)}, 
+							window.calcTimeFrom(model.published)
 						)
 					),
-					React.DOM.div( {className:(window.user && model.author.id===window.user.id)?'msgBody editable':'msgBody'}, 
-						model.data.escapedBody,
-						(window.user && window.user.id === model.author.id)?
-							React.DOM.div( {className:"arrow"})
-						:undefined
+					React.DOM.table(null, 
+					React.DOM.tr(null, 
+						React.DOM.td( {className:"left"}, 
+							React.DOM.div( {className:"voteControl"}, 
+								React.DOM.button( {className:"control"}, React.DOM.i( {className:"icon-aup"})),
+								React.DOM.div( {className:"voteResult"}, "5"),
+								React.DOM.button( {className:"control"}, React.DOM.i( {className:"icon-adown"}))
+							),
+							React.DOM.div( {className:"optionBtns"}, 
+								React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
+									React.DOM.i( {className:"icon-trash"})
+								)
+							)
+						),
+						React.DOM.td( {className:"right"}, 
+							React.DOM.div( {className:"answerBody"}, 
+								React.DOM.div( {className:(window.user && model.author.id===window.user.id)?'msgBody editable':'msgBody'}, 
+									model.data.escapedBody
+								),
+								React.DOM.div( {className:"arrow"})
+							)
+						)
+					)
 					),
-					React.DOM.a( {href:model.path, 'data-time-count':1*new Date(model.published)}, 
-						window.calcTimeFrom(model.published)
+					
+					React.DOM.div( {className:"commentSection", 'data-reactid':".2.1.0.3.0"}, 
+						React.DOM.div( {className:"commentList", 'data-reactid':".2.1.0.3.0.1"}, 
+							React.DOM.div( {className:"commentWrapper", 'data-reactid':".2.1.0.3.0.1.0"}, 
+								React.DOM.div( {className:"msgBody", 'data-reactid':".2.1.0.3.0.1.0.0"}, 
+								React.DOM.div( {className:"arrow", 'data-reactid':".2.1.0.3.0.1.0.0.0"}),
+								React.DOM.span( {'data-reactid':".2.1.0.3.0.1.0.0.1"}, "Um comentário. Acho que essa pergunta tá em latim. E eu não sei latim.")),
+
+								React.DOM.div( {className:"infoBar", 'data-reactid':".2.1.0.3.0.1.0.1"}, 
+									React.DOM.div( {className:"optionBtns", 'data-reactid':".2.1.0.3.0.1.0.1.0"}, 
+										React.DOM.button( {'data-action':"remove-post", 'data-reactid':".2.1.0.3.0.1.0.1.0.0"}, 
+											React.DOM.i( {className:"icon-trash", 'data-reactid':".2.1.0.3.0.1.0.1.0.0.0"})
+										)
+									),
+									React.DOM.a( {className:"userLink author", href:"/u/felipearagaopires", 'data-reactid':".2.1.0.3.0.1.0.1.1"}, 
+									React.DOM.div( {className:"avatarWrapper", 'data-reactid':".2.1.0.3.0.1.0.1.1.0"}, 
+									React.DOM.div( {className:"avatar", style:{background:"url(https://graph.facebook.com/100000366187376/picture);"}, title:"felipearagaopires", 'data-reactid':".2.1.0.3.0.1.0.1.1.0.0"})
+									),
+									React.DOM.span( {className:"name", 'data-reactid':".2.1.0.3.0.1.0.1.1.1"}, "Felipe Aragão")),React.DOM.span( {'data-reactid':".2.1.0.3.0.1.0.1.2"}, ", "),React.DOM.time( {'data-time-count':"1396471922755", 'data-time-long':"true", 'data-reactid':".2.1.0.3.0.1.0.1.3"}, "há 5 horas"),
+									React.DOM.div( {className:"voteOptions", 'data-reactid':".2.1.0.3.0.1.0.1.4"}, React.DOM.i( {className:"icon-tup", 'data-reactid':".2.1.0.3.0.1.0.1.4.0"}),React.DOM.span( {'data-reactid':".2.1.0.3.0.1.0.1.4.1"},  " 4  "),React.DOM.i( {className:"icon-tdown", 'data-reactid':".2.1.0.3.0.1.0.1.4.2"}),React.DOM.span( {'data-reactid':".2.1.0.3.0.1.0.1.4.3"},  " 20"))
+								)
+							)
+						),
+
+						React.DOM.div( {className:"showCommentInput", 'data-reactid':".2.1.0.3.0.2"}, "Fazer comentário")
 					),
-					React.DOM.hr(null ),
-					CommentSectionView( {model:this.props.model} )
+					CommentSectionView( {small:"true", model:this.props.model} )
 				)
 			);
 		},
@@ -226,6 +292,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			});
 
 			return (
+
 				React.DOM.div( {className:"answerList"}, 
 					answerNodes
 				)
@@ -239,9 +306,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			return (
 				React.DOM.div( {className:"answerSection"}, 
 					AnswerListView( {collection:this.props.model.answerList} ),
-					window.user?
 					AnswerInputForm( {model:this.props.model} )
-					:null
 				)
 			);
 		},
@@ -278,31 +343,21 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			};
 
 			return (
-				React.DOM.div( {className:"commentInputSection"}, 
-					React.DOM.form( {className:"formPostComment", onSubmit:this.handleSubmit}, 
-						React.DOM.table(null, 
-							React.DOM.tbody(null, 
-								React.DOM.tr(null, React.DOM.td(null, 
-									React.DOM.div( {className:"mediaUser"}, 
-										React.DOM.a( {href:window.user.profileUrl}, 
-											React.DOM.div( {className:"mediaUserAvatar", style:mediaUserAvatarStyle}
-											)
-										)
-									)
-								),React.DOM.td( {className:"commentInputTd"}, 
-									React.DOM.textarea( {required:"required", className:"commentInput", ref:"input", type:"text", placeholder:"Responda essa publicação."}
-									)
-								),React.DOM.td(null, 
-									React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
-								))
-							)
-						)
+				React.DOM.div( {className:"answerInputSection "+(this.props.small?"small":'')}, 
+					React.DOM.form( {className:"formPostAnswer", onSubmit:this.handleSubmit}, 
+					
+						this.props.small?
+						null
+						:React.DOM.h4(null, "Responda essa publicação"),
+					
+						React.DOM.textarea( {required:"required", ref:"input", type:"text", placeholder:"Sua resposta aqui..."}
+						),
+						React.DOM.button( {'data-action':"send-answer", onClick:this.handleSubmit}, "Enviar")
 					)
 				)
 			);
 		},
 	});
-
 
 	var PostInfoBar = React.createClass({displayName: 'PostInfoBar',
 		mixins: [backboneModel],
@@ -378,9 +433,9 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				React.DOM.div(null, 
 					React.DOM.div( {className:"postHead", 'data-post-type':"QAPost"}, 
 						React.DOM.div( {className:"msgHeader"}, 
-							React.DOM.div( {className:"mediaUser"}, 
+							React.DOM.div( {className:"avatarWrapper"}, 
 								React.DOM.a( {href:post.author.profileUrl}, 
-									React.DOM.div( {className:"mediaUserAvatar", style:mediaUserStyle})
+									React.DOM.div( {className:"avatar", style:mediaUserStyle})
 								)
 							),
 							React.DOM.div( {className:"headline"}, 
@@ -448,11 +503,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 					
 					React.DOM.div( {className:"cardHeader"}, 
 						React.DOM.span( {className:"cardType"}, 
-						
-							post.type === "QA"?
-							"PERGUNTA"
-							:"PUBLICAÇÃO"
-						
+							post.translatedType
 						),
 						React.DOM.div( {className:"iconStats"}, 
 							React.DOM.div( {onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
@@ -512,9 +563,9 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				React.DOM.div(null, 
 					React.DOM.div( {className:"postHead", 'data-post-type':"QAPost"}, 
 						React.DOM.div( {className:"msgHeader"}, 
-							React.DOM.div( {className:"mediaUser"}, 
+							React.DOM.div( {className:"avatarWrapper"}, 
 								React.DOM.a( {href:post.author.profileUrl}, 
-									React.DOM.div( {className:"mediaUserAvatar", style:mediaUserStyle})
+									React.DOM.div( {className:"avatar", style:mediaUserStyle})
 								)
 							),
 							React.DOM.div( {className:"headline"}, 
@@ -556,208 +607,159 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 		},
 	});
 
+	var LeftOutBox = React.createClass({displayName: 'LeftOutBox',
+		render: function () {
+			return (
+				React.DOM.div( {className:"leftOutBox"}, 
+					React.DOM.div( {className:"likeBox", onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
+						this.props.model.voteSum,
+						" ",
+						
+							this.props.model.liked?
+							React.DOM.i( {className:"icon-heart icon-red"})
+							:React.DOM.i( {className:"icon-heart-o"})
+						
+					),
+					React.DOM.div( {className:"eyeBox"}, 
+						"81 ",
+						React.DOM.i( {className:"icon-eye"})
+					),
+					React.DOM.div( {onClick:""}, 
+						"5 ",
+						React.DOM.i( {className:"icon-share"})
+					)
+				)
+			);
+		},
+	});
+
 	return {
-		'PlainPost': PlainPostView,
+		// 'PlainPost': PlainPostView,
+		// 'QA': QAPostView,
 		'CardView': CardView,
-		'QA': QAPostView,
-		full: {
-			'PlainPost': React.createClass({
-				mixins: [EditablePost, backboneModel],
+		'PlainPost': React.createClass({
+			mixins: [EditablePost, backboneModel],
 
-				render: function () {
-					var post = this.props.model.attributes;
-					var mediaUserStyle = {
-						background: 'url('+post.author.avatarUrl+')',
-					};
-					var rawMarkup = post.data.escapedBody;
+			render: function () {
+				var post = this.props.model.attributes;
+				var rawMarkup = post.data.escapedBody;
 
-					// <div>
-					// 	<div className="likeBox" onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
-					// 		{
-					// 			this.props.model.liked?
-					// 			<i className="icon-heart icon-red"></i>
-					// 			:<i className="icon-heart-o"></i>
-					// 		}
-					// 		&nbsp;
-					// 			{post.voteSum}
-					// 	</div>
-					// 	<div className="postContent">
+				var postBody = (
+					React.DOM.div( {className:"postBody"}, 
+						React.DOM.p(null, 
+							"It's been over five years since the day I first learned about the existence of MIT."
+						),
+						"You know MIT, right?",
 
-					// 		<div className="postTitle">
-					// 			{post.data.title}
-					// 		</div>
-					// 		<span className="hits">81 visualizações</span>
-					// 		<time data-time-count={1*new Date(post.published)} data-time-long="true">
-					// 			{window.calcTimeFrom(post.published,true)}
-					// 		</time>
-					// 		<div className="postStats">
-					// 			<div className="tag">Application</div>
-					// 			<div className="tag">Olimpíadas de Matemática</div>
-					// 		</div>
-					// 		<div className="postBody">
-					// 			<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
-					// 		</div>
-					// 	</div>
-					// 	<div className="postInfobar">
-					// 		<ul className="left">
-					// 			{
-					// 				post.type === "QA"?
-					// 				<li>
-					// 					<i className="icon-bulb"></i>&nbsp;
-					// 					{
-					// 						this.props.model.answerList.models.length===1?
-					// 						this.props.model.answerList.models.length+" resposta"
-					// 						:this.props.model.answerList.models.length+" respostas"
-					// 					}
-					// 				</li>
-					// 				:null
-					// 			}
-					// 		</ul>
-					// 	</div>
-					// 	<div className="postFoot">
-					// 		<CommentSectionView model={this.props.model} />
-					// 	</div>
-					// </div>
-					// <div className="postBody">
-					// </div>
+						React.DOM.img( {src:"http://sloansocialimpact.mit.edu/wp-content/uploads/2014/02/MIT_Dome_night1_Edit.jpg"} ),
 
-					var postBody = (
-						React.DOM.div( {className:"postBody"}, 
-							React.DOM.p(null, 
-								"It's been over five years since the day I first learned about the existence of MIT."
+						React.DOM.small(null, "The pornographically-cool MIT Dome."),
+
+						React.DOM.blockquote(null, 
+							"Massachusetts Institute of Technology (MIT) is a private research university in Cambridge, Massachusetts known traditionally for research and education in the physical sciences and engineering",
+							React.DOM.footer(null, React.DOM.a( {href:"http://en.wikipedia.org/wiki/Massachusetts_Institute_of_Technology"}, "Wikipedia"))
+						),
+
+						React.DOM.p(null, 
+							"But MIT isn't just any \"private research university\", though: it's arguably the best technology"+' '+
+							"university in the world."
+						),
+						React.DOM.hr(null ),
+						React.DOM.p(null, 
+							"Someday in 2009, while surfing around the internet, in an uncalculated move, I clicked a link on Info Magazine homepage,"+' '+
+							"taking me to ", React.DOM.a( {href:"http://info.abril.com.br/noticias/internet/aulas-do-mit-e-de-harvard-gratis-no-youtube-09042009-18.shl"}, "this post"),"."+' '+
+							"\"Free MIT and Harvard classes on Youtube\", it said."
+						),
+						React.DOM.h2(null, React.DOM.q(null, "MIT??")),
+						React.DOM.p(null, "Harvard I had heard of, sure. But ", React.DOM.q(null, "what is MIT?"), " The choice to google it (rather than just leaving it be), was one that changed my life."
+						),
+						React.DOM.p(null, 
+							"No... ", React.DOM.em(null, "seriously"),".",React.DOM.br(null ),
+							"I kept reading about it for hours, days even, I presume, because next thing you know MIT was my obsession."+' '+
+							"I began collecting MIT wallpapers – admittedly I still do that –,"+' '+
+							"and videos related to the institution, including one of ", React.DOM.a( {href:"https://www.youtube.com/watch?v=jJ5EwCA2H4Y"}, "Burton Conner students singing Switch"),"."
+						),
+						React.DOM.h2(null, "MIT OpenCourseWare"),
+						React.DOM.p(null, 
+							"Another important MIT-related collection was one of CD-ROMs filled with OCW classes. The MIT OpenCourseWare is an MIT project lauched in 2002 that aims at providing MIT courses videolectured for free (as in beer). The first video I watched was a 2007 version of Gilbert Strang's Linear Algebra lectures. I didn't get past the 6th video. I also watched Single Variable Calculus course, and, of course, Walter Lewin's Classical Mechanics. I must have burned half a dozen CDs with these video-lectures. I don't know why."
+						),
+						React.DOM.iframe( {width:"720", height:"495", src:"//www.youtube.com/embed/ZK3O402wf1c", frameborder:"0", allowfullscreen:true}),
+						React.DOM.small(null, "Seriously, what a sweet guy."),
+
+						
+						React.DOM.h2(null, "MIT Media Lab"),
+						React.DOM.img( {src:"http://upload.wikimedia.org/wikipedia/commons/b/ba/The_MIT_Media_Lab_-_Flickr_-_Knight_Foundation.jpg"} ),
+						
+						React.DOM.h1(null),
+						React.DOM.code(null, 
+							"oi"
+						),
+
+						React.DOM.pre(null, "var postType = this.props.model.get('type')")
+					)
+				);
+
+				return (
+					React.DOM.div(null, 
+						LeftOutBox( {model:this.props.model} ),
+						React.DOM.div( {className:"postContent"}, 
+
+							React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
+								window.calcTimeFrom(post.published,true)
 							),
-							"You know MIT, right?",
-
-							React.DOM.img( {src:"http://sloansocialimpact.mit.edu/wp-content/uploads/2014/02/MIT_Dome_night1_Edit.jpg"} ),
-
-							React.DOM.small(null, "The pornographically-cool MIT Dome."),
-
-							React.DOM.blockquote(null, 
-								"Massachusetts Institute of Technology (MIT) is a private research university in Cambridge, Massachusetts known traditionally for research and education in the physical sciences and engineering",
-								React.DOM.footer(null, React.DOM.a( {href:"http://en.wikipedia.org/wiki/Massachusetts_Institute_of_Technology"}, "Wikipedia"))
+							React.DOM.div( {className:"postTitle"}, 
+								"From OCW fanatic to MIT undergrad: my 5 year journey"
 							),
 
-							React.DOM.p(null, 
-								"But MIT isn't just any \"private research university\", though: it's arguably the best technology"+' '+
-								"university in the world."
-							),
-							React.DOM.hr(null ),
-							React.DOM.p(null, 
-								"Someday in 2009, while surfing around the internet, in an uncalculated move, I clicked a link on Info Magazine homepage,"+' '+
-								"taking me to ", React.DOM.a( {href:"http://info.abril.com.br/noticias/internet/aulas-do-mit-e-de-harvard-gratis-no-youtube-09042009-18.shl"}, "this post"),"."+' '+
-								"\"Free MIT and Harvard classes on Youtube\", it said."
-							),
-							React.DOM.h2(null, React.DOM.q(null, "MIT??")),
-							React.DOM.p(null, "Harvard I had heard of, sure. But ", React.DOM.q(null, "what is MIT?"), " The choice to google it (rather than just leaving it be), was one that changed my life."
-							),
-							React.DOM.p(null, 
-								"No... ", React.DOM.em(null, "seriously"),".",React.DOM.br(null ),
-								"I kept reading about it for hours, days even, I presume, because next thing you know MIT was my obsession."+' '+
-								"I began collecting MIT wallpapers – admittedly I still do that –,"+' '+
-								"and videos related to the institution, including one of ", React.DOM.a( {href:"https://www.youtube.com/watch?v=jJ5EwCA2H4Y"}, "Burton Conner students singing Switch"),"."
-							),
-							React.DOM.h2(null, "MIT OpenCourseWare"),
-							React.DOM.p(null, 
-								"Another important MIT-related collection was one of CD-ROMs filled with OCW classes. The MIT OpenCourseWare is an MIT project lauched in 2002 that aims at providing MIT courses videolectured for free (as in beer). The first video I watched was a 2007 version of Gilbert Strang's Linear Algebra lectures. I didn't get past the 6th video. I also watched Single Variable Calculus course, and, of course, Walter Lewin's Classical Mechanics. I must have burned half a dozen CDs with these video-lectures. I don't know why."
-							),
-							React.DOM.iframe( {width:"720", height:"495", src:"//www.youtube.com/embed/ZK3O402wf1c", frameborder:"0", allowfullscreen:true}),
-							React.DOM.small(null, "Seriously, what a sweet guy."),
-
-							
-							React.DOM.h2(null, "MIT Media Lab"),
-							React.DOM.img( {src:"http://upload.wikimedia.org/wikipedia/commons/b/ba/The_MIT_Media_Lab_-_Flickr_-_Knight_Foundation.jpg"} ),
-							
-							React.DOM.h1(null),
-							React.DOM.code(null, 
-								"oi"
-							),
-
-							React.DOM.pre(null, "var postType = this.props.model.get('type')")
-
-						)
-					);
-					// " ' 
-					return (
-						React.DOM.div(null, 
-							React.DOM.div( {className:"leftOutBox"}, 
-								React.DOM.div( {className:"likeBox", onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
-									post.voteSum,
-									" ",
-									
-										this.props.model.liked?
-										React.DOM.i( {className:"icon-heart icon-red"})
-										:React.DOM.i( {className:"icon-heart-o"})
-									
-								),
-								React.DOM.div( {className:"eyeBox"}, 
-									"81 ",
-									React.DOM.i( {className:"icon-eye"})
-								),
-								React.DOM.div( {onClick:""}, 
-									"5 ",
-									React.DOM.i( {className:"icon-share"})
-								)
-							),
-							React.DOM.div( {className:"postContent"}, 
-
-								React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
-									window.calcTimeFrom(post.published,true)
-								),
-								React.DOM.div( {className:"postTitle"}, 
-									"From OCW fanatic to MIT undergrad: my 5 year journey"
-								),
-
-								postBody
-							),
-							React.DOM.div( {className:"postInfobar"}, 
-								React.DOM.ul( {className:"left"}
-								)
-							),
-							React.DOM.div( {className:"postFoot"}, 
-								CommentSectionView( {model:this.props.model} )
+							postBody
+						),
+						React.DOM.div( {className:"postInfobar"}, 
+							React.DOM.ul( {className:"left"}
 							)
+						),
+						React.DOM.div( {className:"postFoot"}, 
+							CommentSectionView( {model:this.props.model} )
 						)
-					);
-				},
-			}),
-			'QA': React.createClass({
-				mixins: [EditablePost, backboneModel],
+					)
+				);
+			},
+		}),
+		'Question': React.createClass({
+			mixins: [EditablePost, backboneModel],
 
-				render: function () {
-					var post = this.props.model.attributes;
-					var mediaUserStyle = {
-						background: 'url('+post.author.avatarUrl+')',
-					};
-					var rawMarkup = post.data.escapedBody;
+			render: function () {
+				var post = this.props.model.attributes;
+				var rawMarkup = post.data.escapedBody;
 
-					return (
-						React.DOM.div(null, 
-							React.DOM.div( {className:"postHead", 'data-post-type':"QAPost"}, 
-								React.DOM.div( {className:"msgTitle"}, 
-									React.DOM.span(null, post.data.title)
-								),
+				return (
+					React.DOM.div(null, 
+						LeftOutBox( {model:this.props.model} ),
+						React.DOM.div( {className:"postContent"}, 
 
-								React.DOM.div( {className:"msgBody"}, 
-									React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
-								),
-
-								PostInfoBar( {model:this.props.model} )
+							React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
+								window.calcTimeFrom(post.published,true)
 							),
-							React.DOM.div( {className:"postFoot"}, 
-								
-									app.postItem?
-									React.DOM.div(null, 
-										AnswerSectionView( {model:this.props.model} ),
-										CommentSectionView( {model:this.props.model} )
-									)
-									:null
-								
+							React.DOM.div( {className:"postTitle"}, 
+								post.data.title								
+							),
+
+							React.DOM.div( {className:"postBody"}, 
+								React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
 							)
+						),
+						React.DOM.div( {className:"postInfobar"}, 
+							React.DOM.ul( {className:"left"}
+							)
+						),
+						React.DOM.div( {className:"postFoot"}, 
+							CommentSectionView( {small:"true", model:this.props.model} ),
+							AnswerSectionView( {model:this.props.model} )
 						)
-					);
-				},
-			}),
-		}
+
+					)
+				);
+			},
+		}),
 	};
 });
 

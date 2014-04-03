@@ -32,8 +32,50 @@ ul {
 }
 
 
+body { 
+	margin: 0;
+	-webkit-font-smoothing: antialiased;
+}
+
+
 @BrandColor: @COLOR1; // #3498db;
 @BrandFontFamily: "Londrina Solid", Helvetica, Arial;
+
+
+
+.tag {
+	display: inline-block;
+	background: 40px;
+	padding: 4px 6px;
+	// .rounded(5px);
+	font-size: 11px;
+	margin-right: 5px;
+	color: white;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-family: "Lato";
+	margin-bottom: 5px;
+	// font-size: ;
+	background: @COLOR2;
+	cursor: pointer;
+	&:hover {
+		background: darken(@COLOR2, 5%);
+	}
+	border-bottom: 2px solid rgba(0,0,0,.3);
+
+	&.unknown {
+		background: #AAA;
+		// &:hover {
+		// 	background: darken(#AAA, 5%);
+		// }
+	}
+}
+
+
+[data-tag-bg=application] { background: @COLOR2; }
+[data-tag-bg=vestibular] { background: @COLOR3; }
+[data-tag-bg=olimpiada] { background: @COLOR4; }
+
 
 html {
 	// font-size: 16px;
