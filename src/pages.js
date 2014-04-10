@@ -56,6 +56,13 @@ module.exports = {
       return res.render('pages/panel', {});
     }
   },
+  '/guias/vestibular': {
+    name: 'panel',
+    permissions: [required.login],
+    get: function(req, res) {
+      return res.render('guide', {});
+    }
+  },
   '/labs': {
     permissions: [required.login],
     children: {

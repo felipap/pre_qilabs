@@ -48,6 +48,12 @@ module.exports = {
 		get: (req, res) ->
 			res.render 'pages/panel', {}
 
+	'/guias/vestibular':
+		name: 'panel'
+		permissions: [required.login]
+		get: (req, res) ->
+			res.render 'guide', {}
+
 	'/labs':
 		permissions: [required.login],
 		children: {

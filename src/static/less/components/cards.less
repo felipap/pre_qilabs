@@ -1,4 +1,50 @@
 
+.cardsNav {
+	position: relative;
+	color: white;
+	background: #444;
+
+	text-align: center;
+	padding: 10px;
+	font-family: museo-sans;
+	border-bottom: 1px solid #DDD;
+
+	li {
+		position: relative;
+		margin: 0 20px;
+		list-style: none;
+		display: inline-block;
+	}
+
+	li .arrow {
+		content: '';
+		border: 8px solid transparent;
+		// border-bottom-color: #F0F0F0;
+		position: absolute;
+		top: 14px;
+		display: inline;
+		margin-left: -7px;
+	}
+	li.active .arrow { border-bottom-color: #DDD; }
+}
+
+.cardsNav.fixed {
+	position: fixed;
+	top: @navbar-height;
+	z-index: 4;
+	padding-right: 18px;
+	width: 100%;
+	margin: 0;
+}
+
+#globalHead + .cardsNav {
+	margin: 0 10px;
+}
+
+.cardsNav.fixed ~ #cards {
+	margin-top: 33px !important;
+}
+
 .cardsContainer ()
 {
 	@card-width: 265px;

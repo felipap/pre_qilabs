@@ -1,0 +1,37 @@
+
+@import "../components/timelineSidebar.less";
+@import "../components/timeline.less";
+
+@page-width: 960px;
+@sidebar-width: 280px;
+@results-container-width: 960px-@sidebar-width;
+@sidebar-gap: 25px;
+
+.contentCol () {
+	margin: 0 auto;
+	padding-top: 20px;
+	width: @results-container-width+@sidebar-width+@sidebar-gap;
+}
+
+.contentWithSidebar () {
+	margin: 0 auto;
+	width: @results-container-width+@sidebar-width+@sidebar-gap;
+
+	#sidebar {
+		.timelineSidebar;
+	}
+
+	#resultsContainer {
+		.timelineContainer;
+	}
+}
+
+.guideCol {
+	margin: 0 auto;
+}
+
+#fullPageContainer {
+	position: absolute;
+	top: 0;
+	width: 100%;
+}

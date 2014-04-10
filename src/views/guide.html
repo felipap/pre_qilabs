@@ -1,0 +1,90 @@
+{% extends 'stdbody.html' %}
+
+{% import 'macros/tags.html' as tagMacros %}
+
+{% block head %}
+{% parent %}
+	{{ tagMacros.stylesheet(getMediaUrl('css','sn_pages.min.css')) }}
+{% endblock %}
+
+{% block body %}
+	<!-- <div class="flash-msgs"></div> -->
+	{% include 'layouts/navbar.html' %}
+
+	<div id="globalContainer">
+		<div id="content" class="guide">
+			<div class="sidebar">
+				<div class="sidebarHeader">
+					<div class="arrow"></div>
+					<div class="guideLabel">VESTIBULAR</div>
+				</div>
+				<div class="subtopicsList">
+					<div>Introdução</div>
+					<div>Exames Unificados</div>
+					<div>Preparação para Provas</div>
+					<div class="active">Cronograma</div>
+					<div>Resultados</div>
+					<div>Matrícula</div>
+					<div>Links Úteis</div>
+					<div>Glossário</div>
+				</div>
+			</div>
+			<div class="contentCol">
+
+				<section class="header">
+					<h1>Vestibular</h1>
+					<p>
+						  Vestibular é o exame de admissão para entrada em cursos superiores de universidades brasileiras. O exame consiste na aplicação de provas classificatórias que testam o conhecimento dos candidatos sobre temas tratados no Ensino Médio e Fundamental.
+					</p>
+				</section>
+				<section>
+					<p>
+						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+						tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+						consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+						cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+						proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+					</p>
+				</section>
+				<img src="http://cronicasdasurdez.com/wp-content/uploads/2013/12/vestibular1.jpg">
+				<section>
+					<p>
+						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+						tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+						consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+						cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+						proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+					</p>
+				</section>
+				<hr>
+				<section>
+					<p>
+						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+						tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+						consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+						cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+						proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+					</p>
+				</section>
+
+				<section>
+					<p>
+						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+						tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+						quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+						consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+						cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+						proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+					</p>
+				</section>
+
+			</div>
+		</div>
+	</div>
+	
+	{% block bodyEnd %}
+	{% endblock %}
+{% endblock %}

@@ -1,64 +1,64 @@
 
 /* sn_pages.less
 ** Copyright QIlabs.org
-** Styles of social network pages.
+** Styles of the internal pages.
 */
 
 @import "../common.less";
-@import "../components/sidebar.less";
-@import "../components/timeline.less";
 @import "../components/cards.less";
 @import "../components/postbox.less";
-
-.avatarWrapper {
-	display: inline-block;
-	vertical-align: middle;
-	width: 50px;
-	height: 50px;
-	text-decoration: none;
-	overflow: hidden;
-
-	.avatar {
-		vertical-align: middle;
-		width: 100%;
-		height: 100%;
-		background-size: cover !important;
-	}
-
-	& + .username, & + .name, & + span {
-		vertical-align: middle;
-	}
-}
-
-.scrollbared () {
-
-	&::-webkit-scrollbar {
-		width: 8px;
-	} 
-
-	&::-webkit-scrollbar-track {
-		background-clip: padding-box;
-		border: solid transparent;
-		border-width: 0 4px 0 4px;
-		// margin-right: 4px;
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background-color: rgba(0,0,0,.2);
-		.rounded(5px);
-		.transition(all, .4s, linear);
-		&:hover {
-			background-color: rgba(0,0,0,.3);
-		}
-	}
-
-	&::-webkit-scrollbar * {
-		background: transparent;
-	}
-}
+@import "../components/layout.less";
+@import "./guides.less";
 
 body {
 	background: #F0F0F0 url(/static/images/cubes.png);
+
+	#globalContainer {
+		width: 100%;
+		position: relative;
+
+		#cards {
+			padding-top: 20px;
+			margin: 0 auto;
+			.cardsContainer;
+		}
+	}
+
+	#globalContainer.scrollableContainer {
+		overflow: auto;
+		// position: absolute;
+		top: @real-navbar-height;
+		bottom: 0;
+		height: 100%;
+		height: 100%;
+
+		&::-webkit-scrollbar {
+			width: 8px;
+		} 
+
+		&::-webkit-scrollbar-track {
+			background-clip: padding-box;
+			border: solid transparent;
+			border-width: 0 4px 0 4px;
+			// margin-right: 4px;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: rgba(0,0,0,.2);
+			.rounded(5px);
+			.transition(all, .4s, linear);
+			&:hover {
+				background-color: rgba(0,0,0,.3);
+			}
+		}
+
+		&::-webkit-scrollbar * {
+			background: transparent;
+		}
+	}
+}
+
+[data-page=postCreate] {
 
 	#globalHead {
 		background: #444;
@@ -167,87 +167,9 @@ body {
 		}
 	}
 
-	.cardsNav {
-		position: relative;
-		color: white;
-		background: #444;
-
-		text-align: center;
-		padding: 10px;
-		font-family: museo-sans;
-		border-bottom: 1px solid #DDD;
-
-		li {
-			position: relative;
-			margin: 0 20px;
-			list-style: none;
-			display: inline-block;
-		}
-
-		li .arrow {
-			content: '';
-			border: 8px solid transparent;
-			// border-bottom-color: #F0F0F0;
-			position: absolute;
-			top: 14px;
-			display: inline;
-			margin-left: -7px;
-		}
-		li.active .arrow { border-bottom-color: #DDD; }
-	}
-
-	#globalHead + .cardsNav {
-		margin: 0 10px;
-	}
-
-	.cardsNav.fixed {
-		position: fixed;
-		top: @navbar-height;
-		z-index: 4;
-		padding-right: 18px;
-		width: 100%;
-		margin: 0;
-	}
-
-	.cardsNav.fixed ~ #cards {
-		margin-top: 33px !important;
-	}
-
-	#globalContainer {
-		overflow: auto;
-		// position: absolute;
-		top: @real-navbar-height;
-		bottom: 0;
-		height: 100%;
-		width: 100%;
-		.scrollbared;
-
-		#cards {
-			padding-top: 20px;
-			margin: 0 auto;
-			.cardsContainer;
-		}
-
-		#content {
-			margin: 0 auto;
-			width: @results-container-width+@sidebar-width+@sidebar-gap;
-			padding-top: 20px;
-			#sidebar { .sidebar; }
-			#resultsContainer { .timelineContainer; }
-		}
-	}
-
-	#fullPageContainer {
-		position: absolute;
-		top: 0;
-		width: 100%;
-	}
-}
-
-[data-page=postCreate] {
-	
 	#globalContainer #content {
 		width: 800px;
+		.contentWithSidebar();
 	}
 
 	#formCreatePost {
@@ -290,5 +212,4 @@ body {
 			.high-xbtn(white, @COLOR1);
 		}
 	}
-
 }
