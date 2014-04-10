@@ -8,6 +8,7 @@
 
 @WidthSidebar: 280px;
 @WidthContent: 1150px;
+@ColorLink: #08C;
 
 @BgSidebarLabel: darken(desaturate(@COLOR, 15%), 5%);
 
@@ -81,12 +82,24 @@
 		width: (@WidthContent - @WidthSidebar);
 		border: 1px solid #DDD;
 		background: white;
+		font-size: 13px;
+
+		& > .header,
+		.backgrounded {
+			color: white;
+			a { 
+				color: lighten(@COLOR, 50%);
+			}
+		}
+
+		.bbText {
+			font-size: 15px;
+		}
 
 		& > .header {
 			padding: 35px;
 			margin: -1px;
 			background: @COLOR;
-			color: white;
 			border: none;
 
 			h1 { font-size: 54px; }
@@ -95,8 +108,18 @@
 
 		& > section {
 			padding: 30px;
-			// border-left: 1px solid #DDD;
-			// border-right: 1px solid #DDD;
+			a {
+				color: @ColorLink;
+				text-decoration: none;
+				&:hover {
+					color: darken(@ColorLink, 10%);
+				}
+			}
+		}
+
+		.backgrounded {
+			background: @COLOR;
+			color: white;			
 		}
 
 		& > img {
