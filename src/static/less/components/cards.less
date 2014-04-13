@@ -47,9 +47,10 @@
 
 .cardsContainer ()
 {
-	@card-width: 234px;
-	@card-height: 200px;
-	@card-margin: 28px;
+	@card-width: 600px;
+	@card-height: 130px;
+	@card-margin: 300px;
+	@card-margin-bottom: 28px;
 	@card-body-fontsize: 17px;
 	@cpr: 4; // cards-per-row
 	text-align: center;
@@ -66,7 +67,7 @@
 
 		display: inline-block;
 		width: @card-width; margin-right: @card-margin;
-		height: @card-height; margin-bottom: @card-margin;
+		height: @card-height; margin-bottom: @card-margin-bottom;
 		vertical-align: top;
 	
 		cursor: pointer;
@@ -148,7 +149,7 @@
 			line-height: @footer-height;
 
 			time {
-				color: #888;
+				color: #AAA;
 				font-size: 12px;
 			}
 
@@ -166,13 +167,16 @@
 				.avatarWrapper {
 					margin: 0 5px;
 					border: 1px solid #EFEFEF;
-					.rounded(5px);
+					.rounded(15px);
 					width: 25px;
 					height: 25px;
 				}
 			}
 		}
 
+		&:hover {
+			.username { color: #444; }
+		}
 
 		.cardCover {
 			position: absolute;
