@@ -4,7 +4,7 @@
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 	<head>
-		<title>{% block title %}QILabs{% endblock %}</title>
+		<title>{% block title %}QI Labs{% endblock %}</title>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="csrf-token" content="{{ token }}">
@@ -38,7 +38,7 @@
 		{% block templates %}{% endblock %}
 		<script>_flash_msgs={{ JSON.stringify(messages) }}</script>
 </head>
-<body>
+<body data-page="{{ dataPage }}">
 	{% block body %}
 	{% endblock %}
 	{% block bodyEnd %}

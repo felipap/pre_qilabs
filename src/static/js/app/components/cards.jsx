@@ -203,6 +203,14 @@ define([
 
 	});
 
+
+	function onResize () {
+		$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top)
+	}
+	onResize();
+	$(window).resize(onResize);
+
+
 	var originalOffset = $(".cardsNav").offset().top;
 	var hasHead = !!$(".globalHead").length;
 	if (hasHead) {
@@ -216,13 +224,6 @@ define([
 			}
 		});
 	}
-		
-
-	function onResize () {
-		$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top)
-	}
-	$(window).resize(onResize);
-	onResize();
 
 	return {
 		initialize: function () {

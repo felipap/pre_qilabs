@@ -5,7 +5,14 @@
 			<script>
 			var icons = ['bulb']; // 'flask', 'puzzle', 'rocket', 
 			document.write('<i class="icon-'+icons[Math.floor(icons.length*Math.random())]+'"></i>');
-			</script>&nbsp;QI Labs <span>· Guias</span>
+			</script>&nbsp;QI Labs {% spaceless %}
+			{% if dataPage === "guide" %}
+				<span>· Guias</span>
+			{% endif %}
+			{% if dataPage === "profile" %}
+				<span>· Perfis</span>
+			{% endif %}
+			{% endspaceless %}
 		</a>
 	{% if user %}
 
