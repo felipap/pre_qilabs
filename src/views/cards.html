@@ -11,34 +11,61 @@
 {% block body %}
 
 	{% include 'layouts/navbar.html' %}
-	
+	<nav class="cardsNav">
+		<li>
+
+			<div class="arrow"></div>
+		</li>
+		<li class="active">
+			Seguindo
+			<div class="arrow"></div>
+		</li>
+		<li>
+			Populares
+			<div class="arrow"></div>
+		</li>
+		<li>
+			Atividade
+			<div class="arrow"></div>
+		</li>
+	</nav>
+
 	<div id="globalContainer" class="scrollableContainer">
 
-	{% block globalHeader %}
-		<nav class="cardsNav fixed">
-			<li>
+		{% block globalHeader %}
+			<nav class="cardsNav">
+				<li>
 
-				<div class="arrow"></div>
-			</li>
-			<li class="active">
-				Seguindo
-				<div class="arrow"></div>
-			</li>
-			<li>
-				Populares
-				<div class="arrow"></div>
-			</li>
-			<li>
-				Atividade
-				<div class="arrow"></div>
-			</li>
-		</nav>
-	{% endblock %}
+					<div class="arrow"></div>
+				</li>
+				<li class="active">
+					Seguindo
+					<div class="arrow"></div>
+				</li>
+				<li>
+					Populares
+					<div class="arrow"></div>
+				</li>
+				<li>
+					Atividade
+					<div class="arrow"></div>
+				</li>
+			</nav>
+		{% endblock %}
 
 		<div class="flash-msgs"></div>
-		<div id="cards">
+		<div id="cards" class="grid">
 			<div id="resultsContainer">
 			<div class="timeline">
+
+				<div class="cardView cardIcon" onClick="(function(){location.href='/p/create'})()">
+					<i class="icon-plus"></i>
+				</div>
+
+				<div class="cardView cardIcon" onClick="(function(){location.href='/p/create'})()">
+					<i class="icon-refresh"></i>
+				</div>
+
 				<div class="cardView">
 					<div class="cardHeader">
 						<span class="cardType">AVISO</span>
@@ -606,8 +633,7 @@
 						</div>
 					</div>
 
-					<div class="cardBody" style=
-					" font-size: 19px;">
+					<div class="cardBody">
 						<span>Do "Mamãe, quero ser
 						astronauta" ao Florida Institute of Technology</span>
 					</div>
