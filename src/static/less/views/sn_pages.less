@@ -23,9 +23,7 @@ body {
 		margin: 0 auto;
 		.cardsContainer;
 	}
-}
-
-#globalContainer.scrollableContainer {
+	
 	// overflow: auto;
 	// position: absolute;
 	// top: @real-navbar-height;
@@ -35,7 +33,7 @@ body {
 }
 
 &::-webkit-scrollbar {
-	width: 10px;
+	width: 12px;
 } 
 
 &::-webkit-scrollbar-track {
@@ -43,13 +41,13 @@ body {
 	// border-width: 0 1px 0 1px;
 	// margin-right: 4px;
 	background-clip: padding-box;
-	border-left: 1px solid #BBB;
+	border-left: 1px solid #AAA;
 }
 
 &::-webkit-scrollbar-thumb {
 	.transition(all, .2s, linear);
-	background-color: #BEBEBE;
-	border: 1px solid #BEBEBE;
+	background-color: #BBB;
+	border: 1px solid #AAA;
 	border-width: 0 0 0 1px;
 	&:hover {
 		background: #AAA;
@@ -59,14 +57,12 @@ body {
 		background: #999;
 		border: 1px solid #999;
 	}
-}
 
-// &::-webkit-scrollbar * {
-// 	background: transparent;
+}
+// #globalContainer.scrollableContainer {
 // }
 
 [data-page=profile] {
-
 	#globalHead {
 		background: #444;
 		position: relative;
@@ -173,11 +169,9 @@ body {
 			}
 		}
 	}
-
 }
 
 [data-page=postCreate] {
-
 	#globalContainer #content {
 		width: 800px;
 		.contentWithSidebar();

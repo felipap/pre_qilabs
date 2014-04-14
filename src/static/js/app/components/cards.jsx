@@ -204,11 +204,11 @@ define([
 	});
 
 
-	// function onResize () {
-	// 	$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top)
-	// }
-	// onResize();
-	// $(window).resize(onResize);
+	function onResize () {
+		$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top)
+	}
+	onResize();
+	$(window).resize(onResize);
 
 
 	var originalOffset = $(".cardsNav").offset().top;
