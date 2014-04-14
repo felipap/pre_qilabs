@@ -47,9 +47,9 @@
 
 .cardsContainer ()
 {
-	@card-width: 600px;
+	@card-width: 750px;
 	@card-height: 130px;
-	@card-margin: 300px;
+	@card-margin: 250px;
 	@card-margin-bottom: 28px;
 	@card-body-fontsize: 17px;
 	@cpr: 4; // cards-per-row
@@ -137,6 +137,15 @@
 			padding: 20px;
 			font-size: @card-body-fontsize;
 			font-weight: 500;
+
+			span {
+				overflow: hidden;
+				width: 100%;
+				text-overflow: ellipsis;
+				display: block;
+				height: 100%;
+				white-space: nowrap;
+			}
 
 			a {
 				text-decoration: none;
