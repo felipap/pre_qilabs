@@ -1,36 +1,16 @@
 
-// body:not(.fixedScroll) > .cardsNav {
-// 	display: none;
-
-// }
-
-// body #globalContainer > .cardsNav {
-// 	display: none;
-// }
-
-// .cardsNav {
-// 	// position: fixed;
-// 	// top: @navbar-height;
-// 	// width: 100%;
-// 	z-index: 4;
-// 	padding-right: 18px;
-// 	margin: 0;
-
-// 	li.active {
-// 		font-weight: bold;
-// 	}
-// }
-
 nav.bar {
 	.box-shadow(5px, .4);
 }
 
 .cardsNav {
+	@height: 60px;
+
 	position: fixed;
 	width: 100%;
 	color: white;
 	background: desaturate(@COLOR1,10%);
-	height: 60px;
+	height: @height;
 	font-family: "Open Sans";
 	.box-shadow(5px, .4);
 	padding: 0 30px;
@@ -40,7 +20,7 @@ nav.bar {
 
 	li {
 		position: relative;
-		line-height: 60px;
+		line-height: @height;
 		display: inline-block;
 	}
 
@@ -65,7 +45,7 @@ nav.bar {
 			}
 			
 			.arrow {
-				line-height: 60px;
+				line-height: @height;
 				content: '';
 				border: 8px solid transparent;
 				// border-bottom-color: #F0F0F0;
@@ -161,7 +141,7 @@ nav.bar {
 {
 	text-align: center;
 
-	&:not(.grid) {
+	&.grid {
 		@block-card-width: 750px;
 		@block-card-height: 145px;
 		@block-card-margin: 250px;
@@ -196,7 +176,7 @@ nav.bar {
 		}
 	}
 
-	&.grid {
+	&:not(.grid) {
 		@square-card-width: 234px;
 		@square-card-height: 200px;
 		@square-card-margin: 28px;
