@@ -3,9 +3,10 @@
 <div class="navcontent">
 		<a class="brand" href="/" tabindex="-1">
 			<script>
-			var icons = ['bulb']; // 'flask', 'puzzle', 'rocket', 
-			document.write('<i class="icon-'+icons[Math.floor(icons.length*Math.random())]+'"></i>');
-			</script>&nbsp;QI Labs {% spaceless %}
+			// var icons = ['bulb']; // 'flask', 'puzzle', 'rocket', 
+			// document.write('<i class="icon-'+icons[Math.floor(icons.length*Math.random())]+'"></i>');
+			</script>
+			QI <i class="icon-bulb"></i> Labs {% spaceless %}
 			{% if dataPage === "guide" %}
 				<span>· Guias</span>
 			{% endif %}
@@ -33,9 +34,9 @@
 			</li>
 			#}
 			<li>
-				<a class="plain-link" href="/p/create">
-					&nbsp;<i class="postIcon icon-plus"></i>&nbsp;
-				</a>
+				<button class="plain-btn">
+					<i class="icon-search"></i>
+				</button>
 			</li>
 			<div class="separator"></div>
 			<li>

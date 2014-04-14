@@ -29,48 +29,75 @@ nav.bar {
 	position: fixed;
 	width: 100%;
 	color: white;
-	background: desaturate(@COLOR1,20%);
+	background: desaturate(@COLOR1,10%);
 	height: 60px;
-	font-family: museo-sans;
+	font-family: "Open Sans";
 	.box-shadow(5px, .4);
-	padding: 0 20px;
+	padding: 0 30px;
 	top: @navbar-height;
 	z-index: 19;
 	// border-bottom: 1px solid #DDD;
 
 	li {
 		position: relative;
-		margin: 0 20px;
-		list-style: none;
 		line-height: 60px;
 		display: inline-block;
-		font-size: 12px;
-		text-transform: uppercase;
-		text-align: center;
-		
-		.arrow {
-			line-height: 60px;
-			content: '';
-			border: 8px solid transparent;
-			// border-bottom-color: #F0F0F0;
-			position: absolute;
-			bottom: 0;
-			display: inline;
-			margin-left: -7px;
+	}
+
+	& > div {
+		display: inline-block;
+	}
+
+	.tabs {
+		li {
+			list-style: none;
+			font-size: 12px;
+			text-transform: uppercase;
+			text-align: center;
+			margin: 0 15px;
+
+			&:first-child {
+				margin-left: 0;
+			}
+
+			&:last-child {
+				margin-right: 0;
+			}
+			
+			.arrow {
+				line-height: 60px;
+				content: '';
+				border: 8px solid transparent;
+				// border-bottom-color: #F0F0F0;
+				position: absolute;
+				bottom: 0;
+				display: inline;
+				margin-left: -7px;
+			}
+			
+			&.active {
+				font-weight: 600;
+				// font-weight: bold;
+			}
+			&.active .arrow { border-bottom-color: #EEE; }
+
 		}
-		
-		&.active {
-			font-weight: bold;
-		}
-		&.active .arrow { border-bottom-color: #EEE; }
 	}
 
 	.right {
 		float: right;
 		display: inline-block;
+		li {
+			margin: 0 12px;
+		}
+
+		& > * {
+			vertical-align: middle;
+		}
 
 		li > i {
-			font-size: 20px;
+			vertical-align: middle;
+			font-size: 25px;
 			// font-weight: bold;
 		}
 	}
