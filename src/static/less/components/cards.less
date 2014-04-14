@@ -29,12 +29,12 @@ nav.bar {
 	position: fixed;
 	width: 100%;
 	color: white;
-	background: @COLOR1;
+	background: desaturate(@COLOR1,20%);
 	height: 60px;
 	font-family: museo-sans;
 	.box-shadow(5px, .4);
 	padding: 0 20px;
-	top: (@navbar-height - 1);
+	top: @navbar-height;
 	z-index: 19;
 	// border-bottom: 1px solid #DDD;
 
@@ -63,6 +63,16 @@ nav.bar {
 			font-weight: bold;
 		}
 		&.active .arrow { border-bottom-color: #EEE; }
+	}
+
+	.right {
+		float: right;
+		display: inline-block;
+
+		li > i {
+			font-size: 20px;
+			// font-weight: bold;
+		}
 	}
 }
 

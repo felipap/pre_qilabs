@@ -18,34 +18,27 @@
 nav.bar {
 	// .navbar;
 	// &:extend(.navbar);
-	position: relative;
-	min-height: @navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
-	margin-bottom: @navbar-margin-bottom;
-	border: 1px solid transparent;
-
-	// Prevent floats from breaking the navbar
-	&:extend(.clearfix all);
-
+	// margin-bottom: @navbar-margin-bottom;
+	// border: 1px solid transparent;
 	// @media (min-width: @grid-float-breakpoint) {
 	// border-radius: @navbar-border-radius;
 	// }
+	// margin-top: -1px;
+
+	position: relative;
+	height: @navbar-height; // Ensure a navbar always shows (e.g., without a .navbar-brand in collapsed mode)
+	// Prevent floats from breaking the navbar
+	&:extend(.clearfix all);
 	
 	border-radius: 0 !important;
-	margin-top: -1px;
 	padding: @-navbar-padding 10px;
 	margin-bottom: 0;
 	z-index: 20;
 	width: 100%;
 	top: 0;
 
-	.pull-right {
-		float: right !important;
-	}
-
-	.pull-left {
-		float: left !important;
-	}
-
+	.pull-right { float: right !important; }
+	.pull-left { float: left !important; }
 	.tooltip {
 		margin-top: 6px;
 
