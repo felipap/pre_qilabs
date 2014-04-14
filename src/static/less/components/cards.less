@@ -1,12 +1,12 @@
 
-body:not(.fixedScroll) > .cardsNav {
-	display: none;
+// body:not(.fixedScroll) > .cardsNav {
+// 	display: none;
 
-}
+// }
 
-body #globalContainer > .cardsNav {
-	display: none;
-}
+// body #globalContainer > .cardsNav {
+// 	display: none;
+// }
 
 // .cardsNav {
 // 	// position: fixed;
@@ -21,86 +21,95 @@ body #globalContainer > .cardsNav {
 // 	}
 // }
 
+nav.bar {
+	.box-shadow(5px, .4);
+}
 
 .cardsNav {
-	position: relative;
+	position: fixed;
+	width: 100%;
 	color: white;
-	background: #444;
-
-	text-align: center;
-	padding: 10px;
+	background: @COLOR1;
+	height: 60px;
 	font-family: museo-sans;
-	border-bottom: 1px solid #DDD;
+	.box-shadow(5px, .4);
+	padding: 0 20px;
+	top: (@navbar-height - 1);
+	z-index: 19;
+	// border-bottom: 1px solid #DDD;
 
 	li {
 		position: relative;
 		margin: 0 20px;
 		list-style: none;
+		line-height: 60px;
 		display: inline-block;
-	}
-
-	li .arrow {
-		content: '';
-		border: 8px solid transparent;
-		// border-bottom-color: #F0F0F0;
-		position: absolute;
-		top: 14px;
-		display: inline;
-		margin-left: -7px;
-	}
-	li.active .arrow { border-bottom-color: #DDD; }
-}
-
-body:not(.fixedScroll) > .cardsNav {
-	height: 50px;
-	z-index: 4;
-	padding-right: 18px;
-	margin: 0;
-
-	li.active {
-		font-weight: bold;
-	}
-}
-
-body.fixedScroll > .cardsNav {
-	z-index: 4;
-	padding-right: 18px;
-	margin: 0;
-
-	li.active {
-		font-weight: bold;
-	}
-
-	position: absolute;
-	z-index: 22;
-	padding-right: 18px;
-	/* width: 100%; */
-	margin: 0 auto;
-	width: 600px;
-	border: none;
-	height: 60px;
-	left: 50%;
-	margin-left: -300px;
-	padding: 0;
-	background: none;
-	top: 0;
-
-	li {
 		font-size: 12px;
 		text-transform: uppercase;
-		vertical-align: top;
-		height: 100%;
-		// line-height: @navbar-height;
-
+		text-align: center;
+		
 		.arrow {
-			top: 46px;
+			line-height: 60px;
+			content: '';
+			border: 8px solid transparent;
+			// border-bottom-color: #F0F0F0;
+			position: absolute;
+			bottom: 0;
+			display: inline;
+			margin-left: -7px;
 		}
-	}
-
-	li.active {
-
+		
+		&.active {
+			font-weight: bold;
+		}
+		&.active .arrow { border-bottom-color: #EEE; }
 	}
 }
+
+// body:not(.fixedScroll) > .cardsNav {
+// 	height: 50px;
+// 	z-index: 4;
+// 	padding-right: 18px;
+// 	margin: 0;
+
+// }
+
+// body.fixedScroll > .cardsNav {
+// 	z-index: 4;
+// 	padding-right: 18px;
+// 	margin: 0;
+
+// 	li.active {
+// 		font-weight: bold;
+// 	}
+
+// 	position: absolute;
+// 	z-index: 22;
+// 	padding-right: 18px;
+// 	/* width: 100%; */
+// 	margin: 0 auto;
+// 	width: 600px;
+// 	border: none;
+// 	height: 60px;
+// 	left: 50%;
+// 	margin-left: -300px;
+// 	padding: 0;
+// 	background: none;
+// 	top: 0;
+
+// 	li {
+// 		height: 100%;
+// 		// line-height: @navbar-height;
+
+// 		.arrow {
+// 			top: 46px;
+// 		}
+// 	}
+
+// 	li.active {
+
+// 	}
+// }
 
 // .cardsNav.fixed ~ #cards {
 // 	margin-top: 33px !important;
