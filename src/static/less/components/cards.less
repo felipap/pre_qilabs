@@ -45,26 +45,15 @@
 	margin-top: 33px !important;
 }
 
-.tags-inline {
-	display: inline-block;
-	margin: 0 5px;
-	margin-top: 1px;
-	.tag {
-		display: inline;
-		font-size: 11px;
-		padding: 5px 4px;
-		border-bottom: 0;
-	}
-}
 
 
 .cardsContainer ()
 {
 	@card-width: 750px;
-	@card-height: 130px;
+	@card-height: 145px;
 	@card-margin: 250px;
 	@card-margin-bottom: 23px;
-	@card-body-fontsize: 17px;
+	@card-body-fontsize: 23px;
 	@cpr: 4; // cards-per-row
 	text-align: center;
 
@@ -173,6 +162,8 @@
 			time {
 				color: #AAA;
 				font-size: 12px;
+				margin-right: 10px;
+				float: right;
 			}
 
 			.authorship {
@@ -194,6 +185,36 @@
 					height: 25px;
 				}
 			}
+
+			.tags-inline {
+				display: table;
+				margin-top: 1px;
+				.tag {
+					display: inline;
+					font-size: 11px;
+					padding: 5px 4px;
+					border-bottom: 0;
+					// background: transparent;
+				}
+			}
+		}
+
+		&:not(:hover) .cardFoot .tags-inline {
+			.tag {
+				font-weight: normal;
+				color: #666;
+				margin-right: 0;
+				background: transparent;
+				&::after {
+					content: ",";
+				}
+			}
+			.tag:last-child::after {
+				content: "";
+			}
+		}
+
+		&:hover .cardFoot .tags-inline {
 		}
 
 		&:hover {
