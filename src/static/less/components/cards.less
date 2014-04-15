@@ -1,7 +1,4 @@
 
-nav.bar {
-	// .box-shadow(3px, .2);
-}
 
 .cardsNav {
 	@height: 60px;
@@ -12,23 +9,32 @@ nav.bar {
 	background: desaturate(@COLOR1,10%);
 	height: @height;
 	font-family: "Open Sans";
-	.box-shadow(3px, .2);
 	padding: 0 30px;
 	top: @navbar-height;
 	z-index: 19;
-	// border-bottom: 1px solid #DDD;
 
 	li {
 		position: relative;
 		line-height: @height;
 		display: inline-block;
+
+		&.iconItem {
+			font-size: 23px;
+		}
 	}
 
 	& > div {
 		display: inline-block;
+		line-height: @height;
 	}
 
 	.tabs {
+		position: absolute;
+		left: 50%;
+		text-align: center;
+		width: 400px;
+		margin-left: -200px;
+
 		li {
 			list-style: none;
 			font-size: 12px;
@@ -60,13 +66,15 @@ nav.bar {
 				// font-weight: bold;
 			}
 			&.active .arrow { border-bottom-color: #EEE; }
-
 		}
+	}
+
+	.left {
 	}
 
 	.right {
 		float: right;
-		display: inline-block;
+
 		li {
 			margin: 0 12px;
 		}
@@ -82,87 +90,6 @@ nav.bar {
 		}
 	}
 
-	.layoutControl {
-		display: inline-block;
-		position: relative;
-		border: 2px solid #fff;
-		// box-shadow: 0 1px 3px 0 rgba(0,0,0,.3), inset 0 1px 2px rgba(0,0,0,.4);
-		.inner-shadow(0,1px,.4);
-		// background: ;
-		.rounded(6px);
-		border: 2px solid white;
-		background: white;
-
-		li {
-			color: #444;
-			margin: 0;
-			padding: 10px;
-			i { font-size: 18px; }
-			line-height: 25px;
-		}
-
-		.control {
-			background: white;
-			position: absolute;
-			width: 50px;
-		}
-	}
-}
-
-// body:not(.fixedScroll) > .cardsNav {
-// 	height: 50px;
-// 	z-index: 4;
-// 	padding-right: 18px;
-// 	margin: 0;
-
-// }
-
-// body.fixedScroll > .cardsNav {
-// 	z-index: 4;
-// 	padding-right: 18px;
-// 	margin: 0;
-
-// 	li.active {
-// 		font-weight: bold;
-// 	}
-
-// 	position: absolute;
-// 	z-index: 22;
-// 	padding-right: 18px;
-// 	/* width: 100%; */
-// 	margin: 0 auto;
-// 	width: 600px;
-// 	border: none;
-// 	height: 60px;
-// 	left: 50%;
-// 	margin-left: -300px;
-// 	padding: 0;
-// 	background: none;
-// 	top: 0;
-
-// 	li {
-// 		height: 100%;
-// 		// line-height: @navbar-height;
-
-// 		.arrow {
-// 			top: 46px;
-// 		}
-// 	}
-
-// 	li.active {
-
-// 	}
-// }
-
-// .cardsNav.fixed ~ #cards {
-// 	margin-top: 33px !important;
-// }
-
-#globalHead + .cardsNav {
-	margin: 0 10px;
-}
-
-body {
 	.onoffswitch {
 	    position: relative; width: 66px;
 	    margin-top: 5px;
@@ -193,7 +120,7 @@ body {
 		.onoffswitch-inner:before {
 		    content: "FFA";
 		    padding-left: 6px;
-		    background-color: @COLOR2; // #6194FD;
+		    background-color: #AAA; // #6194FD;
 		    color: #FFFFFF;
 		}
 
@@ -238,6 +165,14 @@ body {
 		    content: @fa-var-th;
 		    padding: 1px 6px 0;
 		}
+	}
+
+	[data-page=profile] &:not(.fixed) {
+		position: relative;
+		top: 0;
+		margin: 0 10px;
+		padding: 0 10px;
+		width: auto;
 	}
 }
 
@@ -493,19 +428,3 @@ body {
 	}
 }
 
-
-
-body.white {
-	// nav.bar {
-	// 	background: @COLOR1;
-	// }
-	// .cardsNav {
-	// 	color: #444;
-	// 	background: white;
-	// 	border-bottom: 1px solid #EEE;
-	// 	.no-box-shadow;
-	// }
-	.cardsNav .tabs li.active .arrow {
-	border-bottom-color: #D0D0D0;
-	}
-}

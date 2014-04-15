@@ -12,40 +12,41 @@
 
 	{% include 'layouts/navbar.html' %}
 
-	<div id="globalContainer" class="" "scrollableContainer">
-
-		<nav class="cardsNav">
-			<div class="tabs">
-				<li class="active">
-					Seguindo
-					<div class="arrow"></div>
-				</li>
-				<li>
-					Populares
-					<div class="arrow"></div>
-				</li>
-				<li>
-					Atividade
-					<div class="arrow"></div>
-				</li>
-			</div>
-			<div class="right">
-				<li>
-					NOVO POST&nbsp;<i class="icon-edit"></i>
-				</li>
-				<li>
-					<div class="onoffswitch">
-						<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked onChange="$('#cards').toggleClass('grid')">
-						<label class="onoffswitch-label" for="myonoffswitch">
-							<div class="onoffswitch-inner"></div>
-							<div class="onoffswitch-switch"></div>
-						</label>
-					</div>
-				</li>
-			</div>
-		</nav>
+	<div id="globalContainer">
 
 		{% block globalHeader %}
+			<nav class="cardsNav">
+				<div class="left">
+					<li class="iconItem">
+						<i class="icon-pencil"></i>
+					</li>
+				</div>
+				<div class="tabs">
+					<li class="active">
+						Seguindo
+						<div class="arrow"></div>
+					</li>
+					<li>
+						Populares
+						<div class="arrow"></div>
+					</li>
+					<li>
+						Atividade
+						<div class="arrow"></div>
+					</li>
+				</div>
+				<div class="right">
+					<li>
+						<div class="onoffswitch">
+							<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked onChange="$('#cards').toggleClass('grid')">
+							<label class="onoffswitch-label" for="myonoffswitch">
+								<div class="onoffswitch-inner"></div>
+								<div class="onoffswitch-switch"></div>
+							</label>
+						</div>
+					</li>
+				</div>
+			</nav>
 		{% endblock %}
 
 		<div class="flash-msgs"></div>

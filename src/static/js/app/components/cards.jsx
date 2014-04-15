@@ -203,26 +203,25 @@ define([
 
 	});
 
-
 	// function onResize () {
 	// 	$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top)
 	// }
 	// onResize();
 	// $(window).resize(onResize);
 
-
-	var originalOffset = $(".cardsNav").offset().top;
-	var hasHead = !!$(".globalHead").length;
-	if (hasHead) {
-		$('#globalContainer').scroll(function() {
-			if (!hasHead && $("#globalContainer").scrollTop()) {
-				$(".cardsNav").addClass('fixed');
-			} else if (hasHead && 61 > $(".globalHead").offset().top+$(".globalHead").outerHeight()) {
+	// var originalOffset = $(".cardsNav").offset().top;
+	// var hasHead = ;
+	if (!!$("#globalHead").length) {
+		$(document).scroll(function() {
+			if (($(document).scrollTop()+$('nav.bar').outerHeight()
+				-($("#globalHead").offset().top+$('#globalHead').outerHeight())) >= 0) {
 				$(".cardsNav").addClass('fixed');
 			} else {
 				$(".cardsNav").removeClass('fixed');
 			}
 		});
+	} else {
+		// $(".cardsNav").addClass('fixed');
 	}
 
 	return {

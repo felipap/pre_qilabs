@@ -21,7 +21,8 @@ nav.bar {
 #globalContainer {
 	width: 100%;
 	position: relative;
-	margin-top: 2*@navbar-height - 1;
+	margin-top: @navbar-height;
+	overflow: hidden; // prevent margin aggregation
 
 	#cards {
 		padding-top: 20px;
@@ -64,8 +65,6 @@ nav.bar {
 	}
 
 }
-// #globalContainer.scrollableContainer {
-// }
 
 [data-page=profile] {
 	#globalHead {
