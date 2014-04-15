@@ -212,16 +212,18 @@ define([
 	// var originalOffset = $(".cardsNav").offset().top;
 	// var hasHead = ;
 	if (!!$("#globalHead").length) {
-		$(document).scroll(function() {
+		$(document).scroll(triggerCalcNavbarFixed);
+		function triggerCalcNavbarFixed () {
 			if (($(document).scrollTop()+$('nav.bar').outerHeight()
 				-($("#globalHead").offset().top+$('#globalHead').outerHeight())) >= 0) {
 				$(".cardsNav").addClass('fixed');
 			} else {
 				$(".cardsNav").removeClass('fixed');
 			}
-		});
+		}
+		triggerCalcNavbarFixed();
 	} else {
-		// $(".cardsNav").addClass('fixed');
+		$(".cardsNav").addClass('fixed');
 	}
 
 	return {

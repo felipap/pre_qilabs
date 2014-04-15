@@ -6,7 +6,7 @@
 	position: fixed;
 	width: 100%;
 	color: white;
-	background: desaturate(@COLOR1,10%);
+	background: desaturate(#08C,10%);
 	height: @height;
 	font-family: "Open Sans";
 	padding: 0 30px;
@@ -17,6 +17,7 @@
 		position: relative;
 		line-height: @height;
 		display: inline-block;
+		font-family: museo-sans;
 
 		&.iconItem {
 			font-size: 23px;
@@ -37,7 +38,8 @@
 
 		li {
 			list-style: none;
-			font-size: 12px;
+			font-family: "Open Sans";
+			font-size: 13px;
 			text-transform: uppercase;
 			text-align: center;
 			margin: 0 15px;
@@ -62,7 +64,7 @@
 			}
 			
 			&.active {
-				font-weight: 600;
+				font-weight: 800;
 				// font-weight: bold;
 			}
 			&.active .arrow { border-bottom-color: #EEE; }
@@ -174,7 +176,12 @@
 		padding: 0 10px;
 		width: auto;
 	}
+
+	&.fixed ~ #cards {
+		margin-top: @height !important;
+	}
 }
+
 
 .cardsContainer ()
 {
