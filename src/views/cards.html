@@ -30,14 +30,15 @@
 				</li>
 			</div>
 			<div class="right">
-				<div class="layoutControl">
-					<li>
-						<i class="icon-layout-blocks"></i>
-					</li>
-					<li>
-						<i class="icon-layout-cards"></i>
-					</li>
-				</div>
+				<li>
+					<div class="onoffswitch">
+						<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked onChange="$('#cards').toggleClass('grid')">
+						<label class="onoffswitch-label" for="myonoffswitch">
+							<div class="onoffswitch-inner"></div>
+							<div class="onoffswitch-switch"></div>
+						</label>
+					</div>
+				</li>
 				<li>
 					<i class="icon-edit"></i>
 				</li>
