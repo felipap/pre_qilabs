@@ -31,10 +31,19 @@ ul {
 	padding: 0;
 }
 
+html {
+	// font-size: 16px;
+	position: relative;
+	height: 100%;
+}
 
 body { 
 	margin: 0;
 	-webkit-font-smoothing: antialiased;
+	height: 100%;
+	font-family: "Open Sans";
+	// background: #fBfBfB;
+	min-width: 960px;
 }
 
 @BrandColor: @COLOR1; // #3498db;
@@ -59,6 +68,40 @@ body {
 		vertical-align: middle;
 	}
 }
+
+.tagThumbnail {
+	display: inline-block;
+	vertical-align: middle;
+	width: 40px;
+	height: 40px;
+	text-decoration: none;
+	overflow: hidden;
+	text-align: center;
+	line-height: 40px;
+
+	background: #444;
+	.rounded(25px);
+
+	[class*="icon-tag"] {
+		vertical-align: middle;
+		font-size: 30px;
+	}
+
+	& + .username, & + .name, & + span {
+		vertical-align: middle;
+	}
+}
+
+.tagThumbnail.large {
+	width: 50px;
+	height: 50px;
+	line-height: 50px;
+	i {
+		font-size: 35px;
+	}
+}
+
+.tagThumbnail.small { }
 
 .tag {
 	display: inline-block;
@@ -94,23 +137,15 @@ h3:first-child {
 	margin-top: 5px;
 }
 
+[data-tag-bg=voluntariado] { background: @COLOR1; }
 [data-tag-bg=application] { background: @COLOR2; }
 [data-tag-bg=vestibular] { background: @COLOR3; }
 [data-tag-bg=olimpiada] { background: @COLOR4; }
 
-
-html {
-	// font-size: 16px;
-	position: relative;
-	height: 100%;
-}
-
-body {
-	height: 100%;
-	font-family: "Open Sans";
-	background: #fBfBfB;
-	min-width: 960px;
-}
+[data-tag-color=voluntariado] { color: @COLOR1; }
+[data-tag-color=application] { color: @COLOR2; }
+[data-tag-color=vestibular] { color: @COLOR3; }
+[data-tag-color=olimpiada] { color: @COLOR4; }
 
 .popover {
 	position: absolute;

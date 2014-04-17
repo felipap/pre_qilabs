@@ -71,7 +71,11 @@ UserSchema = new mongoose.Schema {
 ## Virtuals ####################################################################
 
 UserSchema.virtual('avatarUrl').get ->
-	'https://graph.facebook.com/'+@facebookId+'/picture'
+	if @username is 'felipearagaopires'
+		return '/static/images/avatar.png'
+	else
+		return 'https://graph.facebook.com/'+@facebookId+'/picture'
+
 
 UserSchema.virtual('profileUrl').get ->
 	'/u/'+@username

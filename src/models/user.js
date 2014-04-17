@@ -87,7 +87,11 @@ UserSchema = new mongoose.Schema({
 });
 
 UserSchema.virtual('avatarUrl').get(function() {
-  return 'https://graph.facebook.com/' + this.facebookId + '/picture';
+  if (this.username === 'felipearagaopires') {
+    return '/static/images/avatar.png';
+  } else {
+    return 'https://graph.facebook.com/' + this.facebookId + '/picture';
+  }
 });
 
 UserSchema.virtual('profileUrl').get(function() {

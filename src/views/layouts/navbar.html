@@ -11,28 +11,21 @@
 				<span>· Guias</span>
 			{% endif %}
 			{% if dataPage === "profile" %}
-				<span>· Perfis</span>
+				<span>· Tags</span>
 			{% endif %}
 			{% endspaceless %}
 		</a>
 	{% if user %}
 
 		<ul>
-		</ul>
-		<ul class="pull-right">
-			{#
 			<li>
-				<!-- <button class="plain-btn" onClick="$('.searchInput').animate('width', '300px')">
-					<i class="icon-search"></i>
-				</button> -->
-				<div class="searchInput">
-				<form onSubmit="alert('Mano, desculpa cortar o seu barato, mas isso aqui nem tá perto de funcionar ainda.'); return false">
-					<input type="text" placeholder="Descubra..."/>
-					<i class="icon-lupa"></i>
-				</form>
-				</div>
+				<button class="openSidebar">
+					<i class="icon-bars"></i>
+				</button>
 			</li>
-			#}
+		</ul>
+
+		<ul class="pull-right">
 			<li>
 				<button class="plain-btn">
 					<i class="icon-search"></i>
@@ -46,16 +39,15 @@
 			</li>
 			<li id="bellPlacement">
 				<button class="plain-btn bell-btn" data-action="show-notifications">
-					<i class="icon-bell"></i><sup id="count" class="badge"></sup>
+					<i class="icon-bell-o"></i><sup id="count" class="badge"></sup>
 				</button>
 			</li>
-			<div class="separator"></div>
-		 	<li class="menu-dd" class="dropdown">
+			<li class="menu-dd" class="dropdown">
 			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle">
-					{{ user.name }} &nbsp;<div class="avatarDd" style="background-image: url('{{ user.avatarUrl }}')">
+					<!-- {{ user.name }} &nbsp; --><div class="avatarDd" style="background-image: url('{{ user.avatarUrl }}')">
 					</div>
-					<i></i>
-					<b class="caret"></b>
+					<!-- <i></i>
+					<b class="caret"></b> -->
 				</div>
 				<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
 					<li role="presentation">
@@ -80,6 +72,11 @@
 						</a>
 					</li>
 				</ul>
+			</li>
+			<li class="newPost">
+				<button class="plain-btn">
+					<i class="icon-pencil"></i>
+				</button>
 			</li>
 		</ul>
 	{% else %}

@@ -10,6 +10,68 @@
 
 {% block body %}
 
+	<div id="sidebarPanel">
+		<hr class="" />
+
+		<section>
+			<label>Páginas</label>
+			<li>
+				<a href="#">
+					<i class="icon-home"></i>
+					<span>Home</span>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<i class="icon-user"></i>
+					<span>Meu Perfil</span>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<i class="icon-group"></i>
+					<span>Pessoas</span>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<i class="icon-tags"></i>
+					<span>Assuntos</span>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<i class="icon-archive"></i>
+					<span>Guias</span>
+				</a>
+			</li>
+		</section>
+		<hr />
+		<section>
+			<label>Suas Tags</label>
+			<li><a href="#"><i data-tag-color="application" class="icon-circle"></i> Application</a></li>
+			<li><a href="#"><i data-tag-color="vestibular" class="icon-circle"></i> Vestibular</a></li>
+			<li><a href="#"><i data-tag-color="voluntariado" class="icon-circle"></i> Trabalho Voluntário</a></li>
+			<li><a href="#"><i data-tag-color="olimpiada" class="icon-circle"></i> Olimpíada</a></li>
+		</section>
+		<hr />
+		<section>
+			<div class="onoffswitch">
+				<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked onChange="$('#cards').toggleClass('grid')">
+				<label class="onoffswitch-label" for="myonoffswitch">
+					<div class="onoffswitch-inner"></div>
+					<div class="onoffswitch-switch"></div>
+				</label>
+			</div>
+		</section>
+		<section class="sidebarBottom">
+			<li><a href="#">Ajuda</a></li> ·
+			<li><a href="#">FAQ</a></li> ·
+			<li><a href="#" data-ajax-post-href="{{ getPageUrl('logout') }}" data-redirect-href="/">Logout</a></li>
+			<div>QI Labs · Copyright 2014</div>
+		</section>
+	</div>
+
 	{% include 'layouts/navbar.html' %}
 
 	<div id="globalContainer">
@@ -36,15 +98,6 @@
 					</li>
 				</div>
 				<div class="right">
-					<li>
-						<div class="onoffswitch">
-							<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked onChange="$('#cards').toggleClass('grid')">
-							<label class="onoffswitch-label" for="myonoffswitch">
-								<div class="onoffswitch-inner"></div>
-								<div class="onoffswitch-switch"></div>
-							</label>
-						</div>
-					</li>
 				</div>
 			</nav>
 		{% endblock %}

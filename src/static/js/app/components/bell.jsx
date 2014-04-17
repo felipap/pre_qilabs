@@ -143,7 +143,7 @@ define([
 						className="plain-btn bell-btn"
 						data-action="show-notifications"
 						onClick={this.onClickBell}>
-						<i className="icon-bell"></i>
+						<i className="icon-bell-o"></i>
 						<sup id="count" ref="nCount" className="badge"></sup>
 					</button>
 				);

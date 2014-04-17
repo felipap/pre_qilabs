@@ -203,14 +203,13 @@ define([
 
 	});
 
-	// function onResize () {
-	// 	$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top)
-	// }
-	// onResize();
-	// $(window).resize(onResize);
+	function onResize () {
+		$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top - 1);
+		// $("#globalContainer").width($('body').width());
+	}
+	onResize();
+	$(window).resize(onResize);
 
-	// var originalOffset = $(".cardsNav").offset().top;
-	// var hasHead = ;
 	if (!!$("#globalHead").length) {
 		$(document).scroll(triggerCalcNavbarFixed);
 		function triggerCalcNavbarFixed () {

@@ -63,6 +63,20 @@ module.exports = {
       return res.render('guide', {});
     }
   },
+  '/tags/vestibular': {
+    name: 'tag',
+    permissions: [required.login],
+    get: function(req, res) {
+      return req.user.genProfile(function(err, profile) {
+        return req.user.doesFollowUser(req.user, function(err, bool) {
+          return res.render('pages/tag', {
+            profile: profile,
+            follows: bool
+          });
+        });
+      });
+    }
+  },
   '/labs': {
     permissions: [required.login],
     children: {

@@ -10,34 +10,6 @@
 @import "../components/layout.less";
 @import "./guides.less";
 
-body {
-	background: #F0F0F0 url(/static/images/cubes.png);
-}
-
-nav.bar {
-	position: fixed;
-}
-
-#globalContainer {
-	width: 100%;
-	position: relative;
-	margin-top: @navbar-height;
-	overflow: hidden; // prevent margin aggregation
-
-	#cards {
-		padding-top: 20px;
-		margin: 0 auto;
-		.cardsContainer;
-	}
-	
-	// overflow: auto;
-	// position: absolute;
-	// top: @real-navbar-height;
-	// bottom: 0;
-	// height: 100%;
-	// height: 100%;
-}
-
 &::-webkit-scrollbar {
 	width: 12px;
 } 
@@ -48,6 +20,130 @@ nav.bar {
 	// margin-right: 4px;
 	background-clip: padding-box;
 	border-left: 1px solid #AAA;
+}
+@widthSidebar: 260px;
+@bgSidebar: #20201F;
+
+#sidebarPanel {
+	position: fixed;
+	left: -@widthSidebar;
+	top: 0; bottom: 0;
+	width: @widthSidebar;
+	background: @bgSidebar;
+	padding-top: @navbar-height;
+	color: white;
+
+	hr {
+		margin: 5px 0;
+		border-color: darken(@bgSidebar, 4%);
+	}
+
+	hr:first-child {
+		border-color: darken(@bgSidebar, 10%);
+		margin: 0 0 10px;
+	}
+
+	& > section {
+		padding: 10px 20px;
+
+		label {
+			text-transform: uppercase;
+			font-family: museo-sans;
+			font-weight: normal;
+			color: #9A9A9A;
+			font-size: 12px;
+		}
+
+		font-family: museo-sans;
+		font-size: 13px;
+		.text-shadow(3px,.3);
+
+		li {
+			list-style: none;
+			margin: 5px 0;
+			a {
+				font-weight: bold;
+				text-decoration: none;
+				color: #EEE;
+				i {
+					width: 20px;
+					font-size: 15px;
+					margin-right: 4px;
+				}
+				span {
+					vertical-align: middle;
+				}
+				&:hover {
+					color: white;
+				}
+				i.icon-home { font-size: 18px; }
+				i[data-tag-color] {
+					font-size: 16px;
+					width: 15px;
+				}
+			}
+		}
+	}
+
+	.sidebarBottom {
+		position: absolute;
+		bottom: 0;
+		text-align: center;
+		width: 100%;
+
+		li {
+			display: inline-block;
+		}
+
+		div {
+			text-shadow: none;
+			font-size: 12px;
+			color: #888;
+			text-transform: uppercase;
+		}
+	}
+
+	// [data-action=logout] {
+	// 	.high-xbtn(white, @COLOR3);
+	// }
+}
+
+html {
+	overflow-x: hidden;
+	border-top: 2px solid white; // @bgSidebar;
+}
+
+body {
+	.transition(margin-left, 200ms, ease-out);
+}
+
+#sidebarPanel {
+	.transition(left, 200ms, ease-out);
+}
+
+nav.bar {
+	.transition(margin-left, 200ms, ease-out);
+}
+
+body.sidebarOpen {
+	margin-left: @widthSidebar;
+	#sidebarPanel {
+		left: 0;
+	}
+
+	nav.bar {
+		margin-left: -@widthSidebar;
+
+		.openSidebar {
+			color: white;
+			&:hover, &:active, &:focus {
+				color: #F8F8F8;
+			}
+			// .transition(left, 200ms, ease-out);
+			// left: -@widthSidebar;
+			// color: white !important;
+		}
+	}
 }
 
 &::-webkit-scrollbar-thumb {
@@ -63,7 +159,30 @@ nav.bar {
 		background: #999;
 		border: 1px solid #999;
 	}
+}
 
+#globalContainer {
+	background: #F0F0F0 url(/static/images/project_papper.png);
+	background-position-y: -1px;
+	width: 100%;
+
+	position: relative;
+	overflow: hidden; // prevent margin aggregation
+
+	#cards {
+		padding-top: 20px;
+		margin: 0 auto;
+		.cardsContainer;
+	}
+	border-top: 1px solid #DDD;
+	position: absolute;
+	// top: @navbar-height;
+	// margin-top: @navbar-height;
+	// bottom: 0;
+	// height: 0;
+	
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 [data-page=profile] {

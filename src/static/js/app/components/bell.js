@@ -143,7 +143,7 @@ define([
 						className:"plain-btn bell-btn",
 						'data-action':"show-notifications",
 						onClick:this.onClickBell}, 
-						React.DOM.i( {className:"icon-bell"}),
+						React.DOM.i( {className:"icon-bell-o"}),
 						React.DOM.sup( {id:"count", ref:"nCount", className:"badge"})
 					)
 				);
