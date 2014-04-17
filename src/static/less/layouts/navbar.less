@@ -40,8 +40,8 @@ nav.bar {
 		// float: left;
 		position: absolute;
 		left: 50%;
-		width: 150px;
-		margin-left: -75px;
+		width: 300px;
+		margin-left: -150px;
 
 		text-align: center;
 		font-size: @brandFontSize;
@@ -173,12 +173,6 @@ nav.bar {
 			font-size: 13px;
 		}
 
-		.search-input {
-			padding: 6px 7px;
-			outline: none;
-			border: none;
-		}
-
 		.separator {
 			display: inline-block;
 			margin: 0 5px;
@@ -235,21 +229,41 @@ nav.bar {
 			.dropdown-menu {
 				left: auto;
 				right: 2px;
-				margin-top: 1px;
+				margin-top: 6px;
 				padding: 3px;
 				.rounded(3px);
-				li a {
-					outline: none;
-					cursor: pointer;
-					.rounded(1px);
-					font-size: 12px;
-					&:hover {
-						background: @COLOR1;
+				background: #222;
+
+				&::before {
+					content: ' ';
+					border: 5px solid transparent;
+					border-bottom-color: #222;
+					position: absolute;
+					top: -11px;
+					left: 82px;
+				}
+
+				li {
+					font-family: museo-sans;
+					background: transparent;
+					a {
+						outline: none;
+						cursor: pointer;
+						.rounded(1px);
 						color: white;
-					}
-					i {
-						font-size: 13px;
-						margin-right: 3px;
+						font-size: 12px;
+						&:hover, &:focus {
+							// font-weight: bold;
+							background: @COLOR1; // #1A1A1A;
+							color: white;
+						}
+						&:active {
+							.inner-shadow(3px, .3);
+						}
+						i {
+							font-size: 13px;
+							margin-right: 3px;
+						}
 					}
 				}
 			}
