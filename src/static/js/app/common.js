@@ -71,20 +71,30 @@ define([
 	'components.bell',
 	], function ($, _) {
 
-	$('.openSidebar').click(function () {
+	$('.openSidebar').click(function (e) {
 		$('body').toggleClass('sidebarOpen');
 	});
 		
 	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
 		var href = this.dataset['ajaxPostHref'],
 			redirect = this.dataset['redirectHref'];
-		console.log(this.dataset, href);
 		$.post(href, function () {
 			if (redirect)
 				window.location.href = redirect;
 			else
 				window.location.reload();
 		});
+	});
+
+	// Hide popover when mouse-click happens outside it.
+	$(document).mouseup(function (e) {
+		var container = $('#sidebarPanel');
+		if ($('body').hasClass('sidebarOpen')) {
+			if (!container.is(e.target) && container.has(e.target).length === 0 && 
+				!$('.openSidebar').is(e.target) && $('.openSidebar').has(e.target).length === 0) {
+				$('body').removeClass('sidebarOpen');
+			}
+		}
 	});
 
 	$("form[data-ajax-post-href]").on('submit', function (evt) {

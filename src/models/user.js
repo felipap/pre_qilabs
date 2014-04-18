@@ -94,6 +94,46 @@ UserSchema.virtual('avatarUrl').get(function() {
   }
 });
 
+UserSchema.virtual('profile.strAge').get(function() {
+  if (this.username === 'felipearagaopires') {
+    return '18 anos';
+  } else {
+    return '19 anos';
+  }
+});
+
+UserSchema.virtual('profile.location').get(function() {
+  if (this.username === 'felipearagaopires') {
+    return 'Massachusetts Institute of Technology, Cambridge, US';
+  } else {
+    return 'Stanford, Palo Alto, Estados Unidos';
+  }
+});
+
+UserSchema.virtual('profile.from').get(function() {
+  if (this.username === 'felipearagaopires') {
+    return 'Rio de Janeiro, Brasil';
+  } else {
+    return 'Rio de Janeiro, Brasil';
+  }
+});
+
+UserSchema.virtual('profile.bgUrl').get(function() {
+  if (this.username === 'felipearagaopires') {
+    return '/static/images/u/mit.jpg';
+  } else {
+    return '/static/images/u/sta.jpg';
+  }
+});
+
+UserSchema.virtual('profile.bio').get(function() {
+  if (this.username === 'felipearagaopires') {
+    return 'QI Labs Founder. Open source enthusiast. I believe I can program my way into changing the world. My heros are Richard Feynman, Alan Turing and Valesca Popozuda.';
+  } else {
+    return 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+  }
+});
+
 UserSchema.virtual('profileUrl').get(function() {
   return '/u/' + this.username;
 });

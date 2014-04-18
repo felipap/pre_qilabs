@@ -1,25 +1,20 @@
-
 <nav class="bar" role="navigation" id="navbar">
 <div class="navcontent">
-		<a class="brand" href="/" tabindex="-1">
-			<script>
-			// var icons = ['bulb']; // 'flask', 'puzzle', 'rocket', 
-			// document.write('<i class="icon-'+icons[Math.floor(icons.length*Math.random())]+'"></i>');
-			</script>
-			QI <i class="icon-bulb"></i> Labs {% spaceless %}
-			{% if dataPage === "guide" %}
-				<span>· Guias</span>
-			{% endif %}
-			{% if dataPage === "profile" %}
-				<span>· Perfis</span>
-			{% endif %}
-			{% if dataPage === "tag" %}
-				<span>· Tags</span>
-			{% endif %}
-			{% endspaceless %}
-		</a>
+		<span class="brand">
+			<a href="/" tabindex="-1">
+				QI <i class="icon-bulb"></i> Labs
+				{% if dataPage === "guide" %}
+					<span>· Guias</span>
+				{% endif %}
+				{% if dataPage === "profile" %}
+					<span>· @{{ profile.username }}</span>
+				{% endif %}
+				{% if dataPage === "tag" %}
+					<span>· Tags</span>
+				{% endif %}
+			</a>
+		</span>
 	{% if user %}
-
 		<ul>
 			<li>
 				<button class="openSidebar">
@@ -27,8 +22,7 @@
 				</button>
 			</li>
 		</ul>
-
-		<ul class="pull-right">
+		<ul class="pull-right">{% spaceless %}
 			<li>
 				<button class="plain-btn">
 					<i class="icon-search"></i>
@@ -45,12 +39,10 @@
 					<i class="icon-bell-o"></i><sup id="count" class="badge"></sup>
 				</button>
 			</li>
-			<li class="menu-dd" class="dropdown">
+		{% endspaceless %}<li class="navbarDropdown">
 			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle">
-					<!-- {{ user.name }} &nbsp; --><div class="avatarDd" style="background-image: url('{{ user.avatarUrl }}')">
+					<div class="avatarDd" style="background-image: url('{{ user.avatarUrl }}')">
 					</div>
-					<!-- <i></i>
-					<b class="caret"></b> -->
 				</div>
 				<ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
 					<li role="presentation">
@@ -63,28 +55,29 @@
 							<i class="icon-cog"></i> Configurações
 						</a>
 					</li>
-					<li role="presentation" class="divider"></li>
 					<li role="presentation">
 						<a role="menuitem" tabindex="-1" href="{{ getPageUrl('about') }}">
 							<i class="icon-question"></i> Ajuda e FAQ
 						</a>
 					</li>
+					<li role="presentation" class="divider"></li>
 					<li role="presentation">
 						<a role="menuitem" tabindex="-1" data-ajax-post-href="{{ getPageUrl('logout') }}" data-redirect-href="/">
 							<i class="icon-sign-out"></i> Log Out
 						</a>
 					</li>
 				</ul>
-			</li>
-			<li class="newPost">
-				<button class="plain-btn">
+			</li>{% spaceless %}
+			<li>
+				<button class="newPost" title="Nova Publicação">
 					<i class="icon-pencil"></i>
 				</button>
 			</li>
+		{% endspaceless %}
 		</ul>
 	{% else %}
 		<ul class="nav navbar-nav pull-right">
-			<a data-action="show-signin" href="#signin" data-toggle="dialog">
+			<a data-action="show-signin" href="#signin" class="blue-high" data-toggle="dialog">
 				<strong>Peça um Convite</strong>
 			</a>
 			<a href="/auth/facebook" class="plain-btn" data-action="login">
@@ -97,7 +90,6 @@
 	{% endif %}
 </div>
 </nav>
-
 {% if !user %}
 <div class="dialog" id="signin">
 	<div class="box">

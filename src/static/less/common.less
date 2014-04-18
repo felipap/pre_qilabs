@@ -107,7 +107,6 @@ body {
 	display: inline-block;
 	background: 40px;
 	padding: 4px 6px;
-	// .rounded(5px);
 	font-size: 11px;
 	margin-right: 5px;
 	color: white;
@@ -115,19 +114,12 @@ body {
 	text-transform: uppercase;
 	font-family: "Lato";
 	margin-bottom: 5px;
-	// font-size: ;
 	background: @COLOR2;
 	cursor: pointer;
-	// &:hover {
-	// 	background: darken(@COLOR2, 5%);
-	// }
 	border-bottom: 2px solid rgba(0,0,0,.3);
 
 	&.unknown {
 		background: #AAA;
-		// &:hover {
-		// 	background: darken(#AAA, 5%);
-		// }
 	}
 }
 
@@ -156,13 +148,11 @@ h3:first-child {
 	color: #444;
 }
 
-.blackout (@opacity:0.5) {
+.blackout (@opacity: .6) {
+	z-index: -1;
 	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: black;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: black;
 	opacity: @opacity;
 }
 
@@ -193,22 +183,14 @@ h3:first-child {
 
 .cover (@blur: 2) {
 	position: absolute;
-	top: -2*@blur; bottom: -2*@blur;
-	left: -2*@blur; right: -2*@blur;
+	top: -4*@blur; bottom: -4*@blur;
+	left: -4*@blur; right: -4*@blur;
 	.blur(@blur);
 	z-index: -1;
 
 	background: #FFFFFF no-repeat center bottom;
 	background-clip: content-box;
 	.background-size(cover);
-}
-
-.blackout (@opacity: .6) {
-	z-index: -1;
-	position: absolute;
-	top: 0; left: 0; right: 0; bottom: 0;
-	background: black;
-	opacity: @opacity;
 }
 
 .bg-cover {

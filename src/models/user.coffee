@@ -72,10 +72,39 @@ UserSchema = new mongoose.Schema {
 
 UserSchema.virtual('avatarUrl').get ->
 	if @username is 'felipearagaopires'
-		return '/static/images/avatar.png'
+		'/static/images/avatar.png'
 	else
-		return 'https://graph.facebook.com/'+@facebookId+'/picture'
+		'https://graph.facebook.com/'+@facebookId+'/picture'
 
+UserSchema.virtual('profile.strAge').get ->
+	if @username is 'felipearagaopires'
+		'18 anos'
+	else
+		'19 anos'
+
+UserSchema.virtual('profile.location').get ->
+	if @username is 'felipearagaopires'
+		'Massachusetts Institute of Technology, Cambridge, US'
+	else
+		'Stanford, Palo Alto, Estados Unidos'
+
+UserSchema.virtual('profile.from').get ->
+	if @username is 'felipearagaopires'
+		'Rio de Janeiro, Brasil'
+	else
+		'Rio de Janeiro, Brasil'
+
+UserSchema.virtual('profile.bgUrl').get ->
+	if @username is 'felipearagaopires'
+		'/static/images/u/mit.jpg'
+	else
+		'/static/images/u/sta.jpg'
+
+UserSchema.virtual('profile.bio').get ->
+	if @username is 'felipearagaopires'
+		'QI Labs Founder. Open source enthusiast. I believe I can program my way into changing the world. My heros are Richard Feynman, Alan Turing and Valesca Popozuda.'
+	else
+		'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' 
 
 UserSchema.virtual('profileUrl').get ->
 	'/u/'+@username

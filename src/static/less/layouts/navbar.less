@@ -1,13 +1,11 @@
 
 @import "../common.less";
 
-@navbar-height: 45px;
+@navbar-height: 50px;
 
 nav.bar {
 	@compColor: #888;
-	@brandColor: #444; // #08C;
-	// border-bottom: 1px solid #DDD;
-	// background: white;
+	@brandColor: #444;
 	@brandFontSize: 23px;
 
 	position: relative;
@@ -20,14 +18,7 @@ nav.bar {
 		padding: 0 0 0 20px;
 	}
 
-	.tooltip {
-		margin-top: 6px;
-
-		.tooltip-inner {
-			border-radius: 0;
-			padding: 5px 5px;
-		}
-	}
+	.tooltip .tooltip-inner {}
 
 	.pull-right { float: right !important; }
 	.pull-left { float: left !important; }
@@ -37,11 +28,10 @@ nav.bar {
 
 	.brand {
 		.unselectable;
-		// float: left;
 		position: absolute;
 		left: 50%;
-		width: 300px;
-		margin-left: -150px;
+		width: 700px;
+		margin-left: -350px;
 
 		text-align: center;
 		font-size: @brandFontSize;
@@ -49,16 +39,16 @@ nav.bar {
 		margin-right: 15px;
 		vertical-align: middle;
 
-		color: @brandColor;
-		cursor: pointer;
-		font-family: @BrandFontFamily;
-		text-transform: uppercase;
-		// font-weight: bold;
-		font-family: "museo";
-		outline: none !important;
+		a {
+			color: @brandColor;
+			font-family: @BrandFontFamily;
+			text-transform: uppercase;
+			font-family: "museo";
+			outline: none !important;
 
-		&:focus, &:hover {
-			text-decoration: none;
+			&:focus, &:hover {
+				text-decoration: none;
+			}
 		}
 
 		span {
@@ -88,186 +78,176 @@ nav.bar {
 			vertical-align: top;
 			list-style: none;
 			line-height: @navbar-height;
-		}
-		
-		.plain-btn {
-			.btn0;
-			color: @compColor;
-			font-weight: 700;
-			&:hover, &:focus, &:active {
-				background: none;
-				box-shadow: none;
+			
+			.plain-btn {
+				.btn0;
 				color: @compColor;
+				font-weight: 700;
+				&:hover, &:focus, &:active {
+					background: none;
+					box-shadow: none;
+					color: @compColor;
+				}
+				padding: 8px 12px;
+				vertical-align: top;
+				box-shadow: none;
+				background: none;
+				height: @navbar-height;
+				margin: 0;
+				&:hover {
+					color: darken(@compColor, 10%);
+				}
+
+				i {
+					font-size: 17px;
+					vertical-align: middle;
+				}
 			}
-			padding: 8px 12px;
-			vertical-align: top;
-			box-shadow: none;
-			background: none;
-			height: @navbar-height;
-			margin: 0;
-			&:hover {
-				color: darken(@compColor, 10%);
-			}
 
-			i {
-				font-size: 17px;
-			}
-		}
-
-		.bell-btn {
-			position: relative;
-			#count {
-				background: @COLOR2;
-				font-size: 9px;
-				float: right;
-				padding: 3px 5px;
-				position: absolute;
-				top: 2px;
-				right: 4px;
-				.box-shadow(0,0,2px,1);
-			}
-			#count:empty {
-				display: none;
-			}
-		}
-
-		.postIcon {
-			font-size: 16px;
-			// color: #08C;
-		}
-
-		.openSidebar {
-			.btn0;
-			color: @compColor;
-			font-weight: 700;
-			padding: 8px 12px;
-			vertical-align: top;
-			box-shadow: none;
-			background: none;
-			height: @navbar-height;
-			margin: 0;
-			position: absolute;
-			left: -1px;
-			top: 0;
-			width: @widthSidebar+1;
-			text-align: left;
-			padding-left: 20px;
-			opacity: .95;
-			i {
-				font-size: 21px !important;
-			}
-			&:hover, &:focus, &:active { color: auto; background: none; box-shadow: none; }
-			&:hover {
-				opacity: 1;
-			}
-		}
-
-		[data-action=show-signin] 	{ .high-xbtn(white, @COLOR1); }
-		[data-action=sobre] 		{ .xbtn(white, #39B3D7); }
-		[data-action=logout] 		{ .high-xbtn(white, #E74C3C); }
-		[data-action=nos-avisa] 	{ .high-xbtn(white, #FF8300); }
-		[data-action=login] 		{ }
-
-		a[data-action],
-		button[data-action] {
-			font-size: 13px;
-		}
-
-		.separator {
-			display: inline-block;
-			margin: 0 5px;
-			height: 100%;
-			border-left: 1px solid rgba(0,0,0,.1);
-		}
-
-		.newPost {
-			background: saturate(@COLOR3,5%);
-			margin-top: -2px;
-			padding: 1px 1px 1px 2px;
-			height: @navbar-height+3;
-			line-height: @navbar-height+3;
-			i { 
-				font-size: 22px !important;
-				color: white;
-			}
-			&:hover {
-				background: desaturate(@COLOR3, 5%);
-			}
-			// border-left: 1px solid #DDD;
-		}
-
-		.menu-dd {
-			display: inline-block;
-			color: @compColor;
-			// margin-left: 5px;
-			line-height: @navbar-height;
-			font-size: 12px;
-			// margin-top: 0px;
-			margin-right: -4px;
-
-			.avatar-btn {
-				.reset-button;
-				padding-left: 5px;
-				cursor: pointer;
+			.bell-btn {
 				position: relative;
-				display: inline-block;
-				height: @navbar-height+3;
-				
-				.avatarDd {
-					display: inline-block;
-					width: (@navbar-height + 0);
-					height: (@navbar-height + 0);
-					vertical-align: top;
-					.background-size(cover);
-					// border-width: 2px 3px 3px 3px;
-					// box-shadow: 0 0 1px black;
-					// border-radius: 30px;
-					// border-left: 1px solid #DDD;
+				#count {
+					background: @COLOR2;
+					font-size: 9px;
+					float: right;
+					padding: 3px 5px;
+					position: absolute;
+					top: 2px;
+					right: 4px;
+					.box-shadow(0,0,2px,1);
+				}
+				#count:empty {
+					display: none;
 				}
 			}
 
-			.dropdown-menu {
-				left: auto;
-				right: 2px;
-				margin-top: 6px;
-				padding: 3px;
-				.rounded(3px);
-				background: #222;
+			.openSidebar {
+				.plain-btn;
+				.transition(color, 200ms, ease-out);
 
-				&::before {
-					content: ' ';
-					border: 5px solid transparent;
-					border-bottom-color: #222;
-					position: absolute;
-					top: -11px;
-					left: 82px;
+				color: @compColor;
+				font-weight: 700;
+				padding: 8px 12px;
+				vertical-align: top;
+				box-shadow: none;
+				background: none;
+				height: @navbar-height;
+				margin: 0;
+
+				position: absolute;
+				top: 0; left: 0;
+				width: 60px;
+				text-align: left;
+				padding-left: 20px;
+				opacity: .6;
+				.transition(opacity, .2s, linear);
+				i {
+					font-size: 21px !important;
+				}
+				&:hover, &:focus, &:active {
+					background: none;
+					.no-box-shadow;
+					opacity: 1;
+				}
+			}
+
+			button.newPost {
+				.plain-btn;
+				.rounded(0);
+				background: saturate(@COLOR3,5%);
+				height: @navbar-height; // +1;
+				&:active {
+					.inner-shadow(5px, .4);
+				}
+				i { 
+					font-size: 22px !important;
+					color: white;
+				}
+				&:hover, &:focus {
+					background: desaturate(@COLOR3, 5%);
+				}
+			}
+
+			&.navbarDropdown {
+				margin-left: 5px;
+
+				.avatar-btn {
+					.reset-button;
+					cursor: pointer;
+					position: relative;
+					display: inline-block;
+					.avatarDd {
+						display: inline-block;
+						width: @navbar-height; // +1;
+						height: @navbar-height; // +1;
+						vertical-align: top;
+						.background-size(cover);
+					}
 				}
 
-				li {
-					font-family: museo-sans;
-					background: transparent;
-					a {
-						outline: none;
-						cursor: pointer;
-						.rounded(1px);
-						color: white;
-						font-size: 12px;
-						&:hover, &:focus {
-							// font-weight: bold;
-							background: @COLOR1; // #1A1A1A;
+				.dropdown-menu {
+					left: auto;
+					right: 2px;
+					margin-top: 6px;
+					padding: 6px 0px;
+					.rounded(3px);
+					background: #222;
+					min-width: 0;
+
+					&::before {
+						content: ' ';
+						border: 5px solid transparent;
+						border-bottom-color: #222;
+						position: absolute;
+						top: -11px;
+						left: 69px;
+					}
+
+					li {
+						font-family: museo-sans;
+						background: transparent;
+						a {
+							outline: none;
+							cursor: pointer;
 							color: white;
-						}
-						&:active {
-							.inner-shadow(3px, .3);
-						}
-						i {
-							font-size: 13px;
-							margin-right: 3px;
+							.rounded(1px);
+							padding: 5px 20px;
+							font-size: 12px;
+							font-weight: bold;
+							font-family: museo-sans;
+
+							.transition(all, .2s, linear);
+
+							&:focus, &:hover, &:active { background: #222; }
+
+							&:hover {
+								background: @COLOR1;
+								color: white;
+							}
+							&:active {
+								.inner-shadow(3px, .3);
+							}
+
+							i {
+								display: none;
+								font-size: 13px;
+								width: 12px;
+							}
 						}
 					}
 				}
 			}
-		
+		}
+
+		.blue-high {
+			.high-xbtn(white, @COLOR1);
+		}
+
+		& > .separator {
+			display: inline-block;
+			margin: 0 5px;
+			height: 100%;
+			border-left: 1px solid rgba(0,0,0,.1);
 		}
 	}
 }

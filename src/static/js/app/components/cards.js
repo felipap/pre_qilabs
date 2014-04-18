@@ -204,7 +204,7 @@ define([
 	});
 
 	function onResize () {
-		$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top - 1);
+		$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top - 2);
 		// $("#globalContainer").width($('body').width());
 	}
 	onResize();

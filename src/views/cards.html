@@ -1,4 +1,3 @@
-
 {% extends 'stdbody.html' %}
 
 {% import 'macros/tags.html' as tagMacros %}
@@ -10,9 +9,26 @@
 
 {% block body %}
 
-	<div id="sidebarPanel">
-		<hr class="" />
+	{% include 'layouts/navbar.html' %}
 
+	<div id="sidebarPanel">
+		<div class="horBar"></div>
+		<section>
+			<label>Publicações</label>
+			<li>
+				<a href="#">
+					<i class="icon-home"></i>
+					<span>De quem você segue</span>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<i class="icon-home"></i>
+					<span>Populares</span>
+				</a>
+			</li>
+		</section>
+		<hr>
 		<section>
 			<label>Páginas</label>
 			<li>
@@ -21,7 +37,7 @@
 					<span>Home</span>
 				</a>
 			</li>
-			<li>
+			<li class="active">
 				<a href="#">
 					<i class="icon-user"></i>
 					<span>Meu Perfil</span>
@@ -48,14 +64,6 @@
 		</section>
 		<hr />
 		<section>
-			<label>Suas Tags</label>
-			<li><a href="#"><i data-tag-color="application" class="icon-circle"></i> Application</a></li>
-			<li><a href="#"><i data-tag-color="vestibular" class="icon-circle"></i> Vestibular</a></li>
-			<li><a href="#"><i data-tag-color="voluntariado" class="icon-circle"></i> Trabalho Voluntário</a></li>
-			<li><a href="#"><i data-tag-color="olimpiada" class="icon-circle"></i> Olimpíada</a></li>
-		</section>
-		<hr />
-		<section>
 			<div class="onoffswitch">
 				<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked onChange="$('#cards').toggleClass('grid')">
 				<label class="onoffswitch-label" for="myonoffswitch">
@@ -63,6 +71,14 @@
 					<div class="onoffswitch-switch"></div>
 				</label>
 			</div>
+		</section>
+		<hr />
+		<section>
+			<label>Suas Tags</label>
+			<li><a href="#"><i data-tag-color="application" class="icon-circle"></i> Application</a></li>
+			<li><a href="#"><i data-tag-color="vestibular" class="icon-circle"></i> Vestibular</a></li>
+			<li><a href="#"><i data-tag-color="voluntariado" class="icon-circle"></i> Trabalho Voluntário</a></li>
+			<li><a href="#"><i data-tag-color="olimpiada" class="icon-circle"></i> Olimpíada</a></li>
 		</section>
 		<section class="sidebarBottom">
 			<li><a href="#">Ajuda</a></li> ·
@@ -72,34 +88,10 @@
 		</section>
 	</div>
 
-	{% include 'layouts/navbar.html' %}
 
 	<div id="globalContainer">
 
 		{% block globalHeader %}
-			<nav class="cardsNav fixed">
-				<div class="left">
-					<li class="iconItem">
-						<i class="icon-pencil"></i>
-					</li>
-				</div>
-				<div class="tabs">
-					<li class="active">
-						Seguindo
-						<div class="arrow"></div>
-					</li>
-					<li>
-						Populares
-						<div class="arrow"></div>
-					</li>
-					<li>
-						Atividade
-						<div class="arrow"></div>
-					</li>
-				</div>
-				<div class="right">
-				</div>
-			</nav>
 		{% endblock %}
 
 		<div class="flash-msgs"></div>
@@ -109,7 +101,7 @@
 
 					<div class="cardView">
 						<div class="cardHeader">
-							<span class="cardType">AVISO, <time>há 15 horas</time></span>
+							<span class="cardType">AVISO</span>
 
 							<div class="iconStats">
 								<div>
