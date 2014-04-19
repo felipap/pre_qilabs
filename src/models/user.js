@@ -104,7 +104,7 @@ UserSchema.virtual('profile.strAge').get(function() {
 
 UserSchema.virtual('profile.location').get(function() {
   if (this.username === 'felipearagaopires') {
-    return 'Massachusetts Institute of Technology, Cambridge, US';
+    return 'Harvard University, USA';
   } else {
     return 'Stanford, Palo Alto, Estados Unidos';
   }

@@ -155,7 +155,7 @@ nav.bar {
 				.plain-btn;
 				.rounded(0);
 				background: saturate(@COLOR3,5%);
-				height: @navbar-height; // +1;
+				height: @navbar-height+1;
 				&:active {
 					.inner-shadow(5px, .4);
 				}
@@ -178,8 +178,8 @@ nav.bar {
 					display: inline-block;
 					.avatarDd {
 						display: inline-block;
-						width: @navbar-height; // +1;
-						height: @navbar-height; // +1;
+						width: @navbar-height+1;
+						height: @navbar-height+1;
 						vertical-align: top;
 						.background-size(cover);
 					}

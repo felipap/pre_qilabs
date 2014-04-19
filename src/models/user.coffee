@@ -84,7 +84,7 @@ UserSchema.virtual('profile.strAge').get ->
 
 UserSchema.virtual('profile.location').get ->
 	if @username is 'felipearagaopires'
-		'Massachusetts Institute of Technology, Cambridge, US'
+		'Harvard University, USA' # 'Massachusetts Institute of Technology, Cambridge, US'
 	else
 		'Stanford, Palo Alto, Estados Unidos'
 

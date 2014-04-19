@@ -78,7 +78,7 @@
 
 	&[data-action=follow] {
 		.rounded(5px);
-		&:empty::before { content: "Follow"; }
+		&:empty::before { content: "Seguir"; }
 		.high-xbtn(@color: white, @bg: @COLOR2);
 		.high-xbtn-padding(5px, 0px, 5px);
 	}
@@ -86,10 +86,10 @@
 		.rounded(5px);
 		.xbtn(@color: white, @bg: @COLOR1);
 		.high-xbtn-padding(3px, 0px, 5px);
-		&::before { content: "Following"; }
+		&::before { content: "Seguindo"; }
 		&:hover{
-			&:empty::before { content: "Unfollow"; }
-			.xbtn(@color: white, @bg: @COLOR4);
+			&:empty::before { content: "Desfazer"; }
+			.xbtn(@color: white, @bg: desaturate(@COLOR4,10%));
 			.high-xbtn-padding(3px, 0px, 5px);
 		}
 	}
