@@ -40,6 +40,7 @@ html {
 	overflow-x: hidden;
 	overflow-y: auto;
 	width: 100%;
+	min-width: @minPageWidth;
 	border-top: 1px solid #DDD;
 
 	#cards {
@@ -83,14 +84,13 @@ html {
 		overflow: hidden;
 		
 		.elBackground { .cover(0); }
-		.elBlackout { .blackout(.85); }
+		.elBlackout { .blackout(.7); }
 		.elBackground, .elBlackout { z-index: 2; }
 
 		.profileWrapper, nav { position: relative; z-index: 10; }
 		
 		.profileWrapper {
 			width: 100%;
-			min-width: 1200px;
 			display: table;
 			margin: auto;
 			color: white;

@@ -26,6 +26,10 @@
 @CBLUE: #00b5ca;
 @CGREEN: #2ecc71;
 
+@minPageWidth: 900px;
+@BrandColor: @COLOR1; // #3498db;
+@BrandFontFamily: "Londrina Solid", Helvetica, Arial;
+
 ul {
 	margin: 0;
 	padding: 0;
@@ -43,11 +47,9 @@ body {
 	height: 100%;
 	font-family: "Open Sans";
 	// background: #fBfBfB;
-	min-width: 960px;
+	min-width: @minPageWidth;
 }
 
-@BrandColor: @COLOR1; // #3498db;
-@BrandFontFamily: "Londrina Solid", Helvetica, Arial;
 
 .avatarWrapper {
 	display: inline-block;

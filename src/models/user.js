@@ -122,7 +122,7 @@ UserSchema.virtual('profile.bgUrl').get(function() {
   if (this.username === 'felipearagaopires') {
     return '/static/images/u/mit.jpg';
   } else {
-    return '/static/images/u/sta.jpg';
+    return '/static/images/rio.jpg';
   }
 });
 
