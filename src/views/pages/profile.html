@@ -16,60 +16,58 @@
 		<div class="elBlackout"></div>
 
 		<div class="profileWrapper">
+			
+			<div class="bigUser">
+				<div class="avatarWrapper">
+					<div class="avatar" style="background: url({{ profile.avatarUrl }})"></div>
+				</div>
+
+				<section class="profileUser">
+					<span class="name">{{ profile.name }}</span>
+					<div style="display: inline-block; width: 0">
+						{% if follows %}
+							<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+						{% else %}
+							<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
+						{% endif %}
+					</div>
+				</section>
+
+				<section class="bio">
+					{{ profile.profile.bio }}
+				</section>
+
+				<div style="display: none"class="socialLine">
+					<a href="#"><i class="icon-twitter"></i></a> ·
+					<a href="#"><i class="icon-facebook"></i></a> · 
+					<a href="#"><i class="icon-github"></i></a>
+				</div>
+
+				<section class="address">
+					<span><i class="icon-map-marker"></i> {{ profile.profile.location }}</span>·<span><i class="icon-home"></i> {{ profile.profile.from }}</span>
+				</section>
+
+				<div class="stats">
+					<div>
+						<h3>12k</h3>
+						seguidores
+					</div>
+					<div>
+						<h3>120</h3>
+						seguindo
+					</div>
+					<div>
+						<h3>21</h3>
+						posts
+					</div>
+					<div>
+						<h3>23k</h3>
+						votos
+					</div>
+				</div>
+			</div>
 
 			<table style="display:">
-				<tr>
-				<td class="left">
-					<div class="bigUser">
-						<div class="avatarWrapper">
-							<div class="avatar" style="background: url({{ profile.avatarUrl }})"></div>
-						</div>
-
-						<section class="profileUser">
-							<span class="name">{{ profile.name }}</span>
-							<div style="display: inline-block; width: 0">
-								{% if follows %}
-									<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-								{% else %}
-									<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
-								{% endif %}
-							</div>
-						</section>
-
-						<section class="bio">
-							{{ profile.profile.bio }}
-						</section>
-
-						<div style="display: none"class="socialLine">
-							<a href="#"><i class="icon-twitter"></i></a> ·
-							<a href="#"><i class="icon-facebook"></i></a> · 
-							<a href="#"><i class="icon-github"></i></a>
-						</div>
-
-						<section class="address">
-							<span><i class="icon-map-marker"></i> {{ profile.profile.location }}</span>·<span><i class="icon-home"></i> {{ profile.profile.from }}</span>
-						</section>
-
-						<div class="stats">
-							<div>
-								<h3>12k</h3>
-								seguidores
-							</div>
-							<div>
-								<h3>120</h3>
-								seguindo
-							</div>
-							<div>
-								<h3>21</h3>
-								posts
-							</div>
-							<div>
-								<h3>23k</h3>
-								votos
-							</div>
-						</div>
-					</div>
-				</td>
 				<td  style="display: none" class="middle">
 					<section>
 						<h5><i class="icon-tags"></i>&nbsp;<strong>Interesses</strong></h5>
@@ -183,9 +181,6 @@
 							</li>
 						</ul>
 					</sction>
-				</td>
-
-				</tr>
 			</table>
 		</div>
 	</div>

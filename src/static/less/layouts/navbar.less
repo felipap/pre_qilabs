@@ -31,12 +31,11 @@ nav.bar {
 		position: absolute;
 		left: 50%;
 		width: 700px;
-		margin-left: -350px;
+		margin-left: (-350px - 7px);
 
 		text-align: center;
 		font-size: @brandFontSize;
 		line-height: @navbar-height;
-		margin-right: 15px;
 		vertical-align: middle;
 
 		a {
@@ -86,7 +85,7 @@ nav.bar {
 				font-weight: bold;
 				color: fadeout(@compColor,30%);
 				font-weight: 700;
-				&:hover, &:focus, &:active {
+				&:hover, &:active {
 					background: none;
 					box-shadow: none;
 					color: @compColor;
@@ -97,11 +96,14 @@ nav.bar {
 				box-shadow: none;
 				.rounded(0);
 				background: none;
-				height: @navbar-height;
+				height: @navbar-height+1;
 				margin: 0;
-				&:hover {
-					color: @compColor;
-					// background: #EEE;
+				border-bottom: 1px solid transparent;
+				&:hover, &:focus {
+					// background: #30302F;
+					// color: white;
+					background: #F8F8F8;
+					border-bottom: 1px solid #AAA;
 				}
 
 				i {
