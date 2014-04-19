@@ -80,12 +80,54 @@ nav.bar {
 			line-height: @navbar-height;
 			
 			.plain-btn {
-				.btn0;
-				color: @compColor;
+ 				.navbar-vertical-align(@input-height-base);
+
+				outline: none;
+				font-weight: bold;
+				color: fadeout(@compColor,30%);
 				font-weight: 700;
 				&:hover, &:focus, &:active {
 					background: none;
 					box-shadow: none;
+					color: @compColor;
+				}
+				border-left: 1px solid #DDD;
+				padding: 8px 17px;
+				vertical-align: top;
+				box-shadow: none;
+				.rounded(0);
+				background: none;
+				height: @navbar-height;
+				margin: 0;
+				&:hover {
+					color: @compColor;
+					// background: #EEE;
+				}
+
+				i {
+					font-size: 17px;
+					vertical-align: middle;
+				}
+			}
+
+			.icon-btn {
+				line-height: 1;
+				// font-size: 13px;
+				font-weight: bold;
+				padding: 8px 20px;
+				&:focus {
+					outline: none;
+				}
+				border: none;
+				.rounded(2px);
+
+				color: fadeout(@compColor,30%);
+				font-weight: 700;
+				&:hover, &:focus, &:active {
+					background: none;
+					box-shadow: none;
+				}
+				&:hover, &:active {
 					color: @compColor;
 				}
 				padding: 8px 12px;
@@ -95,10 +137,6 @@ nav.bar {
 				height: @navbar-height;
 				margin: 0;
 				opacity: .7;
-				&:hover {
-					opacity: 1;
-					// color: darken(@compColor, 10%);
-				}
 
 				i {
 					font-size: 17px;
@@ -124,30 +162,31 @@ nav.bar {
 			}
 
 			.openSidebar {
-				.plain-btn;
-				.transition(color, 200ms, ease-out);
-
+				position: absolute;
+				top: 0;
+				left: 10px;
+				
+				padding: 8px 12px;
+				height: @navbar-height;
+				margin: 0;
+				text-align: left;
+				opacity: .6;
+				
 				color: @compColor;
 				font-weight: 700;
-				padding: 8px 12px;
 				vertical-align: top;
 				box-shadow: none;
 				background: none;
-				height: @navbar-height;
-				margin: 0;
 
-				position: absolute;
-				top: 0; left: 0;
-				width: 60px;
-				text-align: left;
-				padding-left: 20px;
-				opacity: .6;
 				.transition(opacity, .2s, linear);
+
 				i {
 					font-size: 21px !important;
+					vertical-align: middle;
 				}
+
 				&:hover, &:focus, &:active {
-					background: none;
+					color: @compColor;
 					.no-box-shadow;
 					opacity: 1;
 				}
@@ -180,7 +219,6 @@ nav.bar {
 			}
 
 			&.navbarDropdown {
-				margin-left: 5px;
 
 				.avatar-btn {
 					.reset-button;

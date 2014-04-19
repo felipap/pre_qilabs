@@ -1,184 +1,66 @@
 
-// Second flavor
+@padding-base-vertical:     6px;
+@padding-base-horizontal:   12px;
+@padding-large-vertical:    10px;
+@padding-large-horizontal:  16px;
+@padding-small-vertical:    5px;
+@padding-small-horizontal:  10px;
+@padding-xs-vertical:       1px;
+@padding-xs-horizontal:     5px;
 
-.ibtn (@color) {
-	.btn0;
+@line-height-large:         1.33;
+@line-height-small:         1.5;
+@border-radius-base:        0;
+@border-radius-large:       6px;
+@border-radius-small:       3px;
 
-	.color-btn-focus(white, transparent, @color);
-	border: 2px solid transparent;
-	.color-btn(white, transparent, @color);
-	.color-btn-hover(white, @color, @color);
-	.color-btn-active(white, lighten(@color, 5%), darken(@color, 12%));
-}
+@btn-font-weight: 		normal;
+@btn-default-color: 	#333;
+@btn-default-bg: 		#fff;
+@btn-default-border: 	#ccc;
 
-.transparent-ibtn (@color) {
-	.btn0;
-
-	.color-btn-focus(@color, transparent, @color);
-	border: 2px solid transparent;
-	.color-btn(@color, transparent, @color);
-	.color-btn-hover(white, @color, @color);
-	.color-btn-active(white, lighten(@color, 5%), darken(@color, 12%));
-}
-
-/* Don't change a thing. */
-.xbtn (@color, @bg, @chover: @bg) {
-	.btn0;
-
-	.color-btn-focus(@color, @bg, transparent);
-	border: 2px solid transparent;
-	.color-btn(@color, @bg, @bg);
-	.color-btn-hover(white, darken(@bg, 8%), darken(@bg, 12%));
-	// .color-btn-active(#444, #DDD, #AAA);
-}
-
-.high-xbtn (@color: white, @bg: @COLOR1, @shadowSize:2px) {
-	.btn0;
-
-	.color-btn-focus(@color, @bg, transparent);
-	.inner-shadow(0, -@shadowSize, rgba(0,0,0,.2));
-	.text-shadow(2px, 2px, 0, rgba(0,0,0,.1));
-	.color-btn(@color, @bg, transparent);
-
-	&:hover {
-		.color-btn(@color, lighten(@bg, 2%), transparent);
-		.inner-shadow(0, -@shadowSize, rgba(0,0,0,.4));
-	}
-
-	.high-xbtn-padding(9px, 20px, 6px, 2px);
-}
-
-
-.high-xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px, @shadowSize:2px) {
-	padding: @vertical @horizontal;
-	padding-bottom: @shadowSize+@vertical;
-	margin-top: @verticalMargin;
-	margin-bottom: @verticalMargin;
-
-	&:active {
-		.no-text-shadow;
-		.no-box-shadow;
-		margin-top: @verticalMargin+@shadowSize;
-		margin-bottom: @verticalMargin; // -2+1 (from padding-bottom)
-		padding-bottom: @vertical;
-	}
-}
-
-.small-xbtn () {
-	.xbtn-padding(4px, 5px, 4px);
-}
-
-.xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px) {
-	padding: @vertical @horizontal;
-	margin-top: @verticalMargin;
-	margin-bottom: @verticalMargin;
-}
-
-.btn-follow {
-
-	&[data-action=follow] {
-		.rounded(5px);
-		&:empty::before { content: "Seguir"; }
-		.high-xbtn(@color: white, @bg: @COLOR2);
-		.high-xbtn-padding(5px, 0px, 5px);
-	}
-	&[data-action=unfollow] {
-		.rounded(5px);
-		.xbtn(@color: white, @bg: @COLOR1);
-		.high-xbtn-padding(3px, 0px, 5px);
-		&::before { content: "Seguindo"; }
-		&:hover{
-			&:empty::before { content: "Desfazer"; }
-			.xbtn(@color: white, @bg: desaturate(@COLOR4,10%));
-			.high-xbtn-padding(3px, 0px, 5px);
-		}
-	}
-
-	text-transform: uppercase;
-	font-size: 10px !important;
-	margin-left: 10px;
-	margin-right: 10px;
-	width: 72px;
-	font-family: "Open Sans";
-}
-
-
-.btn-follow-small {
-	font-size: 10px;
-	// width: 75px;
-	// .small-xbtn;
-}
-
-.btn-block {
-	width: 100%;
-}
-
-.btn {
+button {
+	border: none;
 	display: inline-block;
 	margin-bottom: 0; // For input.btn
-	font-weight: @btn-font-weight;
 	text-align: center;
 	vertical-align: middle;
 	cursor: pointer;
-	background-image: none;
-	// Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
-	border: 1px solid transparent;
 	white-space: nowrap;
-	.button-size(@padding-base-vertical; @padding-base-horizontal; @font-size-base; @line-height-base; @border-radius-base);
+	border: none;
+	background-image: none;
+	padding: 6px 12px;
+	color: @btn-default-color;
+	font-weight: @btn-font-weight;
+	color: #222;
+	line-height: 1;
+	.rounded(2px);
 	.user-select(none);
 
 	&:focus {
 		.tab-focus();
 	}
 
-	&:hover,
-	&:focus {
+	&:hover, &:focus {
 		color: @btn-default-color;
 		text-decoration: none;
 	}
 
-	&:active,
-	&.active {
-		outline: 0;
-		background-image: none;
-		.box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
-	}
-
-	&.disabled,
-	&[disabled],
-	fieldset[disabled] & {
+	&.disabled, &[disabled], fieldset[disabled] & {
 		cursor: not-allowed;
 		pointer-events: none; // Future-proof disabling of clicks
 		.opacity(.65);
 		.box-shadow(none);
 	}
+	
+	&:active, &.active {
+		outline: 0;
+		background-image: none;
+		.box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
+	}
 }
 
-.btn0 {
-	.btn;
-	.button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
-	.navbar-vertical-align(@input-height-base);
-
-	&.btn-sm {
-	.navbar-vertical-align(@input-height-small);
-	}
-	&.btn-xs {
-	.navbar-vertical-align(22);
-	}
-
-	// font-size: 13px;
-	font-weight: bold;
-	padding: 8px 20px;
-	&:focus {
-		outline: none;
-	}
-	border: none;
-	.rounded(2px);
-}
-
-
-/* Mixins for building button states.
-**/
+/* Mixins for building button states. */
 
 .color-btn (@color, @bg, @border) {
 	color: @color;
@@ -204,6 +86,8 @@
 	} 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
 
 // Make a button look and behave like a link
 .btn-link {
@@ -241,4 +125,130 @@
       text-decoration: none;
     }
   }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+.btn0 {
+	// padding: @padding-base-vertical @padding-base-horizontal;
+	// font-size: @font-size-base;
+	// line-height: @line-height-base;
+	// border-radius: 0;	
+	// .button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
+	// font-size: 13px;
+
+	.button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
+	// font-size: 13px;
+	outline: none;
+	font-weight: bold;
+	padding: 8px 20px;
+	border: none;
+	.rounded(2px);
+}
+
+// Second flavor
+
+// .ibtn (@color) {
+// 	.btn0;
+
+// 	.color-btn-focus(white, transparent, @color);
+// 	border: 2px solid transparent;
+// 	.color-btn(white, transparent, @color);
+// 	.color-btn-hover(white, @color, @color);
+// 	.color-btn-active(white, lighten(@color, 5%), darken(@color, 12%));
+// }
+
+// .transparent-ibtn (@color) {
+// 	.btn0;
+
+// 	.color-btn-focus(@color, transparent, @color);
+// 	border: 2px solid transparent;
+// 	.color-btn(@color, transparent, @color);
+// 	.color-btn-hover(white, @color, @color);
+// 	.color-btn-active(white, lighten(@color, 5%), darken(@color, 12%));
+// }
+
+.high-xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px, @shadowSize:2px) {
+	padding: @vertical @horizontal;
+	padding-bottom: @shadowSize+@vertical;
+	margin-top: @verticalMargin;
+	margin-bottom: @verticalMargin;
+
+	&:active {
+		.no-text-shadow;
+		.no-box-shadow;
+		margin-top: @verticalMargin+@shadowSize;
+		margin-bottom: @verticalMargin; // -2+1 (from padding-bottom)
+		padding-bottom: @vertical;
+	}
+}
+
+/* Don't change a thing. */
+.xbtn (@color, @bg, @chover: @bg) {
+	.btn0;
+
+	.color-btn-focus(@color, @bg, transparent);
+	border: 2px solid transparent;
+	.color-btn(@color, @bg, @bg);
+	.color-btn-hover(white, darken(@bg, 8%), darken(@bg, 12%));
+	// .color-btn-active(#444, #DDD, #AAA);
+}
+
+.high-xbtn (@color: white, @bg: @COLOR1, @shadowSize:2px) {
+	.btn0;
+
+	.color-btn-focus(@color, @bg, transparent);
+	.inner-shadow(0, -@shadowSize, rgba(0,0,0,.2));
+	.text-shadow(2px, 2px, 0, rgba(0,0,0,.1));
+	.color-btn(@color, @bg, transparent);
+
+	&:hover {
+		.color-btn(@color, lighten(@bg, 2%), transparent);
+		.inner-shadow(0, -@shadowSize, rgba(0,0,0,.4));
+	}
+
+	.high-xbtn-padding(9px, 20px, 6px, 2px);
+}
+
+
+.small-xbtn () {
+	.xbtn-padding(4px, 5px, 4px);
+}
+
+.xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px) {
+	padding: @vertical @horizontal;
+	margin-top: @verticalMargin;
+	margin-bottom: @verticalMargin;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+.btn-follow {
+
+	&[data-action=follow] {
+		.rounded(5px);
+		&:empty::before { content: "Seguir"; }
+		.high-xbtn(@color: white, @bg: @COLOR2);
+		.high-xbtn-padding(5px, 0px, 5px);
+	}
+	&[data-action=unfollow] {
+		.rounded(5px);
+		.xbtn(@color: white, @bg: @COLOR1);
+		.high-xbtn-padding(3px, 0px, 5px);
+		&::before { content: "Seguindo"; }
+		&:hover{
+			&:empty::before { content: "Desfazer"; }
+			.xbtn(@color: white, @bg: desaturate(@COLOR4,10%));
+			.high-xbtn-padding(3px, 0px, 5px);
+		}
+	}
+
+	text-transform: uppercase;
+	font-size: 10px !important;
+	margin-left: 10px;
+	margin-right: 10px;
+	width: 72px;
+	font-family: "Open Sans";
 }
