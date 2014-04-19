@@ -730,6 +730,10 @@
 		</div>
 	</div>
 
+	<script>
+		document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top - 2)+"px";
+	</script>
+
 	<div id="fullPageContainer">
 	</div>
 {% endblock %}

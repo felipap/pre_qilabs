@@ -11,6 +11,12 @@ define([
 	'jquery', 'backbone', 'components.postForms', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
 	function ($, Backbone, postForms, postModels, postViews, _, React, Showdown) {
 
+	function onResize () {
+		document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top - 2)+"px";
+	}
+	$(window).resize(onResize);
+
+
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
 			this.innerHTML = calcTimeFrom(parseInt(this.dataset.timeCount), this.dataset.timeLong);
@@ -202,13 +208,6 @@ define([
 		},
 
 	});
-
-	function onResize () {
-		$("#globalContainer").height($('body').height() - $("#globalContainer").offset().top - 2);
-		// $("#globalContainer").width($('body').width());
-	}
-	onResize();
-	$(window).resize(onResize);
 
 	if (!!$("#globalHead").length) {
 		$(document).scroll(triggerCalcNavbarFixed);
