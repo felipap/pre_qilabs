@@ -4,7 +4,7 @@
 @navbar-height: 50px;
 
 nav.bar {
-	@compColor: #888;
+	@compColor: #666;
 	@brandColor: #444;
 	@brandFontSize: 23px;
 
@@ -94,8 +94,10 @@ nav.bar {
 				background: none;
 				height: @navbar-height;
 				margin: 0;
+				opacity: .7;
 				&:hover {
-					color: darken(@compColor, 10%);
+					opacity: 1;
+					// color: darken(@compColor, 10%);
 				}
 
 				i {
@@ -152,10 +154,19 @@ nav.bar {
 			}
 
 			button.newPost {
-				.plain-btn;
-				.rounded(0);
+				.btn0;
+				padding: 8px 12px;
+				vertical-align: top;
+				box-shadow: none;
+				margin: 0;
+
 				background: saturate(@COLOR3,5%);
 				height: @navbar-height+1;
+				.rounded(0);
+
+				&:hover, &:focus, &:active {
+					box-shadow: none;
+				}
 				&:active {
 					.inner-shadow(5px, .4);
 				}
@@ -200,7 +211,7 @@ nav.bar {
 						border-bottom-color: #222;
 						position: absolute;
 						top: -11px;
-						left: 69px;
+						left: 53px;
 					}
 
 					li {
@@ -221,7 +232,7 @@ nav.bar {
 							&:focus, &:hover, &:active { background: #222; }
 
 							&:hover {
-								background: @COLOR1;
+								background: darken(desaturate(@COLOR1,10%),3%);
 								color: white;
 							}
 							&:active {
