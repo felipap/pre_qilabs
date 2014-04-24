@@ -29,12 +29,22 @@
 	}
 }());
 
-window.calcTimeFrom = function (arg, long) {
+window.calcTimeFrom = function (arg, long, short) {
 	var now = new Date(),
 		then = new Date(arg),
 		diff = now-then;
 
-	if (long) {
+	if (short === true) {
+		if (diff < 1000*60) {
+			return 'agora'; 'há '+Math.floor(diff/1000)+'s';
+		} else if (diff < 1000*60*60) {
+			return 'há '+Math.floor(diff/1000/60)+'min';
+		} else if (diff < 1000*60*60*30) { // até 30 horas
+			return 'há '+Math.floor(diff/1000/60/60)+'h';
+		} else {
+			return 'há '+Math.floor(diff/1000/60/60/24)+'d';
+		}
+	} else {
 		if (diff < 1000*60) {
 			return 'agora';
 			var m = Math.floor(diff/1000);
@@ -48,16 +58,6 @@ window.calcTimeFrom = function (arg, long) {
 		} else {
 			var m = Math.floor(diff/1000/60/60/24);
 			return 'há '+m+' dia'+(m>1?'s':'');
-		}
-	} else {
-		if (diff < 1000*60) {
-			return 'agora'; 'há '+Math.floor(diff/1000)+'s';
-		} else if (diff < 1000*60*60) {
-			return 'há '+Math.floor(diff/1000/60)+'min';
-		} else if (diff < 1000*60*60*30) { // até 30 horas
-			return 'há '+Math.floor(diff/1000/60/60)+'h';
-		} else {
-			return 'há '+Math.floor(diff/1000/60/60/24)+'d';
 		}
 	}
 };

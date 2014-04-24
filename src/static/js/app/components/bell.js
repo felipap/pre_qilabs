@@ -24,7 +24,7 @@ define([
 				React.renderComponent(title, $title[0]);
 			else
 				$title.hide();
-			React.renderComponent(content,  $tip.find('.popover-content')[0]);
+			React.renderComponent(content, $tip.find('.popover-content')[0]);
 		}
 	};
 
@@ -51,7 +51,12 @@ define([
 					backgroundImage: 'url('+this.props.data.thumbnailUrl+')',
 				};
 				var date = window.calcTimeFrom(this.props.data.dateSent);
-				
+				var dateStyle = {
+					'font-style': 'normal',
+					'float': 'right',
+					'font-size': '11px',
+					'color': '#444',
+				};
 				return (
 					React.DOM.li( {className:"notificationItem", 'data-seen':this.props.data.seen, 'data-accessed':this.props.data.accessed,
 					onClick:this.handleClick}, 
@@ -59,7 +64,7 @@ define([
 						React.DOM.div( {className:"thumbnail", style:thumbnailStyle}):undefined,
 						React.DOM.div( {className:"notificationItemBody"}, 
 							React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.data.msgHtml}} ),
-						React.DOM.span(null, React.DOM.em(null, date))
+						React.DOM.span( {style:dateStyle}, date)
 						)
 					)
 				);
@@ -114,7 +119,7 @@ define([
 						react: true,
 						content: NotificationList( {data:response.data}),
 						placement: 'bottom',
-						container: 'body',
+						container: 'nav.bar',
 						trigger: 'manual'
 					});
 				}).always(function () {
