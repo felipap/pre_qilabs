@@ -36,7 +36,7 @@ nav.bar {
 
 		text-align: center;
 		font-size: @brandFontSize;
-		line-height: @navbar-height;
+		line-height: (@navbar-height - 1);
 		vertical-align: middle;
 
 		a {
@@ -51,10 +51,25 @@ nav.bar {
 			}
 		}
 
-		span {
-			text-transform: none;
-			font-weight: normal;
+		.iconThumbnail {
+			line-height: 23px;
+			margin: -2px 1px 0;
+
+			// -moz-text-shadow: 0 0 @blur rgba(0, 0, 0, @alpha);
+			text-shadow: 2px 2px 0 rgba(0, 0, 0, .2),
+				3px 3px 0 rgba(0, 0, 0, .2),
+				5px 5px 0 rgba(0, 0, 0, .2)
+			;
+			// .text-shadow(0, 0, 3px, .2);
+		}
+
+		.pageLabel {
 			display: inline;
+			color: #444;
+			font-family: museo-sans;
+			display: inline-block;
+			font-size: 18px;
+			text-transform: uppercase;
 		}
 
 		.version {

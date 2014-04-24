@@ -11,130 +11,145 @@
 {% endblock %}
 
 {% block globalHeader %}
+
 	<div id="globalHead">
-		<div class="bg-blackout"></div>
+		<div class="tagWrapper">
+			<table style="display: none">
+				<tr>
+					<td class="left">
+				</td>
 
-		<div class="profileWrapper">
-			<table>
-			<tr>
-				<td class="left">
-				<div class="profileUser">
-					<div class="tagThumbnail large">
-						<i class="icon-tag-vestibular"></i>
+				<td class="middle">
+					<div>
+						<h5><i class="icon-tags"></i>&nbsp;<strong>Tags relacionadas</strong></h5>
+						<div class="tag">Application</div>
+						<div class="tag">SAT</div>
+						<div class="tag">Olimpíadas de Informática</div>
 					</div>
-						<span class="name">Vestibular</span>
-					{% if follows %}
-						<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-					{% else %}
-						<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
-					{% endif %}
-				</div>
-				<div class="bio">
-					O Vestibular é o exame dado em lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit.
-				</div>
-			</td>
+					<div>
+						<h5><i class="icon-trophy icon-silvser"></i>&nbsp;<strong>Destaques relacionados</strong></h5>
+						<div>Redação nota 1000</div>
+						<div>90% acertos no ENEM</div>
+					</div>
+				</td>
 
-			<td class="middle">
-				<div>
-					<h5><i class="icon-tags"></i>&nbsp;<strong>Tags relacionadas</strong></h5>
-					<div class="tag">Application</div>
-					<div class="tag">SAT</div>
-					<div class="tag">Olimpíadas de Informática</div>
-				</div>
-				<div>
-					<h5><i class="icon-trophy icon-silvser"></i>&nbsp;<strong>Destaques relacionados</strong></h5>
-					<div>Redação nota 1000</div>
-					<div>90% acertos no ENEM</div>
-				</div>
-			</td>
+				<td class="right">
+					<div class="userList">
+						<h5>
+							<!-- <span class="detail">18</span> Seguidores -->
+							23 Seguidores
+						</h5>
+						<ul>
+							<li>
+								<div class="avatarWrapper">
+									<a href="/u/jonnyguio">
+									<div class="avatar" style="background: url(https://graph.facebook.com/100001737803256/picture)" data-toggle="tooltip" title="João Guio" data-placement="bottom"></div>
+									</a>
+								</div>
+							</li>
+							<li>
+								<div class="avatarWrapper">
+									<a href="/u/michelle.malher">
+									<div class="avatar" style="background: url(https://graph.facebook.com/100002234680040/picture)" data-toggle="tooltip" title="Michelle Malher" data-placement="bottom"></div>
+									</a>
+								</div>
+							</li>
+							<li>
+								<div class="avatarWrapper">
+									<a href="/u/vivianeplobo">
+									<div class="avatar" style="background: url(https://graph.facebook.com/100001840252092/picture)" data-toggle="tooltip" title="Viviane Da Paixão Lobo" data-placement="bottom"></div>
+									</a>
+								</div>
+							</li>
+							<li>
+								<div class="avatarWrapper">
+									<a href="/u/mariitope">
+									<div class="avatar" style="background: url(https://graph.facebook.com/100001115788168/picture)" data-toggle="tooltip" title="Mariam Topeshashvili" data-placement="bottom"></div>
+									</a>
+								</div>
+							</li>
+							<li>
+								<div class="avatarWrapper">
+									<a href="/u/luizfernando.gomes.581">
+									<div class="avatar" style="background: url(https://graph.facebook.com/luizfernando.gomes.581/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Luiz Fernando Leal"></div>
+									</a>
+								</div>
+							</li>
+							<li>
+								<div class="avatarWrapper">
+									<a href="/u/luizfernando.gomes.581">
+									<div class="avatar" style="background: url(https://graph.facebook.com/rennan.gaio/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Garoto Precoce"></div>
+									</a>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</td>
+				</tr>
+			</table>
 
-			<td class="right">
-				<div class="userList">
-					<h5>
-						<!-- <span class="detail">18</span> Seguidores -->
-						23 Seguidores
-					</h5>
-					<ul>
-						<li>
-							<div class="avatarWrapper">
-								<a href="/u/jonnyguio">
-								<div class="avatar" style="background: url(https://graph.facebook.com/100001737803256/picture)" data-toggle="tooltip" title="João Guio" data-placement="bottom"></div>
-								</a>
+			<table style="width: 100%">
+			<tr>
+				<td>
+					<div class="tagProfile">
+						<div class="tagLabel">
+							<div class="iconThumbnail iconThumbnailLarge">
+								<i class="icon-tag-vestibular"></i>
 							</div>
-						</li>
-						<li>
-							<div class="avatarWrapper">
-								<a href="/u/michelle.malher">
-								<div class="avatar" style="background: url(https://graph.facebook.com/100002234680040/picture)" data-toggle="tooltip" title="Michelle Malher" data-placement="bottom"></div>
-								</a>
-							</div>
-						</li>
-						<li>
-							<div class="avatarWrapper">
-								<a href="/u/vivianeplobo">
-								<div class="avatar" style="background: url(https://graph.facebook.com/100001840252092/picture)" data-toggle="tooltip" title="Viviane Da Paixão Lobo" data-placement="bottom"></div>
-								</a>
-							</div>
-						</li>
-						<li>
-							<div class="avatarWrapper">
-								<a href="/u/mariitope">
-								<div class="avatar" style="background: url(https://graph.facebook.com/100001115788168/picture)" data-toggle="tooltip" title="Mariam Topeshashvili" data-placement="bottom"></div>
-								</a>
-							</div>
-						</li>
-						<li>
-							<div class="avatarWrapper">
-								<a href="/u/luizfernando.gomes.581">
-								<div class="avatar" style="background: url(https://graph.facebook.com/luizfernando.gomes.581/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Luiz Fernando Leal"></div>
-								</a>
-							</div>
-						</li>
-						<li>
-							<div class="avatarWrapper">
-								<a href="/u/luizfernando.gomes.581">
-								<div class="avatar" style="background: url(https://graph.facebook.com/rennan.gaio/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Garoto Precoce"></div>
-								</a>
-							</div>
-						</li>
-					</ul>
-				</div>
-			</td>
+								<span class="name">Vestibular</span>
+							{% if follows %}
+								<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+							{% else %}
+								<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
+							{% endif %}
+						</div>
+
+						<div class="bio">
+							O Vestibular é o exame dado em lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit.
+						</div>
+					</div>
+				</td>
+				<td style="width: 300px">
+					<nav class="tagMenu">
+						<button>Guia ></button>
+						<button>Fazer algo ></button>
+						<button>Fazer algo ></button>
+					</nav>
+				</td>
 			</tr>
 			</table>
+
 		</div>
 	</div>
 
 	<nav class="cardsNav">
-		<div class="left">
-			<li>
+		<ul class="left">
+			<li class="cardsLabel">
 				Publicações com <i class="icon-tag"></i>Vestibular
 			</li>
-		</div>
-		<div class="tabs">
-			<li class="active">
-				Seguindo
-				<div class="arrow"></div>
-			</li>
-			<li>
-				Populares
-				<div class="arrow"></div>
-			</li>
-			<li>
-				Atividade
-				<div class="arrow"></div>
-			</li>
-		</div>
+		</ul>
 		<div class="right">
+		{% spaceless %}
 			<li>
-				<div class="onoffswitch">
-					<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked onChange="$('#cards').toggleClass('grid')">
-					<label class="onoffswitch-label" for="myonoffswitch">
-						<div class="onoffswitch-inner"></div>
-						<div class="onoffswitch-switch"></div>
-					</label>
-				</div>
+				<button title="Mais votos" class="green">
+					<i class="icon-group"></i>
+					<span>De quem você segue</span>
+				</button>
+				<div class="arrow"></div>
 			</li>
+			<li>
+				<button title="Mais votos" class="blue">
+					<i class="icon-tup"></i>
+				</button>
+				<div class="arrow"></div>
+			</li>
+			<li>
+				<button title="Populares" class="red">
+					<i class="icon-fire"></i>
+				</button>
+				<div class="arrow"></div>
+			</li>
+		{% endspaceless %}
 		</div>
 	</nav>
 {% endblock %}

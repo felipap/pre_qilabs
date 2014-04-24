@@ -71,7 +71,7 @@ body {
 	}
 }
 
-.tagThumbnail {
+.iconThumbnail {
 	display: inline-block;
 	vertical-align: middle;
 	width: 40px;
@@ -80,8 +80,9 @@ body {
 	overflow: hidden;
 	text-align: center;
 	line-height: 40px;
+	color: white;
 
-	background: #444;
+	background: #333;
 	.rounded(25px);
 
 	[class*="icon-tag"] {
@@ -92,18 +93,38 @@ body {
 	& + .username, & + .name, & + span {
 		vertical-align: middle;
 	}
-}
 
-.tagThumbnail.large {
-	width: 50px;
-	height: 50px;
-	line-height: 50px;
-	i {
-		font-size: 35px;
+	&.iconThumbnailLarge {
+		width: 50px;
+		height: 50px;
+		line-height: 50px;
+		i {
+			font-size: 35px;
+		}
+	}
+
+	&.iconThumbnailSmall {
+		width: 28px;
+		height: 28px;
+		line-height: 25px;
+		i {
+			font-size: 18px;
+		}
+	}
+
+	&.iconUser {
+		background: #08C;
+	}
+
+	&.iconTag {
+		background: @COLOR4;
 	}
 }
 
-.tagThumbnail.small { }
+
+
+
+
 
 .tag {
 	display: inline-block;

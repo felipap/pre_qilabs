@@ -3,15 +3,27 @@
 		<span class="brand">
 			<a href="/" tabindex="-1">
 				QI <i class="icon-bulb"></i> Labs
+			</a>
 				{% if dataPage === "guide" %}
 					<span>· Guias</span>
 				{% endif %}
 				{% if dataPage === "profile" %}
+					<div class="iconThumbnail iconThumbnailSmall iconUser">
+						<i class="icon-user"></i>
+					</div>
+					<span class="pageLabel">
+						{{ profile.name }}
+					</span>
 				{% endif %}
 				{% if dataPage === "tag" %}
-					<span>· Tags</span>
+					<!-- <span>· Tags</span> -->
+					<div class="iconThumbnail iconThumbnailSmall iconTag">
+						<i class="icon-tag"></i>
+					</div>
+					<span class="pageLabel">
+						Vestibular
+					</span>
 				{% endif %}
-			</a>
 		</span>
 	{% if user %}
 		<ul>
