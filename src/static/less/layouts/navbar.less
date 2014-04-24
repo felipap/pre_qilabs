@@ -364,6 +364,10 @@ nav.bar {
 			border-left: 3px solid transparent;
 			.transition(all, .2s, linear);
 		
+			&:not(:last-child) {
+				border-bottom: 1px solid #1A1A1A;
+			}
+
 			&[data-seen=false][data-accessed=false] {
 				font-weight: bold;
 				border-left-color: #08C;
@@ -378,9 +382,6 @@ nav.bar {
 				color: white;
 			}
 
-			&:not(:last-child) {
-				border-bottom: 1px solid #000;
-			}
 			
 			.notificationItemBody {
 			}
