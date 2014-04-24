@@ -51,32 +51,37 @@ nav.bar {
 			}
 		}
 
-		.iconThumbnail {
-			line-height: 23px;
-			margin: -2px 1px 0;
+		.pageLabelDetail {
+			body.hasCards:not(.headerPassed) > & .iconThumbnail {
+				display: none;
+			}
 
-			text-shadow: 2px 2px 0 rgba(0, 0, 0, .2),
-				3px 3px 0 rgba(0, 0, 0, .2),
-				5px 5px 0 rgba(0, 0, 0, .2)
-			;
-			// .text-shadow(0, 0, 3px, .2);
+			body.hasCards:not(.headerPassed) > & .pageLabel {
+				display: none;
+			}
+
+			.iconThumbnail {
+				line-height: 23px;
+				margin: -2px 1px 0;
+				padding-right: 1px;
+
+				text-shadow: 2px 2px 0 rgba(0, 0, 0, .2),
+					3px 3px 0 rgba(0, 0, 0, .2),
+					5px 5px 0 rgba(0, 0, 0, .2)
+				;
+				// .text-shadow(0, 0, 3px, .2);
+			}
+
+			.pageLabel {
+				display: inline;
+				color: #444;
+				font-family: museo-sans;
+				display: inline-block;
+				font-size: 18px;
+				text-transform: uppercase;
+			}
 		}
 
-		.pageLabel {
-			display: inline;
-			color: #444;
-			font-family: museo-sans;
-			display: inline-block;
-			font-size: 18px;
-			text-transform: uppercase;
-		}
-
-		.version {
-			font-size: 20px;
-			font-weight: normal;
-			color: @compColor;
-			cursor: default;
-		}
 	}
 
 	.navcontent > ul {

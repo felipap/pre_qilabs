@@ -4,8 +4,14 @@
 			<a href="/" tabindex="-1">
 				QI <i class="icon-bulb"></i> Labs
 			</a>
+			<span class="pageLabelDetail">
 				{% if dataPage === "guide" %}
-					<span>· Guias</span>
+					<div class="iconThumbnail iconThumbnailSmall iconGuide">
+						<i class="icon-guia"></i>
+					</div>
+					<span class="pageLabel">
+						Guia: Vestibular
+					</span>
 				{% endif %}
 				{% if dataPage === "profile" %}
 					<div class="iconThumbnail iconThumbnailSmall iconUser">
@@ -24,6 +30,7 @@
 						Vestibular
 					</span>
 				{% endif %}
+			</span>
 		</span>
 	{% if user %}
 		<ul>

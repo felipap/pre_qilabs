@@ -150,6 +150,22 @@ define([
 			}
 		});
 	}
+	if (!!$("#globalHead").length) {
+		// $(document).scroll(triggerCalcNavbarFixed);
+		$("#globalContainer").scroll(triggerCalcNavbarFixed);
+		function triggerCalcNavbarFixed () {
+			// if (($(document).scrollTop()+$('nav.bar').outerHeight()
+			// 	-($("#globalHead").offset().top+$('#globalHead').outerHeight())) >= 0) {
+			if ($("#globalContainer").scrollTop()-$("#globalHead").outerHeight() >= 0) {
+				$("body").addClass('headerPassed');
+			} else {
+				$("body").removeClass('headerPassed');
+			}
+		}
+		triggerCalcNavbarFixed();
+	} else {
+		$("body").addClass('noHeader');
+	}
 
 	(function setCSRFToken () {
 		$.ajaxPrefilter(function(options, _, xhr) {
