@@ -69,7 +69,6 @@ nav.bar {
 					3px 3px 0 rgba(0, 0, 0, .2),
 					5px 5px 0 rgba(0, 0, 0, .2)
 				;
-				// .text-shadow(0, 0, 3px, .2);
 			}
 
 			.pageLabel {
@@ -361,14 +360,14 @@ nav.bar {
 			width: 280px;
 			cursor: pointer;
 			color: white;
-			overflow: hidden;
+			overflow-y: hidden;
 			min-height: 50px;
 			// padding: 12px 10px;
 			position: relative;
 			// font-weight: bold;
 			font-size: 12px;
 			font-family: museo-sans;
-			// border-left: 3px solid transparent;
+			border-left: 3px solid transparent;
 			.transition(all, .2s, linear);
 		
 			&:not(:last-child) {
@@ -376,11 +375,11 @@ nav.bar {
 			}
 
 			&[data-seen=false][data-accessed=false] {
-				font-weight: bold;
-				border-left-color: #08C;
 			}
 
 			&[data-seen=true] {
+				font-weight: bold;
+				border-left-color: #08C;
 				// color: #DDD;
 				// background: rgba(255, 255, 255, .1); // #F9FAFF;
 			}
@@ -400,14 +399,12 @@ nav.bar {
 
 			.thumbnail {
 				.rounded(0px);
-				// float: left;
-				// height: 55px;
 				margin-right: 10px;
 				width: 50px;
 				.background-size(cover);
 				
 				position: absolute;
-				left: 0;
+				left: -3px;
 				top: 0;
 				bottom: 0;
 			}
