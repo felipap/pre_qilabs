@@ -351,7 +351,7 @@ nav.bar {
 
 	.notificationList {
 		margin: -10px -15px;
-		.rounded(0);
+		.rounded(3px);
 		overflow: hidden;
 
 		.notificationItem {
@@ -360,21 +360,17 @@ nav.bar {
 			width: 280px;
 			cursor: pointer;
 			color: white;
-			overflow-y: hidden;
 			min-height: 50px;
-			// padding: 12px 10px;
 			position: relative;
-			// font-weight: bold;
 			font-size: 12px;
 			font-family: museo-sans;
-			// border-left: 3px solid transparent;
 			.transition(all, .2s, linear);
 		
 			&:not(:last-child) {
 				border-bottom: 1px solid #1A1A1A;
 			}
 
-			&[data-seen=false][data-accessed=false]::before {
+			&[data-accessed=false]::before {
 				content: " ";
 				position: absolute;
 				left: 50px;
