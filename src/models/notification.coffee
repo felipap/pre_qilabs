@@ -26,8 +26,8 @@ MsgTemplates =
 	NewFollower: '<%= agentName %> começou a te seguir.'
 
 MsgHtmlTemplates = 
-	PostComment: '<strong><%= agentName %></strong> comentou na sua publicação.'
-	NewFollower: '<strong><%= agentName %></strong> começou a te seguir.'
+	PostComment: '<%= agentName %> comentou na sua publicação.'
+	NewFollower: '<%= agentName %> começou a te seguir.'
 
 ################################################################################
 ## Schema ######################################################################

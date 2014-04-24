@@ -51,12 +51,6 @@ define([
 					backgroundImage: 'url('+this.props.data.thumbnailUrl+')',
 				};
 				var date = window.calcTimeFrom(this.props.data.dateSent);
-				var dateStyle = {
-					'font-style': 'normal',
-					'float': 'right',
-					'font-size': '11px',
-					'color': '#444',
-				};
 				return (
 					<li className="notificationItem" data-seen={this.props.data.seen} data-accessed={this.props.data.accessed}
 					onClick={this.handleClick}>
@@ -64,7 +58,7 @@ define([
 						<div className="thumbnail" style={thumbnailStyle}></div>:undefined}
 						<div className="notificationItemBody">
 							<span dangerouslySetInnerHTML={{__html: this.props.data.msgHtml}} />
-						<span style={dateStyle}>{date}</span>
+							<time>{date}</time>
 						</div>
 					</li>
 				);

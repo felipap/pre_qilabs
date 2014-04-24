@@ -41,6 +41,11 @@
 				</button>
 			</li>
 			<!-- <div class="separator"></div> -->
+			<li id="bellPlacement">
+				<button class="plain-btn bell-btn" data-action="show-notifications">
+					<i class="icon-bell-o"></i><sup id="count" class="badge"></sup>
+				</button>
+			</li>
 			<li>
 				<button class="plain-btn">
 					<i class="icon-agenda"></i>
@@ -48,11 +53,6 @@
 			</li>
 			<!-- <div class="separator"></div> -->
 
-			<li id="bellPlacement">
-				<button class="plain-btn bell-btn" data-action="show-notifications">
-					<i class="icon-bell-o"></i><sup id="count" class="badge"></sup>
-				</button>
-			</li>
 		{% endspaceless %}<li class="navbarDropdown">
 			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle">
 					<div class="avatarDd" style="background-image: url('{{ user.avatarUrl }}')">

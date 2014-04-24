@@ -324,47 +324,84 @@ nav.bar {
 	}
 }
 
-.notificationList {
-	margin: -10px -15px;
-	.rounded(5px);
-	overflow: hidden;
 
-	.notificationItem {
-		list-style: none;
-		display: table;
-		width: 100%;
-		cursor: pointer;
-		color: #444;
+.popover {
 
-		padding: 7px 10px;
-		font-size: 12px;
-	
-		&[data-seen=false][data-accessed=false] {
-			background: #EFEFFF;
-		}
+	background: #222;
+	margin-right: 3px;
+	.rounded(3px);
+	max-width: 30000px;
 
-		&[data-seen=true] {
-			background: #F9FAFF;
-		}
+	margin-top: 5px !important;
+	border: none;
 
-		&:hover {
-			background: #F0F0FF !important;
-		}
-
-		&:not(:last-child) {
-			border-bottom: 1px solid #DDD;
-		}
-		
-		.notificationItemBody {
-		}
-
-		.thumbnail {
-			.rounded(3px);
-			float: left;
-			margin-right: 10px;
-			width: 30px;
-			height: 30px;
-			.background-size(cover);
+	.arrow {
+		border: none !important;
+ 		&::after {
+			border-bottom-color: #222 !important;
+			border-width: 5px;
+			margin-left: 7px !important;
+			top: 6px !important;
 		}
 	}
+
+	.notificationList {
+		margin: -10px -15px;
+		.rounded(3px);
+		overflow: hidden;
+
+		.notificationItem {
+			list-style: none;
+			display: table;
+			width: 280px;
+			cursor: pointer;
+			color: white;
+
+			padding: 12px 10px;
+			font-size: 12px;
+			// font-weight: bold;
+			font-family: museo-sans;
+			border-left: 3px solid transparent;
+			.transition(all, .2s, linear);
+		
+			&[data-seen=false][data-accessed=false] {
+				font-weight: bold;
+				border-left-color: #08C;
+			}
+
+			&[data-seen=true] {
+				// color: #DDD;
+				// background: rgba(255, 255, 255, .1); // #F9FAFF;
+			}
+
+			&:hover {
+				color: white;
+			}
+
+			&:not(:last-child) {
+				border-bottom: 1px solid #EEE;
+			}
+			
+			.notificationItemBody {
+			}
+
+			time {
+				font-weight: normal;
+				font-style: normal;
+				float: right;
+				font-size: 11px;
+				opacity: .8;
+			}
+
+			.thumbnail {
+				.rounded(2px);
+				float: left;
+				margin-right: 10px;
+				width: 30px;
+				height: 30px;
+				.background-size(cover);
+			}
+		}
+	}
+
 }

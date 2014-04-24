@@ -51,12 +51,6 @@ define([
 					backgroundImage: 'url('+this.props.data.thumbnailUrl+')',
 				};
 				var date = window.calcTimeFrom(this.props.data.dateSent);
-				var dateStyle = {
-					'font-style': 'normal',
-					'float': 'right',
-					'font-size': '11px',
-					'color': '#444',
-				};
 				return (
 					React.DOM.li( {className:"notificationItem", 'data-seen':this.props.data.seen, 'data-accessed':this.props.data.accessed,
 					onClick:this.handleClick}, 
@@ -64,7 +58,7 @@ define([
 						React.DOM.div( {className:"thumbnail", style:thumbnailStyle}):undefined,
 						React.DOM.div( {className:"notificationItemBody"}, 
 							React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.data.msgHtml}} ),
-						React.DOM.span( {style:dateStyle}, date)
+							React.DOM.time(null, date)
 						)
 					)
 				);
