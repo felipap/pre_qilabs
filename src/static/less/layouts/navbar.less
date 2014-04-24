@@ -367,19 +367,25 @@ nav.bar {
 			// font-weight: bold;
 			font-size: 12px;
 			font-family: museo-sans;
-			border-left: 3px solid transparent;
+			// border-left: 3px solid transparent;
 			.transition(all, .2s, linear);
 		
 			&:not(:last-child) {
 				border-bottom: 1px solid #1A1A1A;
 			}
 
-			&[data-seen=false][data-accessed=false] {
+			&[data-seen=false][data-accessed=false]::before {
+				content: " ";
+				position: absolute;
+				left: 0;
+				top: 0;
+				bottom: 0;
+				width: 3px;
+				z-index: 1;
+				background: #08C;
 			}
 
 			&[data-seen=true] {
-				font-weight: bold;
-				border-left-color: #08C;
 				// color: #DDD;
 				// background: rgba(255, 255, 255, .1); // #F9FAFF;
 			}
@@ -404,7 +410,6 @@ nav.bar {
 				.background-size(cover);
 				
 				position: absolute;
-				left: -3px;
 				top: 0;
 				bottom: 0;
 			}
