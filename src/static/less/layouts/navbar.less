@@ -38,7 +38,7 @@ nav.bar {
 
 @navbar-small-height: 40px;
 
-body.smallNavbar nav.bar {
+body.hasScrolled nav.bar {
 
 	height: @navbar-small-height;
 
@@ -66,7 +66,7 @@ body.smallNavbar nav.bar {
 		.navbarDropdown {
 			.avatar-btn {
 				.avatarDd {
-					width: @navbar-small-height+1;
+					// width: @navbar-small-height+1;
 					height: @navbar-small-height+1;
 				}
 			}
@@ -100,6 +100,24 @@ nav.bar {
 		.pull-left;
 	}
 
+	&.hasDetail {
+		.brand {
+			.transition(margin-right, none);
+			body.hasScrolled & {
+				margin-right: -180px;
+				.transition(margin-right, .1s, linear);
+			}
+
+			.pageLabelDetail {
+				opacity: 0;
+				body.hasScrolled & {
+					top: 0;
+					opacity: 1;
+				}
+			}
+		}
+	}
+
 	.brand {
 		.unselectable;
 		position: absolute;
@@ -111,13 +129,6 @@ nav.bar {
 		font-size: @brandFontSize;
 		line-height: (@navbar-height - 1);
 		vertical-align: middle;
-
-		.transition(none);
-
-		body.scrolled & {
-			margin-right: -180px;
-			.transition(margin-right, .1s, linear);
-		}
 
 		a {
 			color: @brandColor;
@@ -140,21 +151,6 @@ nav.bar {
 
 			.transition(top, .4s, linear);
 			.transition(opacity, .2s, linear);
-
-			body.hasCards:not(.headerPassed) > & .iconThumbnail {
-				display: none;
-			}
-
-			body.hasCards:not(.headerPassed) > & .pageLabel {
-				display: none;
-			}
-
-			opacity: 0;
-			body.scrolled & {
-				top: 0;
-				opacity: 1;
-				// .transition(none);
-			}
 
 			.iconThumbnail {
 				margin: -2px 1px 0;

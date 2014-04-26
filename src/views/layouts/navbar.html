@@ -1,4 +1,8 @@
+{% if dataPage === "guide" || dataPage === "profile" || dataPage === "tag" %}
+<nav class="bar hasDetail" role="navigation" id="navbar">
+{% else %}
 <nav class="bar" role="navigation" id="navbar">
+{% endif %}
 <div class="navcontent">
 		<span class="brand">
 			<a href="/" tabindex="-1">QI <i class="icon-bulb"></i> Labs</a>
@@ -22,7 +26,6 @@
 						</span>
 					{% endif %}
 					{% if dataPage === "tag" %}
-						<!-- <span>· Tags</span> -->
 						<i class="iconThumbnail iconThumbnailSmall icon-tag"></i>
 						<span class="pageLabel">
 							Vestibular

@@ -153,11 +153,9 @@ define([
 
 	$("#globalContainer").scroll(function () {
 		if ($("#globalContainer").scrollTop() > 0) {
-			$("body").addClass('smallNavbar');
-			$("body").addClass('scrolled');
+			$("body").addClass('hasScrolled');
 		} else {
-			$("body").removeClass('smallNavbar');
-			$("body").removeClass('scrolled');
+			$("body").removeClass('hasScrolled');
 		}
 	});
 
