@@ -154,8 +154,10 @@ define([
 	$("#globalContainer").scroll(function () {
 		if ($("#globalContainer").scrollTop() > 0) {
 			$("body").addClass('smallNavbar');
+			$("body").addClass('scrolled');
 		} else {
 			$("body").removeClass('smallNavbar');
+			$("body").removeClass('scrolled');
 		}
 	});
 
