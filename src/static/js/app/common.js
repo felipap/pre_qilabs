@@ -62,7 +62,7 @@ window.calcTimeFrom = function (arg, long, short) {
 	}
 };
 
-define([
+	define([
 	'jquery',
 	'underscore',
 	'plugins',
@@ -74,19 +74,8 @@ define([
 	$('.openSidebar').click(function (e) {
 		$('body').toggleClass('sidebarOpen');
 	});
-		
-	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
-		var href = this.dataset['ajaxPostHref'],
-			redirect = this.dataset['redirectHref'];
-		$.post(href, function () {
-			if (redirect)
-				window.location.href = redirect;
-			else
-				window.location.reload();
-		});
-	});
 
-	// Hide popover when mouse-click happens outside it.
+	// Hide popover when mouse-click happens outside of it.
 	$(document).mouseup(function (e) {
 		var container = $('#sidebarPanel');
 		if ($('body').hasClass('sidebarOpen')) {
@@ -95,15 +84,6 @@ define([
 				$('body').removeClass('sidebarOpen');
 			}
 		}
-	});
-
-	$("form[data-ajax-post-href]").on('submit', function (evt) {
-		evt.preventDefault();
-		var href = this.dataset['ajaxPostHref']+'?'+$(this).serialize();
-		console.log(this.dataset, href);
-		$.post(href, function () {
-			window.location.reload();
-		});
 	});
 
 	$(".btn-follow").click(function (evt) {
@@ -133,23 +113,9 @@ define([
 		}
 	});
 
-	// $("[data-toggle=popover]").popover();
 	$("body").tooltip({selector:'[data-toggle=tooltip]'});
 	$("[data-toggle=dialog]").xdialog();
-
-	if (document.body.dataset.page === 'front') {
-		var navbar = $("nav.bar");
-		var jumboHeight = $('#jumbo').height();
-		var navbarHeight = navbar.outerHeight();
-		$(window).on('scroll ready', function () {
-			// if ($(window).scrollTop()+navbarHeight > jumboHeight) {
-			if ($(window).scrollTop() > navbarHeight) {
-				navbar.addClass('opaque');
-			} else {
-				navbar.removeClass('opaque');
-			}
-		});
-	}
+	// $("[data-toggle=popover]").popover();
 
 	$("#globalContainer").scroll(function () {
 		if ($("#globalContainer").scrollTop() > 0) {
@@ -185,6 +151,8 @@ define([
 		});
 	})();
 
+	// 
+
 	(function showFlashPosts (msgs) {
 		if (!$(".flash-msgs")[0])
 			$("<div class='flash-msgs'>").prependTo($('body > section')[0]);
@@ -195,4 +163,26 @@ define([
 			$("<div class='info'><button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>"+msgs.info[i]+"</div>")
 				.hide().appendTo($(".flash-msgs")).slideDown();
 	})(window._flash_msgs);
+
+	// GOSTAVA TANTO DE NUTELLA
+		
+	$("a[data-ajax-post-href],button[data-ajax-post-href]").click(function () {
+		var href = this.dataset['ajaxPostHref'],
+			redirect = this.dataset['redirectHref'];
+		$.post(href, function () {
+			if (redirect)
+				window.location.href = redirect;
+			else
+				window.location.reload();
+		});
+	});
+
+	$("form[data-ajax-post-href]").on('submit', function (evt) {
+		evt.preventDefault();
+		var href = this.dataset['ajaxPostHref']+'?'+$(this).serialize();
+		console.log(this.dataset, href);
+		$.post(href, function () {
+			window.location.reload();
+		});
+	});
 });

@@ -730,7 +730,10 @@
 	</div>
 
 	<script>
-		document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top - 2)+"px";
+		function resizeCardsPanel() {
+			document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top + 10)+"px";
+		}
+		resizeCardsPanel();
 	</script>
 
 	<div id="fullPageContainer">
