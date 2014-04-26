@@ -4,7 +4,6 @@
 
 {% import '../macros/user.html' as userMacros %}
 
-
 {% block head %}
 	{% parent %}
 	<script>conf={postsRoot:'/api/users/{{ profile.id }}/posts'};</script>
@@ -36,7 +35,6 @@
 				<td class="right">
 					<div class="userList">
 						<h5>
-							<!-- <span class="detail">18</span> Seguidores -->
 							23 Seguidores
 						</h5>
 						<ul>
@@ -88,38 +86,56 @@
 				</tr>
 			</table>
 
+
 			<table style="width: 100%">
 			<tr>
 				<td>
 					<div class="tagProfile">
 						<div class="tagLabel">
-							<div class="iconThumbnail iconThumbnailLarge">
-								<i class="icon-tag-vestibular"></i>
-							</div>
+							<i class="iconThumbnail iconThumbnailLarge icon-tag"></i>
 								<span class="name">Vestibular</span>
-							{% if follows %}
-								<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+							<button class="btn-tag-follow" data-action="unfollow" data-user="{{ user.id }}"></button>
+		<!-- 					{% if follows %}
 							{% else %}
-								<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
+								<button class="btn-tag-follow" data-action="follow" data-user="{{ user.id }}"></button>
 							{% endif %}
-						</div>
+		 -->				</div>
 
 						<div class="bio">
-							O Vestibular é o exame dado em lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit.
+							<p>Vestibular designa o processo de seleção de novos estudantes empregado pelas universidades brasileiras. O vestibular caracteriza-se normalmente como uma prova de aferição dos conhecimentos adquiridos no ensino fundamental e médio, sendo o principal meio de acesso ao ensino superior no Brasil.</p>
 						</div>
+<!-- 						<button class="acessarGuia">
+							Acesse a Guia Vestibular para Saber Mais
+						</button>
+ -->					</div>
+				</td>
+				<!--
+				<td style="width: 400px; vertical-align:top">
+					<div class="tagList">
+						<label>Tags Relacionadas:</label>
+						<button><i class="icon-tag"></i> Application</button>
+						<button><i class="icon-tag"></i> Olimpíadas Científicas</button>
+						<button><i class="icon-tag"></i> Essay</button>
 					</div>
 				</td>
-				<td style="width: 300px">
+				 -->			
+ 				<td style="width: 400px">
 					<nav class="tagMenu">
-						<button>Guia ></button>
-						<button>Fazer algo ></button>
-						<button>Fazer algo ></button>
+						<button>Acesse Guia sobre Vestibular ></button>
+						<button>Ranking</button>
+						<button></button>
 					</nav>
 				</td>
 			</tr>
 			</table>
 
 		</div>
+	</div>
+
+	<div class="cardStats">
+		<li>
+			<span class="num">span>
+		</li>
 	</div>
 
 	<nav class="cardsNav">

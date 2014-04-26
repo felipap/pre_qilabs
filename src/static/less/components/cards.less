@@ -41,11 +41,11 @@
 	&.grid {
 		@square-card-width: 234px;
 		@square-card-height: 200px;
-		@square-card-margin: 28px;
-		@square-card-margin-bottom: 28px;
+		@square-card-margin: 27px;
+		@square-card-margin-bottom: 27px;
 		@square-card-body-fontsize: 17px;
 
-		@square-header-height: 30px;
+		@square-header-height: 35px;
 		@square-footer-height: 36px;
 		padding-left: @square-card-margin;
 		
@@ -61,7 +61,7 @@
 			.cardBody {
 				padding: 17px 20px;
 				font-size: @square-card-body-fontsize;
-				height: @square-card-height - @square-header-height - @square-footer-height - 4;
+				height: @square-card-height - @square-header-height - @square-footer-height - 3;
 			}
 
 			.cardFoot {
@@ -94,7 +94,6 @@
 		border-bottom: 1px solid #CCC;
 
 		&:hover {
-			// border-color: #D5d5d5;
 			border-bottom-color: #AAA;
 		}
 
@@ -166,6 +165,8 @@
 		.cardFoot {
 			border-top: 1px solid #EEE;
 			padding: 0 10px;
+			display: table;
+			width: 100%;
 
 			time {
 				color: #AAA;

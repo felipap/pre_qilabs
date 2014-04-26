@@ -4,15 +4,89 @@
 @navbar-height: 50px;
 
 nav.bar {
+	// .transition(height, .3s, linear);
+
+	.brand {
+		.transition(line-height, .2s, linear);
+		// .transition(font-size, .2s, linear);
+	}
+	.navcontent>ul>li .plain-btn i {
+		// .transition(font-size, .2s, linear);
+	}
+
+	.navcontent > ul {
+		.plain-btn {
+			.transition(height, .1s, linear);
+		}
+		.openSidebar {
+			// .transition(height, .1s, linear);
+			.transition(left, .2s, linear);
+		}
+		.newPost {
+			// .transition(height, .3s, linear);
+			.transition(line-height, .2s, linear);
+		}
+		.navbarDropdown {
+			.avatar-btn {
+				.avatarDd {
+					.transition(width, .2s, linear);
+					// .transition(height, .3s, linear);
+				}
+			}
+		}
+	}
+}
+
+@navbar-small-height: 40px;
+
+body.smallNavbar nav.bar {
+
+	height: @navbar-small-height;
+
+	.brand {
+		line-height: (@navbar-small-height - 1);
+		font-size: 20px;
+	}
+
+	.navcontent>ul>li .plain-btn i {
+		font-size: 15px;
+	}
+
+	.navcontent > ul {
+		.plain-btn {
+			height: @navbar-small-height+1;
+		}
+		.openSidebar {
+			height: @navbar-small-height;
+			left: 5px;
+		}
+		.newPost {
+			height: @navbar-small-height+1;
+			line-height: @navbar-small-height+1+5;
+		}
+		.navbarDropdown {
+			.avatar-btn {
+				.avatarDd {
+					width: @navbar-small-height+1;
+					height: @navbar-small-height+1;
+				}
+			}
+		}
+	}
+
+}
+
+nav.bar {
 	@compColor: #666;
 	@brandColor: #444;
 	@brandFontSize: 23px;
 
+	overflow: hidden;
 	position: relative;
 	height: @navbar-height;
-	&:extend(.clearfix all); // Prevent floats from breaking the navbar
 	z-index: 20;
 	min-width: @minPageWidth;
+	&:extend(.clearfix all); // Prevent floats from breaking the navbar
 
 	.navcontent {
 		margin: 0 auto;
@@ -61,7 +135,6 @@ nav.bar {
 			}
 
 			.iconThumbnail {
-				line-height: 23px;
 				margin: -2px 1px 0;
 				padding-right: 1px;
 
@@ -72,11 +145,11 @@ nav.bar {
 			}
 
 			.pageLabel {
+				font-size: 75%;
 				display: inline;
 				color: #444;
 				font-family: museo-sans;
 				display: inline-block;
-				font-size: 18px;
 				text-transform: uppercase;
 			}
 		}
@@ -89,13 +162,11 @@ nav.bar {
 		&:extend(.navbar-nav);
 
 		margin: 0 !important;
-		height: @navbar-height;
 
 		& > li {
 			display: inline-block;
 			vertical-align: top;
 			list-style: none;
-			line-height: @navbar-height;
 			
 			.plain-btn {
  				.navbar-vertical-align(@input-height-base);
@@ -119,11 +190,9 @@ nav.bar {
 				margin: 0;
 				border-bottom: 1px solid transparent;
 				&:hover, &:focus {
-					// background: #30302F;
-					// color: white;
-					background: #F8F8F8;
-					border-bottom: 1px solid #AAA;
+					border-bottom: 2px solid #AAA;
 				}
+				.transition(all, .2s, linear);
 
 				i {
 					font-size: 17px;
@@ -131,37 +200,10 @@ nav.bar {
 				}
 			}
 
-			.icon-btn {
-				line-height: 1;
-				// font-size: 13px;
-				font-weight: bold;
-				padding: 8px 20px;
-				&:focus {
-					outline: none;
-				}
-				border: none;
-				.rounded(2px);
-
-				color: fadeout(@compColor,30%);
-				font-weight: 700;
-				&:hover, &:focus, &:active {
-					background: none;
-					box-shadow: none;
-				}
-				&:hover, &:active {
-					color: @compColor;
-				}
-				padding: 8px 12px;
-				vertical-align: top;
-				box-shadow: none;
-				background: none;
-				height: @navbar-height;
-				margin: 0;
-				opacity: .7;
-
-				i {
-					font-size: 17px;
-					vertical-align: middle;
+			.sorting {
+				i { font-size: 20px; }
+				.icon-fire {
+					color: #FF865D;
 				}
 			}
 
@@ -187,6 +229,8 @@ nav.bar {
 				top: 0;
 				left: 10px;
 				
+				line-height: 1;
+				border: none;
 				padding: 8px 12px;
 				height: @navbar-height;
 				margin: 0;
@@ -199,6 +243,10 @@ nav.bar {
 				box-shadow: none;
 				background: none;
 
+				&:hover, &:focus, &:active {
+					background: none;
+					box-shadow: none;
+				}
 				.transition(opacity, .2s, linear);
 
 				i {
@@ -207,13 +255,14 @@ nav.bar {
 				}
 
 				&:hover, &:focus, &:active {
+					outline: none;
 					color: @compColor;
 					.no-box-shadow;
 					opacity: 1;
 				}
 			}
 
-			button.newPost {
+			.newPost {
 				.btn0;
 				padding: 8px 12px;
 				vertical-align: top;
@@ -222,6 +271,9 @@ nav.bar {
 
 				background: saturate(@COLOR3,5%);
 				height: @navbar-height+1;
+				line-height: @navbar-height+1+5;
+				width: 43px;
+				padding: 0;
 				.rounded(0);
 
 				&:hover, &:focus, &:active {

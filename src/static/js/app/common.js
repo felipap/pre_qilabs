@@ -150,6 +150,15 @@ define([
 			}
 		});
 	}
+
+	$("#globalContainer").scroll(function () {
+		if ($("#globalContainer").scrollTop() > 0) {
+			$("body").addClass('smallNavbar');
+		} else {
+			$("body").removeClass('smallNavbar');
+		}
+	});
+
 	if (!!$("#globalHead").length) {
 		// $(document).scroll(triggerCalcNavbarFixed);
 		$("#globalContainer").scroll(triggerCalcNavbarFixed);

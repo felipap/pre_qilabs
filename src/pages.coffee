@@ -35,7 +35,6 @@ module.exports = {
 		name: 'feed'
 		permissions: [required.login]
 		get: (req, res) ->
-			# console.log('logged:', req.user.name, req.user.tags)
 			req.user.lastUpdate = new Date()
 			req.user.save()
 			Tag.getAll (err, tags) ->
@@ -109,6 +108,7 @@ module.exports = {
 		}
 
 	'/p/create':
+		name: 'createPost'
 		methods: {
 			get: (req, res) ->
 				res.render 'pages/post_create'

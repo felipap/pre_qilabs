@@ -1,66 +1,60 @@
 <nav class="bar" role="navigation" id="navbar">
 <div class="navcontent">
 		<span class="brand">
-			<a href="/" tabindex="-1">
-				QI <i class="icon-bulb"></i> Labs
-			</a>
-			<span class="pageLabelDetail">
-				{% if dataPage === "guide" %}
-					<div class="iconThumbnail iconThumbnailSmall iconGuide">
-						<i class="icon-guia"></i>
-					</div>
-					<span class="pageLabel">
-						Guia: Vestibular
-					</span>
-				{% endif %}
-				{% if dataPage === "profile" %}
-					<div class="iconThumbnail iconThumbnailSmall iconUser">
-						<i class="icon-user"></i>
-					</div>
-					<span class="pageLabel">
-						{{ profile.name }}
-					</span>
-				{% endif %}
-				{% if dataPage === "tag" %}
-					<!-- <span>· Tags</span> -->
-					<div class="iconThumbnail iconThumbnailSmall iconTag">
-						<i class="icon-tag"></i>
-					</div>
-					<span class="pageLabel">
-						Vestibular
-					</span>
-				{% endif %}
-			</span>
+			<div style="display: inline-block; width: 600px">
+				<a href="/" tabindex="-1">QI <i class="icon-bulb"></i> Labs</a>
+				<span class="pageLabelDetail">
+					{% if dataPage === "guide" %}
+						<i class="iconThumbnail iconThumbnailSmall icon-guia"></i>
+						<span class="pageLabel">
+							Guia: Vestibular
+						</span>
+					{% endif %}
+					{% if dataPage === "profile" %}
+						<i class="iconThumbnail iconThumbnailSmall icon-user"></i>
+						<span class="pageLabel">
+							{{ profile.name }}
+						</span>
+					{% endif %}
+					{% if dataPage === "tag" %}
+						<!-- <span>· Tags</span> -->
+						<i class="iconThumbnail iconThumbnailSmall icon-tag"></i>
+						<span class="pageLabel">
+							Vestibular
+						</span>
+					{% endif %}
+				</span>
+			</div>
 		</span>
 	{% if user %}
 		<ul>
 			<li>
-				<button class="icon-btn openSidebar">
+				<button class="openSidebar">
 					<i class="icon-bars"></i>
 				</button>
 			</li>
 		</ul>
-		<ul class="pull-right">{% spaceless %}
-			<!-- <div class="separator"></div> -->
+		<ul class="pull-right">
 			<li>
+				<button class="plain-btn sorting">
+					<i class="icon-fire"></i>
+					<b class="caret"></b>
+				</button>
+			</li><li>
 				<button class="plain-btn">
 					<i class="icon-search"></i>
 				</button>
-			</li>
-			<!-- <div class="separator"></div> -->
-			<li id="bellPlacement">
+			</li><li id="bellPlacement">
 				<button class="plain-btn bell-btn" data-action="show-notifications">
 					<i class="icon-bell-o"></i><sup id="count" class="badge"></sup>
 				</button>
-			</li>
+			</li><!--
 			<li>
 				<button class="plain-btn">
 					<i class="icon-agenda"></i>
 				</button>
 			</li>
-			<!-- <div class="separator"></div> -->
-
-		{% endspaceless %}<li class="navbarDropdown">
+			--><li class="navbarDropdown">
 			 	<div id="drop3" data-toggle="dropdown" role="button" class="avatar-btn dropdown-toggle">
 					<div class="avatarDd" style="background-image: url('{{ user.avatarUrl }}')">
 					</div>
@@ -88,13 +82,11 @@
 						</a>
 					</li>
 				</ul>
-			</li>{% spaceless %}
-			<li>
-				<button class="newPost" title="Nova Publicação">
+			</li><li>
+				<a href="{{ getPageUrl('createPost') }}" class="button newPost" title="Nova Publicação">
 					<i class="icon-pencil"></i>
-				</button>
+				</a>
 			</li>
-		{% endspaceless %}
 		</ul>
 	{% else %}
 		<ul class="nav navbar-nav pull-right">

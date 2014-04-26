@@ -13,8 +13,13 @@ module.exports = {
 	permissions: [required.login],
 	children: {
 		'/:id': {
-			get: [required.posts.selfCanSee('id'), (req, res) ->
-					return unless postId = req.paramToObjectId('id')
+			# get: [required.posts.selfCanSee('id'), (req, res) ->
+			get: [(req, res) ->
+					# return unless postId = req.paramToObjectId('id')
+					if req.app.get('env') is 'production'
+						postId = '5331c56f1cc29902009d161b'
+					else
+						postId = '5330c0256d791fcd24000003'
 					Post.findOne { _id:postId }, req.handleErrResult((post) ->
 						post.stuff req.handleErrResult (stuffedPost) ->
 							res.endJson( data: stuffedPost )

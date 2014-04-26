@@ -19,7 +19,7 @@
 @btn-default-bg: 		#fff;
 @btn-default-border: 	#ccc;
 
-button {
+button, .button {
 	border: none;
 	display: inline-block;
 	margin-bottom: 0; // For input.btn
@@ -138,7 +138,7 @@ button {
 	// .button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
 	// font-size: 13px;
 
-	.button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
+	// .button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
 	// font-size: 13px;
 	outline: none;
 	font-weight: bold;
@@ -225,7 +225,8 @@ button {
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
-.btn-follow {
+.btn-follow,
+.btn-tag-follow {
 
 	&[data-action=follow] {
 		.rounded(5px);
@@ -251,4 +252,18 @@ button {
 	margin-right: 10px;
 	width: 66px;
 	font-family: "Open Sans";
+}
+
+
+.btn-tag-follow {
+	&[data-action=follow] {
+		&:empty::before { content: "Seguir Tag"; }
+	}
+	&[data-action=unfollow]:not(:hover) {
+		&::before { content: "Seguindo"; }
+	}
+	&[data-action=unfollow]:hover{
+		&:empty::before { content: "Desfazer"; }
+	}
+	width: 70px;
 }
