@@ -1,6 +1,6 @@
 
-@import "../components/timelineSidebar.less";
-@import "../components/timeline.less";
+@import (reference) "../components/timelineSidebar.less";
+@import (reference) "../components/timeline.less";
 
 @page-width: 960px;
 @sidebar-width: 280px;
@@ -36,12 +36,20 @@
 	right: 0;
 	background: white;
 	overflow: scroll;
-	top: 0;
+	padding-top: 20px;
+	top: @navbar-height;
+
 	overflow: auto;
 	bottom: 0;
-	z-index: 20;
-
+	z-index: 10;
 	display: none;
+	border-top: 1px solid #DDD;
+	overflow-x: hidden;
+
+	.blackout {
+		top: @navbar-height !important;
+	}
+
 	&.active {
 		display: block;
 	}
