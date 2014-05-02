@@ -4,36 +4,27 @@
 @navbar-height: 50px;
 
 nav.bar {
-	// .transition(height, .3s, linear);
 	.brand {
 		.transition(line-height, .2s, linear);
-		// .transition(font-size, .2s, linear);
 	}
-	.navcontent>ul>li .plain-btn i {
-		// .transition(font-size, .2s, linear);
-	}
-
-	.navcontent > ul {
+  	.navcontent > ul {
 		.plain-btn {
-			// .transition(height, .02s, linear);
 		}
 		.openSidebar {
-			// .transition(height, .1s, linear);
 			.transition(left, .2s, linear);
 		}
 		.newPost {
-			// .transition(height, .3s, linear);
 			.transition(line-height, .2s, linear);
+			.transition(width, .2s, linear);
 		}
 		.navbarDropdown {
 			.avatar-btn {
 				.avatarDd {
 					.transition(width, .2s, linear);
-					// .transition(height, .3s, linear);
 				}
 			}
 		}
-	}
+	} 
 }
 
 @navbar-small-height: 40px;
@@ -42,7 +33,7 @@ body.hasScrolled nav.bar {
 
 	height: @navbar-small-height;
 
-	.brand {
+	.brand  {
 		line-height: (@navbar-small-height - 1);
 		font-size: 20px;
 	}
@@ -60,6 +51,7 @@ body.hasScrolled nav.bar {
 			left: 5px;
 		}
 		.newPost {
+			width: @navbar-small-height;
 			height: @navbar-small-height+1;
 			line-height: @navbar-small-height+1+5;
 		}
@@ -123,7 +115,7 @@ nav.bar {
 		position: absolute;
 		right: 50%;
 		width: 500px;
-		margin-right: (-250px + 5);
+		margin-right: (-250px + 6);
 
 		text-align: center;
 		font-size: @brandFontSize;
@@ -219,10 +211,56 @@ nav.bar {
 				}
 			}
 
-			.sorting {
-				i { font-size: 20px; }
-				.icon-fire {
+			&.sortingMenu {
+				position: relative;
+
+				label {
+					width: 0;
+					overflow: hidden;
+					font-size: 13px;
 					color: #FF865D;
+					text-transform: uppercase;
+					.transition(width, .1s, linear);
+					margin-top: 4px;
+					vertical-align: middle;
+				}
+				&:hover > .plain-btn {
+					border-bottom: 2px solid #AAA;
+				}
+				&:hover label {
+					margin-right: 5px;
+					width: 75px;
+				}
+				i { font-size: 20px; }
+
+				.icon-fire { color: #FF865D; }
+				.icon-globe { color: #08C; }
+				.icon-user { color: #666; }
+
+				&:not(:hover) .dropdownList {
+					display: none;
+				}
+
+				.dropdownList {
+					position: absolute;
+					top: 100%;
+					width: 100%;
+
+					li {
+						list-style: none;
+						border: 1px solid #DDD;
+						border-top: none;
+						line-height: 37px;
+						text-align: center;
+						width: 100%;
+						background: #fff;
+						cursor: pointer;
+					}
+
+					li:hover {
+						background: #F6F6F6;
+						border-color: #CCC;
+					}
 				}
 			}
 

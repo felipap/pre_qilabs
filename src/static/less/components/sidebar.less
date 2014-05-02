@@ -22,6 +22,10 @@
 	.transition();
 }
 
+nav.bar {
+	background: white;
+}
+
 body.sidebarOpen {
 	// margin-left: @widthSidebar;
 	#sidebarPanel {
@@ -34,15 +38,15 @@ body.sidebarOpen {
 
 	nav.bar {
 		ul li .openSidebar {
-			color: white;
+			color: #444;
 			&:hover, &:active, &:focus {
-				color: #F8F8F8;
+				color: black;
 			}
 		}
 	}
 }
 
-body.smallNavbar #sidebarPanel {
+body.hasScrolled #sidebarPanel {
 	padding-top: @navbar-small-height;
 }
 

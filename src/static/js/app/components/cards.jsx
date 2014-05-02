@@ -45,6 +45,7 @@ define([
 
 		destroy: function () {
 			React.unmountComponentAtNode(document.getElementById('fullPageContainer'));
+			$("#fullPageContainer").removeClass('active');
 			app.navigate('/', {trigger:true});
 		},
 
@@ -180,6 +181,7 @@ define([
 					 	this.postItem = new postModels.postItem(response.data);
 					 	React.renderComponent(FullPostView({model:this.postItem}),
 					 		document.getElementById('fullPageContainer'));
+					 	$("#fullPageContainer").addClass('active');
 				 	});
 				},
 		},
