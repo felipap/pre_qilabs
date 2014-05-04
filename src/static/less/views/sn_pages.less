@@ -468,6 +468,10 @@ html {
 				-o-transform: rotate(0deg);
 				transform: rotate(0deg);
 			}
+			ul .tag {
+				background: @COLOR2;
+				border-color: rgba(0,0,0,.2);
+			}
 			border-bottom: 1px solid #EFEFEF;
 		}
 
@@ -515,6 +519,9 @@ html {
 				padding: 7px 10px;
 				display: inline;
 				font-size: 13px;
+				background: #666;
+				border-color: transparent;
+				.transition(all, .2s, linear);
 				i {
 					margin-left: 5px;
 					font-size: 15px;
