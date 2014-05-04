@@ -38,12 +38,14 @@ body.hasScrolled nav.bar {
 		font-size: 20px;
 	}
 
-	.navcontent>ul>li .plain-btn i {
+	.navcontent>ul>li .plain-btn i,
+	.navcontent>ul>li .icon-btn i {
 		font-size: 15px;
 	}
 
 	.navcontent > ul {
-		.plain-btn {
+		.plain-btn,
+		.icon-btn {
 			height: @navbar-small-height+1;
 		}
 		.openSidebar {
@@ -92,7 +94,7 @@ nav.bar {
 		.pull-left;
 	}
 
-	&.hasDetail {
+	&.detailOnScroll {
 		.brand {
 			.transition(margin-right, none);
 			body.hasScrolled & {
@@ -106,6 +108,19 @@ nav.bar {
 					top: 0;
 					opacity: 1;
 				}
+			}
+		}
+	}
+
+	&.detailVisible {
+		.brand {
+			.transition(margin-right, none);
+			margin-right: -180px;
+			.transition(margin-right, .1s, linear);
+
+			.pageLabelDetail {
+				top: 0;
+				opacity: 1;
 			}
 		}
 	}
@@ -146,12 +161,8 @@ nav.bar {
 
 			.iconThumbnail {
 				margin: -2px 1px 0;
-				padding-right: 1px;
-
-				text-shadow: 2px 2px 0 rgba(0, 0, 0, .2),
-					3px 3px 0 rgba(0, 0, 0, .2),
-					5px 5px 0 rgba(0, 0, 0, .2)
-				;
+				padding-right: 2px;
+				line-height: 26px;
 			}
 
 			.pageLabel {
@@ -170,15 +181,21 @@ nav.bar {
 
 		&:extend(.nav);
 		&:extend(.navbar-nav);
+		
+		margin: 0 20px;
 
-		margin: 0 !important;
+		&.noPadding {
+			margin: 0 !important;
+		}
 
 		& > li {
 			display: inline-block;
 			vertical-align: top;
 			list-style: none;
+			line-height: @navbar-height;
 			
-			.plain-btn {
+			.plain-btn,
+			.icon-btn {
  				.navbar-vertical-align(@input-height-base);
 
 				outline: none;
@@ -190,7 +207,6 @@ nav.bar {
 					box-shadow: none;
 					color: @compColor;
 				}
-				border-left: 1px solid #DDD;
 				padding: 8px 17px;
 				vertical-align: top;
 				box-shadow: none;
@@ -211,40 +227,41 @@ nav.bar {
 				}
 			}
 
+			.icon-btn {
+				border-left: 1px solid #DDD;
+			}
+
 			&.sortingMenu {
-				position: relative;
 
-				label {
-					width: 0;
-					overflow: hidden;
-					font-size: 13px;
-					color: #FF865D;
-					text-transform: uppercase;
-					.transition(width, .1s, linear);
-					margin-top: 4px;
-					vertical-align: middle;
+				i {
+					opacity: .8;
+					font-size: 20px;
+					.transition(opacity, .2s, linear);
 				}
-				&:hover > .plain-btn {
-					border-bottom: 2px solid #AAA;
-				}
-				&:hover label {
-					margin-right: 5px;
-					width: 75px;
-				}
-				i { font-size: 20px; }
 
-				.icon-fire { color: #FF865D; }
-				.icon-globe { color: #08C; }
+				.icon-fire { color: #FF461C; }
+				.icon-globe { color: darken(#08C, 10%); }
 				.icon-user { color: #666; }
 
-				&:not(:hover) .dropdownList {
-					display: none;
+				&:hover {
+					label {
+						margin-right: 5px;
+						width: 75px;
+					}
+
+					& > .plain-btn {
+						border-bottom: 2px solid #AAA;
+						i { opacity: 1; }
+					}
+					.dropdownList {
+						display: block;
+					}
 				}
 
 				.dropdownList {
-					position: absolute;
 					top: 100%;
 					width: 100%;
+					display: none;
 
 					li {
 						list-style: none;
@@ -255,11 +272,14 @@ nav.bar {
 						width: 100%;
 						background: #fff;
 						cursor: pointer;
+						i {
+							opacity: .7;
+						}
 					}
 
 					li:hover {
-						background: #F6F6F6;
 						border-color: #CCC;
+						i { opacity: 1; }
 					}
 				}
 			}
@@ -417,7 +437,6 @@ nav.bar {
 				}
 			}
 		}
-
 		.blue-high {
 			.high-xbtn(white, @COLOR1);
 		}

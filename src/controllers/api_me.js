@@ -100,21 +100,18 @@ module.exports = {
         }));
       },
       post: function(req, res) {
-        var _ref;
-        if (_ref = !req.body.type, __indexOf.call(_.values(Post.Types), _ref) >= 0) {
-          console.log('typo', req.body.type, 'invalido', _.values(Post.Types));
-          return res.endJSON({
-            error: true,
-            type: 'InvalidPostType'
-          });
-        }
+        var sanitizer;
+        sanitizer = require('sanitizer');
+        console.log(req.body.body);
+        console.log('final:', req.body.tags, sanitizer.sanitize(req.body.body));
         return req.user.createPost({
           groupId: null,
-          type: 'Question',
+          type: req.body.type,
           content: {
-            title: req.body.post_title,
-            body: req.body.post_body
-          }
+            title: req.body.title,
+            body: sanitizer.sanitize(req.body.body)
+          },
+          tags: req.body.tags
         }, req.handleErrResult(function(doc) {
           return doc.populate('author', function(err, doc) {
             return res.endJson({

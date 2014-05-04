@@ -1,6 +1,6 @@
 
 requirejs.config({
-	dir: 	'../build-js',
+	dir: 	'../buildjs',
 	baseUrl:'/static/js', // Override this inside grunt. Must be '.' for r.js.
 
 	paths: {
@@ -13,6 +13,7 @@ requirejs.config({
 		'views.profile':	'app/views/profile',
 		'views.lab':		'app/views/lab',
 		'views.panel':		'app/views/panel',
+		'views.createPost':	'app/views/createPost',
 		// 'app.guide':		'app/app/guide',
 		// 'app.mural':		'app/app/mural',
 		// Components
@@ -25,7 +26,11 @@ requirejs.config({
 		// Third-party
 		'jquery':			'vendor/jquery-2.0.3.min',
 		'bootstrap':		'vendor/bootstrap-3.0.0.min',
+		'medium-editor':	'vendor/medium-editor.min',
 		'underscore':		'vendor/underscore-1.5.1.min',
+		'bloodhound': 		'vendor/bloodhound.min',
+		'typeahead-bundle': 'vendor/typeahead.bundle.min',
+		'typeahead': 		'vendor/typeahead.jquery.min',
 		'backbone':			'vendor/backbone-1.0.0.min',
 		'react':			'vendor/react-0.9.0',
 		'react.backbone':	'vendor/react.backbone',
@@ -38,6 +43,9 @@ requirejs.config({
 		'bootstrap.tooltip': { deps: ['jquery'] },
 		'bootstrap.dropdown': { deps: ['jquery'] },
 		'bootstrap.popover': { deps: ['jquery', 'bootstrap.tooltip'] },
+		'medium-editor': { deps: ['jquery'] },
+		'typeahead': { deps: ['jquery'] },
+		'typeahead-bundle': { deps: ['jquery'] },
 		'underscore': { exports: '_' },
 		'bootstrap' : { deps: ['jquery'] },
 		'backbone'	: { exports: 'Backbone', deps: ['underscore', 'jquery']},

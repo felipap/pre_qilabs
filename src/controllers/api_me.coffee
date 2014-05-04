@@ -64,15 +64,20 @@ module.exports = {
 						)
 
 			post: (req, res) ->
-				if not req.body.type in _.values(Post.Types)
-					console.log 'typo', req.body.type, 'invalido', _.values(Post.Types)
-					return res.endJSON {error:true,type:'InvalidPostType'}
+				# if not req.body.type in _.values(Post.Types)
+				# 	console.log 'typo', req.body.type, 'invalido', _.values(Post.Types)
+				# 	return res.endJSON {error:true,type:'InvalidPostType'}
+				sanitizer = require 'sanitizer'
+				console.log req.body.body
+				console.log 'final:', req.body.tags, sanitizer.sanitize(req.body.body)
+
 				req.user.createPost {
 					groupId: null
-					type: 'Question' # req.body.type
+					type: req.body.type
 					content:
-						title: req.body.post_title
-						body: req.body.post_body
+						title: req.body.title
+						body: sanitizer.sanitize(req.body.body)
+					tags: req.body.tags
 				}, req.handleErrResult((doc) ->
 					doc.populate 'author', (err, doc) ->
 						res.endJson {error:false, data:doc}

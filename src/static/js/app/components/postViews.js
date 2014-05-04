@@ -379,18 +379,18 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 					),
 
 					React.DOM.div( {className:"cardBody"}, 
-						React.DOM.span( {dangerouslySetInnerHTML:{__html: post.data.title || post.data.escapedBody}} )
+						React.DOM.span( {dangerouslySetInnerHTML:{__html: post.data.title }} )
 					),
 
 					React.DOM.div( {className:"cardFoot"}, 
 						React.DOM.div( {className:"authorship"}, 
+							React.DOM.a( {href:post.author.profileUrl, className:"username"}, 
+								post.author.name
+							),
 							React.DOM.div( {className:"avatarWrapper"}, 
 								React.DOM.a( {href:post.author.profileUrl}, 
 									React.DOM.div( {className:"avatar", style:mediaUserStyle})
 								)
-							),
-							React.DOM.a( {href:post.author.profileUrl, className:"username"}, 
-								post.author.name
 							)
 						),
 

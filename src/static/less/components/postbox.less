@@ -77,12 +77,17 @@
 					margin: 0 0 20px;
 					line-height: 24px;
 				}
+				p:empty, p::empty {
+					margin: 0;
+					line-height: 0;
+				}
 				margin-bottom: 20px;
 
 				& > img, & > iframe {
 					width: @postWidth;
 					margin: 30px -50px;
 					border: none;
+					max-width: 99999px;
 
 					& + small {
 						display: block;
@@ -458,9 +463,9 @@
 
 		z-index: 1001;
 		float: left;
-		width: 340px;
-		background: #444;
 		text-align: left;
+		width: 340px;
+		background: #222;
 		color: white;
 
 		& > .box {
@@ -482,7 +487,7 @@
 
 		.tags {
 			background: #222;
-			// color: #444;
+			color: white;
 			// border-left: 1px solid #DDD;
 			// border-bottom: 1px dashed #666;
 		}
@@ -490,14 +495,10 @@
 		.authorInfo {
 			padding: 30px;
 			text-align: left;
-			background: #313133;
-			// border-bottom: 1px dashed #444;
-			// border-top: 1px dashed #444;
-	
+			background: #313033;
+			color: white;
+
 			.identification {
-
-				border: ;
-
 				.avatarWrapper {
 					height: 35px;
 					width: 35px;
@@ -532,8 +533,6 @@
 
 		.flagOption {
 			cursor: pointer;
-			color: #AAA;
-			&:hover { color: #BBB; }
 		}
 
 		i { margin: 0 5px; }

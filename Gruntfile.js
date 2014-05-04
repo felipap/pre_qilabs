@@ -97,7 +97,7 @@ module.exports = function(grunt) {
 						{name: 'app/views/cards'},
 						{name: 'app/views/lab'},
 						{name: 'app/views/profile'},
-						// {name: 'app/views/panel'},
+						{name: 'app/views/createPost'},
 						// {name: 'app/views/guide'},
 						// {name: 'app/views/mural'},
 					]
@@ -136,7 +136,6 @@ module.exports = function(grunt) {
 
 	// grunt.registerTask('production', 'lint requirejs:production');
 	// grunt.registerTask('development', 'lint requirejs:development');
-
 
 	// 4. Where we tell Grunt what to do when we type "grunt" into the terminal.
 	grunt.registerTask('serve', ['nodemon']);

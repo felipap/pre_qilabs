@@ -19,7 +19,7 @@
 @import "components/dialog.less";
 @import "components/icons.less";
 
-@COLOR1: #00b5ca;
+@COLOR1: #00b5da;
 @COLOR2: #2ecc71;
 @COLOR3: #FF6008; // #FF3C1F; // #FF8300;
 @COLOR4: #FE3F44;
@@ -109,27 +109,31 @@ body {
 	&.iconThumbnailSmall {
 		width: 28px;
 		height: 28px;
-		line-height: 26px;
+		line-height: 28px;
 		i {
 			font-size: 18px;
 		}
+	}
+	&.iconThumbnailSmall.iconShadowed {
+		text-shadow: 2px 2px 0 rgba(0, 0, 0, .2),
+			3px 3px 0 rgba(0, 0, 0, .2),
+			5px 5px 0 rgba(0, 0, 0, .2)
+		;
+		-moz-text-shadow: 2px 2px 0 rgba(0, 0, 0, .2),
+			3px 3px 0 rgba(0, 0, 0, .2),
+			5px 5px 0 rgba(0, 0, 0, .2)
+		;
 	}
 
 	i&.iconThumbnailSmall {
 		font-size: 18px;
 	}
 
-	&.icon-user {
-		background: #08C;
-	}
+	background: @COLOR1;
 
-	&.icon-tag {
-		background: @COLOR4;
-	}
-
-	&.icon-guia {
-		background: @COLOR3;
-	}
+	&.icon-user { background: #08C; }
+	&.icon-tag, &.icon-tags { background: @COLOR4; }
+	&.icon-guia { background: @COLOR3; }
 }
 
 

@@ -1,0 +1,72 @@
+<div id="sidebarPanel">
+	<div class="horBar"></div>
+	<section>
+		<label>Publicações</label>
+		<li>
+			<a href="#">
+				<i class="icon-home"></i>
+				<span>De quem você segue</span>
+			</a>
+		</li>
+		<li>
+			<a href="#">
+				<i class="icon-fire"></i>
+				<span>Populares</span>
+			</a>
+		</li>
+	</section>
+	
+	<hr>
+
+	<section>
+		<label>Páginas</label>
+		<li>
+			<a href="#">
+				<i class="icon-home"></i>
+				<span>Home</span>
+			</a>
+		</li>
+		<li class="active">
+			<a href="#">
+				<i class="icon-user"></i>
+				<span>Meu Perfil</span>
+			</a>
+		</li>
+		<li>
+			<a href="#">
+				<i class="icon-group"></i>
+				<span>Pessoas</span>
+			</a>
+		</li>
+		<li>
+			<a href="#">
+				<i class="icon-tags"></i>
+				<span>Assuntos</span>
+			</a>
+		</li>
+		<li>
+			<a href="#">
+				<i class="icon-archive"></i>
+				<span>Guias</span>
+			</a>
+		</li>
+	</section>
+	<hr />
+	<section>
+		<div class="onoffswitch">
+			<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked onChange="$('#cards').toggleClass('grid')">
+			<label class="onoffswitch-label" for="myonoffswitch">
+				<div class="onoffswitch-inner"></div>
+				<div class="onoffswitch-switch"></div>
+			</label>
+		</div>
+	</section>
+	<hr />
+	<section class="sidebarBottom">
+		<li><a href="#">Ajuda</a></li> ·
+		<li><a href="#">FAQ</a></li> ·
+		<li><a href="#" data-ajax-post-href="{{ getPageUrl('logout') }}" data-redirect-href="/">Logout</a></li>
+		<div>QI Labs · Copyright 2014</div>
+	</section>
+</div>
+

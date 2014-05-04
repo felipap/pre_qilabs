@@ -6,7 +6,7 @@
   _/    _/_/     _/_/       _/        _/    _/  _/    _/       _/
  _/_/_/_/_/_/   _/_/  _/   _/_/_/_/  _/    _/  _/_/_/-   _/_/_/
 
-QI Labs © 2014
+QI Labs ® 2014
 -->
 
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -28,7 +28,7 @@ QI Labs © 2014
 		<meta property="og:image" content="http://qilabs.herokuapp.com/static/img/logo.png" />
 		<meta property="og:site_name" content="QI Labs" />
 		<meta property="og:description" content="" />
-		<link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Lato|Londrina+Solid|Ubuntu:400,500|Open+Sans:400,500,600,700,800|Londrina+Sketch' />
+		<link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Lato|Londrina+Solid|Ubuntu:400,500|Open+Sans:400,500,600,700,800|Londrina+Sketch|Open+Sans:300,600,700,800' />
 		<link rel="stylesheet" href='/static/css/fonts.css' />
 		<!-- {{_.pluck(user_profile.following.docs, '_id')}} -->
 		{% if user %}
@@ -49,15 +49,15 @@ QI Labs © 2014
 	{% block bodyEnd %}
 	{% endblock %}
 
-	{% if !requireView %}
-		{% set requireView='common' %}
+	{% if !requirejsView %}
+		{% set requirejsView='common' %}
 	{% endif %}
+	{% set jsViewFile=getMediaUrl('buildjs/app/views/'+requirejsView) %}
 	{% if true || app.env === 'development' %}
-		{% set jsViewFile=getMediaUrl('build/app/views/'+requireView) %}
 		<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
 		<script>
 			require(["{{ getMediaUrl('js/config.js') }}"], function () {
-				require(['views.{{requireView}}'], function (App) {});
+				require(['views.{{requirejsView}}'], function (App) {});
 			});
 		</script>
 	{% else %}

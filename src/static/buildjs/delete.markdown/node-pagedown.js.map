@@ -1,0 +1,1 @@
+{"version":3,"file":"node-pagedown.js","sources":["node-pagedown.js.src.js"],"names":["exports","Converter","require","getSanitizingConverter"],"mappings":"AAAAA,QAAQC,UAAYC,QAAQ,wBAAwBD,UACpDD,QAAQG,uBAAyBD,QAAQ,wBAAwBC"}

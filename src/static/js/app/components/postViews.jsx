@@ -379,19 +379,19 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 					</div>
 
 					<div className="cardBody">
-						<span dangerouslySetInnerHTML={{__html: post.data.title || post.data.escapedBody}} />
+						<span dangerouslySetInnerHTML={{__html: post.data.title }} />
 					</div>
 
 					<div className="cardFoot">
 						<div className="authorship">
+							<a href={post.author.profileUrl} className="username">
+								{post.author.name}
+							</a>
 							<div className="avatarWrapper">
 								<a href={post.author.profileUrl}>
 									<div className="avatar" style={mediaUserStyle}></div>
 								</a>
 							</div>
-							<a href={post.author.profileUrl} className="username">
-								{post.author.name}
-							</a>
 						</div>
 
 						<time data-time-count={1*new Date(post.published)} data-time-long="true">

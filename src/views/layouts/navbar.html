@@ -1,8 +1,13 @@
 {% if dataPage === "guide" || dataPage === "profile" || dataPage === "tag" %}
-<nav class="bar hasDetail" role="navigation" id="navbar">
+<nav class="bar detailOnScroll" role="navigation" id="navbar">
+{% else %}
+{% if dataPage === "createPost" %}
+<nav class="bar detailVisible" role="navigation" id="navbar">
 {% else %}
 <nav class="bar" role="navigation" id="navbar">
 {% endif %}
+{% endif %}
+
 <div class="navcontent">
 		<span class="brand">
 			<a href="/" tabindex="-1">QI <i class="icon-bulb"></i> Labs</a>
@@ -14,21 +19,27 @@
 				">
 				<span class="pageLabelDetail">
 					{% if dataPage === "guide" %}
-						<i class="iconThumbnail iconThumbnailSmall icon-guia"></i>
+						<i class="iconThumbnail iconThumbnailSmall iconShadowed icon-guia"></i>
 						<span class="pageLabel">
 							Guia: Vestibular
 						</span>
 					{% endif %}
 					{% if dataPage === "profile" %}
-						<i class="iconThumbnail iconThumbnailSmall icon-user"></i>
+						<i class="iconThumbnail iconThumbnailSmall iconShadowed icon-user"></i>
 						<span class="pageLabel">
 							{{ profile.name }}
 						</span>
 					{% endif %}
 					{% if dataPage === "tag" %}
-						<i class="iconThumbnail iconThumbnailSmall icon-tag"></i>
+						<i class="iconThumbnail iconThumbnailSmall iconShadowed icon-tag"></i>
 						<span class="pageLabel">
 							Vestibular
+						</span>
+					{% endif %}
+					{% if dataPage === "createPost" %}
+						<i class="iconThumbnail iconThumbnailSmall iconShadowed icon-bullhorn"></i>
+						<span class="pageLabel">
+							Nova Publicação
 						</span>
 					{% endif %}
 				</span>
@@ -42,9 +53,30 @@
 				</button>
 			</li>
 		</ul>
-		<ul class="pull-right">
-			<li class="sortingMenu">
-				<button class="plain-btn">
+
+		{% if dataPage === "createPost" %}
+			<ul class="pull-right">
+				<li>
+					<button class="plain-btn" data-action="discart-post">Cancelar</button>
+				</li>
+				<li>
+					<button data-action="send-post">Publicar</button>
+				</li>
+			</ul>
+		{% endif %}
+
+		{% if dataPage === "timeline"  || dataPage === "profile" || dataPage == "tag" %}
+		<ul class="pull-right noPadding">
+			<li>
+				<button class="icon-btn">
+					<i class="icon-search"></i>
+				</button>
+			</li><li id="bellPlacement">
+				<button class="icon-btn bell-btn" data-action="show-notifications">
+					<i class="icon-bell-o"></i><sup id="count" class="badge"></sup>
+				</button>
+			</li><li class="sortingMenu">
+				<button class="icon-btn">
 					<i class="icon-fire"></i>
 					<b class="caret"></b>
 				</button>
@@ -58,17 +90,9 @@
 						<i class="icon-user"></i>
 					</li>
 				</ul>
-			</li><li>
-				<button class="plain-btn">
-					<i class="icon-search"></i>
-				</button>
-			</li><li id="bellPlacement">
-				<button class="plain-btn bell-btn" data-action="show-notifications">
-					<i class="icon-bell-o"></i><sup id="count" class="badge"></sup>
-				</button>
 			</li><!--
 			<li>
-				<button class="plain-btn">
+				<button class="icon-btn">
 					<i class="icon-agenda"></i>
 				</button>
 			</li>
@@ -106,6 +130,8 @@
 				</a>
 			</li>
 		</ul>
+		{% endif %}
+
 	{% else %}
 		<ul class="nav navbar-nav pull-right">
 			<a data-action="show-signin" href="#signin" class="blue-high" data-toggle="dialog">

@@ -109,10 +109,8 @@ module.exports = {
 
 	'/p/create':
 		name: 'createPost'
-		methods: {
-			get: (req, res) ->
-				res.render 'pages/post_create'
-		}
+		get: (req, res) ->
+			res.render 'pages/create_post'			
 
 	'/posts/:postId':
 		name: 'profile'

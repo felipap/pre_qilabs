@@ -134,10 +134,8 @@ module.exports = {
   },
   '/p/create': {
     name: 'createPost',
-    methods: {
-      get: function(req, res) {
-        return res.render('pages/post_create');
-      }
+    get: function(req, res) {
+      return res.render('pages/create_post');
     }
   },
   '/posts/:postId': {

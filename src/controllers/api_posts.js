@@ -19,10 +19,8 @@ module.exports = {
       get: [
         function(req, res) {
           var postId;
-          if (req.app.get('env') === 'production') {
-            postId = '5331c56f1cc29902009d161b';
-          } else {
-            postId = '5330c0256d791fcd24000003';
+          if (!(postId = req.paramToObjectId('id'))) {
+            return;
           }
           return Post.findOne({
             _id: postId

@@ -62,7 +62,7 @@ window.calcTimeFrom = function (arg, long, short) {
 	}
 };
 
-	define([
+define([
 	'jquery',
 	'underscore',
 	'plugins',
@@ -116,31 +116,6 @@ window.calcTimeFrom = function (arg, long, short) {
 	$("body").tooltip({selector:'[data-toggle=tooltip]'});
 	$("[data-toggle=dialog]").xdialog();
 	// $("[data-toggle=popover]").popover();
-
-	$("#globalContainer").scroll(function () {
-		if ($("#globalContainer").scrollTop() > 0) {
-			$("body").addClass('hasScrolled');
-		} else {
-			$("body").removeClass('hasScrolled');
-		}
-	});
-
-	if (!!$("#globalHead").length) {
-		// $(document).scroll(triggerCalcNavbarFixed);
-		$("#globalContainer").scroll(triggerCalcNavbarFixed);
-		function triggerCalcNavbarFixed () {
-			// if (($(document).scrollTop()+$('nav.bar').outerHeight()
-			// 	-($("#globalHead").offset().top+$('#globalHead').outerHeight())) >= 0) {
-			if ($("#globalContainer").scrollTop()-$("#globalHead").outerHeight() >= 0) {
-				$("body").addClass('headerPassed');
-			} else {
-				$("body").removeClass('headerPassed');
-			}
-		}
-		triggerCalcNavbarFixed();
-	} else {
-		$("body").addClass('noHeader');
-	}
 
 	(function setCSRFToken () {
 		$.ajaxPrefilter(function(options, _, xhr) {

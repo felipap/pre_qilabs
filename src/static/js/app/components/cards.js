@@ -11,7 +11,9 @@ define([
 	'jquery', 'backbone', 'components.postForms', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
 	function ($, Backbone, postForms, postModels, postViews, _, React, Showdown) {
 
-	$(window).resize(resizeCardsPanel);
+	$(window).resize(function resizeCardsPanel() {
+		document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top + 10)+"px";
+	});
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
@@ -73,14 +75,13 @@ define([
 			// console.log(this.props.model.get('type'))
 			return (
 				React.DOM.div( {className:"postBox "+(this.state.full?'full':''), 'data-post':this.props.model.get('type')}, 
-					React.DOM.div( {className:"sidebarToggle", onClick:toggleSidebar}, 
-						React.DOM.i( {className:"icon-plus"})
-					),
 					React.DOM.div( {className:"postCol"}, 
 						postView( {model:this.props.model} )
 					),
-
 					React.DOM.div( {className:"postSidebar", ref:"sidebar"}, 
+						React.DOM.div( {className:"sidebarToggle", onClick:toggleSidebar}, 
+							React.DOM.i( {className:"icon-plus"})
+						),
 						React.DOM.div( {className:"box authorInfo"}, 
 							/* <div className="cardType"><strong>DICA</strong> por</div> */
 							React.DOM.div( {className:"identification"}, 
@@ -187,7 +188,7 @@ define([
 		},
 
 		renderList: function (url, opts) {
-			return;
+			// return;
 			this.postList = new postModels.postList([], {url:url});
 			React.renderComponent(CardsPanelView(
 				_.extend(opts,{collection:this.postList})),
@@ -206,6 +207,30 @@ define([
 		},
 	});
 
+	$("#globalContainer").scroll(function () {
+		if ($("#globalContainer").scrollTop() > 0) {
+			$("body").addClass('hasScrolled');
+		} else {
+			$("body").removeClass('hasScrolled');
+		}
+	});
+
+	if (!!$("#globalHead").length) {
+		// $(document).scroll(triggerCalcNavbarFixed);
+		$("#globalContainer").scroll(triggerCalcNavbarFixed);
+		function triggerCalcNavbarFixed () {
+			// if (($(document).scrollTop()+$('nav.bar').outerHeight()
+			// 	-($("#globalHead").offset().top+$('#globalHead').outerHeight())) >= 0) {
+			if ($("#globalContainer").scrollTop()-$("#globalHead").outerHeight() >= 0) {
+				$("body").addClass('headerPassed');
+			} else {
+				$("body").removeClass('headerPassed');
+			}
+		}
+		triggerCalcNavbarFixed();
+	} else {
+		$("body").addClass('noHeader');
+	}
 
 	return {
 		initialize: function () {
