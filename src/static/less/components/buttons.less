@@ -200,10 +200,10 @@ button, .button {
 
 	.color-btn-focus(@color, @bg, transparent);
 	.inner-shadow(0, -@shadowSize, rgba(0,0,0,.2));
-	.text-shadow(2px, 2px, 0, rgba(0,0,0,.1));
 	.color-btn(@color, @bg, transparent);
 
 	&:hover {
+	.text-shadow(2px, 2px, 0, rgba(0,0,0,.1));
 		.color-btn(@color, lighten(@bg, 2%), transparent);
 		.inner-shadow(0, -@shadowSize, rgba(0,0,0,.4));
 	}

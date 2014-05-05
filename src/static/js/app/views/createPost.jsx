@@ -1,6 +1,11 @@
 /** @jsx React.DOM */
 
 require(['common', 'react', 'medium-editor', 'typeahead-bundle'], function (common, React) {
+
+	$(window).resize(function resizeCardsPanel() {
+		document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top + 10)+"px";
+	});
+
 	var editor = new MediumEditor('#postBody');
 	$('#postBody').mediumInsert({
 		editor: editor,
@@ -110,7 +115,7 @@ require(['common', 'react', 'medium-editor', 'typeahead-bundle'], function (comm
 						tags.length?
 						tags
 						:(
-							<div className="placeholder">Escolha os tópicos relacionados a essa publicação</div>
+							<div className="placeholder">Tópicos relacionados</div>
 						)
 					}</ul>
 					<input ref="input" type="text" id="tagInput" />
@@ -146,6 +151,7 @@ require(['common', 'react', 'medium-editor', 'typeahead-bundle'], function (comm
 		var data = {
 			body: editor.serialize().postBody.value,
 			title: $("[name=post_title]").val(),
+			type: 'Question',
 			tags: tagSelectionBox.getSelectedTagsIds(),
 		};
 		console.log(data)

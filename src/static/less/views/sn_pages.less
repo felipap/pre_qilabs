@@ -397,7 +397,8 @@ html {
 [data-page=createPost] {
 	
 	[data-action=send-post] {
-		.high-xbtn(white, @COLOR1);
+		.high-xbtn(white, @COLOR1, 4px);
+		.high-xbtn-padding(10px, 18px, 4px, 4px);
 		text-transform: uppercase;
 		font-weight: 800;
 	}
@@ -412,6 +413,7 @@ html {
 	#globalContainer {
 		background: #FAFAFA;
 		padding: 40px;
+		overflow: scroll;
 
 		#content {
 			width: 700px;
@@ -451,130 +453,6 @@ html {
 		}
 	}
 
-	#tagSelectionBox {
-		position: relative;
-
-		min-height: 40px;
-		margin: 20px 0;
-		font-family: museo-sans;
-		cursor: text;
-
-		&.focused {
-			.iconThumbnail {
-				background: @COLOR4;
-				-webkit-transform: rotate(0deg);
-				-moz-transform: rotate(0deg);
-				-ms-transform: rotate(0deg);
-				-o-transform: rotate(0deg);
-				transform: rotate(0deg);
-			}
-			ul .tag {
-				background: @COLOR2;
-				border-color: rgba(0,0,0,.2);
-			}
-			border-bottom: 1px solid #EFEFEF;
-		}
-
-		.iconThumbnail {
-			position: absolute;
-			left: -40px;
-			// top: -5px;
-			line-height: 30px;
-			background: #BBB;
-			-webkit-transition: -webkit-transform 200ms ease-in,color 100ms ease-in;
-			-moz-transition: -moz-transform 200ms ease-in,color 100ms ease-in;
-			-o-transition: -o-transform 200ms ease-in,color 100ms ease-in;
-			transition: transform 200ms ease-in,color 100ms ease-in;
-			-webkit-transform-origin: center;
-			-moz-transform-origin: center;
-			-ms-transform-origin: center;
-			-o-transform-origin: center;
-			transform-origin: center;
-			.transition(all, .2s, linear);
-
-			-webkit-transform: rotate(45deg);
-			-moz-transform: rotate(45deg);
-			-ms-transform: rotate(45deg);
-			-o-transform: rotate(45deg);
-			transform: rotate(45deg);
-		}
-		.placeholder {
-			position: absolute;
-			border: none;
-			color: #AAA;
-			outline: none;
-			margin-top: -17px;
-			background: none;
-			font-size: 19px;
-		}
-		&.focused .placeholder {
-			display: none;
-		}
-		
-		
-		ul {
-			display: inline-block;
-			.tag {
-				list-style: none;
-				padding: 7px 10px;
-				display: inline;
-				font-size: 13px;
-				background: #666;
-				border-color: transparent;
-				.transition(all, .2s, linear);
-				i {
-					margin-left: 5px;
-					font-size: 15px;
-					font-weight: normal;
-				}
-			}
-		}
-
-		#tagInput {
-			border: none;
-			outline: none;
-			background: none;
-			font-size: 19px;
-		}
-
-		.twitter-typeahead {
-			vertical-align: middle;
-			.tt-dropdown-menu {
-				position: absolute;
-				top: 100%;
-				left: 0px;
-				z-index: 100;
-				background-color: white;
-				display: none;
-				right: auto;
-				// margin-top: -10px;
-				width: 300px;
-				border-bottom-left-radius: 5px;
-				border-bottom-right-radius: 5px;
-				border: 1px solid rgb(221, 221, 221);
-				border-top: none;
-				font-size: 16px;
-				font-weight: normal;
-	
-				.tt-suggestion,
-				.tt-suggestion {
-					cursor: pointer;
-					padding: 8px;
-					margin: 0;
-					&:hover {
-						background: @COLOR3;
-						color: white;
-					}
-				}
-			}
-		}
-
-		// .twitter-typeahead,
-		// .twitter-typeahead input {
-		// 	width: 100%;
-		// }
-	}
-
 	.postIcon {
 		position: absolute;
 		right: -60px;
@@ -608,33 +486,155 @@ html {
 
 		.title {
 			font: 800 45px "Open Sans";
+			margin-left: -4px;
 			letter-spacing: -3px;
 			height: 66px;
 			resize: none;
 			overflow: hidden;
 		}
 
-		.subtitle {
-			font: lighter 26px museo-sans;
-			height: 40px;
-			resize: none;
-			margin-bottom: 20px;
-			overflow: hidden;
+		// .subtitle {
+		// 	font: lighter 26px museo-sans;
+		// 	height: 40px;
+		// 	resize: none;
+		// 	margin-bottom: 20px;
+		// 	overflow: hidden;
+		// }
+
+		#tagSelectionBox {
+			position: relative;
+
+			min-height: 40px;
+			margin: 20px 0;
+			font-family: museo-sans;
+			cursor: text;
+
+			&.focused {
+				.iconThumbnail {
+					background: @COLOR4;
+					-webkit-transform: rotate(0deg);
+					-moz-transform: rotate(0deg);
+					-ms-transform: rotate(0deg);
+					-o-transform: rotate(0deg);
+					transform: rotate(0deg);
+				}
+				ul .tag {
+					background: @COLOR2;
+					border-color: rgba(0,0,0,.2);
+				}
+				border-bottom: 1px solid #EFEFEF;
+			}
+
+			.iconThumbnail {
+				position: absolute;
+				left: -40px;
+				// top: -5px;
+				line-height: 30px;
+				background: #BBB;
+				-webkit-transition: -webkit-transform 200ms ease-in,color 100ms ease-in;
+				-moz-transition: -moz-transform 200ms ease-in,color 100ms ease-in;
+				-o-transition: -o-transform 200ms ease-in,color 100ms ease-in;
+				transition: transform 200ms ease-in,color 100ms ease-in;
+				-webkit-transform-origin: center;
+				-moz-transform-origin: center;
+				-ms-transform-origin: center;
+				-o-transform-origin: center;
+				transform-origin: center;
+				.transition(all, .2s, linear);
+
+				-webkit-transform: rotate(45deg);
+				-moz-transform: rotate(45deg);
+				-ms-transform: rotate(45deg);
+				-o-transform: rotate(45deg);
+				transform: rotate(45deg);
+			}
+			.placeholder {
+				position: absolute;
+				border: none;
+				color: #AAA;
+				outline: none;
+				margin-top: -17px;
+				background: none;
+				font-size: 19px;
+			}
+			&.focused .placeholder {
+				display: none;
+			}
+			
+			ul {
+				display: inline-block;
+				.tag {
+					list-style: none;
+					padding: 7px 10px;
+					display: inline;
+					font-size: 13px;
+					background: #666;
+					border-color: transparent;
+					.transition(all, .2s, linear);
+					i {
+						margin-left: 5px;
+						font-size: 15px;
+						font-weight: normal;
+					}
+				}
+			}
+
+			#tagInput {
+				border: none;
+				outline: none;
+				background: none;
+				font-size: 19px;
+			}
+
+			.twitter-typeahead {
+				vertical-align: middle;
+				.tt-dropdown-menu {
+					position: absolute;
+					top: 100%;
+					left: 0px;
+					z-index: 100;
+					background-color: white;
+					display: none;
+					right: auto;
+					// margin-top: -10px;
+					width: 300px;
+					border-bottom-left-radius: 5px;
+					border-bottom-right-radius: 5px;
+					border: 1px solid rgb(221, 221, 221);
+					border-top: none;
+					font-size: 16px;
+					font-weight: normal;
+		
+					.tt-suggestion,
+					.tt-suggestion {
+						cursor: pointer;
+						padding: 8px;
+						margin: 0;
+						&:hover {
+							background: @COLOR3;
+							color: white;
+						}
+					}
+				}
+			}
+
+			// .twitter-typeahead,
+			// .twitter-typeahead input {
+			// 	width: 100%;
+			// }
 		}
 
 		.bodyWrapper {
-			// border: 1px solid #EAEAEA;
-			// border-bottom: 1px solid #DDD;
-			// padding: 10px;
+			color: black;
+			font-size: 16px;
+			color: #333;
+			min-height: 300px;
 			resize: vertical;
+
 			.editable {
 				font-family: museo-sans;
 				font-size: 17px;
 			}
-
-			color: black;
-			font-size: 16px;
-			color: #333;
 
 			p {
 				margin: 0 0 20px;

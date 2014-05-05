@@ -1,10 +1,11 @@
 
 @medium_editor_bgcolor:       #242424;
-@medium_editor_button_size:   50px;
-@medium_editor_border_radius: 5px;
+@medium_editor_button_size:   40px;
+@medium_editor_border_radius: 4px;
+@medium_editor_outside_padding: 2px;
 
 .medium-toolbar-arrow-under:after {
-    top: @medium_editor_button_size;
+    top: @medium_editor_button_size+@medium_editor_outside_padding;
     border-color: @medium_editor_bgcolor transparent transparent transparent;
 }
 
@@ -24,31 +25,34 @@
 .medium-editor-toolbar {
     border: 1px solid #000;
     background-color: @medium_editor_bgcolor;
-    .linear-gradient(bottom, @medium_editor_bgcolor, fadeout(@medium_editor_bgcolor, 25%));
+    // .linear-gradient(bottom, @medium_editor_bgcolor, fadeout(@medium_editor_bgcolor, 25%));
     border-radius: @medium_editor_border_radius;
     box-shadow: 0 0 3px #000;
     transition: top .075s ease-out, left .075s ease-out;
+    padding: @medium_editor_outside_padding;
 
     li {
         button {
             min-width: @medium_editor_button_size;
             height: @medium_editor_button_size;
             border: 0;
-            border-right: 1px solid #000;
-            border-left: 1px solid #333;
-            border-left: 1px solid fadeout(#fff, 90%);
+            // border-right: 1px solid #000;
+            // border-left: 1px solid #333;
+            // border-left: 1px solid fadeout(#fff, 90%);
             background-color: @medium_editor_bgcolor;
+            // .linear-gradient(bottom, @medium_editor_bgcolor, fadeout(@medium_editor_bgcolor, 11%));
             color: #fff;
-            .linear-gradient(bottom, @medium_editor_bgcolor, fadeout(@medium_editor_bgcolor, 11%));
-            box-shadow: 0 2px 2px rgba(0,0,0,0.3);
+            // box-shadow: 0 2px 2px rgba(0,0,0,0.3);
             transition: background-color .2s ease-in;
             &:hover {
-                background-color: #000;
+                background-color: lighten(@medium_editor_bgcolor, 5%);
                 color: yellow;
             }
+            .rounded(0);
         }
 
         .medium-editor-button-first {
+            border-left: none;
             border-top-left-radius: @medium_editor_border_radius;
             border-bottom-left-radius: @medium_editor_border_radius;
         }
@@ -59,9 +63,9 @@
         }
 
         .medium-editor-button-active {
-            background-color: #000;
-            color: #fff;
-            .linear-gradient(bottom, @medium_editor_bgcolor, fadeout(#000, 11%));
+            background-color: darken(@medium_editor_bgcolor, 5%) !important;
+            color: white;
+            // .linear-gradient(bottom, @medium_editor_bgcolor, fadeout(#000, 11%));
         }
     }
 }
