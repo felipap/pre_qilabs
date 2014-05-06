@@ -105,7 +105,15 @@ define([
 					dataType: 'json',
 				}).done(function (response) {
 					var notSeen = _.filter(response.data, function(i){return !i.seen;});
-					self.refs.nCount.getDOMNode().innerHTML = 5; // notSeen.length || '';
+					var count = notSeen.length || 0;
+					// var count = 5;
+					if (count) {
+						$(self.getDOMNode()).addClass('nonempty');
+						self.refs.nCount.getDOMNode().innerHTML = count;
+					} else {
+						$(self.getDOMNode()).removeClass('nonempty');						
+						self.refs.nCount.getDOMNode().innerHTML = '';
+					}
 					if (notSeen.length) {
 						this.seen = false;
 					}

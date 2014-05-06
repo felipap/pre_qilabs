@@ -287,24 +287,34 @@ nav.bar {
 			.bell-btn {
 				position: relative;
 				.count {
-					background: @COLOR2;
-					color: white;
-					font-size: 11px;
-					padding: 3px 5px;
-					position: absolute;
-					top: 8px;
-					right: 5px;
-					line-height: 10px;
-					.box-shadow(0,0,2px,1);
-					.rounded(7px);
-					// font-size: 13px;
-					// color: #555;
-					// top: -7px;
-					// width: 0;
-					// display: inline-block;
-				}
-				.count:empty {
+					// background: @COLOR2;
+					// color: white;
+					// font-size: 11px;
+					// padding: 3px 5px;
+					// position: absolute;
+					// top: 8px;
+					// right: 5px;
+					// line-height: 10px;
+					// .box-shadow(0,0,2px,1);
+					// .rounded(7px);
+					font-size: 13px;
+					color: #555;
+					top: -7px;
+					width: 0;
 					display: none;
+				}
+				i {
+					font-weight: bold;
+				}
+
+				&.nonempty {
+					.count {
+						display: inline-block;
+						color: #2ebc71;
+					}
+					i {
+						color: #2ebc71;
+					}
 				}
 			}
 
