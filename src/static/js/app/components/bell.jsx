@@ -105,7 +105,7 @@ define([
 					dataType: 'json',
 				}).done(function (response) {
 					var notSeen = _.filter(response.data, function(i){return !i.seen;});
-					self.refs.nCount.getDOMNode().innerHTML = notSeen.length || '';
+					self.refs.nCount.getDOMNode().innerHTML = 5; // notSeen.length || '';
 					if (notSeen.length) {
 						this.seen = false;
 					}
@@ -143,7 +143,7 @@ define([
 						data-action="show-notifications"
 						onClick={this.onClickBell}>
 						<i className="icon-bell-o"></i>
-						<sup id="count" ref="nCount" className="badge"></sup>
+						<sup ref="nCount" className="count"></sup>
 					</button>
 				);
 			},
