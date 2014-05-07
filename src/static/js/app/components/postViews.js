@@ -554,7 +554,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 								post.data.title
 							),
 							React.DOM.div( {className:"tags"}, 
-								React.DOM.i( {className:"icon-tags"})," ",
 								React.DOM.div( {className:"tag"}, "Application"),
 								React.DOM.div( {className:"tag"}, "Olimpíada de Matemática")
 							)

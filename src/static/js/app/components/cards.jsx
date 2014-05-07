@@ -109,8 +109,18 @@ define([
 								<div className="tag">MIT</div>
 							</div>
 						</div>
+						
+						<div className="box editedByBox">
+							<div className="avatarWrapper">
+								<div className="avatar" style={ { background: 'url('+'/static/images/avatar2.png'+')'} }></div>
+							</div>
+							<div className="info">
+								Editado por <span className="name">Felipe Aragão Pires</span> <time>há 5 horas</time> 
+							</div>
+						</div>
+						
 
-						<div className="box likeBox">
+						<div className="likeBox">
 							<div className="up">
 								<i className="icon-tup"></i>
 							</div>
@@ -118,19 +128,14 @@ define([
 								<i className="icon-tdown"></i>
 							</div>
 						</div>
-						
-						
-						<div className="box flatBtnBox">
-							<div className="fb">
-								<i className="icon-facebook"></i>
+						<div className="flatBtnBox">
+							<div className="item edit" data-toggle="tooltip" title="Editar publicação" data-placement="bottom" data-container="body">
+								<i className="icon-edit"></i>
 							</div>
-							<div className="tweet">
-								<i className="icon-twitter"></i>
-							</div>
-							<div className="link">
+							<div className="item link" data-toggle="tooltip" title="Compartilhar" data-placement="bottom" data-container="body">
 								<i className="icon-link"></i>
 							</div>
-							<div className="flag">
+							<div className="item flag" data-toggle="tooltip" title="Sinalizar conteúdo impróprio" data-placement="bottom" data-container="body">
 								<i className="icon-flag"></i>
 							</div>
 						</div>
@@ -138,6 +143,12 @@ define([
 					<div onClick={this.destroy} className="blackout"></div>
 				</div>
 			);
+							// <div className="item fb">
+							// 	<i className="icon-facebook"></i>
+							// </div>
+							// <div className="item tweet">
+							// 	<i className="icon-twitter"></i>
+							// </div>
 			// <div className="box flagOption">
 			// 	<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
 			// 		<i className="icon-flag"></i>

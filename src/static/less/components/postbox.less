@@ -514,7 +514,7 @@
 				vertical-align: middle;
 			}
 
-			& > div {
+			& > .item {
 				display: table-cell;
 				text-align: center;
 				height: 50px;
@@ -525,22 +525,43 @@
 					.inner-shadow(0, 2px, 4px, .3);
 				}
 			}
-			.link { background: #555; }
-			.tweet { background: @COLOR-twitter; }
-			.flag { background: #777; }
-			.like { background: @COLOR4; }
-			.fb { background: @COLOR-facebook; }
-
-			.down {
-				background: desaturate(@COLOR4, 5%);
+			.flatBtn (@color) {
+				background: @color;
 				&:hover {
-					background: darken(desaturate(@COLOR4, 5%), 5%);
+					background: darken(@color, 5%);
 				}
 			}
-			.up {
-				background: @COLOR2;
-				&:hover {
-					background: darken(@COLOR2, 5%);
+
+			.link 	{ .flatBtn(#555); }
+			.tweet 	{ .flatBtn(@COLOR-twitter); }
+			.flag 	{ .flatBtn(#777); }
+			.edit 	{ .flatBtn(#444); }
+			.like 	{ .flatBtn(@COLOR4); }
+			.fb 	{ .flatBtn(@COLOR-facebook); }
+			.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
+			.up 	{ .flatBtn(@COLOR2); }
+		}
+		.box + .box {
+			padding-top: 0;
+		}
+
+		.editedByBox {
+			// padding: 10px;
+			.avatarWrapper {
+				width: 40px;
+				height: 40px;
+				.rounded(20px);
+				display: table-cell;
+			}
+			.info {
+				padding-left: 10px;
+				display: table-cell;
+				vertical-align: middle;
+				.name {
+					font-weight: bold;
+				}
+				time {
+					white-space: nowrap;
 				}
 			}
 		}

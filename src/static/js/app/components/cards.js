@@ -109,8 +109,18 @@ define([
 								React.DOM.div( {className:"tag"}, "MIT")
 							)
 						),
+						
+						React.DOM.div( {className:"box editedByBox"}, 
+							React.DOM.div( {className:"avatarWrapper"}, 
+								React.DOM.div( {className:"avatar", style: { background: 'url('+'/static/images/avatar2.png'+')'} })
+							),
+							React.DOM.div( {className:"info"}, 
+								"Editado por ", React.DOM.span( {className:"name"}, "Felipe Aragão Pires"), " ", React.DOM.time(null, "há 5 horas") 
+							)
+						),
+						
 
-						React.DOM.div( {className:"box likeBox"}, 
+						React.DOM.div( {className:"likeBox"}, 
 							React.DOM.div( {className:"up"}, 
 								React.DOM.i( {className:"icon-tup"})
 							),
@@ -118,19 +128,14 @@ define([
 								React.DOM.i( {className:"icon-tdown"})
 							)
 						),
-						
-						
-						React.DOM.div( {className:"box flatBtnBox"}, 
-							React.DOM.div( {className:"fb"}, 
-								React.DOM.i( {className:"icon-facebook"})
+						React.DOM.div( {className:"flatBtnBox"}, 
+							React.DOM.div( {className:"item edit", 'data-toggle':"tooltip", title:"Editar publicação", 'data-placement':"bottom", 'data-container':"body"}, 
+								React.DOM.i( {className:"icon-edit"})
 							),
-							React.DOM.div( {className:"tweet"}, 
-								React.DOM.i( {className:"icon-twitter"})
-							),
-							React.DOM.div( {className:"link"}, 
+							React.DOM.div( {className:"item link", 'data-toggle':"tooltip", title:"Compartilhar", 'data-placement':"bottom", 'data-container':"body"}, 
 								React.DOM.i( {className:"icon-link"})
 							),
-							React.DOM.div( {className:"flag"}, 
+							React.DOM.div( {className:"item flag", 'data-toggle':"tooltip", title:"Sinalizar conteúdo impróprio", 'data-placement':"bottom", 'data-container':"body"}, 
 								React.DOM.i( {className:"icon-flag"})
 							)
 						)
@@ -138,6 +143,12 @@ define([
 					React.DOM.div( {onClick:this.destroy, className:"blackout"})
 				)
 			);
+							// <div className="item fb">
+							// 	<i className="icon-facebook"></i>
+							// </div>
+							// <div className="item tweet">
+							// 	<i className="icon-twitter"></i>
+							// </div>
 			// <div className="box flagOption">
 			// 	<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
 			// 		<i className="icon-flag"></i>

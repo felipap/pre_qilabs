@@ -554,7 +554,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 								{post.data.title}
 							</div>
 							<div className="tags">
-								<i className="icon-tags"></i>&nbsp;
 								<div className="tag">Application</div>
 								<div className="tag">Olimpíada de Matemática</div>
 							</div>
