@@ -45,78 +45,90 @@
 		float: left;
 		background: white;
 
-		.postContent {
+		.postHeader {
 			overflow: hidden;
-			padding: 30px 50px;
+			padding: 40px 40px 0px;
+			color: #444;
+			margin-bottom: 20px;
+			border-bottom: 1px solid #EEE;
+
+			.type {
+				float: left;
+				text-transform: uppercase;
+			}
+			time {
+				float: right;
+			}
+			.type, time { color: #888; text-transform: uppercase; }
 
 			.postTitle {
-				color: #222;
-				font-size: 40px;
-				margin-bottom: 15px;
-				padding-bottom: 10px;
-				border-bottom: 1px solid #EEE;
+				font: 800 45px museo-sans;
+				margin: 30px 0 0;
+				padding-bottom: 20px;
+				clear: both;
 			}
-
+			
 			.tags {
 				padding-bottom: 10px;
-				margin-bottom: 20px;
-				border-bottom: 1px solid #EEE;
-			}
-
-			& > time {
-				float: right;
-				color: #666;
-			}
-
-			.postBody {
-				color: black;
-				font-size: 16px;
-				color: #333;
-
-				p {
-					margin: 0 0 20px;
-					line-height: 24px;
-				}
-				p:empty, p::empty {
-					margin: 0;
-					line-height: 0;
-				}
-				margin-bottom: 20px;
-
-				& > img, & > iframe {
-					width: @postWidth;
-					margin: 30px -50px;
-					border: none;
-					max-width: 99999px;
-
-					& + small {
-						display: block;
-						margin-top: -10px;
-						font-size: 13px;
-						margin-bottom: 20px;
+				.icon-tags { color: #888; margin-right: 3px; }
+				.tag {
+					background: #AAA;
+					.transition(all, .2s, linear);
+					&:not(:hover) {
+						border-color: transparent;
 					}
-				}
-
-				& > pre {
-					width: 700px;
-					margin: 15px -20px;
-				}
-				
-				h1 + img, .h1 + img, h1 + iframe, .h1 + iframe, 
-				h2 + img, .h2 + img, h2 + iframe, .h2 + iframe
-				{
-					margin-top: 0px;
-				}
-
-				pre {
-					border: 1px solid #EEE;
-					background: #FAFAFA;
-					.rounded(0);
 				}
 			}
 		}
 
-		.postFoot {
+		.postBody {
+			overflow: hidden;
+			padding: 0 50px 20px;
+			font-size: 16px;
+			color: #333;
+
+			p {
+				margin: 0 0 20px;
+				line-height: 24px;
+			}
+			p:empty, p::empty {
+				margin: 0;
+				line-height: 0;
+			}
+
+			& > img, & > iframe {
+				width: @postWidth;
+				margin: 30px -50px;
+				border: none;
+				max-width: 99999px;
+
+				& + small {
+					display: block;
+					margin-top: -10px;
+					font-size: 13px;
+					margin-bottom: 20px;
+				}
+			}
+
+			& > pre {
+				width: 700px;
+				margin: 15px -20px;
+			}
+			
+			h1 + img, .h1 + img, h1 + iframe, .h1 + iframe, 
+			h2 + img, .h2 + img, h2 + iframe, .h2 + iframe
+			{
+				margin-top: 0px;
+			}
+
+			pre {
+				border: 1px solid #EEE;
+				background: #FAFAFA;
+				.rounded(0);
+			}
+		}
+
+		.postFooter {
 			border-top: 1px solid #DDD;
 
 			overflow: hidden;
@@ -135,7 +147,7 @@
 			.commentSection {
 				// background: white;
 				font-size: 13px;
-				background: #EEE;
+				background: #EEE url(/static/images/cubes.png);
 				overflow: hidden;
 
 				.commentList {
@@ -255,10 +267,10 @@
 					}
 
 					[data-action=send-comment] {
-						.high-xbtn(white, @COLOR2);
-						.high-xbtn-padding(4px, 10px, 2px);
+						.xbtn(white, @COLOR2);
+						// .high-xbtn-padding(4px, 10px, 2px);
 						display: inline-block;
-						margin-top: 10px;
+						margin-top: 11px;
 						float: right;
 						font-size: 13px;
 					}
@@ -288,13 +300,18 @@
 				}
 
 				.showCommentInput {
-					padding: 5px;
+					padding: 7px 10px;
 					font-size: 13px;
-					color: #AAA;
+					color: #888;
 					background: white;
 					margin: 5px;
 					border: 1px solid #DDD;
 					cursor: pointer;
+					.transition(all, .2s, linear);
+					&:hover {
+						color: #444;
+						// border-color: #AAA;
+					}
 				}
 
 				.optionBtns {
@@ -465,7 +482,7 @@
 		float: left;
 		text-align: left;
 		width: 340px;
-		background: #222;
+		background: #313033;
 		color: white;
 
 		& > .box {
@@ -476,7 +493,6 @@
 		.cardType {
 			margin-bottom: 20px;
 			// font-weight: bold;
-
 		}
 
 		.transition(margin-left, 500ms, linear);
@@ -485,23 +501,114 @@
 			font-size: 14px;
 		}
 
-		.tags {
+		.flatBtnBox {
+			padding: 0;
+			display: table;
+			width: 100%;
+			table-layout: fixed;
+
+			i {
+				color: white;
+				// font-weight: bold;
+				font-size: 23px;
+				vertical-align: middle;
+			}
+
+			& > div {
+				display: table-cell;
+				text-align: center;
+				height: 50px;
+				color: white;
+				line-height: 50px;
+				cursor: pointer;
+				&:active {
+					.inner-shadow(0, 2px, 4px, .3);
+				}
+			}
+			.link { background: #555; }
+			.tweet { background: @COLOR-twitter; }
+			.flag { background: #777; }
+			.like { background: @COLOR4; }
+			.fb { background: @COLOR-facebook; }
+
+			.down {
+				background: desaturate(@COLOR4, 5%);
+				&:hover {
+					background: darken(desaturate(@COLOR4, 5%), 5%);
+				}
+			}
+			.up {
+				background: @COLOR2;
+				&:hover {
+					background: darken(@COLOR2, 5%);
+				}
+			}
+		}
+
+		.likeBox {
 			background: #222;
 			color: white;
-			// border-left: 1px solid #DDD;
-			// border-bottom: 1px dashed #666;
+			font-weight: bold;
+			padding: 0;
+
+			i {
+				font-size: 23px;
+				vertical-align: middle;
+			}
+			span {
+				font-size: 18px;
+				margin-right: 5px;
+			}
+			.down, .up {
+				text-align: center;
+				width: 50%;
+				height: 50px;
+				display: inline-block;
+				color: white;
+				line-height: 50px;
+				cursor: pointer;
+				&:active {
+					.inner-shadow(0, 2px, 4px, .3);
+				}
+			}
+
+			.down {
+				background: desaturate(@COLOR4, 5%);
+				&:hover {
+					background: darken(desaturate(@COLOR4, 5%), 5%);
+				}
+				&:active {
+				}
+			}
+			.up {
+				background: @COLOR2;
+				&:hover {
+					background: darken(@COLOR2, 5%);
+				}
+				&:active {
+				}
+			}
+		}
+
+		.tags {
+			color: white;
+			padding: 15px 15px 0px;
+			background: #222;
+			.tag {
+				background: #AAA;
+			}
+			display: none;
 		}
 
 		.authorInfo {
 			padding: 30px;
 			text-align: left;
-			background: #313033;
 			color: white;
 
 			.identification {
 				.avatarWrapper {
-					height: 35px;
-					width: 35px;
+					height: 40px;
+					width: 40px;
 					.rounded(20px);
 					margin-right: 10px;
 				}
@@ -563,20 +670,61 @@
 	}
 
 	.leftOutBox {
+		display: none;
 		position: absolute;
 		width: 100px;
-		left: -105px;
+		left: -100px;
+		text-align: right;
 		top: 19px;
 
-		& > * {
-			text-align: right;
-			opacity: .9;
-			line-height: 23px;
+		// & > * {
+		// 	text-align: right;
+		// 	opacity: .9;
+		// 	line-height: 23px;
+		// 	color: white;
+		// 	cursor: pointer;
+		// 	&:hover {
+		// 		opacity: 1;
+		// 	}
+		// }
+		.box {
+			width: 50px;
+			height: 40px;
+			line-height: 40px;
 			color: white;
-			cursor: pointer;
-			&:hover {
-				opacity: 1;
+			float: right;
+			clear: both;
+			position: relative;
+			text-align: center;
+
+			i {
+				font-weight: bold;
+				font-size: 21px;
+				vertical-align: middle;
 			}
+
+			.stats {
+				position: absolute;
+				width: 40px;
+				padding-right: 5px;
+				text-align: right;
+				left: -40px;
+			}
+		}
+		.likeBox {
+			i {
+				color: white;
+			}
+			background: @COLOR4;
+		}
+		.tweetBox {
+			background: @COLOR-twitter;
+		}
+		.gplusBox {
+			background: @COLOR-gplus;
+		}
+		.fbBox {
+			background: @COLOR-facebook;
 		}
 		
 		.eyeBox {
@@ -587,7 +735,7 @@
 	.blackout {
 		z-index: 1000;
 		position: fixed;
-		top: 0; right: 0; bottom: 0; left: 0;
+		top: 0; right: 15px; bottom: 0; left: 0;
 		background: rgba(0,0,0,0.9);
 	}
 }

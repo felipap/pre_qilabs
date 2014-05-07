@@ -52,9 +52,12 @@ QI Labs ® 2014
 	{% if !requirejsView %}
 		{% set requirejsView='common' %}
 	{% endif %}
+
 	{% set jsViewFile=getMediaUrl('buildjs/app/views/'+requirejsView) %}
+	
 	{% if true || app.env === 'development' %}
-		<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+<!--	<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script> -->
+		<script src="/static/js/vendor/require.js"></script>
 		<script>
 			require(["{{ getMediaUrl('js/config.js') }}"], function () {
 				require(['views.{{requirejsView}}'], function (App) {});

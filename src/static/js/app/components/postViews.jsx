@@ -126,7 +126,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							null
 							:<h4>Comente essa publicação</h4>
 						}
-						<textarea required="required" ref="input" type="text" placeholder="Sua mensagem aqui...">
+						<textarea required="required" ref="input" type="text" placeholder="Seu comentário aqui...">
 						</textarea>
 						<button data-action="send-comment" onClick={this.handleSubmit}>Enviar</button>
 						</form>
@@ -407,21 +407,29 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 		render: function () {
 			return (
 				<div className="leftOutBox">
-					<div className="likeBox" onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
-						{this.props.model.get('voteSum')}
-						&nbsp;
+					<div className="box likeBox" onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
+						<div className="stats">{this.props.model.get('voteSum')}</div>
 						{
 							this.props.model.liked?
 							<i className="icon-heart icon-red"></i>
 							:<i className="icon-heart-o"></i>
 						}
 					</div>
-					<div onClick="">
-						5&nbsp;
-						<i className="icon-share"></i>
-					</div>
 				</div>
 			);
+
+			// <div className="box tweetBox" onClick="">
+			// 	<div className="stats">5</div>
+			// 	<i className="icon-twitter"></i>
+			// </div>
+			// <div className="box fbBox" onClick="">
+			// 	<div className="stats">+20</div>
+			// 	<i className="icon-facebook"></i>
+			// </div>
+			// <div className="box gplusBox" onClick="">
+			// 	<div className="stats">2</div>
+			// 	<i className="icon-google-plus"></i>
+			// </div>
 			// <div className="eyeBox">
 			// 	81&nbsp;
 			// 	<i className="icon-eye"></i>
@@ -496,22 +504,28 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				return (
 					<div>
 						<LeftOutBox model={this.props.model} />
-						<div className="postContent">
-
+						<div className="postHeader">
 							<time data-time-count={1*new Date(post.published)} data-time-long="true">
 								{window.calcTimeFrom(post.published,true)}
 							</time>
+							<div className="type">
+								{post.translatedType}
+							</div>
 							<div className="postTitle">
 								From OCW fanatic to MIT undergrad: my 5 year journey
 							</div>
-
-							{postBody}
+							<div className="tags">
+								<div className="tag">Application</div>
+								<div className="tag">Vestibular</div>
+								<div className="tag">Universidades</div>
+							</div>
 						</div>
+						{postBody}
 						<div className="postInfobar">
 							<ul className="left">
 							</ul>
 						</div>
-						<div className="postFoot">
+						<div className="postFooter">
 							<CommentSectionView collection={this.props.model.children.Comment} postModel={this.props.model} />
 						</div>
 					</div>
@@ -528,28 +542,34 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				return (
 					<div>
 						<LeftOutBox model={this.props.model} />
-						<div className="postContent">
 
+						<div className="postHeader">
 							<time data-time-count={1*new Date(post.published)} data-time-long="true">
 								{window.calcTimeFrom(post.published,true)}
 							</time>
+							<div className="type">
+								{post.translatedType}
+							</div>
 							<div className="postTitle">
-								{post.data.title}								
+								{post.data.title}
 							</div>
-
-							<div className="postBody">
-								<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+							<div className="tags">
+								<i className="icon-tags"></i>&nbsp;
+								<div className="tag">Application</div>
+								<div className="tag">Olimpíada de Matemática</div>
 							</div>
+						</div>
+						<div className="postBody">
+							<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
 						</div>
 						<div className="postInfobar">
 							<ul className="left">
 							</ul>
 						</div>
-						<div className="postFoot">
+						<div className="postFooter">
 							<CommentSectionView small="true" collection={this.props.model.children.Comment} postModel={this.props.model} />
 							<AnswerSectionView model={this.props.model} />
 						</div>
-
 					</div>
 				);
 			},

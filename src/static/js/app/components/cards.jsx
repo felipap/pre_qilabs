@@ -100,7 +100,6 @@ define([
 									QI Labs Founder &amp; CEO. Open source enthusiast. I believe I can program my way into changing the world.
 								</div>
 							</div>
-						
 						</div>
 						
 						<div className="box tags">
@@ -110,16 +109,41 @@ define([
 								<div className="tag">MIT</div>
 							</div>
 						</div>
-						<div className="box flagOption">
-							<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
+
+						<div className="box likeBox">
+							<div className="up">
+								<i className="icon-tup"></i>
+							</div>
+							<div className="down">
+								<i className="icon-tdown"></i>
+							</div>
+						</div>
+						
+						
+						<div className="box flatBtnBox">
+							<div className="fb">
+								<i className="icon-facebook"></i>
+							</div>
+							<div className="tweet">
+								<i className="icon-twitter"></i>
+							</div>
+							<div className="link">
+								<i className="icon-link"></i>
+							</div>
+							<div className="flag">
 								<i className="icon-flag"></i>
-							</span>
-							Sinalizar publicação imprópria.
+							</div>
 						</div>
 					</div>
 					<div onClick={this.destroy} className="blackout"></div>
 				</div>
 			);
+			// <div className="box flagOption">
+			// 	<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
+			// 		<i className="icon-flag"></i>
+			// 	</span>
+			// 	Sinalizar publicação imprópria.
+			// </div>
 		},
 	});
 

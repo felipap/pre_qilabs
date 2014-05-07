@@ -126,7 +126,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							null
 							:React.DOM.h4(null, "Comente essa publicação"),
 						
-						React.DOM.textarea( {required:"required", ref:"input", type:"text", placeholder:"Sua mensagem aqui..."}
+						React.DOM.textarea( {required:"required", ref:"input", type:"text", placeholder:"Seu comentário aqui..."}
 						),
 						React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
 						)
@@ -407,21 +407,29 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 		render: function () {
 			return (
 				React.DOM.div( {className:"leftOutBox"}, 
-					React.DOM.div( {className:"likeBox", onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
-						this.props.model.get('voteSum'),
-						" ",
+					React.DOM.div( {className:"box likeBox", onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
+						React.DOM.div( {className:"stats"}, this.props.model.get('voteSum')),
 						
 							this.props.model.liked?
 							React.DOM.i( {className:"icon-heart icon-red"})
 							:React.DOM.i( {className:"icon-heart-o"})
 						
-					),
-					React.DOM.div( {onClick:""}, 
-						"5 ",
-						React.DOM.i( {className:"icon-share"})
 					)
 				)
 			);
+
+			// <div className="box tweetBox" onClick="">
+			// 	<div className="stats">5</div>
+			// 	<i className="icon-twitter"></i>
+			// </div>
+			// <div className="box fbBox" onClick="">
+			// 	<div className="stats">+20</div>
+			// 	<i className="icon-facebook"></i>
+			// </div>
+			// <div className="box gplusBox" onClick="">
+			// 	<div className="stats">2</div>
+			// 	<i className="icon-google-plus"></i>
+			// </div>
 			// <div className="eyeBox">
 			// 	81&nbsp;
 			// 	<i className="icon-eye"></i>
@@ -496,22 +504,28 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				return (
 					React.DOM.div(null, 
 						LeftOutBox( {model:this.props.model} ),
-						React.DOM.div( {className:"postContent"}, 
-
+						React.DOM.div( {className:"postHeader"}, 
 							React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
 								window.calcTimeFrom(post.published,true)
+							),
+							React.DOM.div( {className:"type"}, 
+								post.translatedType
 							),
 							React.DOM.div( {className:"postTitle"}, 
 								"From OCW fanatic to MIT undergrad: my 5 year journey"
 							),
-
-							postBody
+							React.DOM.div( {className:"tags"}, 
+								React.DOM.div( {className:"tag"}, "Application"),
+								React.DOM.div( {className:"tag"}, "Vestibular"),
+								React.DOM.div( {className:"tag"}, "Universidades")
+							)
 						),
+						postBody,
 						React.DOM.div( {className:"postInfobar"}, 
 							React.DOM.ul( {className:"left"}
 							)
 						),
-						React.DOM.div( {className:"postFoot"}, 
+						React.DOM.div( {className:"postFooter"}, 
 							CommentSectionView( {collection:this.props.model.children.Comment, postModel:this.props.model} )
 						)
 					)
@@ -528,28 +542,34 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				return (
 					React.DOM.div(null, 
 						LeftOutBox( {model:this.props.model} ),
-						React.DOM.div( {className:"postContent"}, 
 
+						React.DOM.div( {className:"postHeader"}, 
 							React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
 								window.calcTimeFrom(post.published,true)
 							),
-							React.DOM.div( {className:"postTitle"}, 
-								post.data.title								
+							React.DOM.div( {className:"type"}, 
+								post.translatedType
 							),
-
-							React.DOM.div( {className:"postBody"}, 
-								React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
+							React.DOM.div( {className:"postTitle"}, 
+								post.data.title
+							),
+							React.DOM.div( {className:"tags"}, 
+								React.DOM.i( {className:"icon-tags"})," ",
+								React.DOM.div( {className:"tag"}, "Application"),
+								React.DOM.div( {className:"tag"}, "Olimpíada de Matemática")
 							)
+						),
+						React.DOM.div( {className:"postBody"}, 
+							React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
 						),
 						React.DOM.div( {className:"postInfobar"}, 
 							React.DOM.ul( {className:"left"}
 							)
 						),
-						React.DOM.div( {className:"postFoot"}, 
+						React.DOM.div( {className:"postFooter"}, 
 							CommentSectionView( {small:"true", collection:this.props.model.children.Comment, postModel:this.props.model} ),
 							AnswerSectionView( {model:this.props.model} )
 						)
-
 					)
 				);
 			},

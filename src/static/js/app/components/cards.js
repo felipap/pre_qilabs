@@ -100,7 +100,6 @@ define([
 									"QI Labs Founder & CEO. Open source enthusiast. I believe I can program my way into changing the world."
 								)
 							)
-						
 						),
 						
 						React.DOM.div( {className:"box tags"}, 
@@ -110,16 +109,41 @@ define([
 								React.DOM.div( {className:"tag"}, "MIT")
 							)
 						),
-						React.DOM.div( {className:"box flagOption"}, 
-							React.DOM.span( {'data-toggle':"tooltip", title:"Denunciar publicação", 'data-placement':"bottom"}, 
-								React.DOM.i( {className:"icon-flag"})
+
+						React.DOM.div( {className:"box likeBox"}, 
+							React.DOM.div( {className:"up"}, 
+								React.DOM.i( {className:"icon-tup"})
 							),
-							"Sinalizar publicação imprópria."
+							React.DOM.div( {className:"down"}, 
+								React.DOM.i( {className:"icon-tdown"})
+							)
+						),
+						
+						
+						React.DOM.div( {className:"box flatBtnBox"}, 
+							React.DOM.div( {className:"fb"}, 
+								React.DOM.i( {className:"icon-facebook"})
+							),
+							React.DOM.div( {className:"tweet"}, 
+								React.DOM.i( {className:"icon-twitter"})
+							),
+							React.DOM.div( {className:"link"}, 
+								React.DOM.i( {className:"icon-link"})
+							),
+							React.DOM.div( {className:"flag"}, 
+								React.DOM.i( {className:"icon-flag"})
+							)
 						)
 					),
 					React.DOM.div( {onClick:this.destroy, className:"blackout"})
 				)
 			);
+			// <div className="box flagOption">
+			// 	<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
+			// 		<i className="icon-flag"></i>
+			// 	</span>
+			// 	Sinalizar publicação imprópria.
+			// </div>
 		},
 	});
 
