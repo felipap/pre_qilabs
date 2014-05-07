@@ -416,16 +416,16 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							:React.DOM.i( {className:"icon-heart-o"})
 						
 					),
-					React.DOM.div( {className:"eyeBox"}, 
-						"81 ",
-						React.DOM.i( {className:"icon-eye"})
-					),
 					React.DOM.div( {onClick:""}, 
 						"5 ",
 						React.DOM.i( {className:"icon-share"})
 					)
 				)
 			);
+			// <div className="eyeBox">
+			// 	81&nbsp;
+			// 	<i className="icon-eye"></i>
+			// </div>
 		},
 	});
 

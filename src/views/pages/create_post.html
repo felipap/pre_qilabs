@@ -16,18 +16,28 @@
 
 	<div id="globalContainer">
 		<div id="content">
-			<div id="formCreatePost">
-				<div class="leftist">
-<!-- 					<label>
-						Pergunta
-					</label><br>
- -->					<!-- <div class="avatarWrapper">
-						<div class="avatar" style="background-image: url('{{ user.avatarUrl }}')">
-						</div>
-					</div> -->
+			<div class="leftMenuWrapper">
+				<div class="leftMenu">
+					<label>Selecione o Tipo de Publicação <b class="caret"></b></label>
+					<div class="dropdown">
+						<li>Pergunta</li>
+						<li>A</li>
+						<li>Dica</li>
+					</div>
 				</div>
+				<a data-action="get-help" href="#">?</a>
+			</div>
+			<div id="formCreatePost">
 				<div class="postIcon">
 					<i class="icon-question"></i>
+				</div>
+				<div class="menu">
+					<label>Pergunta<b class="caret"></b></label>
+					<div class="dropdown">
+						<li>Pergunta</li>
+						<li>A</li>
+						<li>Dica</li>
+					</div>
 				</div>
 				<textarea class="title autosize" name="post_title" placeholder="Pergunta"></textarea>
 				<!-- <textarea class="subtitle autosize" name="post_subtitle" placeholder="Subtítulo"></textarea> -->

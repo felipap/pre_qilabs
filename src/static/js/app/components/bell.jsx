@@ -104,19 +104,27 @@ define([
 					type: 'get',
 					dataType: 'json',
 				}).done(function (response) {
-					var notSeen = _.filter(response.data, function(i){return !i.seen;});
-					var count = notSeen.length || 0;
-					// var count = 5;
-					if (count) {
+
+					var count = _.filter(response.data, function(i){return !i.accessed;}).length,
+						allSeen = _.all(response.data, function(i){return i.seen;}),
+						allAccessed = _.all(response.data, function(i){return i.accessed;});
+
+					if (!allAccessed || !allSeen) {
 						$(self.getDOMNode()).addClass('nonempty');
 						self.refs.nCount.getDOMNode().innerHTML = count;
 					} else {
-						$(self.getDOMNode()).removeClass('nonempty');						
+						$(self.getDOMNode()).removeClass('nonempty');
 						self.refs.nCount.getDOMNode().innerHTML = '';
 					}
-					if (notSeen.length) {
-						this.seen = false;
+
+					if (!allSeen) {
+						$(self.getDOMNode()).addClass('green');
+					} else {
+						$(self.getDOMNode()).removeClass('green');						
 					}
+
+					this.seen = !allSeen;
+
 					$(self.refs.button.getDOMNode()).popover({
 						react: true,
 						content: <NotificationList data={response.data}/>,

@@ -435,21 +435,32 @@ html {
 		cursor: default;
 	}
 
-	.leftist {
+	.leftMenuWrapper {
 		position: absolute;
-		left: -110px;
+		left: 20px;
 		top: 20px;
-		width: 110px;
-		text-align: right;
-		.avatarWrapper {
-			height: 100px;
-			width: 100px;
+		
+		.leftMenu {
+			display: inline-block;
+			color: #777;
+
+			label {	
+				background: white;
+				padding: 7px 10px;
+				// .rounded(3px);
+				border-bottom: 2px solid #DDD;
+				font: bold 15px museo-sans;
+			}
+
+			.dropdown {
+				display: none;
+			}
 		}
-		label {
-			font-weight: normal;
-			text-transform: uppercase;
-			font-family: museo-sans;
+
+		[data-action="get-help"] {
+			margin-left: 5px;
 			color: #AAA;
+			font: bold 18px museo-sans;
 		}
 	}
 
@@ -463,10 +474,23 @@ html {
 		}
 	}
 
+	.postMenu {
+	}
 
 	#formCreatePost {
 		position: relative;
 		padding: 20px 0;
+
+		.menu {
+			background: white;
+			width: 100%;
+			padding: 10px;
+			font: bold 16px museo-sans;
+
+			.dropdown {
+				display: none;
+			}
+		}
 
 		.title,
 		.subtitle {
