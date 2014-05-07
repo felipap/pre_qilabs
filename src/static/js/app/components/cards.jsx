@@ -83,22 +83,18 @@ define([
 							<i className="icon-plus"></i>
 						</div>
 						<div className="box authorInfo">
-							{/* <div className="cardType"><strong>DICA</strong> por</div> */}
 							<div className="identification">
 								<div className="avatarWrapper">
-									<a href={post.profileUrl}>
-										<div className="avatar" style={mediaUserStyle}></div>
-									</a>
+									<div className="avatar" style={mediaUserStyle}></div>
 								</div>
 								<a href={post.profileUrl} className="username">
 									{post.author.name}
 								</a>
 								<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-
-								<div className="bio">
-									<div className="specialized">MIT Freshman</div>
-									QI Labs Founder &amp; CEO. Open source enthusiast. I believe I can program my way into changing the world.
-								</div>
+							</div>
+							<div className="bio">
+								<div className="specialized">MIT Freshman</div>
+								QI Labs Founder &amp; CEO. Open source enthusiast. I believe I can program my way into changing the world.
 							</div>
 						</div>
 						
@@ -140,7 +136,6 @@ define([
 							</div>
 						</div>
 					</div>
-					<div onClick={this.destroy} className="blackout"></div>
 				</div>
 			);
 							// <div className="item fb">

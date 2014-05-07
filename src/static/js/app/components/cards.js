@@ -83,22 +83,18 @@ define([
 							React.DOM.i( {className:"icon-plus"})
 						),
 						React.DOM.div( {className:"box authorInfo"}, 
-							/* <div className="cardType"><strong>DICA</strong> por</div> */
 							React.DOM.div( {className:"identification"}, 
 								React.DOM.div( {className:"avatarWrapper"}, 
-									React.DOM.a( {href:post.profileUrl}, 
-										React.DOM.div( {className:"avatar", style:mediaUserStyle})
-									)
+									React.DOM.div( {className:"avatar", style:mediaUserStyle})
 								),
 								React.DOM.a( {href:post.profileUrl, className:"username"}, 
 									post.author.name
 								),
-								React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"}),
-
-								React.DOM.div( {className:"bio"}, 
-									React.DOM.div( {className:"specialized"}, "MIT Freshman"),
-									"QI Labs Founder & CEO. Open source enthusiast. I believe I can program my way into changing the world."
-								)
+								React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
+							),
+							React.DOM.div( {className:"bio"}, 
+								React.DOM.div( {className:"specialized"}, "MIT Freshman"),
+								"QI Labs Founder & CEO. Open source enthusiast. I believe I can program my way into changing the world."
 							)
 						),
 						
@@ -139,8 +135,7 @@ define([
 								React.DOM.i( {className:"icon-flag"})
 							)
 						)
-					),
-					React.DOM.div( {onClick:this.destroy, className:"blackout"})
+					)
 				)
 			);
 							// <div className="item fb">
