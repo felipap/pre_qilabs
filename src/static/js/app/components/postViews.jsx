@@ -91,7 +91,17 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 		InputForm: React.createClass({
 
 			componentDidMount: function () {
-				$(this.refs.input.getDOMNode()).autosize();
+				if (this.refs && this.refs.input) {
+					$(this.refs.input.getDOMNode()).autosize();
+				}
+			},
+
+			getInitialState: function () {
+				return {showInput:false};
+			},
+
+			showInput: function () {
+				this.setState({showInput:true});
 			},
 
 			handleSubmit: function (evt) {
@@ -105,9 +115,11 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 					url: this.props.model.get('apiPath')+'/comments',
 					data: { content: { body: bodyEl.val() } }
 				}).done(function(response) {
+					self.setState({showInput:false});
 					bodyEl.val('');
 					self.props.model.children.Comment.add(new postModels.commentItem(response.data));
 				});
+
 			},
 
 			render: function () {
@@ -118,16 +130,28 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				};
 
 				return (
-					<div className={"commentInputSection "+(this.props.small?"small":'')}>
-						<form className="formPostComment" onSubmit={this.handleSubmit}>
-							{
-								this.props.small?
-								null
-								:<h4>Comente essa publicação</h4>
-							}
-							<textarea required="required" ref="input" type="text" placeholder="Seu comentário aqui..."></textarea>
-							<button data-action="send-comment" onClick={this.handleSubmit}>Enviar</button>
-						</form>
+					<div>
+						{
+							this.state.showInput?(
+								<div className={"commentInputSection "+(this.props.small?"small":'')}>
+									<form className="formPostComment" onSubmit={this.handleSubmit}>
+										{
+											this.props.small?
+											null
+											:<h4>Comente essa publicação</h4>
+										}
+										<textarea required="required" ref="input" type="text" placeholder="Seu comentário aqui..."></textarea>
+										<button data-action="send-comment" onClick={this.handleSubmit}>Enviar</button>
+									</form>
+								</div>
+							):(
+								<div className="showCommentInput" onClick={this.showInput}>{
+									this.props.model.get('type') === "Answer"?
+									"Adicionar comentário."
+									:"Fazer comentário sobre essa pergunta."
+								}</div>
+							)
+						}
 					</div>
 				);
 			},
@@ -150,14 +174,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 		SectionView: React.createClass({
 			mixins: [backboneCollection],
 
-			getInitialState: function () {
-				return {showInput:false};
-			},
-
-			showInput: function () {
-				this.setState({showInput:true});
-			},
-
 			render: function () {
 				if (!this.props.collection)
 					return <div></div>;
@@ -169,18 +185,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							:<div className="info">{this.props.collection.models.length} Comentários</div>
 						}
 						<CommentListView placeholder={this.props.placeholder} collection={this.props.collection} />
-						{
-							this.props.small? (
-								this.state.showInput?
-								<CommentInputForm small={true} model={this.props.postModel} />
-								:<div className="showCommentInput" onClick={this.showInput}>{
-									this.props.postModel.get('type') === "Answer"?
-									"Adicionar comentário."
-									:"Fazer comentário sobre essa pergunta."
-								}</div>
-							)
-							:<CommentInputForm model={this.props.postModel} />
-						}
+						<CommentInputForm small={true} model={this.props.postModel} />
 					</div>
 				);
 			},
@@ -463,40 +468,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				</div>
 			);
 		}
-	});
-
-	var LeftOutBox = React.createClass({
-		render: function () {
-			return (
-				<div className="leftOutBox">
-					<div className="box likeBox" onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
-						<div className="stats">{this.props.model.get('voteSum')}</div>
-						{
-							this.props.model.liked?
-							<i className="icon-heart icon-red"></i>
-							:<i className="icon-heart-o"></i>
-						}
-					</div>
-				</div>
-			);
-
-			// <div className="box tweetBox" onClick="">
-			// 	<div className="stats">5</div>
-			// 	<i className="icon-twitter"></i>
-			// </div>
-			// <div className="box fbBox" onClick="">
-			// 	<div className="stats">+20</div>
-			// 	<i className="icon-facebook"></i>
-			// </div>
-			// <div className="box gplusBox" onClick="">
-			// 	<div className="stats">2</div>
-			// 	<i className="icon-google-plus"></i>
-			// </div>
-			// <div className="eyeBox">
-			// 	81&nbsp;
-			// 	<i className="icon-eye"></i>
-			// </div>
-		},
 	});
 
 	return {

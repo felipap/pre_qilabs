@@ -54,7 +54,7 @@ define([
 		componentDidMount: function () {
 			var self = this;
 			$(this.getDOMNode().parentElement).on('click', function onClickOut (e) {
-				if (this === e.target) {
+				if (e.target === this || e.target === self.getDOMNode()) {
 					self.destroy();
 					$(this).unbind('click', onClickOut);
 				}
