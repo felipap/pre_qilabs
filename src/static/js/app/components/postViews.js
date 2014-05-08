@@ -402,7 +402,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 									:React.DOM.label(null, "Responda à pergunta \"",this.props.model.get('data').title,"\""),
 								
 									React.DOM.div( {className:"editorWrapper"}, 
-										React.DOM.div( {className:"editor", ref:"input", name:"teste", 'data-placeholder':"Resposta da pergunta aqui..."})
+										React.DOM.div( {className:"editor answerBody", ref:"input", name:"teste", 'data-placeholder':"Resposta da pergunta aqui..."})
 									),
 									React.DOM.button( {'data-action':"send-answer", onClick:this.handleSubmit}, "Enviar")
 								)

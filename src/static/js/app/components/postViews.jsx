@@ -402,7 +402,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 									:<label>Responda à pergunta "{this.props.model.get('data').title}"</label>
 								}
 									<div className="editorWrapper">
-										<div className="editor" ref="input" name="teste" data-placeholder="Resposta da pergunta aqui..."></div>
+										<div className="editor answerBody" ref="input" name="teste" data-placeholder="Resposta da pergunta aqui..."></div>
 									</div>
 									<button data-action="send-answer" onClick={this.handleSubmit}>Enviar</button>
 								</form>
