@@ -66,7 +66,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 								<span className="name">
 									{comment.author.name}
 								</span>
-							</a>,&nbsp;
+							</a>&nbsp;·&nbsp;
 
 							<time data-time-count={1*new Date(comment.published)} data-time-long="true">
 								{window.calcTimeFrom(comment.published)}
@@ -209,14 +209,9 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							<tr>
 								<td className="left">
 									<div className="voteControl">
-										<button className="control"><i className="icon-aup"></i></button>
+										<button className="control"><i className="icon-caret-up"></i></button>
 										<div className="voteResult">5</div>
-										<button className="control"><i className="icon-adown"></i></button>
-									</div>
-									<div className="optionBtns">
-										<button data-action="remove-post" onClick={this.onClickTrash}>
-											<i className="icon-trash"></i>
-										</button>
+										<button className="control"><i className="icon-caret-down"></i></button>
 									</div>
 								</td>
 								<td className="right">
@@ -226,59 +221,73 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 										</div>
 										<div className="arrow"></div>
 									</div>
-									<div className="answerHeader">
+									<div className="toolbar">
+										<div className="item edit">
+											<i className="icon-pencil"></i>
+										</div>
+										<div className="item flag">
+											<i className="icon-flag"></i>
+										</div>
+										<div className="item trash" data-action="remove-post" onClick={this.onClickTrash}>
+											<i className="icon-trash"></i>
+										</div>
+									</div>
+									<div className="answerAuthor">
 										<div className="avatarWrapper">
 											<a href={model.author.profileUrl}>
 												<div className="avatar" style={mediaUserAvatarStyle} title={model.author.username}>
 												</div>
 											</a>
 										</div>
-										<span className="username">
-											Felipe Aragão
-										</span><span>, Egg-head enthusiast. Head of Political Science Center.</span>
-										<time data-time-count={1*new Date(model.published)}>
-											{window.calcTimeFrom(model.published)}
-										</time>
+										<div className="info">
+											<span className="username">
+												{model.author.name}
+											</span> <time data-time-count={1*new Date(model.published)}>
+												{window.calcTimeFrom(model.published)}
+											</time>
+										</div>
+										<div className="answerSidebar" ref="sidebar">
+											<div className="box editedByBox">
+												<div className="avatarWrapper">
+													<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')'} }></div>
+												</div>
+												<div className="info">
+													Respondido por <span className="name">{answer.author.name}</span>&nbsp;
+													<time data-time-count={1*new Date(model.published)}>
+														{window.calcTimeFrom(model.published)}
+													</time>
+												</div>
+												<div className="bio">
+													{
+														(answer.author.profile.bio.split(" ").length>20)?
+														answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
+														:answer.author.profile.bio
+													}
+												</div>
+											</div>
+										</div>
 									</div>
 								</td>
 							</tr>
 							</table>
 							<CommentSectionView small={true} collection={this.props.model.children.Comment} postModel={this.props.model} />
 						</div>
-						<div className="answerSidebar" ref="sidebar">
-							<div className="box authorInfo">
-								<div className="identification">
-									<div className="avatarWrapper">
-										<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
-									</div>
-									<a href={answer.profileUrl} className="username">
-										{answer.author.name}
-									</a>
-									<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-								</div>
-								<div className="bio">
-									{
-										(answer.author.profile.bio.split(" ").length>20)?
-										answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
-										:answer.author.profile.bio
-									}
-								</div>
-							</div>
-							
-							<div className="flatBtnBox">
-								<div className="item edit" data-toggle="tooltip" title="Corrigir resposta" data-placement="bottom" data-container="body">
-									<i className="icon-edit"></i>
-								</div>
-								<div className="item link" data-toggle="tooltip" title="Compartilhar" data-placement="bottom" data-container="body">
-									<i className="icon-link"></i>
-								</div>
-								<div className="item flag" data-toggle="tooltip" title="Sinalizar conteúdo impróprio" data-placement="bottom" data-container="body">
-									<i className="icon-flag"></i>
-								</div>
-							</div>
-						</div>
 					</div>
 				);
+				// <div className="box authorInfo">
+				// 	<label><time data-time-count={1*new Date(model.published)}>
+				// 				{window.calcTimeFrom(model.published)}
+				// 			</time> por</label>
+				// 	<div className="identification">
+				// 		<div className="avatarWrapper">
+				// 			<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
+				// 		</div>
+				// 		<a href={answer.profileUrl} className="username">
+				// 			{answer.author.name}
+				// 		</a>
+				// 		<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+				// 	</div>
+				// </div>
 			},
 		}),
 		ListView: React.createClass({

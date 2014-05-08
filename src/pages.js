@@ -140,28 +140,9 @@ module.exports = {
   },
   '/posts/:postId': {
     name: 'profile',
-    get: [
-      required.posts.selfCanSee('postId'), function(req, res) {
-        var postId;
-        if (!(postId = req.paramToObjectId('postId'))) {
-          return;
-        }
-        return Post.findOne({
-          _id: postId
-        }, req.handleErrResult(function(post) {
-          if (post.parentPost) {
-            console.log('redirecting', post.path);
-            return res.redirect(post.path);
-          } else {
-            return post.stuff(req.handleErrResult(function(stuffedPost) {
-              return res.render('pages/post.html', {
-                post: stuffedPost
-              });
-            }));
-          }
-        }));
-      }
-    ],
+    get: function(req, res) {
+      return res.redirect('/#posts/' + req.params.postId);
+    },
     children: {
       '/edit': {
         methods: {

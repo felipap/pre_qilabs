@@ -1,26 +1,4 @@
 
-.optionBtns {
-	display: inline-block;
-
-	[data-action=remove-post],
-	[data-action=edit-post] {
-		.full-reset-button;
-		padding-left: 3px;
-		vertical-align: middle;
-		padding-right: 3px;
-		font-size: 105%;
-		font-weight: bolder;
-		color: #888;
-		opacity: .6;
-		&:hover {
-			color: #444;
-		}
-		&:active {
-			outline: none;
-		}
-	}
-}
-
 #fullPostContainer {
 	position: absolute;
 	left: 0;
@@ -302,7 +280,7 @@
 
 					.commentList .commentWrapper {
 						padding: 5px 0;
-						border-bottom: 1px solid #FFF;
+						border-bottom: 1px solid #EEE;
 
 						.msgBody {
 							width: auto;
@@ -359,6 +337,7 @@
 				}
 
 				.optionBtns {
+					display: inline-block;
 					.transition(all, .2s, linear);
 
 					[data-action=remove-post],
@@ -530,36 +509,40 @@
 							table { width: 100%; }
 							td { vertical-align: top; }
 
-							.answerHeader {
-								display: none;
-								position: relative;
+							.answerAuthor {
+								float: right;
+								margin-right: -20px;
+								font-size: 13px;
+								color: #444;
+								padding-bottom: 10px;
+								padding-right: 40px;
 
-								.avatarWrapper {
-									height: 25px; width: 25px; .rounded(5px);
+								& > .avatarWrapper {
+									height: 35px; width: 35px;
+									.rounded(2px);
 									margin-right: 10px;
 									margin-top: -2px;
-									border: 1px solid #DDD;
+									cursor: pointer;
 								}
-								.username {
-									font-weight: bold;
+
+								& > .info {
+									cursor: pointer;
+									display: inline-block;
 									vertical-align: middle;
-								}
-								padding-right: 20px;
-								padding-bottom: 10px;
-								time {
-									position: absolute;
-									right: 3px;
-									top: 0;
-									line-height: 14px;
-									font-size: 12px;
-									margin-top: 3px;
+									.username {
+										font-weight: bold;
+									}
+
+									time {
+										display: block;
+									}
 								}
 							}
 
 							.left {
 								width: 30px;
 								font-size: 12px;
-								padding: 0 10px 0 5px;
+								padding: 0 25px 0 10px;
 								
 								.voteControl {
 									text-align: center;
@@ -569,8 +552,9 @@
 
 									.control {
 										.btn0();
+										color: #555;
 										.reset-button;
-										font-size: 18px;
+										font-size: 26px;
 										line-height: 16px;
 										i { vertical-align: middle; }
 									}
@@ -578,26 +562,77 @@
 							}
 
 							.right {
+								border-bottom: 1px solid #EEE;
 								.answerBody {
 									font-size: 15px;
+									min-height: 60px;
 									background: white;
-									padding: 0 10px 10px;
+									padding: 0 0 10px;
 								}
+							}
+
+							.toolbar {
+								display: inline-block;
+
+								& > .item {
+									display: inline-block;
+									text-align: center;
+									height: 30px;
+									margin-right: 7px;
+									width: 30px;
+									color: white;
+									line-height: 30px;
+									cursor: pointer;
+									&:active {
+										.inner-shadow(0, 2px, 4px, .3);
+									}
+
+									i {
+										font-size: 17px;
+										vertical-align: middle;
+									}
+								}
+						
+								.flatBtn (@color) {
+									color: #888;
+									&:hover {
+										background: @color;
+										color: white;
+										background: lighten(@color, 2%);
+									}
+									&:focus {
+										.inner-shadow(0, 0, 0, 4px, .2);
+									}
+								}
+
+								.link 	{ .flatBtn(#555); }
+								.tweet 	{ .flatBtn(@COLOR-twitter); }
+								.flag 	{ .flatBtn(#777); }
+								.edit 	{ .flatBtn(@COLOR1); }
+								.trash 	{ .flatBtn(mix(red, @COLOR4)); }
+								.like 	{ .flatBtn(@COLOR4); }
+								.fb 	{ .flatBtn(@COLOR-facebook); }
+								.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
+								.up 	{ .flatBtn(@COLOR2); }
 							}
 
 							.commentSection {
 								background: white;
-								margin: 0 0 0 30px;
-								padding: 10px 0;
+								margin: 0 0 0 54px;
+								padding: 0;
 								border: none;
 
 								.showCommentInput {
 									display: inline-block;
 									padding: 5px;
+									margin-top: 5px;
+								}
+
+								.commentInputSection {
+									margin-top: 5px;
 								}
 							}
 						}
-
 
 						.answerSidebar {
 							.transition-transform(.2s, ease-out);
@@ -610,10 +645,49 @@
 								padding: 20px;
 							}
 							.translate(0);
+
+							.authorInfo, .editedByBox {
+								label {
+									margin-bottom: 10px;
+									font: normal 12px museo-sans;
+								}
+								.bio {
+									margin-top: 10px;
+									font-size: 12px;
+									color: #EEE;
+								}
+							}
 						}
 						
-						&:hover .answerSidebar {
+						.answerAuthor:hover .answerSidebar {
 							.translate(@sidebarWidth);
+						}
+					}
+
+					.optionBtns {
+						.transition(all, .2s, linear);
+
+						[data-action=remove-post],
+						[data-action=edit-post] {
+							background: none;
+							display: inline-block;
+							font-weight: 700;
+							line-height: 1.428571429;
+							white-space: nowrap;
+							cursor: pointer;
+							.rounded(0);
+							border: none;
+							outline: none;
+							padding: 0;
+							margin: 0 0 0 5px;
+							.user-select(none);
+							vertical-align: middle;
+							font-size: 18px;
+							font-weight: bolder;
+							color: #888;
+							&:hover {
+								color: #444;
+							}
 						}
 					}
 				}
@@ -739,6 +813,7 @@
 					font-weight: bold;
 				}
 				time {
+					display: inline-block;
 					white-space: nowrap;
 				}
 			}

@@ -66,7 +66,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 								React.DOM.span( {className:"name"}, 
 									comment.author.name
 								)
-							),", ",
+							)," · ",
 
 							React.DOM.time( {'data-time-count':1*new Date(comment.published), 'data-time-long':"true"}, 
 								window.calcTimeFrom(comment.published)
@@ -209,14 +209,9 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							React.DOM.tr(null, 
 								React.DOM.td( {className:"left"}, 
 									React.DOM.div( {className:"voteControl"}, 
-										React.DOM.button( {className:"control"}, React.DOM.i( {className:"icon-aup"})),
+										React.DOM.button( {className:"control"}, React.DOM.i( {className:"icon-caret-up"})),
 										React.DOM.div( {className:"voteResult"}, "5"),
-										React.DOM.button( {className:"control"}, React.DOM.i( {className:"icon-adown"}))
-									),
-									React.DOM.div( {className:"optionBtns"}, 
-										React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
-											React.DOM.i( {className:"icon-trash"})
-										)
+										React.DOM.button( {className:"control"}, React.DOM.i( {className:"icon-caret-down"}))
 									)
 								),
 								React.DOM.td( {className:"right"}, 
@@ -226,59 +221,73 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 										),
 										React.DOM.div( {className:"arrow"})
 									),
-									React.DOM.div( {className:"answerHeader"}, 
+									React.DOM.div( {className:"toolbar"}, 
+										React.DOM.div( {className:"item edit"}, 
+											React.DOM.i( {className:"icon-pencil"})
+										),
+										React.DOM.div( {className:"item flag"}, 
+											React.DOM.i( {className:"icon-flag"})
+										),
+										React.DOM.div( {className:"item trash", 'data-action':"remove-post", onClick:this.onClickTrash}, 
+											React.DOM.i( {className:"icon-trash"})
+										)
+									),
+									React.DOM.div( {className:"answerAuthor"}, 
 										React.DOM.div( {className:"avatarWrapper"}, 
 											React.DOM.a( {href:model.author.profileUrl}, 
 												React.DOM.div( {className:"avatar", style:mediaUserAvatarStyle, title:model.author.username}
 												)
 											)
 										),
-										React.DOM.span( {className:"username"}, 
-											"Felipe Aragão"
-										),React.DOM.span(null, ", Egg-head enthusiast. Head of Political Science Center."),
-										React.DOM.time( {'data-time-count':1*new Date(model.published)}, 
-											window.calcTimeFrom(model.published)
+										React.DOM.div( {className:"info"}, 
+											React.DOM.span( {className:"username"}, 
+												model.author.name
+											), " ", React.DOM.time( {'data-time-count':1*new Date(model.published)}, 
+												window.calcTimeFrom(model.published)
+											)
+										),
+										React.DOM.div( {className:"answerSidebar", ref:"sidebar"}, 
+											React.DOM.div( {className:"box editedByBox"}, 
+												React.DOM.div( {className:"avatarWrapper"}, 
+													React.DOM.div( {className:"avatar", style: { background: 'url('+answer.author.avatarUrl+')'} })
+												),
+												React.DOM.div( {className:"info"}, 
+													"Respondido por ", React.DOM.span( {className:"name"}, answer.author.name)," ",
+													React.DOM.time( {'data-time-count':1*new Date(model.published)}, 
+														window.calcTimeFrom(model.published)
+													)
+												),
+												React.DOM.div( {className:"bio"}, 
+													
+														(answer.author.profile.bio.split(" ").length>20)?
+														answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
+														:answer.author.profile.bio
+													
+												)
+											)
 										)
 									)
 								)
 							)
 							),
 							CommentSectionView( {small:true, collection:this.props.model.children.Comment, postModel:this.props.model} )
-						),
-						React.DOM.div( {className:"answerSidebar", ref:"sidebar"}, 
-							React.DOM.div( {className:"box authorInfo"}, 
-								React.DOM.div( {className:"identification"}, 
-									React.DOM.div( {className:"avatarWrapper"}, 
-										React.DOM.div( {className:"avatar", style: { background: 'url('+answer.author.avatarUrl+')' } })
-									),
-									React.DOM.a( {href:answer.profileUrl, className:"username"}, 
-										answer.author.name
-									),
-									React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
-								),
-								React.DOM.div( {className:"bio"}, 
-									
-										(answer.author.profile.bio.split(" ").length>20)?
-										answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
-										:answer.author.profile.bio
-									
-								)
-							),
-							
-							React.DOM.div( {className:"flatBtnBox"}, 
-								React.DOM.div( {className:"item edit", 'data-toggle':"tooltip", title:"Corrigir resposta", 'data-placement':"bottom", 'data-container':"body"}, 
-									React.DOM.i( {className:"icon-edit"})
-								),
-								React.DOM.div( {className:"item link", 'data-toggle':"tooltip", title:"Compartilhar", 'data-placement':"bottom", 'data-container':"body"}, 
-									React.DOM.i( {className:"icon-link"})
-								),
-								React.DOM.div( {className:"item flag", 'data-toggle':"tooltip", title:"Sinalizar conteúdo impróprio", 'data-placement':"bottom", 'data-container':"body"}, 
-									React.DOM.i( {className:"icon-flag"})
-								)
-							)
 						)
 					)
 				);
+				// <div className="box authorInfo">
+				// 	<label><time data-time-count={1*new Date(model.published)}>
+				// 				{window.calcTimeFrom(model.published)}
+				// 			</time> por</label>
+				// 	<div className="identification">
+				// 		<div className="avatarWrapper">
+				// 			<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
+				// 		</div>
+				// 		<a href={answer.profileUrl} className="username">
+				// 			{answer.author.name}
+				// 		</a>
+				// 		<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+				// 	</div>
+				// </div>
 			},
 		}),
 		ListView: React.createClass({displayName: 'ListView',
