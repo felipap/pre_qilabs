@@ -200,7 +200,7 @@ define(['jquery', 'backbone', 'components.postForms', 'components.postModels', '
 				 function (postId) {
 				 	this.postItem = new postModels.postItem(window.conf.postData);
 				 	React.renderComponent(FullPostView({model:this.postItem}),
-				 		document.getElementById('fullPageContainer'));
+				 		document.getElementById('fullPostContainer'));
 				},
 			'labs/:labId':
 				function (labId) {					

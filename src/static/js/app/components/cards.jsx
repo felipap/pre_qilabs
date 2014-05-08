@@ -46,8 +46,8 @@ define([
 		},
 
 		destroy: function () {
-			React.unmountComponentAtNode(document.getElementById('fullPageContainer'));
-			$("#fullPageContainer").removeClass('active');
+			React.unmountComponentAtNode(document.getElementById('fullPostContainer'));
+			$("#fullPostContainer").removeClass('active');
 			app.navigate('/', {trigger:true});
 		},
 
@@ -69,10 +69,6 @@ define([
 				self.setState({full:!self.state.full});
 			}
 
-			var mediaUserStyle = {
-				background: 'url('+post.author.avatarUrl+')',
-			};
-			// console.log(this.props.model.get('type'))
 			return (
 				<div className={"postBox "+(this.state.full?'full':'')} data-post={this.props.model.get('type')}>
 					<div className="postCol">
@@ -85,7 +81,7 @@ define([
 						<div className="box authorInfo">
 							<div className="identification">
 								<div className="avatarWrapper">
-									<div className="avatar" style={mediaUserStyle}></div>
+									<div className="avatar" style={ { background: 'url('+post.author.avatarUrl+')' } }></div>
 								</div>
 								<a href={post.profileUrl} className="username">
 									{post.author.name}
@@ -93,16 +89,7 @@ define([
 								<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
 							</div>
 							<div className="bio">
-								<div className="specialized">MIT Freshman</div>
-								QI Labs Founder &amp; CEO. Open source enthusiast. I believe I can program my way into changing the world.
-							</div>
-						</div>
-						
-						<div className="box tags">
-							<div className="postStats">
-								<i className="icon-tags"></i> &nbsp;
-								<div className="tag">Application</div>
-								<div className="tag">MIT</div>
+								{post.author.profile.bio}
 							</div>
 						</div>
 						
@@ -115,15 +102,15 @@ define([
 							</div>
 						</div>
 						
-
-						<div className="likeBox">
-							<div className="up">
+						<div className="flatBtnBox">
+							<div className="item up">
 								<i className="icon-tup"></i>
 							</div>
-							<div className="down">
+							<div className="item down">
 								<i className="icon-tdown"></i>
 							</div>
 						</div>
+
 						<div className="flatBtnBox">
 							<div className="item edit" data-toggle="tooltip" title="Editar publicação" data-placement="bottom" data-container="body">
 								<i className="icon-edit"></i>
@@ -135,21 +122,23 @@ define([
 								<i className="icon-flag"></i>
 							</div>
 						</div>
+
+						<div className="box relatedContentBox">
+							<label>Perguntas relacionadas</label>
+							<li>
+								<span className="question">Lorem Ipsum Dolor Sit Amet?</span> – <span className="asker">Léo Creo</span>
+							</li>
+							<li>
+								<span className="question">Felipe não sabe fazer site ou eu tô enganado?</span> – <span className="asker">Recalcada Qualquer</span>
+							</li>
+							<li>
+								<span className="question">O Site que Nunca Saiu</span> – <span className="asker">Felipe Aragão</span>
+							</li>
+						</div>
 					</div>
 				</div>
 			);
-							// <div className="item fb">
-							// 	<i className="icon-facebook"></i>
-							// </div>
-							// <div className="item tweet">
-							// 	<i className="icon-twitter"></i>
-							// </div>
-			// <div className="box flagOption">
-			// 	<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
-			// 		<i className="icon-flag"></i>
-			// 	</span>
-			// 	Sinalizar publicação imprópria.
-			// </div>
+
 		},
 	});
 
@@ -210,9 +199,15 @@ define([
 				 	$.getJSON('/api/posts/'+postId, function (response) {
 				 		console.log('response, data', response)
 					 	this.postItem = new postModels.postItem(response.data);
-					 	React.renderComponent(FullPostView({model:this.postItem}),
-					 		document.getElementById('fullPageContainer'));
-					 	$("#fullPageContainer").addClass('active');
+					 	var component = React.renderComponent(FullPostView(
+					 		{model:this.postItem}),
+					 		document.getElementById('fullPostContainer'));
+					 	$("#fullPostContainer").addClass('active');
+					 	$("#fullPostContainer").one('click', function (e) {
+					 		if (this === e.target) {
+					 			component.destroy();
+					 		}
+					 	})
 				 	});
 				},
 		},

@@ -19,7 +19,7 @@
 @btn-default-bg: 		#fff;
 @btn-default-border: 	#ccc;
 
-button:not(.reset-button), .button {
+button, .button {
 	border: none;
 	display: inline-block;
 	margin-bottom: 0; // For input.btn
@@ -184,6 +184,17 @@ button:not(.reset-button), .button {
 	}
 }
 
+.xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px) {
+	padding: @vertical @horizontal;
+	margin-top: @verticalMargin;
+	margin-bottom: @verticalMargin;
+
+	&:active {
+		.no-text-shadow;
+		// .no-box-shadow;
+	}
+}
+
 /* Don't change a thing. */
 .xbtn (@color, @bg, @chover: @bg) {
 	.btn0;
@@ -191,8 +202,8 @@ button:not(.reset-button), .button {
 	.color-btn-focus(@color, @bg, transparent);
 	border: 2px solid transparent;
 	.color-btn(@color, @bg, @bg);
-	.color-btn-hover(white, darken(@bg, 8%), darken(@bg, 12%));
-	// .color-btn-active(#444, #DDD, #AAA);
+	.color-btn-hover(white, lighten(@bg, 8%), darken(@bg, 12%));
+	.color-btn-active(white, darken(@bg, 8%), darken(@bg, 12%));
 }
 
 .high-xbtn (@color: white, @bg: @COLOR1, @shadowSize:2px) {
@@ -211,15 +222,8 @@ button:not(.reset-button), .button {
 	.high-xbtn-padding(9px, 20px, 6px, 2px);
 }
 
-
 .small-xbtn () {
 	.xbtn-padding(4px, 5px, 4px);
-}
-
-.xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px) {
-	padding: @vertical @horizontal;
-	margin-top: @verticalMargin;
-	margin-bottom: @verticalMargin;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -227,7 +231,6 @@ button:not(.reset-button), .button {
 
 .btn-follow,
 .btn-tag-follow {
-
 	&[data-action=follow] {
 		.rounded(5px);
 		&:empty::before { content: "Seguir"; }

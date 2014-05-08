@@ -28,6 +28,7 @@ requirejs.config({
 		'bootstrap':		'vendor/bootstrap-3.0.0.min',
 		'medium-editor':	'vendor/medium-editor.min',
 		'underscore':		'vendor/underscore-1.5.1.min',
+		'modernizr':		'vendor/modernizr-2.6.2.min',
 		'bloodhound': 		'vendor/bloodhound.min',
 		'typeahead-bundle': 'vendor/typeahead.bundle.min',
 		'typeahead': 		'vendor/typeahead.jquery.min',

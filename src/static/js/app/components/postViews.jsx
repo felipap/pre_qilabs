@@ -58,13 +58,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							{comment.data.escapedBody}
 						</div>
 						<div className="infoBar">
-							{(window.user && window.user.id === comment.author.id)?
-								<div className="optionBtns">
-									<button data-action="remove-post" onClick={this.onClickTrash}>
-										<i className="icon-trash"></i>
-									</button>
-								</div>
-							:undefined}
 							<a className="userLink author" href={comment.author.profileUrl}>
 								<div className="avatarWrapper">
 									<div className="avatar" style={mediaUserAvatarStyle} title={comment.author.username}>
@@ -78,15 +71,21 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							<time data-time-count={1*new Date(comment.published)} data-time-long="true">
 								{window.calcTimeFrom(comment.published)}
 							</time>
-							
-							<div className="voteOptions">
-								<i className="icon-tup"></i> 4 &nbsp;
-								<i className="icon-tdown"></i> 20
-							</div>
-						
+
+							{(window.user && window.user.id === comment.author.id)?
+								<div className="optionBtns">
+									<button data-action="remove-post" onClick={this.onClickTrash}>
+										<i className="icon-trash"></i>
+									</button>
+								</div>
+							:undefined}
 						</div>
 					</div>
 				);
+							// <div className="voteOptions">
+							// 	<i className="icon-tup"></i> 4 &nbsp;
+							// 	<i className="icon-tdown"></i> 20
+							// </div>
 			},
 		}),
 		InputForm: React.createClass({
@@ -121,14 +120,13 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				return (
 					<div className={"commentInputSection "+(this.props.small?"small":'')}>
 						<form className="formPostComment" onSubmit={this.handleSubmit}>
-						{
-							this.props.small?
-							null
-							:<h4>Comente essa publicação</h4>
-						}
-						<textarea required="required" ref="input" type="text" placeholder="Seu comentário aqui...">
-						</textarea>
-						<button data-action="send-comment" onClick={this.handleSubmit}>Enviar</button>
+							{
+								this.props.small?
+								null
+								:<h4>Comente essa publicação</h4>
+							}
+							<textarea required="required" ref="input" type="text" placeholder="Seu comentário aqui..."></textarea>
+							<button data-action="send-comment" onClick={this.handleSubmit}>Enviar</button>
 						</form>
 					</div>
 				);
@@ -156,27 +154,31 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				return {showInput:false};
 			},
 
-			showInput: function() {
+			showInput: function () {
 				this.setState({showInput:true});
 			},
 
 			render: function () {
+				console.log(this.props.postModel)
 				if (!this.props.collection)
 					return <div></div>;
 				return (
-					<div className="commentSection">
+					<div className={"commentSection "+(this.props.small?' small ':'')}>
 						{
-							this.props.small === 'true'?
+							this.props.small?
 							null
 							:<div className="info">{this.props.collection.models.length} Comentários</div>
 						}
-					
-						<CommentListView collection={this.props.collection} />
+						<CommentListView placeholder={this.props.placeholder} collection={this.props.collection} />
 						{
-							this.props.small === 'true'? (
+							this.props.small? (
 								this.state.showInput?
 								<CommentInputForm small={true} model={this.props.postModel} />
-								:<div className="showCommentInput" onClick={this.showInput}>Fazer comentário</div>
+								:<div className="showCommentInput" onClick={this.showInput}>{
+									this.props.postModel.get('type') === "Answer"?
+									"Adicionar comentário."
+									:"Fazer comentário sobre essa pergunta."
+								}</div>
 							)
 							:<CommentInputForm model={this.props.postModel} />
 						}
@@ -193,6 +195,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			mixins: [EditablePost],
 			render: function () {
 				var model = this.props.model.attributes;
+				var answer = this.props.model.attributes;
 				var self = this;
 
 				var mediaUserAvatarStyle = {
@@ -200,46 +203,80 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				};
 
 				return (
-					<div className="answerView">
-						<div className="answerHeader">
-							<div className="avatarWrapper">
-								<a href={model.author.profileUrl}>
-									<div className="avatar" style={mediaUserAvatarStyle} title={model.author.username}>
+					<div className="answerViewWrapper">
+						<div className="answerView">
+							<table>
+							<tr>
+								<td className="left">
+									<div className="voteControl">
+										<button className="control"><i className="icon-aup"></i></button>
+										<div className="voteResult">5</div>
+										<button className="control"><i className="icon-adown"></i></button>
 									</div>
-								</a>
-							</div>
-							<span className="username">
-								Felipe Aragão
-							</span><span>, Egg-head enthusiast. Head of Political Science Center.</span>
-							<time data-time-count={1*new Date(model.published)}>
-								{window.calcTimeFrom(model.published)}
-							</time>
+									<div className="optionBtns">
+										<button data-action="remove-post" onClick={this.onClickTrash}>
+											<i className="icon-trash"></i>
+										</button>
+									</div>
+								</td>
+								<td className="right">
+									<div className="answerBody">
+										<div className={(window.user && model.author.id===window.user.id)?'msgBody editable':'msgBody'}>
+											{model.data.escapedBody}
+										</div>
+										<div className="arrow"></div>
+									</div>
+									<div className="answerHeader">
+										<div className="avatarWrapper">
+											<a href={model.author.profileUrl}>
+												<div className="avatar" style={mediaUserAvatarStyle} title={model.author.username}>
+												</div>
+											</a>
+										</div>
+										<span className="username">
+											Felipe Aragão
+										</span><span>, Egg-head enthusiast. Head of Political Science Center.</span>
+										<time data-time-count={1*new Date(model.published)}>
+											{window.calcTimeFrom(model.published)}
+										</time>
+									</div>
+								</td>
+							</tr>
+							</table>
+							<CommentSectionView small={true} collection={this.props.model.children.Comment} postModel={this.props.model} />
 						</div>
-						<table>
-						<tr>
-							<td className="left">
-								<div className="voteControl">
-									<button className="control"><i className="icon-aup"></i></button>
-									<div className="voteResult">5</div>
-									<button className="control"><i className="icon-adown"></i></button>
-								</div>
-								<div className="optionBtns">
-									<button data-action="remove-post" onClick={this.onClickTrash}>
-										<i className="icon-trash"></i>
-									</button>
-								</div>
-							</td>
-							<td className="right">
-								<div className="answerBody">
-									<div className={(window.user && model.author.id===window.user.id)?'msgBody editable':'msgBody'}>
-										{model.data.escapedBody}
+						<div className="answerSidebar" ref="sidebar">
+							<div className="box authorInfo">
+								<div className="identification">
+									<div className="avatarWrapper">
+										<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
 									</div>
-									<div className="arrow"></div>
+									<a href={answer.profileUrl} className="username">
+										{answer.author.name}
+									</a>
+									<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
 								</div>
-							</td>
-						</tr>
-						</table>
-						<CommentSectionView small="true" collection={this.props.model.children.Comment} postModel={this.props.model} />
+								<div className="bio">
+									{
+										(answer.author.profile.bio.split(" ").length>20)?
+										answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
+										:answer.author.profile.bio
+									}
+								</div>
+							</div>
+							
+							<div className="flatBtnBox">
+								<div className="item edit" data-toggle="tooltip" title="Corrigir resposta" data-placement="bottom" data-container="body">
+									<i className="icon-edit"></i>
+								</div>
+								<div className="item link" data-toggle="tooltip" title="Compartilhar" data-placement="bottom" data-container="body">
+									<i className="icon-link"></i>
+								</div>
+								<div className="item flag" data-toggle="tooltip" title="Sinalizar conteúdo impróprio" data-placement="bottom" data-container="body">
+									<i className="icon-flag"></i>
+								</div>
+							</div>
+						</div>
 					</div>
 				);
 			},
@@ -271,8 +308,21 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			render: function () {
 				return (
 					<div className="answerSection">
-						<AnswerListView collection={this.props.model.children.Answer} />
-						<AnswerInputForm model={this.props.model} />
+						<div className="sectionHeader">
+							<label>{ this.props.collection.length } Respostas</label>
+							<div className="sortingMenu">
+								<label>ordenar por</label>
+								<div className="menu">
+									<span className="selected">Votos <i className="icon-adown"></i></span>
+									<div className="dropdown">
+										<li>+ Antigo</li>
+										<li>Atividade</li>
+									</div>
+								</div>
+							</div>
+						</div>
+						<AnswerListView collection={this.props.collection} />
+						<AnswerInputForm model={this.props.postModel} placeholder="Adicionar comentário."/>
 					</div>
 				);
 			},
@@ -300,12 +350,17 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				});
 			},
 
+			componentDidMount: function () {
+				$(this.refs.input.getDOMNode()).focus();
+			},
+
 			render: function () {
 				if (!window.user)
 					return (<div></div>);
 				var mediaUserAvatarStyle = {
 					background: 'url('+window.user.avatarUrl+')',
 				};
+				console.log(this.props.model)
 
 				return (
 					<div className={"answerInputSection "+(this.props.small?"small":'')}>
@@ -315,7 +370,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							null
 							:<h4>Responda essa publicação</h4>
 						}
-							<textarea required="required" ref="input" type="text" placeholder="Sua resposta aqui...">
+							<textarea required="required" ref="input" type="text" placeholder="Responda a pergunta aqui.">
 							</textarea>
 							<button data-action="send-answer" onClick={this.handleSubmit}>Enviar</button>
 						</form>
@@ -503,7 +558,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 
 				return (
 					<div>
-						<LeftOutBox model={this.props.model} />
 						<div className="postHeader">
 							<time data-time-count={1*new Date(post.published)} data-time-long="true">
 								{window.calcTimeFrom(post.published,true)}
@@ -541,8 +595,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 
 				return (
 					<div>
-						<LeftOutBox model={this.props.model} />
-
 						<div className="postHeader">
 							<time data-time-count={1*new Date(post.published)} data-time-long="true">
 								{window.calcTimeFrom(post.published,true)}
@@ -566,8 +618,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							</ul>
 						</div>
 						<div className="postFooter">
-							<CommentSectionView small="true" collection={this.props.model.children.Comment} postModel={this.props.model} />
-							<AnswerSectionView model={this.props.model} />
+							<CommentSectionView collection={this.props.model.children.Comment} postModel={this.props.model} small={true} />
+							<AnswerSectionView collection={this.props.model.children.Answer} postModel={this.props.model} />
 						</div>
 					</div>
 				);

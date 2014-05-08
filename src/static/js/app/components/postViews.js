@@ -58,13 +58,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							comment.data.escapedBody
 						),
 						React.DOM.div( {className:"infoBar"}, 
-							(window.user && window.user.id === comment.author.id)?
-								React.DOM.div( {className:"optionBtns"}, 
-									React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
-										React.DOM.i( {className:"icon-trash"})
-									)
-								)
-							:undefined,
 							React.DOM.a( {className:"userLink author", href:comment.author.profileUrl}, 
 								React.DOM.div( {className:"avatarWrapper"}, 
 									React.DOM.div( {className:"avatar", style:mediaUserAvatarStyle, title:comment.author.username}
@@ -78,15 +71,21 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							React.DOM.time( {'data-time-count':1*new Date(comment.published), 'data-time-long':"true"}, 
 								window.calcTimeFrom(comment.published)
 							),
-							
-							React.DOM.div( {className:"voteOptions"}, 
-								React.DOM.i( {className:"icon-tup"}), " 4  ",
-								React.DOM.i( {className:"icon-tdown"}), " 20"
-							)
-						
+
+							(window.user && window.user.id === comment.author.id)?
+								React.DOM.div( {className:"optionBtns"}, 
+									React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
+										React.DOM.i( {className:"icon-trash"})
+									)
+								)
+							:undefined
 						)
 					)
 				);
+							// <div className="voteOptions">
+							// 	<i className="icon-tup"></i> 4 &nbsp;
+							// 	<i className="icon-tdown"></i> 20
+							// </div>
 			},
 		}),
 		InputForm: React.createClass({displayName: 'InputForm',
@@ -121,14 +120,13 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				return (
 					React.DOM.div( {className:"commentInputSection "+(this.props.small?"small":'')}, 
 						React.DOM.form( {className:"formPostComment", onSubmit:this.handleSubmit}, 
-						
-							this.props.small?
-							null
-							:React.DOM.h4(null, "Comente essa publicação"),
-						
-						React.DOM.textarea( {required:"required", ref:"input", type:"text", placeholder:"Seu comentário aqui..."}
-						),
-						React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
+							
+								this.props.small?
+								null
+								:React.DOM.h4(null, "Comente essa publicação"),
+							
+							React.DOM.textarea( {required:"required", ref:"input", type:"text", placeholder:"Seu comentário aqui..."}),
+							React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
 						)
 					)
 				);
@@ -156,27 +154,31 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				return {showInput:false};
 			},
 
-			showInput: function() {
+			showInput: function () {
 				this.setState({showInput:true});
 			},
 
 			render: function () {
+				console.log(this.props.postModel)
 				if (!this.props.collection)
 					return React.DOM.div(null);
 				return (
-					React.DOM.div( {className:"commentSection"}, 
+					React.DOM.div( {className:"commentSection "+(this.props.small?' small ':'')}, 
 						
-							this.props.small === 'true'?
+							this.props.small?
 							null
 							:React.DOM.div( {className:"info"}, this.props.collection.models.length, " Comentários"),
 						
-					
-						CommentListView( {collection:this.props.collection} ),
+						CommentListView( {placeholder:this.props.placeholder, collection:this.props.collection} ),
 						
-							this.props.small === 'true'? (
+							this.props.small? (
 								this.state.showInput?
 								CommentInputForm( {small:true, model:this.props.postModel} )
-								:React.DOM.div( {className:"showCommentInput", onClick:this.showInput}, "Fazer comentário")
+								:React.DOM.div( {className:"showCommentInput", onClick:this.showInput}, 
+									this.props.postModel.get('type') === "Answer"?
+									"Adicionar comentário."
+									:"Fazer comentário sobre essa pergunta."
+								)
 							)
 							:CommentInputForm( {model:this.props.postModel} )
 						
@@ -193,6 +195,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			mixins: [EditablePost],
 			render: function () {
 				var model = this.props.model.attributes;
+				var answer = this.props.model.attributes;
 				var self = this;
 
 				var mediaUserAvatarStyle = {
@@ -200,46 +203,80 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				};
 
 				return (
-					React.DOM.div( {className:"answerView"}, 
-						React.DOM.div( {className:"answerHeader"}, 
-							React.DOM.div( {className:"avatarWrapper"}, 
-								React.DOM.a( {href:model.author.profileUrl}, 
-									React.DOM.div( {className:"avatar", style:mediaUserAvatarStyle, title:model.author.username}
-									)
-								)
-							),
-							React.DOM.span( {className:"username"}, 
-								"Felipe Aragão"
-							),React.DOM.span(null, ", Egg-head enthusiast. Head of Political Science Center."),
-							React.DOM.time( {'data-time-count':1*new Date(model.published)}, 
-								window.calcTimeFrom(model.published)
-							)
-						),
-						React.DOM.table(null, 
-						React.DOM.tr(null, 
-							React.DOM.td( {className:"left"}, 
-								React.DOM.div( {className:"voteControl"}, 
-									React.DOM.button( {className:"control"}, React.DOM.i( {className:"icon-aup"})),
-									React.DOM.div( {className:"voteResult"}, "5"),
-									React.DOM.button( {className:"control"}, React.DOM.i( {className:"icon-adown"}))
-								),
-								React.DOM.div( {className:"optionBtns"}, 
-									React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
-										React.DOM.i( {className:"icon-trash"})
-									)
-								)
-							),
-							React.DOM.td( {className:"right"}, 
-								React.DOM.div( {className:"answerBody"}, 
-									React.DOM.div( {className:(window.user && model.author.id===window.user.id)?'msgBody editable':'msgBody'}, 
-										model.data.escapedBody
+					React.DOM.div( {className:"answerViewWrapper"}, 
+						React.DOM.div( {className:"answerView"}, 
+							React.DOM.table(null, 
+							React.DOM.tr(null, 
+								React.DOM.td( {className:"left"}, 
+									React.DOM.div( {className:"voteControl"}, 
+										React.DOM.button( {className:"control"}, React.DOM.i( {className:"icon-aup"})),
+										React.DOM.div( {className:"voteResult"}, "5"),
+										React.DOM.button( {className:"control"}, React.DOM.i( {className:"icon-adown"}))
 									),
-									React.DOM.div( {className:"arrow"})
+									React.DOM.div( {className:"optionBtns"}, 
+										React.DOM.button( {'data-action':"remove-post", onClick:this.onClickTrash}, 
+											React.DOM.i( {className:"icon-trash"})
+										)
+									)
+								),
+								React.DOM.td( {className:"right"}, 
+									React.DOM.div( {className:"answerBody"}, 
+										React.DOM.div( {className:(window.user && model.author.id===window.user.id)?'msgBody editable':'msgBody'}, 
+											model.data.escapedBody
+										),
+										React.DOM.div( {className:"arrow"})
+									),
+									React.DOM.div( {className:"answerHeader"}, 
+										React.DOM.div( {className:"avatarWrapper"}, 
+											React.DOM.a( {href:model.author.profileUrl}, 
+												React.DOM.div( {className:"avatar", style:mediaUserAvatarStyle, title:model.author.username}
+												)
+											)
+										),
+										React.DOM.span( {className:"username"}, 
+											"Felipe Aragão"
+										),React.DOM.span(null, ", Egg-head enthusiast. Head of Political Science Center."),
+										React.DOM.time( {'data-time-count':1*new Date(model.published)}, 
+											window.calcTimeFrom(model.published)
+										)
+									)
+								)
+							)
+							),
+							CommentSectionView( {small:true, collection:this.props.model.children.Comment, postModel:this.props.model} )
+						),
+						React.DOM.div( {className:"answerSidebar", ref:"sidebar"}, 
+							React.DOM.div( {className:"box authorInfo"}, 
+								React.DOM.div( {className:"identification"}, 
+									React.DOM.div( {className:"avatarWrapper"}, 
+										React.DOM.div( {className:"avatar", style: { background: 'url('+answer.author.avatarUrl+')' } })
+									),
+									React.DOM.a( {href:answer.profileUrl, className:"username"}, 
+										answer.author.name
+									),
+									React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
+								),
+								React.DOM.div( {className:"bio"}, 
+									
+										(answer.author.profile.bio.split(" ").length>20)?
+										answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
+										:answer.author.profile.bio
+									
+								)
+							),
+							
+							React.DOM.div( {className:"flatBtnBox"}, 
+								React.DOM.div( {className:"item edit", 'data-toggle':"tooltip", title:"Corrigir resposta", 'data-placement':"bottom", 'data-container':"body"}, 
+									React.DOM.i( {className:"icon-edit"})
+								),
+								React.DOM.div( {className:"item link", 'data-toggle':"tooltip", title:"Compartilhar", 'data-placement':"bottom", 'data-container':"body"}, 
+									React.DOM.i( {className:"icon-link"})
+								),
+								React.DOM.div( {className:"item flag", 'data-toggle':"tooltip", title:"Sinalizar conteúdo impróprio", 'data-placement':"bottom", 'data-container':"body"}, 
+									React.DOM.i( {className:"icon-flag"})
 								)
 							)
 						)
-						),
-						CommentSectionView( {small:"true", collection:this.props.model.children.Comment, postModel:this.props.model} )
 					)
 				);
 			},
@@ -271,8 +308,21 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			render: function () {
 				return (
 					React.DOM.div( {className:"answerSection"}, 
-						AnswerListView( {collection:this.props.model.children.Answer} ),
-						AnswerInputForm( {model:this.props.model} )
+						React.DOM.div( {className:"sectionHeader"}, 
+							React.DOM.label(null,  this.props.collection.length,  " Respostas"),
+							React.DOM.div( {className:"sortingMenu"}, 
+								React.DOM.label(null, "ordenar por"),
+								React.DOM.div( {className:"menu"}, 
+									React.DOM.span( {className:"selected"}, "Votos ", React.DOM.i( {className:"icon-adown"})),
+									React.DOM.div( {className:"dropdown"}, 
+										React.DOM.li(null, "+ Antigo"),
+										React.DOM.li(null, "Atividade")
+									)
+								)
+							)
+						),
+						AnswerListView( {collection:this.props.collection} ),
+						AnswerInputForm( {model:this.props.postModel, placeholder:"Adicionar comentário."})
 					)
 				);
 			},
@@ -300,12 +350,17 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				});
 			},
 
+			componentDidMount: function () {
+				$(this.refs.input.getDOMNode()).focus();
+			},
+
 			render: function () {
 				if (!window.user)
 					return (React.DOM.div(null));
 				var mediaUserAvatarStyle = {
 					background: 'url('+window.user.avatarUrl+')',
 				};
+				console.log(this.props.model)
 
 				return (
 					React.DOM.div( {className:"answerInputSection "+(this.props.small?"small":'')}, 
@@ -315,7 +370,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							null
 							:React.DOM.h4(null, "Responda essa publicação"),
 						
-							React.DOM.textarea( {required:"required", ref:"input", type:"text", placeholder:"Sua resposta aqui..."}
+							React.DOM.textarea( {required:"required", ref:"input", type:"text", placeholder:"Responda a pergunta aqui."}
 							),
 							React.DOM.button( {'data-action':"send-answer", onClick:this.handleSubmit}, "Enviar")
 						)
@@ -503,7 +558,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 
 				return (
 					React.DOM.div(null, 
-						LeftOutBox( {model:this.props.model} ),
 						React.DOM.div( {className:"postHeader"}, 
 							React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
 								window.calcTimeFrom(post.published,true)
@@ -541,8 +595,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 
 				return (
 					React.DOM.div(null, 
-						LeftOutBox( {model:this.props.model} ),
-
 						React.DOM.div( {className:"postHeader"}, 
 							React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
 								window.calcTimeFrom(post.published,true)
@@ -566,8 +618,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 							)
 						),
 						React.DOM.div( {className:"postFooter"}, 
-							CommentSectionView( {small:"true", collection:this.props.model.children.Comment, postModel:this.props.model} ),
-							AnswerSectionView( {model:this.props.model} )
+							CommentSectionView( {collection:this.props.model.children.Comment, postModel:this.props.model, small:true} ),
+							AnswerSectionView( {collection:this.props.model.children.Answer, postModel:this.props.model} )
 						)
 					)
 				);

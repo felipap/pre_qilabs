@@ -46,8 +46,8 @@ define([
 		},
 
 		destroy: function () {
-			React.unmountComponentAtNode(document.getElementById('fullPageContainer'));
-			$("#fullPageContainer").removeClass('active');
+			React.unmountComponentAtNode(document.getElementById('fullPostContainer'));
+			$("#fullPostContainer").removeClass('active');
 			app.navigate('/', {trigger:true});
 		},
 
@@ -69,10 +69,6 @@ define([
 				self.setState({full:!self.state.full});
 			}
 
-			var mediaUserStyle = {
-				background: 'url('+post.author.avatarUrl+')',
-			};
-			// console.log(this.props.model.get('type'))
 			return (
 				React.DOM.div( {className:"postBox "+(this.state.full?'full':''), 'data-post':this.props.model.get('type')}, 
 					React.DOM.div( {className:"postCol"}, 
@@ -85,7 +81,7 @@ define([
 						React.DOM.div( {className:"box authorInfo"}, 
 							React.DOM.div( {className:"identification"}, 
 								React.DOM.div( {className:"avatarWrapper"}, 
-									React.DOM.div( {className:"avatar", style:mediaUserStyle})
+									React.DOM.div( {className:"avatar", style: { background: 'url('+post.author.avatarUrl+')' } })
 								),
 								React.DOM.a( {href:post.profileUrl, className:"username"}, 
 									post.author.name
@@ -93,16 +89,7 @@ define([
 								React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
 							),
 							React.DOM.div( {className:"bio"}, 
-								React.DOM.div( {className:"specialized"}, "MIT Freshman"),
-								"QI Labs Founder & CEO. Open source enthusiast. I believe I can program my way into changing the world."
-							)
-						),
-						
-						React.DOM.div( {className:"box tags"}, 
-							React.DOM.div( {className:"postStats"}, 
-								React.DOM.i( {className:"icon-tags"}), "  ",
-								React.DOM.div( {className:"tag"}, "Application"),
-								React.DOM.div( {className:"tag"}, "MIT")
+								post.author.profile.bio
 							)
 						),
 						
@@ -115,15 +102,15 @@ define([
 							)
 						),
 						
-
-						React.DOM.div( {className:"likeBox"}, 
-							React.DOM.div( {className:"up"}, 
+						React.DOM.div( {className:"flatBtnBox"}, 
+							React.DOM.div( {className:"item up"}, 
 								React.DOM.i( {className:"icon-tup"})
 							),
-							React.DOM.div( {className:"down"}, 
+							React.DOM.div( {className:"item down"}, 
 								React.DOM.i( {className:"icon-tdown"})
 							)
 						),
+
 						React.DOM.div( {className:"flatBtnBox"}, 
 							React.DOM.div( {className:"item edit", 'data-toggle':"tooltip", title:"Editar publicação", 'data-placement':"bottom", 'data-container':"body"}, 
 								React.DOM.i( {className:"icon-edit"})
@@ -134,22 +121,24 @@ define([
 							React.DOM.div( {className:"item flag", 'data-toggle':"tooltip", title:"Sinalizar conteúdo impróprio", 'data-placement':"bottom", 'data-container':"body"}, 
 								React.DOM.i( {className:"icon-flag"})
 							)
+						),
+
+						React.DOM.div( {className:"box relatedContentBox"}, 
+							React.DOM.label(null, "Perguntas relacionadas"),
+							React.DOM.li(null, 
+								React.DOM.span( {className:"question"}, "Lorem Ipsum Dolor Sit Amet?"), " – ", React.DOM.span( {className:"asker"}, "Léo Creo")
+							),
+							React.DOM.li(null, 
+								React.DOM.span( {className:"question"}, "Felipe não sabe fazer site ou eu tô enganado?"), " – ", React.DOM.span( {className:"asker"}, "Recalcada Qualquer")
+							),
+							React.DOM.li(null, 
+								React.DOM.span( {className:"question"}, "O Site que Nunca Saiu"), " – ", React.DOM.span( {className:"asker"}, "Felipe Aragão")
+							)
 						)
 					)
 				)
 			);
-							// <div className="item fb">
-							// 	<i className="icon-facebook"></i>
-							// </div>
-							// <div className="item tweet">
-							// 	<i className="icon-twitter"></i>
-							// </div>
-			// <div className="box flagOption">
-			// 	<span data-toggle="tooltip" title="Denunciar publicação" data-placement="bottom">
-			// 		<i className="icon-flag"></i>
-			// 	</span>
-			// 	Sinalizar publicação imprópria.
-			// </div>
+
 		},
 	});
 
@@ -210,9 +199,15 @@ define([
 				 	$.getJSON('/api/posts/'+postId, function (response) {
 				 		console.log('response, data', response)
 					 	this.postItem = new postModels.postItem(response.data);
-					 	React.renderComponent(FullPostView({model:this.postItem}),
-					 		document.getElementById('fullPageContainer'));
-					 	$("#fullPageContainer").addClass('active');
+					 	var component = React.renderComponent(FullPostView(
+					 		{model:this.postItem}),
+					 		document.getElementById('fullPostContainer'));
+					 	$("#fullPostContainer").addClass('active');
+					 	$("#fullPostContainer").one('click', function (e) {
+					 		if (this === e.target) {
+					 			component.destroy();
+					 		}
+					 	})
 				 	});
 				},
 		},

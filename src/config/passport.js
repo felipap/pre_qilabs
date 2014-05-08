@@ -31,6 +31,7 @@ function setUpPassport() {
 					user.save();
 					done(null, user);
 				} else { // new user
+					return "GET out";
 					console.log('new user: ', profile.displayName)
 					user = new User({
 						facebookId: profile.id,

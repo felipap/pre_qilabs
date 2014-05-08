@@ -65,6 +65,7 @@ window.calcTimeFrom = function (arg, long, short) {
 define([
 	'jquery',
 	'underscore',
+	'modernizr',
 	'plugins',
 	'bootstrap.dropdown',
 	'bootstrap.tooltip',

@@ -1,25 +1,10 @@
 
-.transition() {
-	-webkit-transition: -webkit-transform .3s cubic-bezier(0.645,0.045,0.355,1),opacity .4s ease;
-	-moz-transition: -moz-transform .3s cubic-bezier(0.645,0.045,0.355,1),opacity .4s ease;
-	-ms-transition: -ms-transform .3s cubic-bezier(0.645,0.045,0.355,1),opacity .4s ease;
-	-o-transition: -o-transform .3s cubic-bezier(0.645,0.045,0.355,1),opacity .4s ease;
-}
-
-.translate(x) {
-	-webkit-transform: translateX(0);
-	-moz-transform: translateX(0);
-	-ms-transform: translateX(0);
-	-o-transform: translateX(0);
-	transform: translateX(0);
-}
-
 #sidebarPanel {
-	.transition();
+	.transition-transform();
 	.translate(-@widthSidebar);
 }
 #globalContainer {
-	.transition();
+	.transition-transform();
 }
 
 body.sidebarOpen {

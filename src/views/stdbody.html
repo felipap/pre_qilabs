@@ -8,11 +8,7 @@
 
 QI Labs ® 2014
 -->
-
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<html class="no-js">
 	<head>
 		<title>{% block title %}QI LABS.org{% endblock %}</title>
 		<meta charset="utf-8">
@@ -32,10 +28,8 @@ QI Labs ® 2014
 		<link rel="stylesheet" href='/static/css/fonts.css' />
 		<!-- {{_.pluck(user_profile.following.docs, '_id')}} -->
 		{% if user %}
-			<script>window.loggedUser=true;</script>
 			<script>window.user = {id: '{{user.id}}', avatarUrl: '{{user.avatarUrl}}', following: '{{user_profile.followingIds|json}}'}</script>
 		{% else %}
-			<script>window.loggedUser=false;</script>
 			<script>window.user = {}</script>
 		{% endif %}
 		{% block head %}{% endblock %}
@@ -43,20 +37,18 @@ QI Labs ® 2014
 		{% block templates %}{% endblock %}
 		<script>_flash_msgs={{ JSON.stringify(messages) }}</script>
 </head>
-<body data-page="{{ dataPage }}">
-	{% block body %}
-	{% endblock %}
-	{% block bodyEnd %}
-	{% endblock %}
+<!--[if lt IE 8]> <body data-page="{{ dataPage }}"> class="lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <body data-page="{{ dataPage }}"> <!--<![endif]-->
+	{% block body %}{% endblock %}
+	
+	{% block bodyEnd %}{% endblock %}
 
 	{% if !requirejsView %}
-		{% set requirejsView='common' %}
+		{% set requirejsView = 'common' %}
 	{% endif %}
-
-	{% set jsViewFile=getMediaUrl('buildjs/app/views/'+requirejsView) %}
+	{% set jsViewFile = getMediaUrl('buildjs/app/views/'+requirejsView) %}
 	
 	{% if true || app.env === 'development' %}
-<!--	<script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script> -->
 		<script src="/static/js/vendor/require.js"></script>
 		<script>
 			require(["{{ getMediaUrl('js/config.js') }}"], function () {
