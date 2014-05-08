@@ -51,6 +51,16 @@ define([
 			app.navigate('/', {trigger:true});
 		},
 
+		componentDidMount: function () {
+			var self = this;
+			$(this.getDOMNode().parentElement).on('click', function onClickOut (e) {
+				if (this === e.target) {
+					self.destroy();
+					$(this).unbind('click', onClickOut);
+				}
+			});
+		},
+
 		render: function () {
 			var post = this.props.model.attributes;
 
@@ -196,19 +206,14 @@ define([
 				},
 			'posts/:postId':
 				 function (postId) {
-				 	$.getJSON('/api/posts/'+postId, function (response) {
-				 		console.log('response, data', response)
-					 	this.postItem = new postModels.postItem(response.data);
-					 	var component = React.renderComponent(FullPostView(
-					 		{model:this.postItem}),
-					 		document.getElementById('fullPostContainer'));
-					 	$("#fullPostContainer").addClass('active');
-					 	$("#fullPostContainer").one('click', function (e) {
-					 		if (this === e.target) {
-					 			component.destroy();
-					 		}
-					 	})
-				 	});
+					$.getJSON('/api/posts/'+postId, function (response) {
+						console.log('response, data', response)
+						this.postItem = new postModels.postItem(response.data);
+						React.renderComponent(FullPostView(
+							{model:this.postItem}),
+							document.getElementById('fullPostContainer'));
+						$("#fullPostContainer").addClass('active');
+					});
 				},
 		},
 

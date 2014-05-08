@@ -159,7 +159,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 			},
 
 			render: function () {
-				console.log(this.props.postModel)
 				if (!this.props.collection)
 					return <div></div>;
 				return (
@@ -378,7 +377,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				var mediaUserAvatarStyle = {
 					background: 'url('+window.user.avatarUrl+')',
 				};
-				console.log(this.props.model)
 
 				return (
 					<div className={"answerInputSection "+(this.props.small?"small":'')}>
