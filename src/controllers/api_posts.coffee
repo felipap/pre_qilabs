@@ -71,6 +71,7 @@ module.exports = {
 							}
 							type: Post.Types.Comment
 						}
+
 						Post.findById postId, req.handleErrResult (parentPost) =>
 							req.user.postToParentPost parentPost, data,
 								req.handleErrResult (doc) =>
@@ -82,12 +83,16 @@ module.exports = {
 				'/answers':
 					post: [required.posts.selfCanComment('id'), (req, res) ->
 						return if not postId = req.paramToObjectId('id')
+						sanitizer = require 'sanitizer'
+						console.log req.body.body
+						console.log 'final:', req.body.tags, sanitizer.sanitize(req.body.body)
 						data = {
 							content: {
-								body: req.body.content.body
+								body: sanitizer.sanitize(req.body.body)
 							}
 							type: Post.Types.Answer
 						}
+
 						Post.findById postId,
 							req.handleErrResult (parentPost) =>
 								req.user.postToParentPost parentPost, data,

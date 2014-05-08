@@ -7,7 +7,7 @@
 ** by @f03lipe
 */
 
-define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], function ($, Backbone, _, postModels, React) {
+define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'medium-editor',], function ($, Backbone, _, postModels, React) {
 
 	/* React.js views */
 
@@ -82,22 +82,25 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 						</div>
 					</div>
 				);
-							// <div className="voteOptions">
-							// 	<i className="icon-tup"></i> 4 &nbsp;
-							// 	<i className="icon-tdown"></i> 20
-							// </div>
 			},
 		}),
 		InputForm: React.createClass({
 
-			componentDidMount: function () {
-				if (this.refs && this.refs.input) {
-					$(this.refs.input.getDOMNode()).autosize();
-				}
-			},
-
 			getInitialState: function () {
 				return {showInput:false};
+			},
+
+			componentDidUpdate: function () {
+				if (this.refs.input) {
+					$(this.refs.input.getDOMNode()).autosize();
+					if (this.props.small) {
+						$(this.refs.input.getDOMNode()).keypress(function (e) {
+							if (e.keyCode == 13) {
+								e.preventDefault();
+							}
+						});
+					}
+				}
 			},
 
 			showInput: function () {
@@ -145,7 +148,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 									</form>
 								</div>
 							):(
-								<div className="showCommentInput" onClick={this.showInput}>{
+								<div className="showInput" onClick={this.showInput}>{
 									this.props.model.get('type') === "Answer"?
 									"Adicionar comentário."
 									:"Fazer comentário sobre essa pergunta."
@@ -198,12 +201,11 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 		View: React.createClass({
 			mixins: [EditablePost],
 			render: function () {
-				var model = this.props.model.attributes;
 				var answer = this.props.model.attributes;
 				var self = this;
 
 				var mediaUserAvatarStyle = {
-					background: 'url('+model.author.avatarUrl+')',
+					background: 'url('+answer.author.avatarUrl+')',
 				};
 
 				return (
@@ -220,19 +222,19 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 								</td>
 								<td className="right">
 									<div className="answerBody">
-										<div className={(window.user && model.author.id===window.user.id)?'msgBody editable':'msgBody'}>
-											{model.data.escapedBody}
+										<div className='msgBody'>
+											<span dangerouslySetInnerHTML={{__html: answer.data.escapedBody }} />
 										</div>
 										<div className="arrow"></div>
 									</div>
 									<div className="toolbar">
-										{(window.user && model.author.id===window.user.id)?
+										{(window.user && answer.author.id===window.user.id)?
 										(
 											<div className="item edit">
 												<i className="icon-pencil"></i>
 											</div>
 										):null}
-										{(window.user && model.author.id===window.user.id)?
+										{(window.user && answer.author.id===window.user.id)?
 										(
 											<div className="item trash" data-action="remove-post" onClick={this.onClickTrash}>
 												<i className="icon-trash"></i>
@@ -247,16 +249,16 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 									</div>
 									<div className="answerAuthor">
 										<div className="avatarWrapper">
-											<a href={model.author.profileUrl}>
-												<div className="avatar" style={mediaUserAvatarStyle} title={model.author.username}>
+											<a href={answer.author.profileUrl}>
+												<div className="avatar" style={mediaUserAvatarStyle} title={answer.author.username}>
 												</div>
 											</a>
 										</div>
 										<div className="info">
 											<span className="username">
-												{model.author.name}
-											</span> <time data-time-count={1*new Date(model.published)}>
-												{window.calcTimeFrom(model.published)}
+												{answer.author.name}
+											</span> <time data-time-count={1*new Date(answer.published)}>
+												{window.calcTimeFrom(answer.published)}
 											</time>
 										</div>
 										<div className="answerSidebar" ref="sidebar">
@@ -287,11 +289,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 						</div>
 					</div>
 				);
-				// <div className="box authorInfo">
-				// 	<label><time data-time-count={1*new Date(model.published)}>
-				// 				{window.calcTimeFrom(model.published)}
-				// 			</time> por</label>
-				// </div>
 			},
 		}),
 		ListView: React.createClass({
@@ -342,50 +339,80 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 		}),
 		InputForm: React.createClass({
 
-			componentDidMount: function () {
-				$(this.refs.input.getDOMNode()).autosize();
+			componentDidUpdate: function () {
+				if (this.refs.input) {
+					this.editor = new MediumEditor(this.refs.input.getDOMNode(), {
+						firstHeader: 'h1',
+						secondHeader: 'h2',
+						buttons: ['bold', 'italic', 'quote', 'anchor', 'underline', 'orderedlist'],
+						buttonLabels: {
+							quote: '<i class="icon-quote"></i>',
+							orderedlist: '<i class="icon-list"></i>'
+						}
+					});
+					e = this.editor;
+				}
+			},
+
+			getInitialState: function () {
+				return {showInput:false};
 			},
 
 			handleSubmit: function (evt) {
 				evt.preventDefault();
 
-				var bodyEl = $(this.refs.input.getDOMNode());
+				if (!this.editor) return alert("WTF"); // WTF
+
+				var body = this.editor.serialize()['element-0'].value;
 				var self = this;
 				$.ajax({
 					type: 'post',
 					dataType: 'json',
 					url: this.props.model.get('apiPath')+'/answers',
-					data: { content: { body: bodyEl.val() } }
+					data: { body: body }
 				}).done(function(response) {
-					bodyEl.val('');
+					self.editor.innerHTML = "";
+					self.setState({showInput:false});
 					console.log('response', response);
 					self.props.model.children.Answer.add(new postModels.answerItem(response.data));
 				});
 			},
 
-			componentDidMount: function () {
-				$(this.refs.input.getDOMNode()).focus();
+			showInput: function () {
+				this.setState({showInput:true});
 			},
 
 			render: function () {
 				if (!window.user)
 					return (<div></div>);
+
 				var mediaUserAvatarStyle = {
 					background: 'url('+window.user.avatarUrl+')',
 				};
 
 				return (
-					<div className={"answerInputSection "+(this.props.small?"small":'')}>
-						<form className="formPostAnswer" onSubmit={this.handleSubmit}>
-						{
-							this.props.small?
-							null
-							:<h4>Responda essa publicação</h4>
-						}
-							<textarea required="required" ref="input" type="text" placeholder="Responda a pergunta aqui.">
-							</textarea>
-							<button data-action="send-answer" onClick={this.handleSubmit}>Enviar</button>
-						</form>
+					<div>
+					{
+						this.state.showInput?(
+							<div className={"answerInputSection "+(this.props.small?"small":'')}>
+								<form className="formPostAnswer" onSubmit={this.handleSubmit}>
+								{
+									this.props.small?
+									null
+									:<label>Responda à pergunta "{this.props.model.get('data').title}"</label>
+								}
+									<div className="editorWrapper">
+										<div className="editor" ref="input" name="teste" data-placeholder="Resposta da pergunta aqui..."></div>
+									</div>
+									<button data-action="send-answer" onClick={this.handleSubmit}>Enviar</button>
+								</form>
+							</div>
+						):(
+							<div className="showInput" onClick={this.showInput}>
+								Responder pergunta.
+							</div>
+						)
+					}
 					</div>
 				);
 			},

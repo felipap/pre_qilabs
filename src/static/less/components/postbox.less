@@ -26,7 +26,7 @@
 	top: 30px;
 	display: table;
 	.transition-transform(.4s, linear);
-	padding-bottom: 20px;
+	padding-bottom: 50px;
 	margin: 0 auto;
 	margin-top: 40px;
 
@@ -254,7 +254,7 @@
 					}
 				}
 
-				.showCommentInput {
+				.showInput {
 					padding: 8px 10px;
 					font-size: 13px;
 					color: #888;
@@ -270,6 +270,7 @@
 
 				&.small {
 					border-top: 1px solid #DDD;
+					// border-bottom: 1px solid #DDD;
 					padding: 10px 20px 10px 20px;
 					background: #F8F8F8;
 
@@ -497,7 +498,6 @@
 				}
 
 				.answerList {
-
 					.answerViewWrapper {
 						position: relative;
 						border-bottom: 1px solid #DDD;
@@ -619,7 +619,7 @@
 								padding: 0;
 								border: none;
 
-								.showCommentInput {
+								.showInput {
 									display: inline-block;
 									padding: 5px;
 									margin-top: 5px;
@@ -689,8 +689,8 @@
 					}
 				}
 
-				.showAnswerInput {
-					padding: 5px;
+				.showInput {
+					padding: 15px;
 					font-size: 13px;
 					color: #AAA;
 					background: white;
@@ -701,41 +701,63 @@
 
 				.answerInputSection {
 					padding: 10px;
-					border-top: 1px solid #DDD;
 					position: relative;
 					display: table;
 					width: 100%;
+					background: #EEE;
+
+					label {
+						font: normal 17px museo-sans;
+						margin: 10px 5px;
+						color: #666;
+					}
 					
 					.avatarWrapper {
 						border: 1px solid #DDD;
 					}
 
-					textarea {
+					.editorWrapper {
 						vertical-align: middle;
 						display: inline-block;
 						border: 1px solid #DDD;
 						.no-box-shadow;
 						outline: none;
-						font-size: 13px;
-						padding: 5px;
+						font-size: 15px;
+						padding: 20px;
 						text-align: left;
-
+						background: white;
 						width: 100%;
-						height: 50px;
-						&:focus {
-							border-color: #444;
-							height: 35px;
+
+						.editor {
+							min-height: 60px;
+
+							p {
+								margin: 0;
+							}
 						}
-						resize: vertical;
 					}
 
 					[data-action=send-answer] {
 						.high-xbtn(white, @COLOR2);
-						.high-xbtn-padding(4px, 10px, 2px);
+						.high-xbtn-padding(6px, 10px, 2px);
 						display: inline-block;
 						margin-top: 10px;
 						float: right;
+						font-size: 14px;
+					}
+
+					.showAnswerInput {
+						padding: 8px 10px;
 						font-size: 13px;
+						color: #888;
+						background: white;
+
+						border: 1px solid #DDD;
+						cursor: pointer;
+						.transition(all, .2s, linear);
+						&:hover {
+							color: #444;
+						}
 					}
 				}
 			}
@@ -879,7 +901,6 @@
 			}
 		}
 	}
-
 	.postSidebar {
 		float: left;
 		.transition-transform(.4s, linear);
@@ -909,7 +930,6 @@
 		&.full .sidebarToggle i:before {
 			content: @fa-var-plus;
 		}
-
 	}
 
 }

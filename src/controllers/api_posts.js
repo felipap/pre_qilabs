@@ -143,13 +143,16 @@ module.exports = {
         '/answers': {
           post: [
             required.posts.selfCanComment('id'), function(req, res) {
-              var data, postId;
+              var data, postId, sanitizer;
               if (!(postId = req.paramToObjectId('id'))) {
                 return;
               }
+              sanitizer = require('sanitizer');
+              console.log(req.body.body);
+              console.log('final:', req.body.tags, sanitizer.sanitize(req.body.body));
               data = {
                 content: {
-                  body: req.body.content.body
+                  body: sanitizer.sanitize(req.body.body)
                 },
                 type: Post.Types.Answer
               };
