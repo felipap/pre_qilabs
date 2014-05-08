@@ -255,15 +255,15 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 											</time>
 										</div>
 										<div className="answerSidebar" ref="sidebar">
-											<div className="box editedByBox">
-												<div className="avatarWrapper">
-													<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')'} }></div>
-												</div>
-												<div className="info">
-													Respondido por <span className="name">{answer.author.name}</span>&nbsp;
-													<time data-time-count={1*new Date(model.published)}>
-														{window.calcTimeFrom(model.published)}
-													</time>
+											<div className="box authorInfo">
+												<div className="identification">
+													<div className="avatarWrapper">
+														<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
+													</div>
+													<a href={answer.profileUrl} className="username">
+														{answer.author.name}
+													</a>
+													<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
 												</div>
 												<div className="bio">
 													{
@@ -286,15 +286,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				// 	<label><time data-time-count={1*new Date(model.published)}>
 				// 				{window.calcTimeFrom(model.published)}
 				// 			</time> por</label>
-				// 	<div className="identification">
-				// 		<div className="avatarWrapper">
-				// 			<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
-				// 		</div>
-				// 		<a href={answer.profileUrl} className="username">
-				// 			{answer.author.name}
-				// 		</a>
-				// 		<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-				// 	</div>
 				// </div>
 			},
 		}),

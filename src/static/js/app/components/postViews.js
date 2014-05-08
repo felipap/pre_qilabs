@@ -255,15 +255,15 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 											)
 										),
 										React.DOM.div( {className:"answerSidebar", ref:"sidebar"}, 
-											React.DOM.div( {className:"box editedByBox"}, 
-												React.DOM.div( {className:"avatarWrapper"}, 
-													React.DOM.div( {className:"avatar", style: { background: 'url('+answer.author.avatarUrl+')'} })
-												),
-												React.DOM.div( {className:"info"}, 
-													"Respondido por ", React.DOM.span( {className:"name"}, answer.author.name)," ",
-													React.DOM.time( {'data-time-count':1*new Date(model.published)}, 
-														window.calcTimeFrom(model.published)
-													)
+											React.DOM.div( {className:"box authorInfo"}, 
+												React.DOM.div( {className:"identification"}, 
+													React.DOM.div( {className:"avatarWrapper"}, 
+														React.DOM.div( {className:"avatar", style: { background: 'url('+answer.author.avatarUrl+')' } })
+													),
+													React.DOM.a( {href:answer.profileUrl, className:"username"}, 
+														answer.author.name
+													),
+													React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
 												),
 												React.DOM.div( {className:"bio"}, 
 													
@@ -286,15 +286,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 				// 	<label><time data-time-count={1*new Date(model.published)}>
 				// 				{window.calcTimeFrom(model.published)}
 				// 			</time> por</label>
-				// 	<div className="identification">
-				// 		<div className="avatarWrapper">
-				// 			<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
-				// 		</div>
-				// 		<a href={answer.profileUrl} className="username">
-				// 			{answer.author.name}
-				// 		</a>
-				// 		<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-				// 	</div>
 				// </div>
 			},
 		}),
