@@ -573,6 +573,7 @@
 
 							.toolbar {
 								display: inline-block;
+								margin-bottom: -10px;
 
 								& > .item {
 									display: inline-block;
@@ -594,14 +595,10 @@
 								}
 						
 								.flatBtn (@color) {
-									color: #888;
+									color: #CCC;
+									.transition(color, .2s, linear);
 									&:hover {
-										background: @color;
-										color: white;
-										background: lighten(@color, 2%);
-									}
-									&:focus {
-										.inner-shadow(0, 0, 0, 4px, .2);
+										color: @color;
 									}
 								}
 

@@ -222,14 +222,23 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 										<div className="arrow"></div>
 									</div>
 									<div className="toolbar">
-										<div className="item edit">
-											<i className="icon-pencil"></i>
+										{(window.user && model.author.id===window.user.id)?
+										(
+											<div className="item edit">
+												<i className="icon-pencil"></i>
+											</div>
+										):null}
+										{(window.user && model.author.id===window.user.id)?
+										(
+											<div className="item trash" data-action="remove-post" onClick={this.onClickTrash}>
+												<i className="icon-trash"></i>
+											</div>
+										):null}
+										<div className="item link">
+											<i className="icon-link"></i>
 										</div>
 										<div className="item flag">
 											<i className="icon-flag"></i>
-										</div>
-										<div className="item trash" data-action="remove-post" onClick={this.onClickTrash}>
-											<i className="icon-trash"></i>
 										</div>
 									</div>
 									<div className="answerAuthor">

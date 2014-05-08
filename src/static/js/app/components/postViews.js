@@ -222,14 +222,23 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react'], f
 										React.DOM.div( {className:"arrow"})
 									),
 									React.DOM.div( {className:"toolbar"}, 
-										React.DOM.div( {className:"item edit"}, 
-											React.DOM.i( {className:"icon-pencil"})
+										(window.user && model.author.id===window.user.id)?
+										(
+											React.DOM.div( {className:"item edit"}, 
+												React.DOM.i( {className:"icon-pencil"})
+											)
+										):null,
+										(window.user && model.author.id===window.user.id)?
+										(
+											React.DOM.div( {className:"item trash", 'data-action':"remove-post", onClick:this.onClickTrash}, 
+												React.DOM.i( {className:"icon-trash"})
+											)
+										):null,
+										React.DOM.div( {className:"item link"}, 
+											React.DOM.i( {className:"icon-link"})
 										),
 										React.DOM.div( {className:"item flag"}, 
 											React.DOM.i( {className:"icon-flag"})
-										),
-										React.DOM.div( {className:"item trash", 'data-action':"remove-post", onClick:this.onClickTrash}, 
-											React.DOM.i( {className:"icon-trash"})
 										)
 									),
 									React.DOM.div( {className:"answerAuthor"}, 
