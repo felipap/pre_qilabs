@@ -1,5 +1,6 @@
 
-@import "./postFormatting.less";
+@import "./formatting.less";
+@import "../common.less";
 
 @postSidebarWidth: 340px;
 @postColWidth: 760px;
@@ -343,7 +344,6 @@
 				}
 
 				.answerSection {
-
 					.sectionHeader {
 						background: #F8F8F8;
 						position: relative;
@@ -473,63 +473,6 @@
 						}
 					}
 
-					.answerBody {
-						color: #222;
-						font-size: 15px;
-						color: #333;
-						min-height: 300px;
-						resize: vertical;
-
-						p {
-							margin: 0 0 5px;
-							line-height: 24px;
-
-							&:empty { display: none; }
-						}
-						margin-bottom: 5px;
-
-						& > img, & > iframe {
-							width: 100%;
-							margin: 30px -50px;
-							border: none;
-
-							& + small {
-								display: block;
-								margin-top: -10px;
-								font-size: 13px;
-								margin-bottom: 20px;
-							}
-						}
-
-						& > pre {
-							width: 700px;
-							margin: 15px -20px;
-						}
-						
-						h1 + img, .h1 + img, h1 + iframe, .h1 + iframe, 
-						h2 + img, .h2 + img, h2 + iframe, .h2 + iframe
-						{
-							margin-top: 0px;
-						}
-
-						pre {
-							border: 1px solid #EEE;
-							background: #FAFAFA;
-							.rounded(0);
-						}
-
-						blockquote {
-							margin-top: .4em;
-							font-size: 15px;
-							margin-bottom: .4em;
-							border-left: 5px solid #DDD;
-							padding-left: 10px;
-							margin: 0 0 10px;
-							font-size: 16px;
-						}
-
-					}
-
 					.answerList {
 						.answerViewWrapper {
 							position: relative;
@@ -541,74 +484,6 @@
 
 								table { width: 100%; }
 								td { vertical-align: top; }
-
-								.answerAuthor {
-									float: right;
-									margin-right: -20px;
-									font-size: 13px;
-									position: relative;
-									color: #444;
-									// padding-bottom: 10px;
-									padding: 10px;
-									padding-right: 40px;
-									pointer: default;
-
-									.transition(all, .2s, ease-out);
-
-									& > .avatarWrapper {
-										height: 35px; width: 35px;
-										.rounded(2px);
-										margin-right: 10px;
-										margin-top: -2px;
-										cursor: pointer;
-									}
-
-									& > .info {
-										cursor: pointer;
-										display: inline-block;
-										vertical-align: middle;
-										.username {
-											font-weight: bold;
-										}
-
-										time {
-											display: block;
-										}
-									}
-
-									.answerSidebar {
-										.transition-transform(.2s, ease-out);
-
-										position: absolute;
-										right: 0;
-										bottom: 0;
-										z-index: -1;
-										.authorInfo {
-											padding: 20px;
-										}
-										.translate(0);
-
-										.authorInfo, .editedByBox {
-											label {
-												margin-bottom: 10px;
-												font: normal 12px museo-sans;
-											}
-											.bio {
-												margin-top: 10px;
-												font-size: 12px;
-												color: #EEE;
-											}
-										}
-									}
-
-									&:hover .answerSidebar {
-										.translate(@postSidebarWidth);
-									}
-
-									&:hover {
-										background: lighten(#DDD, 10%);
-									}
-								}
 
 								.left {
 									width: 30px;
@@ -642,46 +517,168 @@
 									}
 								}
 
-								.toolbar {
-									display: inline-block;
-									margin-bottom: -10px;
+								.answerBodyWrapper {
+									font-size: 15px;
+									min-height: 100px;
+									padding: 5px;
+									resize: vertical;
+									border: 1px solid transparent;
+									.transition(border, .2s, ease);
 
-									& > .item {
+									.answerBody {
+										padding: 5px;
+										color: #555;
+										.answerFormatting;
+									}
+
+									& > button {
+										display: none;
+									}
+								}
+								
+								&.editing {
+									.answerBodyWrapper {
+										border-color: #DDD;
+										.answerBody {
+											padding: 5px;
+											color: #222;
+										}
+									}
+
+									.infobar .toolbar {
+										.edit, .remove {
+											display: none;
+										}
+										.save, .cancel {
+											display: inline-block;
+										}
+									}
+								}
+
+								.infobar {
+									border-top: 1px solid #EEE;
+
+									.toolbar {
 										display: inline-block;
-										text-align: center;
-										height: 30px;
-										margin-right: 7px;
-										width: 30px;
-										color: white;
-										line-height: 30px;
-										cursor: pointer;
-										&:active {
-											.inner-shadow(0, 2px, 4px, .3);
+										margin: 12px 0;
+
+										& > .item {
+											display: inline-block;
+											text-align: center;
+											height: 30px;
+											margin-right: 7px;
+											width: 30px;
+											color: white;
+											line-height: 30px;
+											cursor: pointer;
+											&:active {
+												.inner-shadow(0, 2px, 4px, .3);
+											}
+
+											i {
+												font-size: 17px;
+												vertical-align: middle;
+											}
+										}
+								
+										.flatBtn (@color) {
+											color: #CCC;
+											.transition(all, .2s, linear);
+											&:hover {
+												color: @color;
+											}
 										}
 
-										i {
-											font-size: 17px;
+										.link 	{ .flatBtn(#555); }
+										.tweet 	{ .flatBtn(@COLOR-twitter); }
+										.flag 	{ .flatBtn(#777); }
+										.edit 	{ .flatBtn(@COLOR1); }
+										.remove { .flatBtn(mix(red, @COLOR4)); }
+										.like 	{ .flatBtn(@COLOR4); }
+										.fb 	{ .flatBtn(@COLOR-facebook); }
+										.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
+										.up 	{ .flatBtn(@COLOR2); }
+
+										.cancel {
+											display: none;
+											.flatBtn(@COLOR4);
+											color: @COLOR4;
+											padding-right: 1px;
+										}
+
+										.save {
+											display: none;
+											.flatBtn(@COLOR1);
+											color: #08C;
+										}
+									}
+
+									.answerAuthor {
+										float: right;
+										margin-right: -20px;
+										font-size: 13px;
+										position: relative;
+										color: #444;
+										// padding-bottom: 10px;
+										padding: 10px;
+										padding-right: 40px;
+										pointer: default;
+
+										.transition(all, .2s, ease-out);
+
+										& > .avatarWrapper {
+											height: 35px; width: 35px;
+											.rounded(2px);
+											margin-right: 10px;
+											margin-top: -2px;
+											cursor: pointer;
+										}
+
+										& > .info {
+											cursor: default;
+											display: inline-block;
 											vertical-align: middle;
-										}
-									}
-							
-									.flatBtn (@color) {
-										color: #CCC;
-										.transition(color, .2s, linear);
-										&:hover {
-											color: @color;
-										}
-									}
+											.username {
+												font-weight: bold;
+											}
 
-									.link 	{ .flatBtn(#555); }
-									.tweet 	{ .flatBtn(@COLOR-twitter); }
-									.flag 	{ .flatBtn(#777); }
-									.edit 	{ .flatBtn(@COLOR1); }
-									.trash 	{ .flatBtn(mix(red, @COLOR4)); }
-									.like 	{ .flatBtn(@COLOR4); }
-									.fb 	{ .flatBtn(@COLOR-facebook); }
-									.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
-									.up 	{ .flatBtn(@COLOR2); }
+											time {
+												display: block;
+											}
+										}
+
+										.answerSidebar {
+											.transition-transform(.2s, ease-out);
+											position: absolute;
+											right: 0;
+											bottom: 0;
+											z-index: -1;
+											.authorInfo {
+												padding: 20px;
+											}
+											.translate(0);
+
+											.authorInfo, .editedByBox {
+												label {
+													margin-bottom: 10px;
+													font: normal 12px museo-sans;
+												}
+												.bio {
+													margin-top: 10px;
+													font-size: 12px;
+													color: #EEE;
+												}
+											}
+										}
+
+										&:hover .answerSidebar {
+											.translate(@postSidebarWidth);
+										}
+
+										&:hover {
+											background: lighten(#DDD, 10%);
+										}
+									}
 								}
 
 								.commentSection {
@@ -765,12 +762,12 @@
 							.no-box-shadow;
 							outline: none;
 							font-size: 15px;
-							padding: 20px;
 							text-align: left;
 							background: white;
 							width: 100%;
 
 							.editor {
+								padding: 20px;
 								min-height: 60px;
 
 								p {
@@ -823,9 +820,9 @@
 
 			.authorInfo {
 				padding: 30px;
+
 				.identification {
 					display: table;
-
 					.avatarWrapper {
 						height: 50px;
 						width: 50px;

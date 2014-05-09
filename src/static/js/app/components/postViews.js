@@ -9,10 +9,19 @@
 
 define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'medium-editor',], function ($, Backbone, _, postModels, React) {
 
+	var mediumEditorAnswerOpts = {
+		firstHeader: 'h1',
+		secondHeader: 'h2',
+		buttons: ['bold', 'italic', 'quote', 'anchor', 'underline', 'orderedlist'],
+		buttonLabels: {
+			quote: '<i class="icon-quote"></i>',
+			orderedlist: '<i class="icon-list"></i>'
+		}
+	};
+
 	/* React.js views */
 
 	var EditablePost = {
-		onClickEdit: function () { },
 		onClickTrash: function () {
 			if (confirm('Tem certeza que deseja excluir essa postagem?')) {
 				this.props.model.destroy();
@@ -91,7 +100,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 
 			componentDidUpdate: function () {
-				if (this.refs.input) {
+				if (this.refs && this.refs.input) {
 					$(this.refs.input.getDOMNode()).autosize();
 					if (this.props.small) {
 						$(this.refs.input.getDOMNode()).keypress(function (e) {
@@ -203,17 +212,71 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 	var Answer = {
 		View: React.createClass({displayName: 'View',
 			mixins: [EditablePost],
+
+			getInitialState: function () {
+				return {isEditing:false};
+			},
+
+			onClickEdit: function () {
+				if (!this.editor) return;
+
+				this.setState({isEditing:true});
+				this.editor.activate();
+			},
+
+			componentDidMount: function () {
+				if (window.user && this.props.model.get('author').id === window.user.id) {
+					this.editor = new MediumEditor(this.refs.answerBody.getDOMNode(), mediumEditorAnswerOpts); 
+					this.editor.deactivate();
+				} else {
+					this.editor = null;
+				}
+			},
+			
+			onClickSave: function () {
+				if (!this.editor) return;
+
+				var self = this;
+
+				this.props.model.save({
+					data: {
+						body: this.editor.serialize()['element-0'].value,
+					},
+				}, {
+					success: function () {
+						console.log(self.props.model.attributes)
+						self.setState({isEditing:false});
+						self.forceUpdate();
+					}
+				});
+			},
+
+			componentDidUpdate: function () {
+				if (!this.editor) return;
+				if (!this.state.isEditing) {
+					console.log('hear hear')
+					this.editor.deactivate(); // just to make sure
+					$(this.refs.answerBody.getDOMNode()).html($(this.props.model.get('data').body));
+				} else {
+					this.editor.activate();
+				}
+			},
+
+			onCancelEdit: function () {
+				if (!this.editor) return;
+
+				console.log('come on', this.props.model.attributes.data.escapedBody)
+				this.setState({isEditing:false});
+				e = this.editor;
+			},
+			
 			render: function () {
 				var answer = this.props.model.attributes;
 				var self = this;
 
-				var mediaUserAvatarStyle = {
-					background: 'url('+answer.author.avatarUrl+')',
-				};
-
 				return (
 					React.DOM.div( {className:"answerViewWrapper"}, 
-						React.DOM.div( {className:"answerView"}, 
+						React.DOM.div( {className:" answerView "+(this.state.isEditing?" editing ":""), ref:"answerView"}, 
 							React.DOM.table(null, 
 							React.DOM.tr(null, 
 								React.DOM.td( {className:"left"}, 
@@ -224,63 +287,79 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 									)
 								),
 								React.DOM.td( {className:"right"}, 
-									React.DOM.div( {className:"answerBody"}, 
-										React.DOM.div( {className:"msgBody"}, 
-											React.DOM.span( {dangerouslySetInnerHTML:{__html: answer.data.escapedBody }} )
+									React.DOM.div( {className:"answerBodyWrapper", ref:"answerBodyWrapper"}, 
+										React.DOM.div( {className:"answerBody", ref:"answerBody", dangerouslySetInnerHTML:{__html: answer.data.body }}
 										),
-										React.DOM.div( {className:"arrow"})
-									),
-									React.DOM.div( {className:"toolbar"}, 
-										(window.user && answer.author.id===window.user.id)?
-										(
-											React.DOM.div( {className:"item edit"}, 
-												React.DOM.i( {className:"icon-pencil"})
-											)
-										):null,
-										(window.user && answer.author.id===window.user.id)?
-										(
-											React.DOM.div( {className:"item trash", 'data-action':"remove-post", onClick:this.onClickTrash}, 
-												React.DOM.i( {className:"icon-trash"})
-											)
-										):null,
-										React.DOM.div( {className:"item link"}, 
-											React.DOM.i( {className:"icon-link"})
-										),
-										React.DOM.div( {className:"item flag"}, 
-											React.DOM.i( {className:"icon-flag"})
+										React.DOM.div( {className:"arrow"}),
+										React.DOM.button( {'data-action':"save"}, 
+											"Salvar"
 										)
 									),
-									React.DOM.div( {className:"answerAuthor"}, 
-										React.DOM.div( {className:"avatarWrapper"}, 
-											React.DOM.a( {href:answer.author.profileUrl}, 
-												React.DOM.div( {className:"avatar", style:mediaUserAvatarStyle, title:answer.author.username}
+									React.DOM.div( {className:"infobar"}, 
+										React.DOM.div( {className:"toolbar"}, 
+											(window.user && answer.author.id===window.user.id)?
+											(
+												React.DOM.div( {className:"item save", 'data-action':"save-post", onClick:this.onClickSave, 'data-toggle':"tooltip", 'data-placement':"bottom", title:"Salvar"}, 
+													React.DOM.i( {className:"icon-save"})
 												)
+											):null,
+											(window.user && answer.author.id===window.user.id)?
+											(
+												React.DOM.div( {className:"item cancel", onClick:this.onCancelEdit, 'data-toggle':"tooltip", 'data-placement':"bottom", title:"Cancelar"}, 
+													React.DOM.i( {className:"icon-times"})
+												)
+											):null,
+											(window.user && answer.author.id===window.user.id)?
+											(
+												React.DOM.div( {className:"item edit", onClick:this.onClickEdit, 'data-toggle':"tooltip", 'data-placement':"bottom", title:"Editar"}, 
+													React.DOM.i( {className:"icon-pencil"})
+												)
+											):null,
+											(window.user && answer.author.id===window.user.id)?
+											(
+												React.DOM.div( {className:"item remove", 'data-action':"remove-post", onClick:this.onClickTrash,  'data-toggle':"tooltip", 'data-placement':"bottom", title:"Remover"}, 
+													React.DOM.i( {className:"icon-trash"})
+												)
+											):null,
+											React.DOM.div( {className:"item link", 'data-toggle':"tooltip", 'data-placement':"bottom", title:"Link"}, 
+												React.DOM.i( {className:"icon-link"})
+											),
+											React.DOM.div( {className:"item flag",  'data-toggle':"tooltip", 'data-placement':"bottom", title:"Sinalizar conteúdo"}, 
+												React.DOM.i( {className:"icon-flag"})
 											)
 										),
-										React.DOM.div( {className:"info"}, 
-											React.DOM.a( {href:answer.author.profileUrl, className:"username"}, 
-												answer.author.name
-											), " ", React.DOM.time( {'data-time-count':1*new Date(answer.published)}, 
-												window.calcTimeFrom(answer.published)
-											)
-										),
-										React.DOM.div( {className:"answerSidebar", ref:"sidebar"}, 
-											React.DOM.div( {className:"box authorInfo"}, 
-												React.DOM.div( {className:"identification"}, 
-													React.DOM.div( {className:"avatarWrapper"}, 
-														React.DOM.div( {className:"avatar", style: { background: 'url('+answer.author.avatarUrl+')' } })
+										React.DOM.div( {className:"answerAuthor"}, 
+											React.DOM.div( {className:"avatarWrapper"}, 
+												React.DOM.a( {href:answer.author.profileUrl}, 
+													React.DOM.div( {className:"avatar", style: { background: 'url('+answer.author.avatarUrl+')' },  title:answer.author.username}
+													)
+												)
+											),
+											React.DOM.div( {className:"info"}, 
+												React.DOM.a( {href:answer.author.profileUrl, className:"username"}, 
+													answer.author.name
+												), " ", React.DOM.time( {'data-time-count':1*new Date(answer.published)}, 
+													window.calcTimeFrom(answer.published)
+												)
+											),
+											React.DOM.div( {className:"answerSidebar", ref:"sidebar"}, 
+												React.DOM.div( {className:"box authorInfo"}, 
+													React.DOM.div( {className:"identification"}, 
+														React.DOM.div( {className:"avatarWrapper"}, 
+															React.DOM.div( {className:"avatar", style: { background: 'url('+answer.author.avatarUrl+')' } })
+														),
+														React.DOM.a( {href:answer.profileUrl, className:"username"}, 
+															answer.author.name
+														),
+														React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
 													),
-													React.DOM.a( {href:answer.profileUrl, className:"username"}, 
-														answer.author.name
-													),
-													React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
-												),
-												React.DOM.div( {className:"bio"}, 
-													
-														(answer.author.profile.bio.split(" ").length>20)?
-														answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
-														:answer.author.profile.bio
-													
+													React.DOM.div( {className:"bio"}, 
+														
+															(answer.author.profile.bio.split(" ").length>20)?
+															answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
+															:answer.author.profile.bio
+														
+													)
 												)
 											)
 										)
@@ -292,6 +371,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						)
 					)
 				);
+				// console.log('me', me.props.children.props.children[0].props.children.props.children[1].props.children[0].props.children[0].props.children.props.dangerouslySetInnerHTML);
+				// return me
 			},
 		}),
 		ListView: React.createClass({displayName: 'ListView',
@@ -344,15 +425,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 			componentDidUpdate: function () {
 				if (this.refs.input) {
-					this.editor = new MediumEditor(this.refs.input.getDOMNode(), {
-						firstHeader: 'h1',
-						secondHeader: 'h2',
-						buttons: ['bold', 'italic', 'quote', 'anchor', 'underline', 'orderedlist'],
-						buttonLabels: {
-							quote: '<i class="icon-quote"></i>',
-							orderedlist: '<i class="icon-list"></i>'
-						}
-					});
+					this.editor = new MediumEditor(this.refs.input.getDOMNode(), mediumEditorAnswerOpts);
 					e = this.editor;
 				}
 			},

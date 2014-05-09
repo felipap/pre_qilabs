@@ -21,9 +21,21 @@ module.exports = {
 							res.endJson( data: stuffedPost )
 					)
 				]
-			post: (req, res) ->
+			put: [required.posts.selfOwns('id'), (req, res) ->
 					return if not postId = req.paramToObjectId('id')
 					# For security, handle each option
+					sanitizer = require 'sanitizer'
+					console.log req.body.data.body
+					console.log 'final:', req.body.tags, sanitizer.sanitize(req.body.data.body)
+
+					Post.findById postId, req.handleErrResult (post) =>
+						post.data.body = sanitizer.sanitize(req.body.data.body)
+						post.save req.handleErrResult((me) ->
+							post.stuff req.handleErrResult (stuffedPost) ->
+								res.endJson stuffedPost
+						)
+				]
+
 			delete: (req, res) ->
 					return if not postId = req.paramToObjectId('id')
 					Post.findOne {_id: postId, author: req.user},

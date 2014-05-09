@@ -9,10 +9,19 @@
 
 define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'medium-editor',], function ($, Backbone, _, postModels, React) {
 
+	var mediumEditorAnswerOpts = {
+		firstHeader: 'h1',
+		secondHeader: 'h2',
+		buttons: ['bold', 'italic', 'quote', 'anchor', 'underline', 'orderedlist'],
+		buttonLabels: {
+			quote: '<i class="icon-quote"></i>',
+			orderedlist: '<i class="icon-list"></i>'
+		}
+	};
+
 	/* React.js views */
 
 	var EditablePost = {
-		onClickEdit: function () { },
 		onClickTrash: function () {
 			if (confirm('Tem certeza que deseja excluir essa postagem?')) {
 				this.props.model.destroy();
@@ -91,7 +100,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 
 			componentDidUpdate: function () {
-				if (this.refs.input) {
+				if (this.refs && this.refs.input) {
 					$(this.refs.input.getDOMNode()).autosize();
 					if (this.props.small) {
 						$(this.refs.input.getDOMNode()).keypress(function (e) {
@@ -203,17 +212,71 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 	var Answer = {
 		View: React.createClass({
 			mixins: [EditablePost],
+
+			getInitialState: function () {
+				return {isEditing:false};
+			},
+
+			onClickEdit: function () {
+				if (!this.editor) return;
+
+				this.setState({isEditing:true});
+				this.editor.activate();
+			},
+
+			componentDidMount: function () {
+				if (window.user && this.props.model.get('author').id === window.user.id) {
+					this.editor = new MediumEditor(this.refs.answerBody.getDOMNode(), mediumEditorAnswerOpts); 
+					this.editor.deactivate();
+				} else {
+					this.editor = null;
+				}
+			},
+			
+			onClickSave: function () {
+				if (!this.editor) return;
+
+				var self = this;
+
+				this.props.model.save({
+					data: {
+						body: this.editor.serialize()['element-0'].value,
+					},
+				}, {
+					success: function () {
+						console.log(self.props.model.attributes)
+						self.setState({isEditing:false});
+						self.forceUpdate();
+					}
+				});
+			},
+
+			componentDidUpdate: function () {
+				if (!this.editor) return;
+				if (!this.state.isEditing) {
+					console.log('hear hear')
+					this.editor.deactivate(); // just to make sure
+					$(this.refs.answerBody.getDOMNode()).html($(this.props.model.get('data').body));
+				} else {
+					this.editor.activate();
+				}
+			},
+
+			onCancelEdit: function () {
+				if (!this.editor) return;
+
+				console.log('come on', this.props.model.attributes.data.escapedBody)
+				this.setState({isEditing:false});
+				e = this.editor;
+			},
+			
 			render: function () {
 				var answer = this.props.model.attributes;
 				var self = this;
 
-				var mediaUserAvatarStyle = {
-					background: 'url('+answer.author.avatarUrl+')',
-				};
-
 				return (
 					<div className="answerViewWrapper">
-						<div className="answerView">
+						<div className={" answerView "+(this.state.isEditing?" editing ":"")} ref="answerView">
 							<table>
 							<tr>
 								<td className="left">
@@ -224,63 +287,79 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 									</div>
 								</td>
 								<td className="right">
-									<div className="answerBody">
-										<div className='msgBody'>
-											<span dangerouslySetInnerHTML={{__html: answer.data.escapedBody }} />
+									<div className="answerBodyWrapper" ref="answerBodyWrapper">
+										<div className='answerBody' ref="answerBody" dangerouslySetInnerHTML={{__html: answer.data.body }}>
 										</div>
 										<div className="arrow"></div>
+										<button data-action="save">
+											Salvar
+										</button>
 									</div>
-									<div className="toolbar">
-										{(window.user && answer.author.id===window.user.id)?
-										(
-											<div className="item edit">
-												<i className="icon-pencil"></i>
-											</div>
-										):null}
-										{(window.user && answer.author.id===window.user.id)?
-										(
-											<div className="item trash" data-action="remove-post" onClick={this.onClickTrash}>
-												<i className="icon-trash"></i>
-											</div>
-										):null}
-										<div className="item link">
-											<i className="icon-link"></i>
-										</div>
-										<div className="item flag">
-											<i className="icon-flag"></i>
-										</div>
-									</div>
-									<div className="answerAuthor">
-										<div className="avatarWrapper">
-											<a href={answer.author.profileUrl}>
-												<div className="avatar" style={mediaUserAvatarStyle} title={answer.author.username}>
+									<div className="infobar">
+										<div className="toolbar">
+											{(window.user && answer.author.id===window.user.id)?
+											(
+												<div className="item save" data-action="save-post" onClick={this.onClickSave} data-toggle="tooltip" data-placement="bottom" title="Salvar">
+													<i className="icon-save"></i>
 												</div>
-											</a>
+											):null}
+											{(window.user && answer.author.id===window.user.id)?
+											(
+												<div className="item cancel" onClick={this.onCancelEdit} data-toggle="tooltip" data-placement="bottom" title="Cancelar">
+													<i className="icon-times"></i>
+												</div>
+											):null}
+											{(window.user && answer.author.id===window.user.id)?
+											(
+												<div className="item edit" onClick={this.onClickEdit} data-toggle="tooltip" data-placement="bottom" title="Editar">
+													<i className="icon-pencil"></i>
+												</div>
+											):null}
+											{(window.user && answer.author.id===window.user.id)?
+											(
+												<div className="item remove" data-action="remove-post" onClick={this.onClickTrash}  data-toggle="tooltip" data-placement="bottom" title="Remover">
+													<i className="icon-trash"></i>
+												</div>
+											):null}
+											<div className="item link" data-toggle="tooltip" data-placement="bottom" title="Link">
+												<i className="icon-link"></i>
+											</div>
+											<div className="item flag"  data-toggle="tooltip" data-placement="bottom" title="Sinalizar conteúdo">
+												<i className="icon-flag"></i>
+											</div>
 										</div>
-										<div className="info">
-											<a href={answer.author.profileUrl} className="username">
-												{answer.author.name}
-											</a> <time data-time-count={1*new Date(answer.published)}>
-												{window.calcTimeFrom(answer.published)}
-											</time>
-										</div>
-										<div className="answerSidebar" ref="sidebar">
-											<div className="box authorInfo">
-												<div className="identification">
-													<div className="avatarWrapper">
-														<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
+										<div className="answerAuthor">
+											<div className="avatarWrapper">
+												<a href={answer.author.profileUrl}>
+													<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } } title={answer.author.username}>
 													</div>
-													<a href={answer.profileUrl} className="username">
-														{answer.author.name}
-													</a>
-													<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-												</div>
-												<div className="bio">
-													{
-														(answer.author.profile.bio.split(" ").length>20)?
-														answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
-														:answer.author.profile.bio
-													}
+												</a>
+											</div>
+											<div className="info">
+												<a href={answer.author.profileUrl} className="username">
+													{answer.author.name}
+												</a> <time data-time-count={1*new Date(answer.published)}>
+													{window.calcTimeFrom(answer.published)}
+												</time>
+											</div>
+											<div className="answerSidebar" ref="sidebar">
+												<div className="box authorInfo">
+													<div className="identification">
+														<div className="avatarWrapper">
+															<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
+														</div>
+														<a href={answer.profileUrl} className="username">
+															{answer.author.name}
+														</a>
+														<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+													</div>
+													<div className="bio">
+														{
+															(answer.author.profile.bio.split(" ").length>20)?
+															answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
+															:answer.author.profile.bio
+														}
+													</div>
 												</div>
 											</div>
 										</div>
@@ -292,6 +371,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						</div>
 					</div>
 				);
+				// console.log('me', me.props.children.props.children[0].props.children.props.children[1].props.children[0].props.children[0].props.children.props.dangerouslySetInnerHTML);
+				// return me
 			},
 		}),
 		ListView: React.createClass({
@@ -344,15 +425,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 			componentDidUpdate: function () {
 				if (this.refs.input) {
-					this.editor = new MediumEditor(this.refs.input.getDOMNode(), {
-						firstHeader: 'h1',
-						secondHeader: 'h2',
-						buttons: ['bold', 'italic', 'quote', 'anchor', 'underline', 'orderedlist'],
-						buttonLabels: {
-							quote: '<i class="icon-quote"></i>',
-							orderedlist: '<i class="icon-list"></i>'
-						}
-					});
+					this.editor = new MediumEditor(this.refs.input.getDOMNode(), mediumEditorAnswerOpts);
 					e = this.editor;
 				}
 			},
