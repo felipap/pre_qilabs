@@ -164,11 +164,19 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 			render: function () {
 				var commentNodes = this.props.collection.map(function (comment) {
-					return CommentView({model:comment});
+					return (
+						CommentView( {model:comment, key:comment.id} )
+					);
 				});
 
 				return (
 					React.DOM.div( {className:"commentList"}, 
+						
+							this.props.small?
+							null
+							:React.DOM.label(null, this.props.collection.models.length, " Comentário",this.props.collection.models.length>1?"s":""),
+						
+
 						commentNodes
 					)
 				);
@@ -182,13 +190,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					return React.DOM.div(null);
 				return (
 					React.DOM.div( {className:"commentSection "+(this.props.small?' small ':'')}, 
-						
-							this.props.small?
-							null
-							:React.DOM.div( {className:"info"}, this.props.collection.models.length, " Comentários"),
-						
-						CommentListView( {placeholder:this.props.placeholder, collection:this.props.collection} ),
-						CommentInputForm( {small:true, model:this.props.postModel} )
+						CommentListView(  {small:this.props.small, placeholder:this.props.placeholder, collection:this.props.collection} ),
+						CommentInputForm( {small:this.props.small, model:this.props.postModel} )
 					)
 				);
 			},
@@ -255,7 +258,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 											)
 										),
 										React.DOM.div( {className:"info"}, 
-											React.DOM.span( {className:"username"}, 
+											React.DOM.a( {href:answer.author.profileUrl, className:"username"}, 
 												answer.author.name
 											), " ", React.DOM.time( {'data-time-count':1*new Date(answer.published)}, 
 												window.calcTimeFrom(answer.published)
@@ -302,7 +305,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			render: function () {
 				var answerNodes = this.props.collection.map(function (answer) {
 					return (
-						AnswerView( {model:answer} )
+						AnswerView( {model:answer, key:answer.id})
 					);
 				});
 
@@ -579,7 +582,11 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								React.DOM.div( {className:"tag"}, "Universidades")
 							)
 						),
-						postBody,
+
+						React.DOM.div( {className:"postBody"}, 
+							React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
+						),
+
 						React.DOM.div( {className:"postInfobar"}, 
 							React.DOM.ul( {className:"left"}
 							)

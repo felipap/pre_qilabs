@@ -1,819 +1,223 @@
 
+@import "./postFormatting.less";
+
+@postSidebarWidth: 340px;
+@postColWidth: 760px;
+
 #fullPostContainer {
 	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	background: fadeout(black, 10%);
-	overflow: auto;
-	overflow-x: hidden;
+	top: 0; bottom: 0;
+	left: 0; right: 0;
 	z-index: 20;
+	overflow: auto;
+	overflow-x: hidden;	
+	background: fadeout(black, 10%);
 	display: none;
-	cursor: pointer;
-
-	& > * {
-		cursor: auto;
-	}
 
 	&.active {
 		display: block;
 	}
-}
 
-.postBox {
-	z-index: 1000;
-	top: 30px;
-	display: table;
-	.transition-transform(.4s, linear);
-	padding-bottom: 50px;
-	margin: 0 auto;
-	margin-top: 40px;
+	.postBox {
+		z-index: 1000;
+		display: table;
+		margin: 40px auto;
+		.transition-transform(.4s, linear);
 
-	.postCol {
+		.postCol {
+			width: @postColWidth;
+			position: relative;
+			z-index: 1002;
+			float: left;
+			background: white;
+			font-family: museo-sans;
 
-		h1, .h1, h2, .h2 {
-			margin-top: 25px;
-			margin-bottom: 10px;
-		}
-		@postWidth: 760px;
+			.postHeader {
+				padding: 40px 40px 10px;
 
-		font-family: museo-sans;
-		position: relative;
-		z-index: 1002;
-		width: @postWidth;
-		float: left;
-		background: white;
-
-		.postHeader {
-			overflow: hidden;
-			padding: 40px 40px 0px;
-			color: #444;
-			margin-bottom: 10px;
-
-			.type, time {
-				color: #888;
-				text-transform: uppercase;
-			}
-			.type {
-				text-transform: uppercase;
-			}
-			time {
-				float: right;
-			}
-
-			.postTitle {
-				font: 800 45px museo-sans;
-				margin: 20px 0 20px;
-			}
-			
-			.tags {
-				padding-bottom: 10px;
-				.tag {
-					background: #AAA;
-					.transition(all, .2s, linear);
-					&:not(:hover) {
-						border-color: transparent;
-					}
-				}
-			}
-		}
-
-		.postBody {
-			overflow: hidden;
-			padding: 0 40px 20px;
-			font-size: 16px;
-			color: #333;
-
-			p {
-				margin: 0 0 20px;
-				line-height: 24px;
-			}
-			p:empty, p::empty {
-				margin: 0;
-				line-height: 0;
-			}
-
-			& > img, & > iframe {
-				width: @postWidth;
-				margin: 30px -50px;
-				border: none;
-				max-width: 99999px;
-
-				& + small {
-					display: block;
-					margin-top: -10px;
-					font-size: 13px;
-					margin-bottom: 20px;
-				}
-			}
-
-			& > pre {
-				width: 700px;
-				margin: 15px -20px;
-			}
-			
-			h1 + img, .h1 + img, h1 + iframe, .h1 + iframe, 
-			h2 + img, .h2 + img, h2 + iframe, .h2 + iframe
-			{
-				margin-top: 0px;
-			}
-
-			pre {
-				border: 1px solid #EEE;
-				background: #FAFAFA;
-				.rounded(0);
-			}
-		}
-
-		.postFooter {
-			.commentSection {
-				font-size: 13px;
-				background: #EEE;
-				overflow: hidden;
-
-				.commentList {
-					list-style: none;
-					padding: 0 5px;
-
-					.commentWrapper:last-child {
-						padding-bottom: 5px;
-					}
-
-					.commentWrapper {
-						overflow-wrap: break-word;
-
-						.msgBody {
-							vertical-align: middle;
-							display: inline-block;
-							.no-box-shadow;
-							background: white;
-							outline: none;
-							font-size: 13px;
-							width: 100%;
-							position: relative;
-
-							border: 1px solid #DDD;
-
-							.arrow {
-								content: '';
-								border: 5px solid transparent;
-								border-top-color: #DDD;
-								bottom: -10px;
-								position: absolute;
-								left: 8px;
-							}
-						}
-
-						.infoBar {
-							position: relative;
-							padding: 5px;
-							font-size: 12px;
-
-							.author {
-								color: #333;
-								text-decoration: none;
-
-								&:hover {
-									color: #333;
-								}
-
-								.avatarWrapper {
-									height: 20px;
-									width: 20px;
-									vertical-align: middle;
-									margin-right: 5px;
-									// border: 1px solid #DDD;
-									.rounded(15px);
-								}
-
-								.name {
-									vertical-align: middle;
-								}
-							}
-
-							.voteOptions {
-								display: inline-block;
-								vertical-align: middle;
-								margin: 0 10px;
-								cursor: pointer;
-								i { font-size: 14px; }
-								&:hover {
-									color: #222;
-								}
-							}
-
-							.time {
-								font-size: 11px;
-							}
-						}
-					}
-					.commentWrapper:target {
-						background: yellow;
-					}
-				}
-
-				.commentInputSection {
-					padding: 10px;
-					border-top: 1px solid #DDD;
-					position: relative;
-					display: table;
-					width: 100%;
-					
-					.avatarWrapper {
-						border: 1px solid #DDD;
-					}
-
-					textarea {
-						.transition(border-color, .2s, linear);
-						vertical-align: middle;
-						display: inline-block;
-						border: 1px solid #DDD;
-						.no-box-shadow;
-						outline: none;
-						font-size: 13px;
-						padding: 5px;
-						text-align: left;
-
-						width: 100%;
-						height: 50px;
-						&:focus {
-							border-color: #666;
-							height: 35px;
-						}
-						resize: vertical;
-					}
-
-					[data-action=send-comment] {
-						.xbtn(white, @COLOR2);
-						// .high-xbtn-padding(4px, 10px, 2px);
-						display: inline-block;
-						margin-top: 11px;
-						float: right;
-						font-size: 13px;
-					}
-				}
-
-				.showInput {
-					padding: 8px 10px;
-					font-size: 13px;
+				.type, time {
 					color: #888;
-					background: white;
-
-					border: 1px solid #DDD;
-					cursor: pointer;
-					.transition(all, .2s, linear);
-					&:hover {
-						color: #444;
-					}
+					text-transform: uppercase;
+				}
+				time {
+					float: right;
 				}
 
-				&.small {
-					border-top: 1px solid #DDD;
-					// border-bottom: 1px solid #DDD;
-					padding: 10px 20px 10px 20px;
-					background: #F8F8F8;
-
-					label {
-						font: 18px museo-sans;
-						margin: 8px 0;
-					}
-
-					.commentList .commentWrapper {
-						padding: 5px 0;
-						border-bottom: 1px solid #EEE;
-
-						.msgBody {
-							width: auto;
-							border: none;
-							display: inline;
-							background: none;
-							.arrow {
-								display: none;
-							}
-						}
-						.infoBar {
-							.author {
-								font-weight: bold;
-								color: #58A;
-							}
-							display: inline-block;
-						}
-
-						&:last-child {
-							border-bottom: none;
+				.postTitle {
+					color: #444;
+					font-weight: 800;
+					font-size: 45px;
+					margin: 20px 0 20px;
+				}
+				
+				.tags {
+					.tag {
+						background: #AAA;
+						.transition(all, .2s, linear);
+						&:not(:hover) {
+							border-color: transparent;
 						}
 					}
-	
+				}
+			}
+
+			.postBody {
+				overflow: hidden;
+				padding: 10px 40px 20px;
+				font-size: 16px;
+				color: #333;
+
+				.postBodyFormatting;
+				p:empty { display: none; }
+			}
+
+			.postFooter
+			{
+				.commentSection {
+					font-size: 13px;
+					background: #EEE;
+					overflow: hidden;
+
+					.commentList {
+						list-style: none;
+						padding: 0 5px;
+
+						.commentWrapper:last-child {
+							padding-bottom: 5px;
+						}
+
+						.commentWrapper {
+							overflow-wrap: break-word;
+
+							.msgBody {
+								vertical-align: middle;
+								display: inline-block;
+								.no-box-shadow;
+								background: white;
+								outline: none;
+								font-size: 13px;
+								width: 100%;
+								position: relative;
+
+								border: 1px solid #DDD;
+
+								.arrow {
+									content: '';
+									border: 5px solid transparent;
+									border-top-color: #DDD;
+									bottom: -10px;
+									position: absolute;
+									left: 8px;
+								}
+							}
+
+							.infoBar {
+								position: relative;
+								padding: 5px;
+								font-size: 14px;
+
+								.author {
+									color: #333;
+									text-decoration: none;
+
+									&:hover {
+										color: #333;
+									}
+
+									.avatarWrapper {
+										height: 20px;
+										width: 20px;
+										vertical-align: middle;
+										margin-right: 5px;
+										.rounded(15px);
+									}
+
+									.name {
+										vertical-align: middle;
+									}
+								}
+
+								.voteOptions {
+									display: inline-block;
+									vertical-align: middle;
+									margin: 0 10px;
+									cursor: pointer;
+									i { font-size: 14px; }
+									&:hover {
+										color: #222;
+									}
+								}
+
+								.time {
+									font-size: 11px;
+								}
+
+								.optionBtns {
+									display: inline-block;
+
+									[data-action=remove-post],
+									[data-action=edit-post] {
+										.reset-button;
+										.user-select(none);
+										font-size: 15px;
+										color: #888;
+										padding: 0;
+										vertical-align: middle;
+										margin: -2px 0 0 8px;
+										.no-box-shadow;
+										&:hover {
+											color: #444;
+										}
+									}
+								}
+							}
+						}
+						.commentWrapper:target {
+							background: yellow;
+						}
+					}
+
 					.commentInputSection {
+						padding: 10px;
+						border-top: 1px solid #DDD;
+						position: relative;
+						display: table;
 						width: 100%;
-						padding: 0;
-						padding-right: 70px;
-						border: none;
 						
 						.avatarWrapper {
 							border: 1px solid #DDD;
 						}
 
 						textarea {
+							.transition(border-color, .2s, linear);
+							vertical-align: middle;
+							display: inline-block;
+							border: 1px solid #DDD;
+							.no-box-shadow;
+							outline: none;
+							font-size: 13px;
+							padding: 10px;
+							text-align: left;
+
 							width: 100%;
-							border: 1px solid #CCC;
-							height: 36px;
-							padding: 7px 10px;
-							font-size: 14px;
+							height: 50px;
+							&:focus {
+								border-color: #666;
+								height: 35px;
+							}
+							resize: vertical;
 						}
 
 						[data-action=send-comment] {
-							.xbtn-padding(6px, 6px, 0px);
+							.xbtn(white, @COLOR2);
 							display: inline-block;
-							height: 36px;
-							position: absolute;
-							.rounded(0);
-							width: 64px;
-							right: 0;
+							margin-top: 11px;
 							float: right;
-							font-size: 13px;
-						}
-					}
-				}
-
-				.optionBtns {
-					display: inline-block;
-					.transition(all, .2s, linear);
-
-					[data-action=remove-post],
-					[data-action=edit-post] {
-						background: none;
-						display: inline-block;
-						font-weight: 700;
-						line-height: 1.428571429;
-						white-space: nowrap;
-						cursor: pointer;
-						.rounded(0);
-						border: none;
-						outline: none;
-						padding: 0;
-						margin: -2px 0 0 8px;
-						.user-select(none);
-						vertical-align: middle;
-						font-size: 15px;
-						font-weight: bolder;
-						color: #888;
-						&:hover {
-							color: #444;
-						}
-					}
-				}
-			}
-
-			.answerSection {
-
-				.sectionHeader {
-					background: #F8F8F8;
-					position: relative;
-					border-bottom: 1px solid #EEE;
-					line-height: 50px;
-
-					& > label {
-						padding: 0 20px;
-						font-weight: bold;
-						font-size: 17px;
-						margin: 0;
-						text-transform: uppercase;
-					}
-
-					.sortingMenu {
-						float: right;
-						list-style: none;
-						display: inline-block;
-						position: relative;
-						right: 15px;
-
-						& > label {
-							display: inline;
-							color: #888;
-							font-weight: normal;
-							margin: 0;
-							margin-right: 12px;
-							font-size: 12px;
-							text-transform: uppercase;
-						}
-
-						.menu {
-							display: inline-block;
-
-							.selected {
-								background: white;
-								font-size: 12px;
-								.rounded(2px);
-								width: 86px;
-								text-align: center;
-								line-height: 33px;
-								text-transform: uppercase;
-								display: inline-block;
-								font-weight: bold;
-								border: 1px solid #EFEFEF;
-								border-bottom-color: #CCC;
-								cursor: pointer;
-								color: #444;
-
-
-								i {
-									margin-left: 5px;
-									font-size: 11px;
-								}
-							}
-
-							&:hover .selected {
-								background: #FCFCFC;
-								color: #222;
-							}
-
-							.dropdown {
-								display: none;
-								position: absolute;
-								top: 100%;
-								right: 0;
-								z-index: 20;
-								margin-top: -10px;
-								border-top: 1px solid #DDD;
-
-								li {
-									list-style: none;
-									background: white;
-									text-transform: uppercase;
-									padding: 7px 10px;
-									width: ;
-									font: bold 12px museo-sans;
-									cursor: pointer;
-									border: 1px solid #EEE;
-									border-top: 0;
-									color: #555;
-
-									&:hover {
-										background: #F8F8F8;
-									}
-								}
-							}
-
-							&:hover {
-								.dropdown {
-									display: block;
-								}
-							}
+							font-size: 14px;
 						}
 					}
 
-					ul {
-
-						li {
-							display: inline-block;
-							padding: 0 11px;
-							height: 40px;
-							line-height: 40px;
-							vertical-align: bottom;
-
-							&.label {
-								// font-weight: bold;
-								text-transform: uppercase;
-								font-size: 12px;
-								display: none;
-							}
-
-							&:not(.label) {
-								display: none;
-							}
-
-							&.active {
-								background: white;
-								border: 1px solid #EEE;
-								border-bottom: none;
-								margin-bottom: -1px;
-							}
-
-							.dropdown {
-							}
-						}
-					}
-				}
-
-				.answerBody {
-					color: #222;
-					font-size: 15px;
-					color: #333;
-					min-height: 300px;
-					resize: vertical;
-
-					p {
-						margin: 0 0 5px;
-						line-height: 24px;
-
-						&:empty { display: none; }
-					}
-					margin-bottom: 5px;
-
-					& > img, & > iframe {
-						width: 100%;
-						margin: 30px -50px;
-						border: none;
-
-						& + small {
-							display: block;
-							margin-top: -10px;
-							font-size: 13px;
-							margin-bottom: 20px;
-						}
-					}
-
-					& > pre {
-						width: 700px;
-						margin: 15px -20px;
-					}
-					
-					h1 + img, .h1 + img, h1 + iframe, .h1 + iframe, 
-					h2 + img, .h2 + img, h2 + iframe, .h2 + iframe
-					{
-						margin-top: 0px;
-					}
-
-					pre {
-						border: 1px solid #EEE;
-						background: #FAFAFA;
-						.rounded(0);
-					}
-
-					blockquote {
-						margin-top: .4em;
-						font-size: 15px;
-						margin-bottom: .4em;
-						border-left: 5px solid #DDD;
-						padding-left: 10px;
-						margin: 0 0 10px;
-						font-size: 16px;
-					}
-
-				}
-
-				.answerList {
-					.answerViewWrapper {
-						position: relative;
-						border-bottom: 1px solid #DDD;
-
-						.answerView {
-							padding: 20px;
-							background: white;
-
-							table { width: 100%; }
-							td { vertical-align: top; }
-
-							.answerAuthor {
-								float: right;
-								margin-right: -20px;
-								font-size: 13px;
-								position: relative;
-								color: #444;
-								// padding-bottom: 10px;
-								padding: 10px;
-								padding-right: 40px;
-								pointer: default;
-
-								.transition(all, .2s, ease-out);
-
-								& > .avatarWrapper {
-									height: 35px; width: 35px;
-									.rounded(2px);
-									margin-right: 10px;
-									margin-top: -2px;
-									cursor: pointer;
-								}
-
-								& > .info {
-									cursor: pointer;
-									display: inline-block;
-									vertical-align: middle;
-									.username {
-										font-weight: bold;
-									}
-
-									time {
-										display: block;
-									}
-								}
-
-								.answerSidebar {
-									.transition-transform(.2s, ease-out);
-
-									position: absolute;
-									right: 0;
-									bottom: 0;
-									z-index: -1;
-									.authorInfo {
-										padding: 20px;
-									}
-									.translate(0);
-
-									.authorInfo, .editedByBox {
-										label {
-											margin-bottom: 10px;
-											font: normal 12px museo-sans;
-										}
-										.bio {
-											margin-top: 10px;
-											font-size: 12px;
-											color: #EEE;
-										}
-									}
-								}
-
-								&:hover .answerSidebar {
-									.translate(@sidebarWidth);
-								}
-
-								&:hover {
-									background: lighten(#DDD, 10%);
-									// color: white;
-								}
-							}
-
-							.left {
-								width: 30px;
-								font-size: 12px;
-								padding: 0 25px 0 10px;
-								
-								.voteControl {
-									text-align: center;
-									.voteResult {
-										font-size: 23px;
-									}
-
-									.control {
-										.btn0();
-										color: #555;
-										.reset-button;
-										font-size: 26px;
-										line-height: 16px;
-										i { vertical-align: middle; }
-									}
-								}
-							}
-
-							.right {
-								border-bottom: 1px solid #EEE;
-								.answerBody {
-									font-size: 15px;
-									min-height: 60px;
-									background: white;
-									padding: 0 0 10px;
-								}
-							}
-
-							.toolbar {
-								display: inline-block;
-								margin-bottom: -10px;
-
-								& > .item {
-									display: inline-block;
-									text-align: center;
-									height: 30px;
-									margin-right: 7px;
-									width: 30px;
-									color: white;
-									line-height: 30px;
-									cursor: pointer;
-									&:active {
-										.inner-shadow(0, 2px, 4px, .3);
-									}
-
-									i {
-										font-size: 17px;
-										vertical-align: middle;
-									}
-								}
-						
-								.flatBtn (@color) {
-									color: #CCC;
-									.transition(color, .2s, linear);
-									&:hover {
-										color: @color;
-									}
-								}
-
-								.link 	{ .flatBtn(#555); }
-								.tweet 	{ .flatBtn(@COLOR-twitter); }
-								.flag 	{ .flatBtn(#777); }
-								.edit 	{ .flatBtn(@COLOR1); }
-								.trash 	{ .flatBtn(mix(red, @COLOR4)); }
-								.like 	{ .flatBtn(@COLOR4); }
-								.fb 	{ .flatBtn(@COLOR-facebook); }
-								.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
-								.up 	{ .flatBtn(@COLOR2); }
-							}
-
-							.commentSection {
-								background: white;
-								margin: 0 0 0 54px;
-								padding: 0;
-								border: none;
-
-								.showInput {
-									display: inline-block;
-									padding: 5px;
-									margin-top: 5px;
-								}
-
-								.commentInputSection {
-									margin-top: 5px;
-								}
-							}
-						}
-					}
-
-					.optionBtns {
-						.transition(all, .2s, linear);
-
-						[data-action=remove-post],
-						[data-action=edit-post] {
-							background: none;
-							display: inline-block;
-							font-weight: 700;
-							line-height: 1.428571429;
-							white-space: nowrap;
-							cursor: pointer;
-							.rounded(0);
-							border: none;
-							outline: none;
-							padding: 0;
-							margin: 0 0 0 5px;
-							.user-select(none);
-							vertical-align: middle;
-							font-size: 18px;
-							font-weight: bolder;
-							color: #888;
-							&:hover {
-								color: #444;
-							}
-						}
-					}
-				}
-
-				.showInput {
-					padding: 15px;
-					font-size: 13px;
-					color: #AAA;
-					background: white;
-					margin: 5px;
-					border: 1px solid #DDD;
-					cursor: pointer;
-				}
-
-				.answerInputSection {
-					padding: 10px;
-					position: relative;
-					display: table;
-					width: 100%;
-					background: #EEE;
-
-					label {
-						font: normal 17px museo-sans;
-						margin: 10px 5px;
-						color: #666;
-					}
-					
-					.avatarWrapper {
-						border: 1px solid #DDD;
-					}
-
-					.editorWrapper {
-						vertical-align: middle;
-						display: inline-block;
-						border: 1px solid #DDD;
-						.no-box-shadow;
-						outline: none;
-						font-size: 15px;
-						padding: 20px;
-						text-align: left;
-						background: white;
-						width: 100%;
-
-						.editor {
-							min-height: 60px;
-
-							p {
-								margin: 0;
-							}
-						}
-					}
-
-					[data-action=send-answer] {
-						.high-xbtn(white, @COLOR2);
-						.high-xbtn-padding(6px, 10px, 2px);
-						display: inline-block;
-						margin-top: 10px;
-						float: right;
-						font-size: 14px;
-					}
-
-					.showAnswerInput {
+					.showInput {
 						padding: 8px 10px;
 						font-size: 13px;
 						color: #888;
@@ -826,178 +230,748 @@
 							color: #444;
 						}
 					}
+
+					&:not(.small) {
+						
+						border-top: 1px solid #DDD;
+
+						.commentList {
+							padding: 20px 0 0;
+
+							label {
+								font-size: 17px;
+								text-transform: uppercase;
+								padding: 0 15px;
+								font-weight: normal;
+							}
+
+							.commentWrapper {
+								padding: 10px 10px 0;
+								.msgBody {
+									padding: 9px;
+									font-size: 14px;
+								}
+
+								.infoBar {
+									padding: 5px;
+									font-size: 14px;
+
+									.avatarWrapper {
+										width: 40px;
+										height: 40px;
+										vertical-align: middle;
+										.rounded(40px);
+									}
+								}
+							}
+						}
+
+						.showInput {
+							margin: 10px 10px 10px;
+						}
+					}
+
+					&.small {
+						border-top: 1px solid #DDD;
+						padding: 10px 20px 10px 20px;
+						background: #F8F8F8;
+
+						label {
+							font: 18px museo-sans;
+							margin: 8px 0;
+						}
+
+						.commentList .commentWrapper {
+							padding: 5px 0;
+							border-bottom: 1px solid #EEE;
+
+							.msgBody {
+								width: auto;
+								border: none;
+								display: inline;
+								background: none;
+								.arrow {
+									display: none;
+								}
+							}
+							.infoBar {
+								font-size: 12px;
+								padding: 5px;
+								.author {
+									font-weight: bold;
+									color: #58A;
+								}
+								display: inline-block;
+							}
+
+							&:last-child {
+								border-bottom: none;
+							}
+						}
+		
+						.commentInputSection {
+							width: 100%;
+							padding: 0;
+							padding-right: 70px;
+							border: none;
+							
+							.avatarWrapper {
+								border: 1px solid #DDD;
+							}
+
+							textarea {
+								width: 100%;
+								border: 1px solid #CCC;
+								height: 36px;
+								padding: 7px 10px;
+								font-size: 14px;
+							}
+
+							[data-action=send-comment] {
+								.xbtn-padding(6px, 6px, 0px);
+								display: inline-block;
+								height: 36px;
+								position: absolute;
+								.rounded(0);
+								width: 64px;
+								right: 0;
+								float: right;
+								font-size: 13px;
+							}
+						}
+					}
+				}
+
+				.answerSection {
+
+					.sectionHeader {
+						background: #F8F8F8;
+						position: relative;
+						border-bottom: 1px solid #EEE;
+						line-height: 50px;
+
+						& > label {
+							padding: 0 20px;
+							font-weight: bold;
+							font-size: 17px;
+							margin: 0;
+							text-transform: uppercase;
+						}
+
+						.sortingMenu {
+							float: right;
+							list-style: none;
+							display: inline-block;
+							position: relative;
+							right: 15px;
+
+							& > label {
+								display: inline;
+								color: #888;
+								font-weight: normal;
+								margin: 0;
+								margin-right: 12px;
+								font-size: 12px;
+								text-transform: uppercase;
+							}
+
+							.menu {
+								display: inline-block;
+
+								.selected {
+									background: white;
+									font-size: 12px;
+									.rounded(2px);
+									width: 86px;
+									text-align: center;
+									line-height: 33px;
+									text-transform: uppercase;
+									display: inline-block;
+									font-weight: bold;
+									border: 1px solid #EFEFEF;
+									border-bottom-color: #CCC;
+									cursor: pointer;
+									color: #444;
+
+
+									i {
+										margin-left: 5px;
+										font-size: 11px;
+									}
+								}
+
+								&:hover .selected {
+									background: #FCFCFC;
+									color: #222;
+								}
+
+								.dropdown {
+									display: none;
+									position: absolute;
+									top: 100%;
+									right: 0;
+									z-index: 20;
+									margin-top: -10px;
+									border-top: 1px solid #DDD;
+
+									li {
+										list-style: none;
+										background: white;
+										text-transform: uppercase;
+										padding: 7px 10px;
+										width: ;
+										font: bold 12px museo-sans;
+										cursor: pointer;
+										border: 1px solid #EEE;
+										border-top: 0;
+										color: #555;
+
+										&:hover {
+											background: #F8F8F8;
+										}
+									}
+								}
+
+								&:hover {
+									.dropdown {
+										display: block;
+									}
+								}
+							}
+						}
+
+						ul {
+
+							li {
+								display: inline-block;
+								padding: 0 11px;
+								height: 40px;
+								line-height: 40px;
+								vertical-align: bottom;
+
+								&.label {
+									// font-weight: bold;
+									text-transform: uppercase;
+									font-size: 12px;
+									display: none;
+								}
+
+								&:not(.label) {
+									display: none;
+								}
+
+								&.active {
+									background: white;
+									border: 1px solid #EEE;
+									border-bottom: none;
+									margin-bottom: -1px;
+								}
+
+								.dropdown {
+								}
+							}
+						}
+					}
+
+					.answerBody {
+						color: #222;
+						font-size: 15px;
+						color: #333;
+						min-height: 300px;
+						resize: vertical;
+
+						p {
+							margin: 0 0 5px;
+							line-height: 24px;
+
+							&:empty { display: none; }
+						}
+						margin-bottom: 5px;
+
+						& > img, & > iframe {
+							width: 100%;
+							margin: 30px -50px;
+							border: none;
+
+							& + small {
+								display: block;
+								margin-top: -10px;
+								font-size: 13px;
+								margin-bottom: 20px;
+							}
+						}
+
+						& > pre {
+							width: 700px;
+							margin: 15px -20px;
+						}
+						
+						h1 + img, .h1 + img, h1 + iframe, .h1 + iframe, 
+						h2 + img, .h2 + img, h2 + iframe, .h2 + iframe
+						{
+							margin-top: 0px;
+						}
+
+						pre {
+							border: 1px solid #EEE;
+							background: #FAFAFA;
+							.rounded(0);
+						}
+
+						blockquote {
+							margin-top: .4em;
+							font-size: 15px;
+							margin-bottom: .4em;
+							border-left: 5px solid #DDD;
+							padding-left: 10px;
+							margin: 0 0 10px;
+							font-size: 16px;
+						}
+
+					}
+
+					.answerList {
+						.answerViewWrapper {
+							position: relative;
+							border-bottom: 1px solid #DDD;
+
+							.answerView {
+								padding: 20px;
+								background: white;
+
+								table { width: 100%; }
+								td { vertical-align: top; }
+
+								.answerAuthor {
+									float: right;
+									margin-right: -20px;
+									font-size: 13px;
+									position: relative;
+									color: #444;
+									// padding-bottom: 10px;
+									padding: 10px;
+									padding-right: 40px;
+									pointer: default;
+
+									.transition(all, .2s, ease-out);
+
+									& > .avatarWrapper {
+										height: 35px; width: 35px;
+										.rounded(2px);
+										margin-right: 10px;
+										margin-top: -2px;
+										cursor: pointer;
+									}
+
+									& > .info {
+										cursor: pointer;
+										display: inline-block;
+										vertical-align: middle;
+										.username {
+											font-weight: bold;
+										}
+
+										time {
+											display: block;
+										}
+									}
+
+									.answerSidebar {
+										.transition-transform(.2s, ease-out);
+
+										position: absolute;
+										right: 0;
+										bottom: 0;
+										z-index: -1;
+										.authorInfo {
+											padding: 20px;
+										}
+										.translate(0);
+
+										.authorInfo, .editedByBox {
+											label {
+												margin-bottom: 10px;
+												font: normal 12px museo-sans;
+											}
+											.bio {
+												margin-top: 10px;
+												font-size: 12px;
+												color: #EEE;
+											}
+										}
+									}
+
+									&:hover .answerSidebar {
+										.translate(@postSidebarWidth);
+									}
+
+									&:hover {
+										background: lighten(#DDD, 10%);
+									}
+								}
+
+								.left {
+									width: 30px;
+									font-size: 12px;
+									padding: 0 25px 0 10px;
+									
+									.voteControl {
+										text-align: center;
+										.voteResult {
+											font-size: 23px;
+										}
+
+										.control {
+											.btn0();
+											color: #555;
+											.reset-button;
+											font-size: 26px;
+											line-height: 16px;
+											i { vertical-align: middle; }
+										}
+									}
+								}
+
+								.right {
+									border-bottom: 1px solid #EEE;
+									.answerBody {
+										font-size: 15px;
+										min-height: 60px;
+										background: white;
+										padding: 0 0 10px;
+									}
+								}
+
+								.toolbar {
+									display: inline-block;
+									margin-bottom: -10px;
+
+									& > .item {
+										display: inline-block;
+										text-align: center;
+										height: 30px;
+										margin-right: 7px;
+										width: 30px;
+										color: white;
+										line-height: 30px;
+										cursor: pointer;
+										&:active {
+											.inner-shadow(0, 2px, 4px, .3);
+										}
+
+										i {
+											font-size: 17px;
+											vertical-align: middle;
+										}
+									}
+							
+									.flatBtn (@color) {
+										color: #CCC;
+										.transition(color, .2s, linear);
+										&:hover {
+											color: @color;
+										}
+									}
+
+									.link 	{ .flatBtn(#555); }
+									.tweet 	{ .flatBtn(@COLOR-twitter); }
+									.flag 	{ .flatBtn(#777); }
+									.edit 	{ .flatBtn(@COLOR1); }
+									.trash 	{ .flatBtn(mix(red, @COLOR4)); }
+									.like 	{ .flatBtn(@COLOR4); }
+									.fb 	{ .flatBtn(@COLOR-facebook); }
+									.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
+									.up 	{ .flatBtn(@COLOR2); }
+								}
+
+								.commentSection {
+									background: white;
+									margin: 0 0 0 54px;
+									padding: 0;
+									border: none;
+
+									.showInput {
+										display: inline-block;
+										padding: 5px;
+										margin-top: 5px;
+									}
+
+									.commentInputSection {
+										margin-top: 5px;
+									}
+								}
+							}
+						}
+
+						.optionBtns {
+							.transition(all, .2s, linear);
+
+							[data-action=remove-post],
+							[data-action=edit-post] {
+								background: none;
+								display: inline-block;
+								font-weight: 700;
+								line-height: 1.428571429;
+								white-space: nowrap;
+								cursor: pointer;
+								.rounded(0);
+								border: none;
+								outline: none;
+								padding: 0;
+								margin: 0 0 0 5px;
+								.user-select(none);
+								vertical-align: middle;
+								font-size: 18px;
+								font-weight: bolder;
+								color: #888;
+								&:hover {
+									color: #444;
+								}
+							}
+						}
+					}
+
+					.showInput {
+						padding: 15px;
+						font-size: 13px;
+						color: #AAA;
+						background: white;
+						margin: 5px;
+						border: 1px solid #DDD;
+						cursor: pointer;
+					}
+
+					.answerInputSection {
+						padding: 10px;
+						position: relative;
+						display: table;
+						width: 100%;
+						background: #EEE;
+
+						label {
+							font: normal 17px museo-sans;
+							margin: 10px 5px;
+							color: #666;
+						}
+						
+						.avatarWrapper {
+							border: 1px solid #DDD;
+						}
+
+						.editorWrapper {
+							vertical-align: middle;
+							display: inline-block;
+							border: 1px solid #DDD;
+							.no-box-shadow;
+							outline: none;
+							font-size: 15px;
+							padding: 20px;
+							text-align: left;
+							background: white;
+							width: 100%;
+
+							.editor {
+								min-height: 60px;
+
+								p {
+									margin: 0;
+								}
+							}
+						}
+
+						[data-action=send-answer] {
+							.high-xbtn(white, @COLOR2);
+							.high-xbtn-padding(6px, 10px, 2px);
+							display: inline-block;
+							margin-top: 10px;
+							float: right;
+							font-size: 14px;
+						}
+
+						.showAnswerInput {
+							padding: 8px 10px;
+							font-size: 13px;
+							color: #888;
+							background: white;
+
+							border: 1px solid #DDD;
+							cursor: pointer;
+							.transition(all, .2s, linear);
+							&:hover {
+								color: #444;
+							}
+						}
+					}
 				}
 			}
 		}
-	}
 
-	@sidebarWidth: 340px;
-	.postSidebar,
-	.answerSidebar {
-		position: relative;
-		z-index: 1001;
-		width: @sidebarWidth;
-		background: #313033;
-		text-align: left;
-		font-family: museo-sans;
-		color: white;
-
-		& > .box {
-			padding: 20px;
-			& + .box { padding-top: 0; }
-		}
-
-		.authorInfo {
-			padding: 30px;
-			.identification {
-				display: table;
-
-				.avatarWrapper {
-					height: 50px;
-					width: 50px;
-					min-width: 50px;
-					.rounded(50px);
-					display: table-cell;
-				}
-
-				.username {
-					width: 100%;
-					font-weight: bold;
-					padding-left: 10px;
-					color: inherit;
-					text-decoration: none;
-					vertical-align: middle;
-					display: table-cell;
-				}
-
-				.btn-follow {
-					margin-top: 14px;
-					display: table-cell;
-				}
-			}
-
-			.bio {
-				margin: 20px 0 0;
-				font-size: 14px;
-				line-height: 21px;
-			}
-		}
-
-		.editedByBox {
-			padding: 20px !important;
-			background: #232023;
-			.avatarWrapper {
-				display: table-cell;
-				width: 40px;
-				height: 40px;
-				.rounded(20px);
-			}
-			.info {
-				display: table-cell;
-				padding-left: 10px;
-				vertical-align: middle;
-				.name {
-					font-weight: bold;
-				}
-				time {
-					display: inline-block;
-					white-space: nowrap;
-				}
-			}
-		}
-
-		.flatBtnBox {
-			padding: 0;
-			display: table;
-			width: 100%;
-			table-layout: fixed;
-
-			& > .item {
-				display: table-cell;
-				text-align: center;
-				height: 50px;
-				color: white;
-				line-height: 50px;
-				cursor: pointer;
-				&:active {
-					.inner-shadow(0, 2px, 4px, .3);
-				}
-
-				i {
-					color: white;
-					font-size: 23px;
-					vertical-align: middle;
-				}
-			}
-	
-			.flatBtn (@color) {
-				background: @color;
-				&:hover {
-					background: lighten(@color, 2%);
-				}
-				&:focus {
-					.inner-shadow(0, 0, 0, 4px, .2);
-				}
-			}
-
-			.link 	{ .flatBtn(#555); }
-			.tweet 	{ .flatBtn(@COLOR-twitter); }
-			.flag 	{ .flatBtn(#777); }
-			.edit 	{ .flatBtn(@COLOR1); }
-			.like 	{ .flatBtn(@COLOR4); }
-			.fb 	{ .flatBtn(@COLOR-facebook); }
-			.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
-			.up 	{ .flatBtn(@COLOR2); }
-		}
-
-		.relatedContentBox {
-			border-top: 1px solid #222;
-			label {
-				font: 17px museo-sans;
-				margin-bottom: 10px;
-			}
-			li {
-				list-style: none;
-				margin: 5px;
-
-				.question {
-					font: bold 14px museo-sans;
-				}
-				.asker {
-					font: normal 14px museo-sans;
-				}
-			}
-		}
-	}
-	.postSidebar {
-		float: left;
-		.transition-transform(.4s, linear);
-
-		&.full {
-			.translate(@sidebarWidth/2);
-			.postSidebar {
-				.translate(-@sidebarWidth);
-			}
-		}
-
-		.sidebarToggle {
-			display: none;
-			position: absolute; 
-			right: -30px;
-			z-index: 1002;
-			top: 5px;
-			width: 30px;
+		.postSidebar,
+		.answerSidebar {
+			position: relative;
+			z-index: 1001;
+			width: @postSidebarWidth;
+			background: #313033;
+			text-align: left;
+			font-family: museo-sans;
 			color: white;
-			opacity: .35;
-			text-align: center;
-			cursor: pointer;
-			&:hover { opacity: 1};
-			font-size: 17px;
-			i:before { content: @fa-var-minus; }
+
+			& > .box {
+				padding: 20px;
+				& + .box { padding-top: 0; }
+			}
+
+			.authorInfo {
+				padding: 30px;
+				.identification {
+					display: table;
+
+					.avatarWrapper {
+						height: 50px;
+						width: 50px;
+						min-width: 50px;
+						.rounded(50px);
+						display: table-cell;
+					}
+
+					.username {
+						width: 100%;
+						font-weight: bold;
+						padding-left: 10px;
+						color: inherit;
+						text-decoration: none;
+						vertical-align: middle;
+						display: table-cell;
+					}
+
+					.btn-follow {
+						margin-top: 14px;
+						display: table-cell;
+					}
+				}
+
+				.bio {
+					margin: 20px 0 0;
+					font-size: 14px;
+					line-height: 21px;
+				}
+			}
+
+			.editedByBox {
+				padding: 20px !important;
+				background: #232023;
+				.avatarWrapper {
+					display: table-cell;
+					width: 40px;
+					height: 40px;
+					.rounded(20px);
+				}
+				.info {
+					display: table-cell;
+					padding-left: 10px;
+					vertical-align: middle;
+					.name {
+						font-weight: bold;
+					}
+					time {
+						display: inline-block;
+						white-space: nowrap;
+					}
+				}
+			}
+
+			.flatBtnBox {
+				padding: 0;
+				display: table;
+				width: 100%;
+				table-layout: fixed;
+
+				& > .item {
+					display: table-cell;
+					text-align: center;
+					height: 50px;
+					color: white;
+					line-height: 50px;
+					cursor: pointer;
+					&:active {
+						.inner-shadow(0, 2px, 4px, .3);
+					}
+
+					i {
+						color: white;
+						font-size: 23px;
+						vertical-align: middle;
+					}
+				}
+		
+				.flatBtn (@color) {
+					background: @color;
+					&:hover {
+						background: lighten(@color, 2%);
+					}
+					&:focus {
+						.inner-shadow(0, 0, 0, 4px, .2);
+					}
+				}
+
+				.link 	{ .flatBtn(#555); }
+				.tweet 	{ .flatBtn(@COLOR-twitter); }
+				.flag 	{ .flatBtn(#777); }
+				.edit 	{ .flatBtn(@COLOR1); }
+				.like 	{ .flatBtn(@COLOR4); }
+				.fb 	{ .flatBtn(@COLOR-facebook); }
+				.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
+				.up 	{ .flatBtn(@COLOR2); }
+			}
+
+			.relatedContentBox {
+				border-top: 1px solid #222;
+				label {
+					font: 17px museo-sans;
+					margin-bottom: 10px;
+				}
+				li {
+					list-style: none;
+					margin: 5px;
+
+					.question {
+						font: bold 14px museo-sans;
+					}
+					.asker {
+						font: normal 14px museo-sans;
+					}
+				}
+			}
 		}
-		&.full .sidebarToggle i:before {
-			content: @fa-var-plus;
+		.postSidebar {
+			float: left;
+			.transition-transform(.4s, linear);
+
+			&.full {
+				.translate(@postSidebarWidth/2);
+				.postSidebar {
+					.translate(-@postSidebarWidth);
+				}
+			}
+
+			.sidebarToggle {
+				display: none;
+				position: absolute; 
+				right: -30px;
+				z-index: 1002;
+				top: 5px;
+				width: 30px;
+				color: white;
+				opacity: .35;
+				text-align: center;
+				cursor: pointer;
+				&:hover { opacity: 1};
+				font-size: 17px;
+				i:before { content: @fa-var-minus; }
+			}
+			&.full .sidebarToggle i:before {
+				content: @fa-var-plus;
+			}
 		}
 	}
-
 }

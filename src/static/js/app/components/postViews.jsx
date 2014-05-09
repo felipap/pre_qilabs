@@ -164,11 +164,19 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 			render: function () {
 				var commentNodes = this.props.collection.map(function (comment) {
-					return CommentView({model:comment});
+					return (
+						<CommentView model={comment} key={comment.id} />
+					);
 				});
 
 				return (
 					<div className="commentList">
+						{
+							this.props.small?
+							null
+							:<label>{this.props.collection.models.length} Comentário{this.props.collection.models.length>1?"s":""}</label>
+						}
+
 						{commentNodes}
 					</div>
 				);
@@ -182,13 +190,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					return <div></div>;
 				return (
 					<div className={"commentSection "+(this.props.small?' small ':'')}>
-						{
-							this.props.small?
-							null
-							:<div className="info">{this.props.collection.models.length} Comentários</div>
-						}
-						<CommentListView placeholder={this.props.placeholder} collection={this.props.collection} />
-						<CommentInputForm small={true} model={this.props.postModel} />
+						<CommentListView  small={this.props.small} placeholder={this.props.placeholder} collection={this.props.collection} />
+						<CommentInputForm small={this.props.small} model={this.props.postModel} />
 					</div>
 				);
 			},
@@ -255,9 +258,9 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 											</a>
 										</div>
 										<div className="info">
-											<span className="username">
+											<a href={answer.author.profileUrl} className="username">
 												{answer.author.name}
-											</span> <time data-time-count={1*new Date(answer.published)}>
+											</a> <time data-time-count={1*new Date(answer.published)}>
 												{window.calcTimeFrom(answer.published)}
 											</time>
 										</div>
@@ -302,7 +305,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			render: function () {
 				var answerNodes = this.props.collection.map(function (answer) {
 					return (
-						<AnswerView model={answer} />
+						<AnswerView model={answer} key={answer.id}/>
 					);
 				});
 
@@ -579,7 +582,11 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								<div className="tag">Universidades</div>
 							</div>
 						</div>
-						{postBody}
+
+						<div className="postBody">
+							<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+						</div>
+
 						<div className="postInfobar">
 							<ul className="left">
 							</ul>

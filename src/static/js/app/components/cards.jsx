@@ -172,7 +172,7 @@ define([
 
 			var cards = this.props.collection.map(function (post) {
 				if (post.get('__t') === 'Post')
-					return postViews.CardView( {model:post} );
+					return postViews.CardView({model:post, key:post.id});
 				return null;
 			});
 			return (
