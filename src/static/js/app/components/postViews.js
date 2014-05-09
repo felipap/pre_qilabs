@@ -392,7 +392,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				});
 
 				return (
-					
 					React.DOM.div( {className:"answerList"}, 
 						answerNodes
 					)
@@ -400,20 +399,54 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 		}),
 		SectionView: React.createClass({displayName: 'SectionView',
+			getInitialState: function () {
+				return {sortingType:'votes'};
+			},
+			onSortSelected: function (e) {
+				var type = e.target.dataset.sort;
+				console.log(e, type)
+
+				var comp = this.props.collection.comparators[type];
+				this.props.collection.comparator = comp;
+				this.props.collection.sort();
+				this.setState({sortingType: type});
+			},
 			render: function () {
+				var self = this;
+
+				var sortTypes = {
+					'votes': 'Votos',
+					'created': '+ Antigo',
+					'updated': 'Atividade',
+				};
+				
+				var otherOpts = _.map(_.filter(_.keys(sortTypes), function (i) {
+					return i != self.state.sortingType;
+				}), function (type) {
+					return (
+						React.DOM.li( {'data-sort':type, onClick:self.onSortSelected}, sortTypes[type])
+					);
+				});
+
+				var menu = (
+					React.DOM.div( {className:"menu"}, 
+						React.DOM.span( {className:"selected", 'data-sort':this.state.sortingType}, 
+							sortTypes[this.state.sortingType],
+							React.DOM.i( {className:"icon-adown"})
+						),
+						React.DOM.div( {className:"dropdown"}, 
+							otherOpts
+						)
+					)
+				);
+
 				return (
 					React.DOM.div( {className:"answerSection"}, 
 						React.DOM.div( {className:"sectionHeader"}, 
 							React.DOM.label(null,  this.props.collection.length,  " Respostas"),
 							React.DOM.div( {className:"sortingMenu"}, 
 								React.DOM.label(null, "ordenar por"),
-								React.DOM.div( {className:"menu"}, 
-									React.DOM.span( {className:"selected"}, "Votos ", React.DOM.i( {className:"icon-adown"})),
-									React.DOM.div( {className:"dropdown"}, 
-										React.DOM.li(null, "+ Antigo"),
-										React.DOM.li(null, "Atividade")
-									)
-								)
+								menu
 							)
 						),
 						AnswerListView( {collection:this.props.collection} ),
@@ -581,7 +614,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 			render: function () {
 				var post = this.props.model.attributes;
-				var rawMarkup = post.data.escapedBody;
 
 				var postBody = (
 					React.DOM.div( {className:"postBody"}, 
@@ -648,7 +680,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								post.translatedType
 							),
 							React.DOM.div( {className:"postTitle"}, 
-								"From OCW fanatic to MIT undergrad: my 5 year journey"
+								this.props.model.get('data').title
 							),
 							React.DOM.div( {className:"tags"}, 
 								React.DOM.div( {className:"tag"}, "Application"),
@@ -658,7 +690,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						),
 
 						React.DOM.div( {className:"postBody"}, 
-							React.DOM.span( {dangerouslySetInnerHTML:{__html: rawMarkup}} )
+							React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('data')}} )
 						),
 
 						React.DOM.div( {className:"postInfobar"}, 

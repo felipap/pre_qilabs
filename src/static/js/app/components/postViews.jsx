@@ -392,7 +392,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				});
 
 				return (
-					
 					<div className="answerList">
 						{answerNodes}
 					</div>
@@ -400,20 +399,54 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 		}),
 		SectionView: React.createClass({
+			getInitialState: function () {
+				return {sortingType:'votes'};
+			},
+			onSortSelected: function (e) {
+				var type = e.target.dataset.sort;
+				console.log(e, type)
+
+				var comp = this.props.collection.comparators[type];
+				this.props.collection.comparator = comp;
+				this.props.collection.sort();
+				this.setState({sortingType: type});
+			},
 			render: function () {
+				var self = this;
+
+				var sortTypes = {
+					'votes': 'Votos',
+					'created': '+ Antigo',
+					'updated': 'Atividade',
+				};
+				
+				var otherOpts = _.map(_.filter(_.keys(sortTypes), function (i) {
+					return i != self.state.sortingType;
+				}), function (type) {
+					return (
+						<li data-sort={type} onClick={self.onSortSelected}>{sortTypes[type]}</li>
+					);
+				});
+
+				var menu = (
+					<div className="menu">
+						<span className="selected" data-sort={this.state.sortingType}>
+							{sortTypes[this.state.sortingType]}
+							<i className="icon-adown"></i>
+						</span>
+						<div className="dropdown">
+							{otherOpts}
+						</div>
+					</div>
+				);
+
 				return (
 					<div className="answerSection">
 						<div className="sectionHeader">
 							<label>{ this.props.collection.length } Respostas</label>
 							<div className="sortingMenu">
 								<label>ordenar por</label>
-								<div className="menu">
-									<span className="selected">Votos <i className="icon-adown"></i></span>
-									<div className="dropdown">
-										<li>+ Antigo</li>
-										<li>Atividade</li>
-									</div>
-								</div>
+								{menu}
 							</div>
 						</div>
 						<AnswerListView collection={this.props.collection} />
@@ -581,7 +614,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 			render: function () {
 				var post = this.props.model.attributes;
-				var rawMarkup = post.data.escapedBody;
 
 				var postBody = (
 					<div className="postBody">
@@ -648,7 +680,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								{post.translatedType}
 							</div>
 							<div className="postTitle">
-								From OCW fanatic to MIT undergrad: my 5 year journey
+								{this.props.model.get('data').title}
 							</div>
 							<div className="tags">
 								<div className="tag">Application</div>
@@ -658,7 +690,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						</div>
 
 						<div className="postBody">
-							<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+							<span dangerouslySetInnerHTML={{__html: this.props.model.get('data')}} />
 						</div>
 
 						<div className="postInfobar">

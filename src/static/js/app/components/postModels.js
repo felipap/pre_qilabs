@@ -93,8 +93,19 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			model: AnswerItem,	
 			comparator: function (i) {
 				// do votes here! :)
-				return -1*new Date(i.get('published'));
-			}
+				return -i.get('voteSum');
+			},
+			comparators: {
+				'votes': function (i) {
+					return -i.get('voteSum');
+				},
+				'created': function (i) {
+					return -1*new Date(i.get('published'));
+				},
+				'updated': function (i) {
+					return -1*new Date(i.get('updated'));
+				}
+			},
 		}),
 		Comment: Backbone.Collection.extend({
 			model: CommentItem,
@@ -116,6 +127,6 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 		postItem: PostItem,
 		answerItem: AnswerItem,
 		commentItem: CommentItem,
-		postList: PostList
+		postList: PostList,
 	}
 });
