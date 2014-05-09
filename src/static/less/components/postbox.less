@@ -947,7 +947,7 @@
 				.remove { .flatBtn(desaturate(@COLOR4, 15%)); }
 
 				.like {
-					.flatBtn(#AAA);
+					.flatBtn(desaturate(@COLOR3, 10%));
 					.transition(all, .2s, ease);
 					&.liked {
 						.flatBtn(@COLOR3);						
@@ -956,7 +956,7 @@
 						}
 					}
 					&:hover {
-						.flatBtn(desaturate(@COLOR3, 5%));
+						.flatBtn(@COLOR3);
 					}
 					i {
 						margin-left: 5px;
