@@ -479,36 +479,64 @@
 							border-bottom: 1px solid #DDD;
 
 							.answerView {
-								padding: 20px;
+								padding: 20px 20px 20px 10px;
 								background: white;
 
-								table { width: 100%; }
-								td { vertical-align: top; }
-
 								.left {
-									width: 30px;
+									min-width: 60px;
 									font-size: 12px;
-									padding: 0 25px 0 10px;
+									display: table-cell;
+									vertical-align: top;
 									
 									.voteControl {
 										text-align: center;
-										.voteResult {
-											font-size: 23px;
+										margin-top: 20px;
+										color: #666;
+
+										.thumbs {
+											.btn0;
+											.reset-button;
+											color: inherit;
+											font-weight: normal;
+											font-size: 30px;
+											.transition(color, .2s, linear);
+											&:hover {
+												color: darken(@COLOR1, 10%);
+											}
 										}
 
-										.control {
-											.btn0();
-											color: #555;
-											.reset-button;
-											font-size: 26px;
-											line-height: 16px;
-											i { vertical-align: middle; }
+										.count {
+											padding: 10px 0 0;
+											font-size: 24px;
 										}
+
+										&.voted {
+											.thumbs, .count {
+												color: @COLOR3;
+											}
+										}
+
+										// .voteResult {
+										// 	font-size: 23px;
+										// }
+
+										// .control {
+										// 	.btn0();
+										// 	color: #555;
+										// 	.reset-button;
+										// 	font-size: 26px;
+										// 	line-height: 16px;
+										// 	i { vertical-align: middle; }
+										// }
 									}
 								}
 
 								.right {
+									width: 100%;
+									display: table-cell;
+									vertical-align: top;
 									border-bottom: 1px solid #EEE;
+
 									.answerBody {
 										font-size: 15px;
 										min-height: 60px;
@@ -527,12 +555,8 @@
 
 									.answerBody {
 										padding: 5px;
-										color: #555;
+										color: #444;
 										.answerFormatting;
-									}
-
-									& > button {
-										display: none;
 									}
 								}
 								
@@ -541,7 +565,7 @@
 										border-color: #DDD;
 										.answerBody {
 											padding: 5px;
-											color: #222;
+											color: #111;
 										}
 									}
 

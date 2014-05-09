@@ -211,7 +211,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 	var Answer = {
 		View: React.createClass({
-			mixins: [EditablePost],
+			mixins: [backboneModel, EditablePost],
 
 			getInitialState: function () {
 				return {isEditing:false};
@@ -252,127 +252,128 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 
 			componentDidUpdate: function () {
-				if (!this.editor) return;
-				if (!this.state.isEditing) {
-					console.log('hear hear')
-					this.editor.deactivate(); // just to make sure
-					$(this.refs.answerBody.getDOMNode()).html($(this.props.model.get('data').body));
-				} else {
-					this.editor.activate();
+				if (this.editor) {
+					if (!this.state.isEditing) {
+						this.editor.deactivate(); // just to make sure
+						$(this.refs.answerBody.getDOMNode()).html($(this.props.model.get('data').body));
+					} else {
+						this.editor.activate();
+					}
 				}
+			},
+
+			toggleVote: function () {
+				this.props.model.handleToggleVote();
 			},
 
 			onCancelEdit: function () {
 				if (!this.editor) return;
-
-				console.log('come on', this.props.model.attributes.data.escapedBody)
 				this.setState({isEditing:false});
-				e = this.editor;
 			},
 			
 			render: function () {
 				var answer = this.props.model.attributes;
 				var self = this;
 
+				// <button className="control"><i className="icon-caret-up"></i></button>
+				// <div className="voteResult">5</div>
+				// <button className="control"><i className="icon-caret-down"></i></button>
+				var voteControl = (
+					<div className={" voteControl "+((window.user && answer.votes.indexOf(window.user.id) != -1)?"voted":"")}>
+						<button className="thumbs" onClick={this.toggleVote}>
+							<i className="icon-tup"></i>
+						</button>
+						<div className="count">
+							{answer.voteSum}
+						</div>
+					</div>
+				);
+
 				return (
 					<div className="answerViewWrapper">
 						<div className={" answerView "+(this.state.isEditing?" editing ":"")} ref="answerView">
-							<table>
-							<tr>
-								<td className="left">
-									<div className="voteControl">
-										<button className="control"><i className="icon-caret-up"></i></button>
-										<div className="voteResult">5</div>
-										<button className="control"><i className="icon-caret-down"></i></button>
+							<div className="left">
+								{voteControl}
+							</div>
+							<div className="right">
+								<div className="answerBodyWrapper" ref="answerBodyWrapper">
+									<div className='answerBody' ref="answerBody" dangerouslySetInnerHTML={{__html: answer.data.body }}>
 									</div>
-								</td>
-								<td className="right">
-									<div className="answerBodyWrapper" ref="answerBodyWrapper">
-										<div className='answerBody' ref="answerBody" dangerouslySetInnerHTML={{__html: answer.data.body }}>
+								</div>
+								<div className="infobar">
+									<div className="toolbar">
+										{(window.user && answer.author.id===window.user.id)?
+										(
+											<div className="item save" data-action="save-post" onClick={this.onClickSave} data-toggle="tooltip" data-placement="bottom" title="Salvar">
+												<i className="icon-save"></i>
+											</div>
+										):null}
+										{(window.user && answer.author.id===window.user.id)?
+										(
+											<div className="item cancel" onClick={this.onCancelEdit} data-toggle="tooltip" data-placement="bottom" title="Cancelar">
+												<i className="icon-times"></i>
+											</div>
+										):null}
+										{(window.user && answer.author.id===window.user.id)?
+										(
+											<div className="item edit" onClick={this.onClickEdit} data-toggle="tooltip" data-placement="bottom" title="Editar">
+												<i className="icon-pencil"></i>
+											</div>
+										):null}
+										{(window.user && answer.author.id===window.user.id)?
+										(
+											<div className="item remove" data-action="remove-post" onClick={this.onClickTrash}  data-toggle="tooltip" data-placement="bottom" title="Remover">
+												<i className="icon-trash"></i>
+											</div>
+										):null}
+										<div className="item link" data-toggle="tooltip" data-placement="bottom" title="Link">
+											<i className="icon-link"></i>
 										</div>
-										<div className="arrow"></div>
-										<button data-action="save">
-											Salvar
-										</button>
+										<div className="item flag"  data-toggle="tooltip" data-placement="bottom" title="Sinalizar conteúdo">
+											<i className="icon-flag"></i>
+										</div>
 									</div>
-									<div className="infobar">
-										<div className="toolbar">
-											{(window.user && answer.author.id===window.user.id)?
-											(
-												<div className="item save" data-action="save-post" onClick={this.onClickSave} data-toggle="tooltip" data-placement="bottom" title="Salvar">
-													<i className="icon-save"></i>
+									<div className="answerAuthor">
+										<div className="avatarWrapper">
+											<a href={answer.author.profileUrl}>
+												<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } } title={answer.author.username}>
 												</div>
-											):null}
-											{(window.user && answer.author.id===window.user.id)?
-											(
-												<div className="item cancel" onClick={this.onCancelEdit} data-toggle="tooltip" data-placement="bottom" title="Cancelar">
-													<i className="icon-times"></i>
-												</div>
-											):null}
-											{(window.user && answer.author.id===window.user.id)?
-											(
-												<div className="item edit" onClick={this.onClickEdit} data-toggle="tooltip" data-placement="bottom" title="Editar">
-													<i className="icon-pencil"></i>
-												</div>
-											):null}
-											{(window.user && answer.author.id===window.user.id)?
-											(
-												<div className="item remove" data-action="remove-post" onClick={this.onClickTrash}  data-toggle="tooltip" data-placement="bottom" title="Remover">
-													<i className="icon-trash"></i>
-												</div>
-											):null}
-											<div className="item link" data-toggle="tooltip" data-placement="bottom" title="Link">
-												<i className="icon-link"></i>
-											</div>
-											<div className="item flag"  data-toggle="tooltip" data-placement="bottom" title="Sinalizar conteúdo">
-												<i className="icon-flag"></i>
-											</div>
+											</a>
 										</div>
-										<div className="answerAuthor">
-											<div className="avatarWrapper">
-												<a href={answer.author.profileUrl}>
-													<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } } title={answer.author.username}>
+										<div className="info">
+											<a href={answer.author.profileUrl} className="username">
+												{answer.author.name}
+											</a> <time data-time-count={1*new Date(answer.published)}>
+												{window.calcTimeFrom(answer.published)}
+											</time>
+										</div>
+										<div className="answerSidebar" ref="sidebar">
+											<div className="box authorInfo">
+												<div className="identification">
+													<div className="avatarWrapper">
+														<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
 													</div>
-												</a>
-											</div>
-											<div className="info">
-												<a href={answer.author.profileUrl} className="username">
-													{answer.author.name}
-												</a> <time data-time-count={1*new Date(answer.published)}>
-													{window.calcTimeFrom(answer.published)}
-												</time>
-											</div>
-											<div className="answerSidebar" ref="sidebar">
-												<div className="box authorInfo">
-													<div className="identification">
-														<div className="avatarWrapper">
-															<div className="avatar" style={ { background: 'url('+answer.author.avatarUrl+')' } }></div>
-														</div>
-														<a href={answer.profileUrl} className="username">
-															{answer.author.name}
-														</a>
-														<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-													</div>
-													<div className="bio">
-														{
-															(answer.author.profile.bio.split(" ").length>20)?
-															answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
-															:answer.author.profile.bio
-														}
-													</div>
+													<a href={answer.profileUrl} className="username">
+														{answer.author.name}
+													</a>
+													<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+												</div>
+												<div className="bio">
+													{
+														(answer.author.profile.bio.split(" ").length>20)?
+														answer.author.profile.bio.split(" ").slice(0,20).join(" ")+"..."
+														:answer.author.profile.bio
+													}
 												</div>
 											</div>
 										</div>
 									</div>
-								</td>
-							</tr>
-							</table>
+								</div>
+							</div>
 							<CommentSectionView small={true} collection={this.props.model.children.Comment} postModel={this.props.model} />
 						</div>
 					</div>
 				);
-				// console.log('me', me.props.children.props.children[0].props.children.props.children[1].props.children[0].props.children[0].props.children.props.dangerouslySetInnerHTML);
-				// return me
 			},
 		}),
 		ListView: React.createClass({

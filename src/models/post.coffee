@@ -21,8 +21,8 @@ Types =
 	QA: 'QA'
 	Question: 'Question'
 	VideoPost: 'VideoPost'
-	Notification: 'Notification'
-	# QuizPost: 'QuizPost'
+	Notification: 'Notification
+'	# QuizPost: 'QuizPost'
 
 TransTypes = {}
 TransTypes[Types.Question] = 'Pergunta'
