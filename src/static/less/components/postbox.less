@@ -20,6 +20,7 @@
 	}
 
 	.postBox {
+		min-width: (@postSidebarWidth+@postColWidth);
 		z-index: 1000;
 		display: table;
 		margin: 40px auto;
@@ -619,10 +620,6 @@
 										.flag 	{ .flatBtn(#777); }
 										.edit 	{ .flatBtn(@COLOR1); }
 										.remove { .flatBtn(mix(red, @COLOR4)); }
-										.like 	{ .flatBtn(@COLOR4); }
-										.fb 	{ .flatBtn(@COLOR-facebook); }
-										.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
-										.up 	{ .flatBtn(@COLOR2); }
 
 										.cancel {
 											display: none;
@@ -922,12 +919,16 @@
 						.inner-shadow(0, 2px, 4px, .3);
 					}
 
+					span {
+						vertical-align: middle;
+					}
+
 					i {
 						color: white;
 						font-size: 23px;
 						font-weight: normal;
 						vertical-align: middle;
-					}
+					} 
 				}
 		
 				.flatBtn (@color) {
@@ -940,15 +941,27 @@
 					}
 				}
 
-				.link 	{ .flatBtn(#555); }
-				.tweet 	{ .flatBtn(@COLOR-twitter); }
-				.flag 	{ .flatBtn(#777); }
-				.edit 	{ .flatBtn(@COLOR1); }
-				.like 	{ .flatBtn(@COLOR4); }
-				.fb 	{ .flatBtn(@COLOR-facebook); }
-				.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
-				.up 	{ .flatBtn(@COLOR2); }
-				.remove { .flatBtn(desaturate(@COLOR4, 10%)); }
+				.link 	{ .flatBtn(#333); }
+				.flag 	{ .flatBtn(#444); }
+				.edit 	{ .flatBtn(desaturate(@COLOR1, 25%)); }
+				.remove { .flatBtn(desaturate(@COLOR4, 15%)); }
+
+				.like {
+					.flatBtn(#AAA);
+					.transition(all, .2s, ease);
+					&.liked {
+						.flatBtn(@COLOR3);						
+						i::before {
+							content: "\f164"; // "\f087"; // thumbs-o
+						}
+					}
+					&:hover {
+						.flatBtn(desaturate(@COLOR3, 5%));
+					}
+					i {
+						margin-left: 5px;
+					}
+				}
 			}
 
 			.relatedContentBox {

@@ -41,8 +41,11 @@ define([
 
 	var FullPostView = React.createClass({
 
-		getInitialState: function () {
-			return {full:false};
+		componentWillMount: function () {
+			var update = function () {
+				this.forceUpdate(function(){});
+			}
+			this.props.model.on('add reset remove change', update.bind(this));
 		},
 
 		destroy: function () {
@@ -62,6 +65,11 @@ define([
 				app.postList.remove({id:this.props.model.get('id')})
 				$(".tooltip").remove(); // fuckin bug
 			}
+		},
+
+		toggleVote: function () {
+			console.log('helooo')
+			this.props.model.handleToggleVote();
 		},
 
 		componentDidMount: function () {
@@ -88,19 +96,12 @@ define([
 
 			var self = this;
 
-			function toggleSidebar () {
-				self.setState({full:!self.state.full});
-			}
-
 			return (
-				<div className={"postBox "+(this.state.full?'full':'')} data-post={this.props.model.get('type')}>
+				<div className="postBox" data-post={this.props.model.get('type')}>
 					<div className="postCol">
 						<postView model={this.props.model} />
 					</div>
 					<div className="postSidebar" ref="sidebar">
-						<div className="sidebarToggle" onClick={toggleSidebar}>
-							<i className="icon-plus"></i>
-						</div>
 						<div className="box authorInfo">
 							<div className="identification">
 								<div className="avatarWrapper">
@@ -123,7 +124,8 @@ define([
 									<i className="icon-edit"></i>
 								</div>
 								:
-								<div className="item up">
+								<div className={"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":"")}
+									onClick={this.toggleVote}>
 									{post.voteSum} <i className="icon-tup"></i>
 								</div>
 							}

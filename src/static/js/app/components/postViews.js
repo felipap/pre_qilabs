@@ -459,9 +459,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 		InputForm: React.createClass({displayName: 'InputForm',
 
 			componentDidUpdate: function () {
-				if (this.refs.input) {
+				if (this.refs && this.refs.input) {
 					this.editor = new MediumEditor(this.refs.input.getDOMNode(), mediumEditorAnswerOpts);
-					e = this.editor;
 				}
 			},
 

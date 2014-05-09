@@ -41,8 +41,11 @@ define([
 
 	var FullPostView = React.createClass({displayName: 'FullPostView',
 
-		getInitialState: function () {
-			return {full:false};
+		componentWillMount: function () {
+			var update = function () {
+				this.forceUpdate(function(){});
+			}
+			this.props.model.on('add reset remove change', update.bind(this));
 		},
 
 		destroy: function () {
@@ -62,6 +65,11 @@ define([
 				app.postList.remove({id:this.props.model.get('id')})
 				$(".tooltip").remove(); // fuckin bug
 			}
+		},
+
+		toggleVote: function () {
+			console.log('helooo')
+			this.props.model.handleToggleVote();
 		},
 
 		componentDidMount: function () {
@@ -88,19 +96,12 @@ define([
 
 			var self = this;
 
-			function toggleSidebar () {
-				self.setState({full:!self.state.full});
-			}
-
 			return (
-				React.DOM.div( {className:"postBox "+(this.state.full?'full':''), 'data-post':this.props.model.get('type')}, 
+				React.DOM.div( {className:"postBox", 'data-post':this.props.model.get('type')}, 
 					React.DOM.div( {className:"postCol"}, 
 						postView( {model:this.props.model} )
 					),
 					React.DOM.div( {className:"postSidebar", ref:"sidebar"}, 
-						React.DOM.div( {className:"sidebarToggle", onClick:toggleSidebar}, 
-							React.DOM.i( {className:"icon-plus"})
-						),
 						React.DOM.div( {className:"box authorInfo"}, 
 							React.DOM.div( {className:"identification"}, 
 								React.DOM.div( {className:"avatarWrapper"}, 
@@ -123,7 +124,8 @@ define([
 									React.DOM.i( {className:"icon-edit"})
 								)
 								:
-								React.DOM.div( {className:"item up"}, 
+								React.DOM.div( {className:"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":""),
+									onClick:this.toggleVote}, 
 									post.voteSum, " ", React.DOM.i( {className:"icon-tup"})
 								),
 							
