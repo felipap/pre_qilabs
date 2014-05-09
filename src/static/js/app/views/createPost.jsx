@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-require(['common', 'react', 'medium-editor', 'typeahead-bundle'], function (common, React) {
+require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-bundle'], function (common, React) {
 
 	$(window).resize(function resizeCardsPanel() {
 		document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top + 10)+"px";

@@ -90,6 +90,16 @@ var permissions = {
 				}
 			}));
 		},
+
+		selfDoesntOwn: function (postId, req, res, callback) {
+			Post.findById(postId, req.handleErrResult(function (post) {
+				if (''+post.author === req.user.id) {
+					callback({ required: 'posts.selfDoesntOwn' });
+				} else {
+					callback();
+				}
+			}));
+		},
 	},
 
 };
@@ -166,6 +176,15 @@ module.exports = required = {
 				req.paramToObjectId(postIdParam, function (postId) {
 					permissions.posts.selfOwns(postId, req, res, function (err) {
 						next( err ? extendErr(err, 'posts.selfOwns') : undefined);
+					});
+				});
+			};
+		},
+		selfDoesntOwn: function (postIdParam) {
+			return function (req, res, next) {
+				req.paramToObjectId(postIdParam, function (postId) {
+					permissions.posts.selfDoesntOwn(postId, req, res, function (err) {
+						next( err ? extendErr(err, 'posts.selfDoesntOwn') : undefined);
 					});
 				});
 			};

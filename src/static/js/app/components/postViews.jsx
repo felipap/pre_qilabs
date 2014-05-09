@@ -34,7 +34,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			var update = function () {
 				this.forceUpdate(function(){});
 			}
-			this.props.collection.on('add reset remove', update.bind(this));
+			this.props.collection.on('add reset change remove', update.bind(this));
 		},
 	};
 
@@ -416,10 +416,11 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 				var sortTypes = {
 					'votes': 'Votos',
-					'created': '+ Antigo',
+					'older': '+ Antigo',
+					'younger': '+ Novo',
 					'updated': 'Atividade',
 				};
-				
+
 				var otherOpts = _.map(_.filter(_.keys(sortTypes), function (i) {
 					return i != self.state.sortingType;
 				}), function (type) {
@@ -690,7 +691,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						</div>
 
 						<div className="postBody">
-							<span dangerouslySetInnerHTML={{__html: this.props.model.get('data')}} />
+							<span dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}} />
 						</div>
 
 						<div className="postInfobar">

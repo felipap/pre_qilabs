@@ -99,7 +99,10 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				'votes': function (i) {
 					return -i.get('voteSum');
 				},
-				'created': function (i) {
+				'older': function (i) {
+					return 1*new Date(i.get('published'));
+				},
+				'younger': function (i) {
 					return -1*new Date(i.get('published'));
 				},
 				'updated': function (i) {

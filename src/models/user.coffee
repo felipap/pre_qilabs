@@ -275,6 +275,7 @@ fetchTimelinePostAndActivities = (opts, postConds, actvConds, cb) ->
 			], HandleLimit (err, results) -> # Merge results and call back
 				all = _.sortBy((results[0]||[]).concat(results[1]), (p) -> -p.published)
 				cb(err, all, minPostDate)
+
 ###
 # Behold.
 ###

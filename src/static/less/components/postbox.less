@@ -382,7 +382,7 @@
 									background: white;
 									font-size: 12px;
 									.rounded(2px);
-									width: 86px;
+									width: 95px;
 									text-align: center;
 									line-height: 33px;
 									text-transform: uppercase;
@@ -393,10 +393,11 @@
 									cursor: pointer;
 									color: #444;
 
-
 									i {
-										margin-left: 5px;
 										font-size: 11px;
+										float: right;
+										line-height: 33px;
+										margin-right: 7px;
 									}
 								}
 
@@ -411,7 +412,7 @@
 									top: 100%;
 									right: 0;
 									z-index: 20;
-									margin-top: -10px;
+									margin-top: -8px;
 									border-top: 1px solid #DDD;
 
 									li {
@@ -419,7 +420,7 @@
 										background: white;
 										text-transform: uppercase;
 										padding: 7px 10px;
-										width: ;
+										width: 95px;
 										font: bold 12px museo-sans;
 										cursor: pointer;
 										border: 1px solid #EEE;
@@ -914,6 +915,9 @@
 					color: white;
 					line-height: 50px;
 					cursor: pointer;
+					font-size: 20px;
+					font-weight: bold;
+
 					&:active {
 						.inner-shadow(0, 2px, 4px, .3);
 					}
@@ -921,6 +925,7 @@
 					i {
 						color: white;
 						font-size: 23px;
+						font-weight: normal;
 						vertical-align: middle;
 					}
 				}
@@ -943,6 +948,7 @@
 				.fb 	{ .flatBtn(@COLOR-facebook); }
 				.down 	{ .flatBtn(desaturate(@COLOR4, 5%)); }
 				.up 	{ .flatBtn(@COLOR2); }
+				.remove { .flatBtn(desaturate(@COLOR4, 10%)); }
 			}
 
 			.relatedContentBox {

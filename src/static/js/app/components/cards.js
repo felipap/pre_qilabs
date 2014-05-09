@@ -51,6 +51,19 @@ define([
 			app.navigate('/', {trigger:true});
 		},
 
+		onClickTrash: function () {
+			if (confirm('Tem certeza que deseja excluir essa postagem?')) {
+				this.props.model.destroy();
+				this.destroy();
+				// Signal to the wall that the post with this ID must be removed.
+				// This isn't automatic (as in comments) because the models on the wall
+				// aren't the same as those on post FullPostView.
+
+				app.postList.remove({id:this.props.model.get('id')})
+				$(".tooltip").remove(); // fuckin bug
+			}
+		},
+
 		componentDidMount: function () {
 			var self = this;
 			$(this.getDOMNode().parentElement).on('click', function onClickOut (e) {
@@ -70,7 +83,7 @@ define([
 				var postView = postViews[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
-				return React.DOM.div(null );
+				var postView = postViews.Question;
 			}
 
 			var self = this;
@@ -102,53 +115,59 @@ define([
 								post.author.profile.bio
 							)
 						),
-						
-						React.DOM.div( {className:"box editedByBox"}, 
-							React.DOM.div( {className:"avatarWrapper"}, 
-								React.DOM.div( {className:"avatar", style: { background: 'url('+'/static/images/avatar2.png'+')'} })
-							),
-							React.DOM.div( {className:"info"}, 
-								"Editado por ", React.DOM.span( {className:"name"}, "Felipe Aragão Pires"), " ", React.DOM.time(null, "há 5 horas") 
-							)
-						),
-						
-						React.DOM.div( {className:"flatBtnBox"}, 
-							React.DOM.div( {className:"item up"}, 
-								React.DOM.i( {className:"icon-tup"})
-							),
-							React.DOM.div( {className:"item down"}, 
-								React.DOM.i( {className:"icon-tdown"})
-							)
-						),
 
 						React.DOM.div( {className:"flatBtnBox"}, 
-							React.DOM.div( {className:"item edit", 'data-toggle':"tooltip", title:"Editar publicação", 'data-placement':"bottom", 'data-container':"body"}, 
-								React.DOM.i( {className:"icon-edit"})
-							),
+							
+								(window.user.id === post.author.id)?
+								React.DOM.div( {className:"item edit", onClick:this.onClickEdit, 'data-toggle':"tooltip", title:"Editar publicação", 'data-placement':"bottom", 'data-container':"body"}, 
+									React.DOM.i( {className:"icon-edit"})
+								)
+								:
+								React.DOM.div( {className:"item up"}, 
+									post.voteSum, " ", React.DOM.i( {className:"icon-tup"})
+								),
+							
+							
+								(window.user.id === post.author.id)?
+								React.DOM.div( {className:"item remove", onClick:this.onClickTrash, 'data-toggle':"tooltip", title:"Excluir publicação", 'data-placement':"bottom", 'data-container':"body"}, 
+									React.DOM.i( {className:"icon-trash"})
+								)
+								:null,
+							
+
 							React.DOM.div( {className:"item link", 'data-toggle':"tooltip", title:"Compartilhar", 'data-placement':"bottom", 'data-container':"body"}, 
 								React.DOM.i( {className:"icon-link"})
 							),
 							React.DOM.div( {className:"item flag", 'data-toggle':"tooltip", title:"Sinalizar conteúdo impróprio", 'data-placement':"bottom", 'data-container':"body"}, 
 								React.DOM.i( {className:"icon-flag"})
 							)
-						),
-
-						React.DOM.div( {className:"box relatedContentBox"}, 
-							React.DOM.label(null, "Perguntas relacionadas"),
-							React.DOM.li(null, 
-								React.DOM.span( {className:"question"}, "Lorem Ipsum Dolor Sit Amet?"), " – ", React.DOM.span( {className:"asker"}, "Léo Creo")
-							),
-							React.DOM.li(null, 
-								React.DOM.span( {className:"question"}, "Felipe não sabe fazer site ou eu tô enganado?"), " – ", React.DOM.span( {className:"asker"}, "Recalcada Qualquer")
-							),
-							React.DOM.li(null, 
-								React.DOM.span( {className:"question"}, "O Site que Nunca Saiu"), " – ", React.DOM.span( {className:"asker"}, "Felipe Aragão")
-							)
 						)
+
 					)
 				)
 			);
 
+			// <div className="box relatedContentBox">
+			// 	<label>Perguntas relacionadas</label>
+			// 	<li>
+			// 		<span className="question">Lorem Ipsum Dolor Sit Amet?</span> – <span className="asker">Léo Creo</span>
+			// 	</li>
+			// 	<li>
+			// 		<span className="question">Felipe não sabe fazer site ou eu tô enganado?</span> – <span className="asker">Recalcada Qualquer</span>
+			// 	</li>
+			// 	<li>
+			// 		<span className="question">O Site que Nunca Saiu</span> – <span className="asker">Felipe Aragão</span>
+			// 	</li>
+			// </div>
+			
+			// <div className="box editedByBox">
+			// 	<div className="avatarWrapper">
+			// 		<div className="avatar" style={ { background: 'url('+'/static/images/avatar2.png'+')'} }></div>
+			// 	</div>
+			// 	<div className="info">
+			// 		Editado por <span className="name">Felipe Aragão Pires</span> <time>há 5 horas</time> 
+			// 	</div>
+			// </div>
 		},
 	});
 
@@ -158,10 +177,9 @@ define([
 		},
 		componentWillMount: function () {
 			function update (evt) {
-				// console.log('updatefired')
 				this.forceUpdate(function(){});
 			}
-			this.props.collection.on('add remove reset statusChange', update.bind(this));
+			this.props.collection.on('add change remove reset statusChange', update.bind(this));
 		},
 		render: function () {
 			var self = this;

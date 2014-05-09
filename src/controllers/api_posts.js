@@ -70,7 +70,7 @@ module.exports = {
       children: {
         '/upvote': {
           post: [
-            required.posts.selfCanComment('id'), function(req, res) {
+            required.posts.selfDoesntOwn('id'), function(req, res) {
               var postId;
               if (!(postId = req.paramToObjectId('id'))) {
                 return;
@@ -90,7 +90,7 @@ module.exports = {
         },
         '/unupvote': {
           post: [
-            required.posts.selfCanComment('id'), function(req, res) {
+            required.posts.selfDoesntOwn('id'), function(req, res) {
               var postId;
               if (!(postId = req.paramToObjectId('id'))) {
                 return;
