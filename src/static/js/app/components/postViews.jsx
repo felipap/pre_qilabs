@@ -542,73 +542,89 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 	//
 
-	var CardView = React.createClass({
-		mixins: [backboneModel],
+	var TagList = React.createClass({
 		render: function () {
-
-			function gotoPost () {
-				app.navigate('#posts/'+post.id, {trigger:true});
-				// app.navigate('')
-			}
-			var post = this.props.model.attributes;
-			var mediaUserStyle = {
-				background: 'url('+post.author.avatarUrl+')',
-			};
-			var rawMarkup = post.data.escapedBody;
-
+			var tags = _.map(this.props.tags, function (label) {
+				return (
+					<div className="tag">
+						{label}
+					</div>
+				);
+			});
+			console.log(tags, this.props.tags)
 			return (
-				<div className="cardView" onClick={gotoPost}>
-					
-					<div className="cardHeader">
-						<span className="cardType">
-							{post.translatedType}
-						</span>
-						<div className="iconStats">
-							<div onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
-								{this.props.model.liked?<i className="icon-heart icon-red"></i>:<i className="icon-heart"></i>}
-								&nbsp;
-								{post.voteSum}
-							</div>
-							<div>
-								<i className="icon-comment-o"></i>&nbsp;
-								{this.props.model.get('childrenCount').Comment}
-							</div>
-							{post.type === "QA"?
-								<div>
-									<i className="icon-bulb"></i>&nbsp;
-									{this.props.model.get('childrenCount').Answer}
-								</div>
-								:null}
-						</div>
-					</div>
-
-					<div className="cardBody">
-						<span dangerouslySetInnerHTML={{__html: post.data.title }} />
-					</div>
-
-					<div className="cardFoot">
-						<div className="authorship">
-							<a href={post.author.profileUrl} className="username">
-								{post.author.name}
-							</a>
-							<div className="avatarWrapper">
-								<a href={post.author.profileUrl}>
-									<div className="avatar" style={mediaUserStyle}></div>
-								</a>
-							</div>
-						</div>
-
-						<time data-time-count={1*new Date(post.published)} data-time-long="true">
-							{window.calcTimeFrom(post.published,true)}
-						</time>
-					</div>
+				<div className="tags">
+					{tags}
 				</div>
 			);
 		}
-	});
+	})
 
 	return {
-		'CardView': CardView,
+		'CardView': React.createClass({
+			mixins: [backboneModel],
+			render: function () {
+
+				function gotoPost () {
+					app.navigate('#posts/'+post.id, {trigger:true});
+					// app.navigate('')
+				}
+				var post = this.props.model.attributes;
+				var mediaUserStyle = {
+					background: 'url('+post.author.avatarUrl+')',
+				};
+				var rawMarkup = post.data.escapedBody;
+
+				return (
+					<div className="cardView" onClick={gotoPost}>
+						
+						<div className="cardHeader">
+							<span className="cardType">
+								{post.translatedType}
+							</span>
+							<div className="iconStats">
+								<div onClick={this.props.model.handleToggleVote.bind(this.props.model)}>
+									{this.props.model.liked?<i className="icon-heart icon-red"></i>:<i className="icon-heart"></i>}
+									&nbsp;
+									{post.voteSum}
+								</div>
+								<div>
+									<i className="icon-comment-o"></i>&nbsp;
+									{this.props.model.get('childrenCount').Comment}
+								</div>
+								{post.type === "QA"?
+									<div>
+										<i className="icon-bulb"></i>&nbsp;
+										{this.props.model.get('childrenCount').Answer}
+									</div>
+									:null}
+							</div>
+						</div>
+
+						<div className="cardBody">
+							<span dangerouslySetInnerHTML={{__html: post.data.title }} />
+						</div>
+
+						<div className="cardFoot">
+							<div className="authorship">
+								<a href={post.author.profileUrl} className="username">
+									{post.author.name}
+								</a>
+								<div className="avatarWrapper">
+									<a href={post.author.profileUrl}>
+										<div className="avatar" style={mediaUserStyle}></div>
+									</a>
+								</div>
+							</div>
+
+							<time data-time-count={1*new Date(post.published)} data-time-long="true">
+								{window.calcTimeFrom(post.published,true)}
+							</time>
+						</div>
+					</div>
+				);
+			}
+		}),
 		'PlainPost': React.createClass({
 			mixins: [EditablePost, backboneModel],
 
@@ -683,9 +699,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								{this.props.model.get('data').title}
 							</div>
 							<div className="tags">
-								<div className="tag">Application</div>
-								<div className="tag">Vestibular</div>
-								<div className="tag">Universidades</div>
+								<TagList tags={post.tags} />
 							</div>
 						</div>
 
@@ -724,8 +738,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								{post.data.title}
 							</div>
 							<div className="tags">
-								<div className="tag">Application</div>
-								<div className="tag">Olimpíada de Matemática</div>
+								<TagList tags={post.tags} />
 							</div>
 						</div>
 						<div className="postBody">

@@ -23,8 +23,6 @@ require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-
 		{ name: 'Application', id: 'application' }, 
 		{ name: 'Vestibular', id: 'vestibular' }, 
 		{ name: 'Olimpíadas de Matemática', id: 'olimpíadas-de-matemática' }, 
-		{ name: 'Olimpíadas de Informática', id: 'olimpíadas-de-informática' }, 
-		{ name: 'Olimpíadas Brasileira de Informática', id: 'obi' }, 
 	];
 
 	var tagStates = new Bloodhound({

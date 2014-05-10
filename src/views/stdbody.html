@@ -36,6 +36,9 @@ QI Labs ® 2014
 		{% block head %}{% endblock %}
 		{% block stylesheets %}{% endblock %}
 		{% block templates %}{% endblock %}
+		<script>
+		tagData = {{ getTags()|json }};
+		</script>
 		<script>_flash_msgs={{ JSON.stringify(messages) }}</script>
 </head>
 <!--[if lt IE 8]> <body data-page="{{ dataPage }}"> class="lt-ie9"> <![endif]-->

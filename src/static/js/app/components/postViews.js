@@ -542,73 +542,89 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 	//
 
-	var CardView = React.createClass({displayName: 'CardView',
-		mixins: [backboneModel],
+	var TagList = React.createClass({displayName: 'TagList',
 		render: function () {
-
-			function gotoPost () {
-				app.navigate('#posts/'+post.id, {trigger:true});
-				// app.navigate('')
-			}
-			var post = this.props.model.attributes;
-			var mediaUserStyle = {
-				background: 'url('+post.author.avatarUrl+')',
-			};
-			var rawMarkup = post.data.escapedBody;
-
-			return (
-				React.DOM.div( {className:"cardView", onClick:gotoPost}, 
-					
-					React.DOM.div( {className:"cardHeader"}, 
-						React.DOM.span( {className:"cardType"}, 
-							post.translatedType
-						),
-						React.DOM.div( {className:"iconStats"}, 
-							React.DOM.div( {onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
-								this.props.model.liked?React.DOM.i( {className:"icon-heart icon-red"}):React.DOM.i( {className:"icon-heart"}),
-								" ",
-								post.voteSum
-							),
-							React.DOM.div(null, 
-								React.DOM.i( {className:"icon-comment-o"})," ",
-								this.props.model.get('childrenCount').Comment
-							),
-							post.type === "QA"?
-								React.DOM.div(null, 
-									React.DOM.i( {className:"icon-bulb"})," ",
-									this.props.model.get('childrenCount').Answer
-								)
-								:null
-						)
-					),
-
-					React.DOM.div( {className:"cardBody"}, 
-						React.DOM.span( {dangerouslySetInnerHTML:{__html: post.data.title }} )
-					),
-
-					React.DOM.div( {className:"cardFoot"}, 
-						React.DOM.div( {className:"authorship"}, 
-							React.DOM.a( {href:post.author.profileUrl, className:"username"}, 
-								post.author.name
-							),
-							React.DOM.div( {className:"avatarWrapper"}, 
-								React.DOM.a( {href:post.author.profileUrl}, 
-									React.DOM.div( {className:"avatar", style:mediaUserStyle})
-								)
-							)
-						),
-
-						React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
-							window.calcTimeFrom(post.published,true)
-						)
+			var tags = _.map(this.props.tags, function (label) {
+				return (
+					React.DOM.div( {className:"tag"}, 
+						label
 					)
+				);
+			});
+			console.log(tags, this.props.tags)
+			return (
+				React.DOM.div( {className:"tags"}, 
+					tags
 				)
 			);
 		}
-	});
+	})
 
 	return {
-		'CardView': CardView,
+		'CardView': React.createClass({
+			mixins: [backboneModel],
+			render: function () {
+
+				function gotoPost () {
+					app.navigate('#posts/'+post.id, {trigger:true});
+					// app.navigate('')
+				}
+				var post = this.props.model.attributes;
+				var mediaUserStyle = {
+					background: 'url('+post.author.avatarUrl+')',
+				};
+				var rawMarkup = post.data.escapedBody;
+
+				return (
+					React.DOM.div( {className:"cardView", onClick:gotoPost}, 
+						
+						React.DOM.div( {className:"cardHeader"}, 
+							React.DOM.span( {className:"cardType"}, 
+								post.translatedType
+							),
+							React.DOM.div( {className:"iconStats"}, 
+								React.DOM.div( {onClick:this.props.model.handleToggleVote.bind(this.props.model)}, 
+									this.props.model.liked?React.DOM.i( {className:"icon-heart icon-red"}):React.DOM.i( {className:"icon-heart"}),
+									" ",
+									post.voteSum
+								),
+								React.DOM.div(null, 
+									React.DOM.i( {className:"icon-comment-o"})," ",
+									this.props.model.get('childrenCount').Comment
+								),
+								post.type === "QA"?
+									React.DOM.div(null, 
+										React.DOM.i( {className:"icon-bulb"})," ",
+										this.props.model.get('childrenCount').Answer
+									)
+									:null
+							)
+						),
+
+						React.DOM.div( {className:"cardBody"}, 
+							React.DOM.span( {dangerouslySetInnerHTML:{__html: post.data.title }} )
+						),
+
+						React.DOM.div( {className:"cardFoot"}, 
+							React.DOM.div( {className:"authorship"}, 
+								React.DOM.a( {href:post.author.profileUrl, className:"username"}, 
+									post.author.name
+								),
+								React.DOM.div( {className:"avatarWrapper"}, 
+									React.DOM.a( {href:post.author.profileUrl}, 
+										React.DOM.div( {className:"avatar", style:mediaUserStyle})
+									)
+								)
+							),
+
+							React.DOM.time( {'data-time-count':1*new Date(post.published), 'data-time-long':"true"}, 
+								window.calcTimeFrom(post.published,true)
+							)
+						)
+					)
+				);
+			}
+		}),
 		'PlainPost': React.createClass({
 			mixins: [EditablePost, backboneModel],
 
@@ -683,9 +699,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								this.props.model.get('data').title
 							),
 							React.DOM.div( {className:"tags"}, 
-								React.DOM.div( {className:"tag"}, "Application"),
-								React.DOM.div( {className:"tag"}, "Vestibular"),
-								React.DOM.div( {className:"tag"}, "Universidades")
+								TagList( {tags:post.tags} )
 							)
 						),
 
@@ -724,8 +738,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								post.data.title
 							),
 							React.DOM.div( {className:"tags"}, 
-								React.DOM.div( {className:"tag"}, "Application"),
-								React.DOM.div( {className:"tag"}, "Olimpíada de Matemática")
+								TagList( {tags:post.tags} )
 							)
 						),
 						React.DOM.div( {className:"postBody"}, 

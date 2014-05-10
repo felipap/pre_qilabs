@@ -525,7 +525,7 @@ UserSchema.methods.createPost = function(data, cb) {
   var post, self;
   self = this;
   assertArgs({
-    $contains: ['content', 'type']
+    $contains: ['content', 'type', 'tags']
   }, '$isCb');
   post = new Post({
     author: self.id,
@@ -533,7 +533,8 @@ UserSchema.methods.createPost = function(data, cb) {
       title: data.content.title,
       body: data.content.body
     },
-    type: data.type
+    type: data.type,
+    tags: data.tags
   });
   if (data.groupId) {
     post.group = data.groupId;

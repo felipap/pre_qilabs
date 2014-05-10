@@ -419,7 +419,7 @@ Create a post object and fan out through inboxes.
 ###
 UserSchema.methods.createPost = (data, cb) ->
 	self = @
-	assertArgs({$contains:['content','type']}, '$isCb')
+	assertArgs({$contains:['content','type','tags']}, '$isCb')
 	post = new Post {
 		author: self.id
 		data: {
@@ -427,6 +427,7 @@ UserSchema.methods.createPost = (data, cb) ->
 			body: data.content.body
 		},
 		type: data.type
+		tags: data.tags
 	}
 	if data.groupId
 		post.group = data.groupId

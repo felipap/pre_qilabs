@@ -100,10 +100,35 @@ module.exports = {
         }));
       },
       post: function(req, res) {
-        var sanitizer;
+        var sanitizer, tag, tags;
         sanitizer = require('sanitizer');
         console.log(req.body.body);
         console.log('final:', req.body.tags, sanitizer.sanitize(req.body.body));
+        tags = (function() {
+          var _i, _len, _ref, _results;
+          _ref = req.body.tags;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            tag = _ref[_i];
+            if (__indexOf.call(_.pluck(req.app.locals.tags, 'id'), tag) >= 0) {
+              _results.push(tag);
+            }
+          }
+          return _results;
+        })();
+        console.log(req.body.tags, tags, req.app.locals.tags, _.pluck(req.app.locals.tags, 'id'));
+        if (!req.body.title) {
+          res.endJson({
+            error: true,
+            name: 'empty title'
+          });
+        }
+        if (!req.body.body) {
+          res.endJson({
+            error: true,
+            name: 'empty body'
+          });
+        }
         return req.user.createPost({
           groupId: null,
           type: req.body.type,
@@ -111,7 +136,7 @@ module.exports = {
             title: req.body.title,
             body: sanitizer.sanitize(req.body.body)
           },
-          tags: req.body.tags
+          tags: tags
         }, req.handleErrResult(function(doc) {
           return doc.populate('author', function(err, doc) {
             return res.endJson({

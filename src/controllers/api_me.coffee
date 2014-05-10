@@ -70,6 +70,13 @@ module.exports = {
 				sanitizer = require 'sanitizer'
 				console.log req.body.body
 				console.log 'final:', req.body.tags, sanitizer.sanitize(req.body.body)
+				
+				tags = (tag for tag in req.body.tags when tag in _.pluck(req.app.locals.tags, 'id'))
+				console.log(req.body.tags, tags, req.app.locals.tags, _.pluck(req.app.locals.tags, 'id'))
+				if not req.body.title
+					res.endJson {error:true, name:'empty title'}
+				if not req.body.body
+					res.endJson {error:true, name:'empty body'}
 
 				req.user.createPost {
 					groupId: null
@@ -77,7 +84,7 @@ module.exports = {
 					content:
 						title: req.body.title
 						body: sanitizer.sanitize(req.body.body)
-					tags: req.body.tags
+					tags: tags
 				}, req.handleErrResult((doc) ->
 					doc.populate 'author', (err, doc) ->
 						res.endJson {error:false, data:doc}
