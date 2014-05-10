@@ -19,11 +19,6 @@ require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-
 		},
 	});	//
 
-	var tagData = [
-		{ name: 'Application', id: 'application' }, 
-		{ name: 'Vestibular', id: 'vestibular' }, 
-		{ name: 'Olimpíadas de Matemática', id: 'olimpíadas-de-matemática' }, 
-	];
 
 	var tagStates = new Bloodhound({
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),

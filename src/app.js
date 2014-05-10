@@ -205,19 +205,13 @@ app.locals({
 			return "#";
 		}
 	},
-	tags: [
-		{ name: 'Application', id: 'application' }, 
-		{ name: 'Vestibular', id: 'vestibular' }, 
-		{ name: 'Olimpíadas de Matemática', id: 'olimpiadas-de-matematica' }, 
-		{ name: 'Olimpíadas de Informática', id: 'olimpiadas-de-informatica' }, 
-		{ name: 'Olimpíada Brasileira de Informática', id: 'obi' }, 
-	],
 	getTags: function () {
 		return [
 			{ name: 'Application', id: 'application' }, 
 			{ name: 'Vestibular', id: 'vestibular' }, 
 			{ name: 'Olimpíadas de Matemática', id: 'olimpiadas-de-matematica' }, 
 			{ name: 'Olimpíadas de Informática', id: 'olimpiadas-de-informatica' }, 
+			{ name: 'Olimpíadas Científicas', id: 'olimpiadas-cientificas' }, 
 			{ name: 'Olimpíada Brasileira de Informática', id: 'obi' }, 
 		];
 	},
