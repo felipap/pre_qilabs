@@ -412,15 +412,13 @@ html {
 		& > label {
 			display: block;
 			text-align: center;
-			font: bold 18px museo-sans;
+			font: 18px museo-sans;
 			color: white;
 			margin: 20px 0;
 		}
 
 		.optionsBox {
-			// background: white;
 			padding: 10px;
-			.rounded(6px);
 
 			& > ul {
 				& > li {
@@ -428,14 +426,12 @@ html {
 					height: 290px;
 					display: inline-block;
 					width: 240px;
-					border: 1px solid #EEE;
 					font-family: museo-sans;
 					padding: 10px;
-					// .rounded(6px);
+					.rounded(6px);
 					vertical-align: top;
 					cursor: pointer;
-					// margin-right: -5px;
-					background: #F8F8F8;
+					color: white;
 
 					.image {
 						.rounded(6px);
@@ -461,7 +457,6 @@ html {
 					}
 
 					.info {
-						color: #444;
 						label {
 							margin: 10px;
 							font: bold 19px museo-sans;
@@ -470,15 +465,19 @@ html {
 							font-size: 12px museo-sans;
 							text-align: center;
 							margin: 0;
+							opacity: 1;
 						}
 					}
 
 					&:hover {
-						background: white;
+						background: #EEE;
 						.transition;
 						.info {
 							.transition;
 							color: #222;
+							p {
+								opacity: 1;
+							}
 						}
 						i {
 							.transition;

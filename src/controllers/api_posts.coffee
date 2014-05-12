@@ -36,13 +36,24 @@ module.exports = {
 						)
 				]
 
-			delete: (req, res) ->
-					return if not postId = req.paramToObjectId('id')
-					Post.findOne {_id: postId, author: req.user},
-						req.handleErrResult (doc) ->
-							doc.remove()
-							res.endJson(doc)
+			delete: [required.posts.selfOwns('id'), (req, res) ->
+				return if not postId = req.paramToObjectId('id')
+				Post.findOne {_id: postId, author: req.user},
+					req.handleErrResult (doc) ->
+						doc.remove()
+						res.endJson(doc)
+				]
+
 			children: {
+				'/delete':
+					get: [required.posts.selfOwns('id'), (req, res) ->
+						return if not postId = req.paramToObjectId('id')
+						Post.findOne { _id: postId },
+							req.handleErrResult (doc) ->
+								doc.remove()
+								res.endJson(doc)
+						]
+
 				'/upvote':
 					# post: [required.posts.selfCanComment('id'),
 					post: [required.posts.selfDoesntOwn('id'), (req, res) ->

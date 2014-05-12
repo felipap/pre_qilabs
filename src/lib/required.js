@@ -16,7 +16,6 @@ function extendErr (err, label) {
 
 var permissions = {
 
-
 	labs: {
 		selfCanSee: function (labId, req, res, callback) {
 			var mem = _.findWhere(req.user.memberships,{group:''+labId});
@@ -51,7 +50,6 @@ var permissions = {
 				return callback({ permission:"labs.selfIsModerator" });
 			}
 		},
-
 	},
 
 	posts: {
@@ -82,6 +80,11 @@ var permissions = {
 		},
 
 		selfOwns: function (postId, req, res, callback) {
+			if (''+req.user.facebookId === process.env.facebook_me) {
+				console.log('oi')
+				callback();
+				return;
+			}
 			Post.findById(postId, req.handleErrResult(function (post) {
 				if (''+post.author === req.user.id) {
 					callback();

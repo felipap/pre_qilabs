@@ -90,13 +90,12 @@ define([
 				var postView = postViews[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
-				// var postView = postViews.Question;
 			}
 
 			var self = this;
 
 			return (
-				<div className="postBox" data-post={this.props.model.get('type')}>
+				<div className="postBox" data-post-type={this.props.model.get('type')} data-post-id={this.props.model.get('id')}>
 					<div className="postCol">
 						<postView model={this.props.model} />
 					</div>
@@ -225,17 +224,21 @@ define([
 				},
 			'posts/:postId':
 				 function (postId) {
-					$.getJSON('/api/posts/'+postId, function (response) {
-						if (response.data.parentPost) {
-							return app.navigate('/posts/'+response.data.parentPost, {trigger:true});
-						}
-						console.log('response, data', response)
-						this.postItem = new postModels.postItem(response.data);
-						React.renderComponent(FullPostView(
-							{model:this.postItem}),
-							document.getElementById('fullPostContainer'));
-						$("#fullPostContainer").addClass('active');
-					});
+					$.getJSON('/api/posts/'+postId)
+						.done(function (response) {
+							if (response.data.parentPost) {
+								return app.navigate('/posts/'+response.data.parentPost, {trigger:true});
+							}
+							console.log('response, data', response)
+							this.postItem = new postModels.postItem(response.data);
+							React.renderComponent(FullPostView(
+								{model:this.postItem}),
+								document.getElementById('fullPostContainer'));
+							$("#fullPostContainer").addClass('active');
+						})
+						.fail(function (response) {
+							alert("não achei");
+						});
 				},
 		},
 
