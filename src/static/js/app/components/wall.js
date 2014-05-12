@@ -277,7 +277,7 @@ define([
 				function () {
 					var self = this;
 					console.log('oi')
-					$.getJSON('/api/users/'+user_profile.id+'/following')
+					$.getJSON('/api/users/'+user_profile.id+'/followers')
 						.done(function (response) {
 							if (response.error)
 								alert('vish fu')
