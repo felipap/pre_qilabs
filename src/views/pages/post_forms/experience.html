@@ -1,0 +1,21 @@
+{% extends './new_post.html' %}
+
+{% set requirejsView="createPost" %}
+{% set dataPage="createPost" %}
+
+{% block formContent %}
+
+	<div id="content">
+		<div id="formCreatePost">
+			<textarea class="title autosize" name="post_title" placeholder="Título da Publicação" data-toggle="tooltip" data-placement="right" title="" data-trigger="focus"></textarea>
+			<!-- <textarea class="subtitle autosize" name="post_subtitle" placeholder="Subtítulo"></textarea> -->
+			<div id="tagSelectionBoxWrapper"></div>
+			<div class="bodyWrapper">
+				<div id="postBody" data-placeholder="Conte a sua experiência aqui. Mínimo de 100 palavras."></div>
+			</div>
+			<input type="hidden" name="type" value="Experience" />
+			<input type="hidden" name="_csrf" value="{{ token }}" />
+		</div>
+	</div>
+
+{% endblock %}

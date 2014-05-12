@@ -19,7 +19,6 @@ require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-
 		},
 	});	//
 
-
 	var tagStates = new Bloodhound({
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -120,6 +119,14 @@ require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-
 	});
 	
 	var tagSelectionBox = React.renderComponent(TagSelectionBox( {data:_.indexBy(tagData,'id')} ), document.getElementById('tagSelectionBoxWrapper'));
+
+	// var page = React.createClass({
+	// 	render: function () {
+	// 		return (
+	// 			<tagSelectionBox>
+	// 		);
+	// 	}
+	// })
 
 	$("#postBody").on('input keyup', function () {
 		function countWords (s){

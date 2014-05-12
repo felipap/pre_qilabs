@@ -57,7 +57,7 @@ module.exports = {
     }
   },
   '/guias/vestibular': {
-    name: 'panel',
+    name: 'guia',
     permissions: [required.login],
     get: function(req, res) {
       return res.render('guide', {});
@@ -75,36 +75,6 @@ module.exports = {
           });
         });
       });
-    }
-  },
-  '/labs': {
-    permissions: [required.login],
-    children: {
-      'create': {
-        methods: {
-          get: function(req, res) {
-            return res.render('pages/lab_create');
-          }
-        }
-      },
-      ':slug': {
-        permissions: [required.labs.selfCanSee('slug')],
-        get: function(req, res) {
-          if (!req.params.slug) {
-            return res.render404();
-          }
-          return Group.findOne({
-            slug: req.params.slug
-          }, req.handleErrResult(function(group) {
-            return group.genGroupProfile(req.handleErrResult(function(groupProfile) {
-              console.log('group', groupProfile);
-              return res.render('pages/lab', {
-                group: groupProfile
-              });
-            }));
-          }));
-        }
-      }
     }
   },
   '/u/:username': {
@@ -132,10 +102,22 @@ module.exports = {
       }
     }
   },
-  '/p/create': {
-    name: 'createPost',
+  '/new/experience': {
+    name: 'newExperience',
     get: function(req, res) {
-      return res.render('pages/create_post');
+      return res.render('pages/post_forms/experience');
+    }
+  },
+  '/new/pergunta': {
+    name: 'newQuestion',
+    get: function(req, res) {
+      return res.render('pages/post_forms/question');
+    }
+  },
+  '/new/dica': {
+    name: 'newTip',
+    get: function(req, res) {
+      return res.render('pages/post_forms/tip');
     }
   },
   '/posts/:postId': {

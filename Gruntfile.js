@@ -15,11 +15,16 @@ module.exports = function(grunt) {
 			dist: {
 				files: { // change to singular?
 					'src/static/css/sn_pages.min.css':'src/static/less/views/sn_pages.less',
-					// 'src/static/css/about_pages.min.css':'src/static/less/views/about_pages.less',
-					// 'src/static/css/full_bg_page.min.css':'src/static/less/views/full_bg_page.less',
 				},
 				options: { cleancss: true },
 			},
+			others: {
+				files: {
+					// 'src/static/css/about_pages.min.css':'src/static/less/views/about_pages.less',
+					'src/static/css/full_bg_page.min.css':'src/static/less/views/full_bg_page.less',
+				},
+				options: { cleancss: true },
+			}
 		},
 		
 		coffee: {
@@ -53,7 +58,7 @@ module.exports = function(grunt) {
 			// Less
 			css: {
 				files: ['src/static/less/**/*.less'],
-				tasks: ['less'],
+				tasks: ['less:dist'],
 				options: { spawn: false },
 			},
 			// // Require.js

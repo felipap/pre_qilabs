@@ -1,9 +1,0 @@
-{% extends '../cards.html' %}
-{% set requirejsView="cards" %}
-
-{% import '../macros/user.html' as userMacros %}
-
-{% block bodyEnd %}
-	{% parent %}
-	<script>conf={postData:{{ post|json|safe }}};</script>
-{% endblock %}

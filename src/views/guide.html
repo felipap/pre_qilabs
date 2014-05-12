@@ -8,8 +8,14 @@
 	{{ tagMacros.stylesheet(getMediaUrl('css','sn_pages.min.css')) }}
 {% endblock %}
 
+
 {% block body %}
-	<!-- <div class="flash-msgs"></div> -->
+	{% set navbarOpts = {
+		pageDetailLabel: 'Guia: Vestibular',
+		pageDetailIcon: 'icon-guia',
+		detailOnScroll: true,
+	}
+	%}
 	{% include 'layouts/navbar.html' %}
 
 	<div id="globalContainer">

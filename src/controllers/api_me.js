@@ -147,18 +147,6 @@ module.exports = {
         }));
       }
     },
-    'leave': {
-      name: 'user_quit',
-      post: function(req, res) {
-        return req.user.remove(function(err, data) {
-          if (err) {
-            throw err;
-          }
-          req.logout();
-          return res.redirect('/');
-        });
-      }
-    },
     'logout': {
       name: 'logout',
       post: function(req, res) {

@@ -4,6 +4,13 @@
 
 {% import '../macros/user.html' as userMacros %}
 
+{%
+set navbarOpts = {
+	pageDetailLabel: profile.name,
+	pageDetailIcon: 'icon-user',
+	detailOnScroll: true,
+}
+%}
 
 {% block head %}
 	{% parent %}

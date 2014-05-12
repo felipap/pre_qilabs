@@ -8,10 +8,7 @@
 {% import 'macros/ubgs.html' as ubgs %}
 
 {% block body %}
-	{{ ubgs.selectUBg() }}
-	<div class="bg-cover" style="background-image: url({{ getMediaUrl('images/', sel_bg.source) }});"></div>
-	<div class="box-blackout"></div>
-
+	{{ ubgs.selectIBg() }}
 	{% include 'layouts/navbar.html' %}
 	
 	<section id="jumbo">

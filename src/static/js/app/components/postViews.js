@@ -278,9 +278,12 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				// <button className="control"><i className="icon-caret-up"></i></button>
 				// <div className="voteResult">5</div>
 				// <button className="control"><i className="icon-caret-down"></i></button>
+				var userHasVoted = window.user && answer.votes.indexOf(window.user.id) != -1;
+				var userIsAuthor = window.user && answer.author.id===window.user.id;
+
 				var voteControl = (
-					React.DOM.div( {className:" voteControl "+((window.user && answer.votes.indexOf(window.user.id) != -1)?"voted":"")}, 
-						React.DOM.button( {className:"thumbs", onClick:this.toggleVote}, 
+					React.DOM.div( {className:" voteControl "+(userHasVoted?"voted":"")}, 
+						React.DOM.button( {className:"thumbs", onClick:this.toggleVote, disabled:userIsAuthor?"disabled":""}, 
 							React.DOM.i( {className:"icon-tup"})
 						),
 						React.DOM.div( {className:"count"}, 
@@ -302,25 +305,25 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								),
 								React.DOM.div( {className:"infobar"}, 
 									React.DOM.div( {className:"toolbar"}, 
-										(window.user && answer.author.id===window.user.id)?
+										userIsAuthor?
 										(
 											React.DOM.div( {className:"item save", 'data-action':"save-post", onClick:this.onClickSave, 'data-toggle':"tooltip", 'data-placement':"bottom", title:"Salvar"}, 
 												React.DOM.i( {className:"icon-save"})
 											)
 										):null,
-										(window.user && answer.author.id===window.user.id)?
+										userIsAuthor?
 										(
 											React.DOM.div( {className:"item cancel", onClick:this.onCancelEdit, 'data-toggle':"tooltip", 'data-placement':"bottom", title:"Cancelar"}, 
 												React.DOM.i( {className:"icon-times"})
 											)
 										):null,
-										(window.user && answer.author.id===window.user.id)?
+										userIsAuthor?
 										(
 											React.DOM.div( {className:"item edit", onClick:this.onClickEdit, 'data-toggle':"tooltip", 'data-placement':"bottom", title:"Editar"}, 
 												React.DOM.i( {className:"icon-pencil"})
 											)
 										):null,
-										(window.user && answer.author.id===window.user.id)?
+										userIsAuthor?
 										(
 											React.DOM.div( {className:"item remove", 'data-action':"remove-post", onClick:this.onClickTrash,  'data-toggle':"tooltip", 'data-placement':"bottom", title:"Remover"}, 
 												React.DOM.i( {className:"icon-trash"})

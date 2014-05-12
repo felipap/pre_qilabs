@@ -48,7 +48,7 @@ module.exports = {
 			res.render 'pages/panel', {}
 
 	'/guias/vestibular':
-		name: 'panel'
+		name: 'guia'
 		permissions: [required.login]
 		get: (req, res) ->
 			res.render 'guide', {}
@@ -67,27 +67,27 @@ module.exports = {
 						profile: profile
 						follows: bool
 
-	'/labs':
-		permissions: [required.login],
-		children: {
-			'create':
-				methods:
-					get: (req, res) ->
-						res.render 'pages/lab_create'
-			':slug': {
-				permissions: [required.labs.selfCanSee('slug')],
-				get: (req, res) ->
-					unless req.params.slug
-						return res.render404()
-					Group.findOne {slug: req.params.slug},
-						req.handleErrResult (group) ->
-							group.genGroupProfile req.handleErrResult (groupProfile) ->
-								# console.log('groupProfile', groupProfile)
-								console.log('group', groupProfile)
-								res.render 'pages/lab',
-									group: groupProfile
-			}
-		}
+	# '/labs':
+	# 	permissions: [required.login],
+	# 	children: {
+	# 		'create':
+	# 			methods:
+	# 				get: (req, res) ->
+	# 					res.render 'pages/lab_create'
+	# 		':slug': {
+	# 			permissions: [required.labs.selfCanSee('slug')],
+	# 			get: (req, res) ->
+	# 				unless req.params.slug
+	# 					return res.render404()
+	# 				Group.findOne {slug: req.params.slug},
+	# 					req.handleErrResult (group) ->
+	# 						group.genGroupProfile req.handleErrResult (groupProfile) ->
+	# 							# console.log('groupProfile', groupProfile)
+	# 							console.log('group', groupProfile)
+	# 							res.render 'pages/lab',
+	# 								group: groupProfile
+	# 		}
+	# 	}
 
 	'/u/:username':
 		name: 'profile'
@@ -107,10 +107,20 @@ module.exports = {
 									follows: bool
 		}
 
-	'/p/create':
-		name: 'createPost'
+	'/new/experience':
+		name: 'newExperience'
 		get: (req, res) ->
-			res.render 'pages/create_post'			
+			res.render 'pages/post_forms/experience'
+
+	'/new/pergunta':
+		name: 'newQuestion'
+		get: (req, res) ->
+			res.render 'pages/post_forms/question'
+
+	'/new/dica':
+		name: 'newTip'
+		get: (req, res) ->
+			res.render 'pages/post_forms/tip'
 
 	'/posts/:postId':
 		name: 'profile'

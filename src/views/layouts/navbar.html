@@ -1,12 +1,10 @@
-{% if dataPage === "guide" || dataPage === "profile" || dataPage === "tag" %}
-<nav class="bar detailOnScroll" role="navigation" id="navbar">
+<nav class="bar {% if pageDetailLabel %}
+{% if detailOnScroll %}
+detailOnScroll
 {% else %}
-{% if dataPage === "createPost" %}
-<nav class="bar detailVisible" role="navigation" id="navbar">
-{% else %}
-<nav class="bar" role="navigation" id="navbar">
+detailVisible
 {% endif %}
-{% endif %}
+{% endif %}" role="navigation" id="navbar">
 
 <div class="navcontent">
 		<span class="brand">
@@ -17,30 +15,12 @@
 				position: relative;
 				width: 0;
 				">
-				<span class="pageLabelDetail">
-					{% if dataPage === "guide" %}
-						<i class="iconThumbnail iconThumbnailSmall iconShadowed icon-guia"></i>
-						<span class="pageLabel">
-							Guia: Vestibular
-						</span>
-					{% endif %}
-					{% if dataPage === "profile" %}
-						<i class="iconThumbnail iconThumbnailSmall iconShadowed icon-user"></i>
-						<span class="pageLabel">
-							{{ profile.name }}
-						</span>
-					{% endif %}
-					{% if dataPage === "tag" %}
-						<i class="iconThumbnail iconThumbnailSmall iconShadowed icon-tag"></i>
-						<span class="pageLabel">
-							Vestibular
-						</span>
-					{% endif %}
-					{% if dataPage === "createPost" %}
-						<i class="iconThumbnail iconThumbnailSmall iconShadowed icon-bullhorn"></i>
-						<span class="pageLabel">
-							Nova Publicação
-						</span>
+				<span class="pageDetailLabel">
+					{% if pageDetailLabel %}
+					<i class="iconThumbnail iconThumbnailSmall iconShadowed {{ pageDetailIcon }}"></i>
+					<span class="pageLabel">
+						{{ pageDetailLabel }}
+					</span>
 					{% endif %}
 				</span>
 			</div>
@@ -63,9 +43,7 @@
 					<button data-action="send-post">Publicar</button>
 				</li>
 			</ul>
-		{% endif %}
-
-		{% if dataPage === "timeline"  || dataPage === "profile" || dataPage == "tag" %}
+		{% else %}
 		<ul class="pull-right noPadding">
 			<li id="bellPlacement">
 				<button class="icon-btn bell-btn" data-action="show-notifications">
@@ -125,7 +103,7 @@
 					</li>
 				</ul>
 			</li><li>
-				<a href="{{ getPageUrl('createPost') }}" class="button newPost" title="Nova Publicação">
+				<a href="javascript:$('#newPostPopup').fadeIn()" class="button newPost" title="Nova Publicação">
 					<i class="icon-pencil"></i>
 				</a>
 			</li>
@@ -165,5 +143,48 @@
 		</div>
 	</div>
 	<div class="box-blackout" data-action="close-dialog"></div>
+</div>
+{% else %}
+<div id="newPostPopup" name="newPostPopup" onClick="$(this).fadeOut()">
+	<div class="postSelectionWrapper">
+		<label>Selecione uma Tipo de Publicação</label>
+		<div class="optionsBox">
+			<ul class="options">
+				<li onClick="location.href='{{ getPageUrl('newQuestion') }}'">
+					<div class="image">
+						<i class="icon-question"></i>
+					</div>
+					<div class="info">
+						<label>Pergunta</label>
+						<p>
+							Faça uma pergunta sobre um dos nossos tópicos.
+						</p>
+					</div>
+				</li>
+				<li onClick="location.href='{{ getPageUrl('newTip') }}'">
+					<div class="image">
+						<i class="icon-bulb"></i>
+					</div>
+					<div class="info">
+						<label>Dica</label>
+						<p>
+							Divulgue uma dica ou evento para os usuários.
+						</p>
+					</div>
+				</li>
+				<li onClick="location.href='{{ getPageUrl('newExperience') }}'">
+					<div class="image">
+						<i class="icon-trophy"></i>
+					</div>
+					<div class="info">
+						<label>Experiência</label>
+						<p>
+							Compartilhe com os outros usuários uma experiência ou conquista sua.
+						</p>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
 </div>
 {% endif %}

@@ -278,9 +278,12 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				// <button className="control"><i className="icon-caret-up"></i></button>
 				// <div className="voteResult">5</div>
 				// <button className="control"><i className="icon-caret-down"></i></button>
+				var userHasVoted = window.user && answer.votes.indexOf(window.user.id) != -1;
+				var userIsAuthor = window.user && answer.author.id===window.user.id;
+
 				var voteControl = (
-					<div className={" voteControl "+((window.user && answer.votes.indexOf(window.user.id) != -1)?"voted":"")}>
-						<button className="thumbs" onClick={this.toggleVote}>
+					<div className={" voteControl "+(userHasVoted?"voted":"")}>
+						<button className="thumbs" onClick={this.toggleVote} disabled={userIsAuthor?"disabled":""}>
 							<i className="icon-tup"></i>
 						</button>
 						<div className="count">
@@ -302,25 +305,25 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								</div>
 								<div className="infobar">
 									<div className="toolbar">
-										{(window.user && answer.author.id===window.user.id)?
+										{userIsAuthor?
 										(
 											<div className="item save" data-action="save-post" onClick={this.onClickSave} data-toggle="tooltip" data-placement="bottom" title="Salvar">
 												<i className="icon-save"></i>
 											</div>
 										):null}
-										{(window.user && answer.author.id===window.user.id)?
+										{userIsAuthor?
 										(
 											<div className="item cancel" onClick={this.onCancelEdit} data-toggle="tooltip" data-placement="bottom" title="Cancelar">
 												<i className="icon-times"></i>
 											</div>
 										):null}
-										{(window.user && answer.author.id===window.user.id)?
+										{userIsAuthor?
 										(
 											<div className="item edit" onClick={this.onClickEdit} data-toggle="tooltip" data-placement="bottom" title="Editar">
 												<i className="icon-pencil"></i>
 											</div>
 										):null}
-										{(window.user && answer.author.id===window.user.id)?
+										{userIsAuthor?
 										(
 											<div className="item remove" data-action="remove-post" onClick={this.onClickTrash}  data-toggle="tooltip" data-placement="bottom" title="Remover">
 												<i className="icon-trash"></i>

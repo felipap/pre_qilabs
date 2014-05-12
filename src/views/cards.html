@@ -9,7 +9,7 @@
 
 {% block body %}
 
-	{% include 'layouts/navbar.html' %}
+	{% include 'layouts/navbar.html' with navbarOpts %}
 	{% include 'layouts/sidebar.html' %}
 
 	<div id="globalContainer">
@@ -273,7 +273,7 @@
 						<div class="cardFoot">
 							<div class="authorship">
 								<a class="username" href=
-								"/u/felipearagaopires">Alguém Humilde</a>
+								"/u/felipearagaopires">Alguém</a>
 								<div class="avatarWrapper">
 									<a href=
 									"/u/felipearagaopires"></a>
@@ -666,4 +666,5 @@
 	</script>
 
 	<div id="fullPostContainer"></div>
+
 {% endblock %}

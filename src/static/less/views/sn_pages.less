@@ -391,40 +391,151 @@ html {
 	}
 }
 
+#newPostPopup {
+	position: fixed;
+	display: none;
+	top: 0;
+	bottom: 0;
+	left: 0; 
+	right: 0;
+	z-index: 30;
+
+	background: fadeout(black, 20%);
+
+	.postSelectionWrapper {
+		// width: 700px;
+		display: table;
+		margin: 80px auto 0;
+		height: 300px;
+		position: relative;
+
+		& > label {
+			display: block;
+			text-align: center;
+			font: bold 18px museo-sans;
+			color: white;
+			margin: 20px 0;
+		}
+
+		.optionsBox {
+			// background: white;
+			padding: 10px;
+			.rounded(6px);
+
+			& > ul {
+				& > li {
+					text-align: center;
+					height: 290px;
+					display: inline-block;
+					width: 240px;
+					border: 1px solid #EEE;
+					font-family: museo-sans;
+					padding: 10px;
+					// .rounded(6px);
+					vertical-align: top;
+					cursor: pointer;
+					// margin-right: -5px;
+					background: #F8F8F8;
+
+					.image {
+						.rounded(6px);
+						// border: 1px solid #EEE;
+						height: 170px;
+						line-height: 170px;
+						i {
+							font-size: 150px;
+							.text-shadow(0, 0, 0, 0);
+							// text-shadow: 7px 7px 0 rgba(0, 0, 0, .1),
+							// 	8px 8px 0 rgba(0, 0, 0, .05),
+							// 	10px 10px 0 rgba(0, 0, 0, .1)
+							// ;
+							// -moz-text-shadow: 7px 7px 0 rgba(0, 0, 0, .1),
+							// 	8px 8px 0 rgba(0, 0, 0, .05),
+							// 	10px 10px 0 rgba(0, 0, 0, .1)
+							// ;
+						}
+						i.icon-question {
+							font-size: 170px;
+							color: @COLOR1;
+						}
+						i.icon-bulb {
+							color: @COLOR2;
+						}
+						i.icon-trophy {
+							color: mix(@COLOR4, yellow, 20%);
+						}
+					}
+
+					.info {
+						color: #444;
+						label {
+							margin: 10px;
+							font: bold 19px museo-sans;
+						}
+						p {
+							font-size: 12px museo-sans;
+							text-align: center;
+							margin: 0;
+						}
+					}
+
+					&:hover {
+						background: white;
+						.transition;
+						.info {
+							.transition;
+							color: #222;
+						}
+						i {
+							.transition;
+							.text-shadow(3px, 3px, 0, .2);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
 @import "../plugins/medium-editor-insert-plugin.less";
 @import "../plugins/medium-editor.less";
 
 [data-page=createPost] {
 	
-	[data-action=send-post] {
-		.high-xbtn(white, @COLOR1, 4px);
-		.high-xbtn-padding(10px, 18px, 4px, 4px);
-		text-transform: uppercase;
-		font-weight: 800;
-	}
-	[data-action=discart-post] {
-		background: none;
-		color: #888;
-		font-weight: bold;
-		font-size: 13px;
-		text-transform: uppercase;
+	nav.bar {
+		[data-action=send-post] {
+			.high-xbtn(white, @COLOR1, 4px);
+			.high-xbtn-padding(10px, 18px, 4px, 4px);
+			text-transform: uppercase;
+			font-weight: 600;
+		}
+		[data-action=discart-post] {
+			background: none;
+			color: #AAA !important;
+			font-weight: bold;
+			margin-right: 10px !important;
+			font-size: 13px;
+			text-transform: uppercase;
+		}
 	}
 
 	#globalContainer {
 		background: #FAFAFA;
-		padding: 40px;
-		overflow: scroll;
+		padding: 40px 60px;
+
+		// overflow-y: scroll;
 
 		#content {
 			width: 700px;
-			margin: 0 auto;
+			// margin: 0 auto;
 		}
 	}
 
 	.wordCounter {
 		position: fixed;
 		right: 40px;
-		bottom: 40px;
+		bottom: 20px;
 		font-weight: 800;
 		text-transform: uppercase;
 		color: #BBB;
@@ -435,9 +546,13 @@ html {
 		cursor: default;
 	}
 
+	.card {
+
+	}
+
 	.leftMenuWrapper {
 		position: absolute;
-		left: 20px;
+		left: 60px;
 		top: 20px;
 		
 		.leftMenu {
@@ -482,6 +597,7 @@ html {
 		padding: 20px 0;
 
 		.menu {
+			display: none;
 			background: white;
 			width: 100%;
 			padding: 10px;
@@ -506,6 +622,8 @@ html {
 			width: 100%;
 			background: transparent;
 
+			border-bottom: 1px solid #EEE;
+
 			::-webkit-input-placeholder,
 			:-moz-placeholder,
 			::-moz-placeholder,
@@ -516,10 +634,10 @@ html {
 
 		#tagSelectionBox {
 			position: relative;
-
-			min-height: 40px;
-			margin: 20px 0;
+			padding-bottom: 15px;
+			margin: 15px 0;
 			font-family: museo-sans;
+			border-bottom: 1px solid #EEE;
 			cursor: text;
 
 			&.focused {
@@ -566,7 +684,6 @@ html {
 				border: none;
 				color: #AAA;
 				outline: none;
-				margin-top: -17px;
 				background: none;
 				font-size: 19px;
 			}
@@ -575,11 +692,11 @@ html {
 			}
 			
 			ul {
-				display: inline-block;
+				display: inline;
 				.tag {
 					list-style: none;
 					padding: 7px 10px;
-					display: inline;
+					display: inline-block;
 					font-size: 13px;
 					background: #666;
 					border-color: transparent;

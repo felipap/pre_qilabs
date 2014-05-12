@@ -90,14 +90,14 @@ module.exports = {
 						res.endJson {error:false, data:doc}
 				)
 		}
-		'leave': {
-			name: 'user_quit'
-			post: (req, res) -> # Deletes user account.
-					req.user.remove (err, data) ->
-						if err then throw err
-						req.logout()
-						res.redirect('/')
-		}
+		# 'leave': {
+		# 	name: 'user_quit'
+		# 	post: (req, res) -> # Deletes user account.
+		# 		req.user.remove (err, data) ->
+		# 			if err then throw err
+		# 			req.logout()
+		# 			res.redirect('/')
+		# }
 		'logout': {
 			name: 'logout',
 			post: (req, res) ->

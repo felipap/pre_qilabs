@@ -74,7 +74,6 @@ nav.bar {
 	@brandColor: #444;
 	@brandFontSize: 23px;
 
-	// overflow: hidden;
 	position: relative;
 	z-index: 20;
 	height: @navbar-height;
@@ -102,7 +101,7 @@ nav.bar {
 				.transition(margin-right, .1s, linear);
 			}
 
-			.pageLabelDetail {
+			.pageDetailLabel {
 				opacity: 0;
 				body.hasScrolled & {
 					top: 0;
@@ -118,7 +117,7 @@ nav.bar {
 			margin-right: -180px;
 			.transition(margin-right, .1s, linear);
 
-			.pageLabelDetail {
+			.pageDetailLabel {
 				top: 0;
 				opacity: 1;
 			}
@@ -152,7 +151,7 @@ nav.bar {
 			}
 		}
 
-		.pageLabelDetail {
+		.pageDetailLabel {
 			position: relative;
 			display: inline-block;
 			width: 300px;
@@ -185,7 +184,7 @@ nav.bar {
 		&:extend(.nav);
 		&:extend(.navbar-nav);
 		
-		margin: 0 20px;
+		margin: 0 10px;
 
 		&.noPadding {
 			margin: 0 !important;
