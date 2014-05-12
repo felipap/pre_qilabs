@@ -189,7 +189,7 @@ define([
 					)
 				);
 			});
-			if (this.props.isFollowingList)
+			if (this.props.isFollowing)
 				var label = this.props.profile.name+" segue "+this.props.list.length+" pessoas";
 			else
 				var label = this.props.list.length+" pessoas seguem "+this.props.profile.name;
