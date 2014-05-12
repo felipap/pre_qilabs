@@ -189,7 +189,7 @@ define([
 					</li>
 				);
 			});
-			if (this.props.isFollowing)
+			if (this.props.isFollowin)g
 				var label = this.props.profile.name+" segue "+this.props.list.length+" pessoas";
 			else
 				var label = this.props.list.length+" pessoas seguem "+this.props.profile.name;
@@ -324,7 +324,7 @@ define([
 		},
 
 		renderWall: function (url, opts) {
-			// return;
+			return;
 			this.postList = new postModels.postList([], {url:url});
 			if (!this.postWall) {
 				this.postWall = React.renderComponent(CardsPanelView(
