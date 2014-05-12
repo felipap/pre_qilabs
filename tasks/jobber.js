@@ -23,8 +23,7 @@ module.exports = function (job, options) {
 
 	var start = function () {
 
-		if (verbose)
-			console.log(('Jobber: Requiring environment keys.').green);
+		verbose && console.log(('Jobber: Requiring environment keys.').green);
 		
 		// If being executed directly...
 		// > load keys
@@ -33,15 +32,12 @@ module.exports = function (job, options) {
 		} catch (e) {}
 
 		// Open database.
-		if (verbose)
-			console.log(('Jobber: Opening database configuration file.').green);
+		verbose && console.log(('Jobber: Opening database configuration file.').green);
 		require('../src/config/mongoose');
 
-		if (verbose)
-			console.log(('Jobber: Requiring environment keys.').green);
+		verbose && console.log(('Jobber: Requiring environment keys.').green);
 
-		if (verbose)
-			console.log(('Jobber: Calling job on file '+parentFile).green);
+		verbose && console.log(('Jobber: Calling job on file '+parentFile).green);
 	
 		console.time('jobTime');
 		job({

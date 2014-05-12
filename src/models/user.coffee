@@ -54,6 +54,8 @@ UserSchema = new mongoose.Schema {
 	stats: {
 		posts:	{ type: Number, default: 0 }
 		votes:	{ type: Number, default: 0 }
+		followers:	{ type: Number, default: 0 }
+		following:	{ type: Number, default: 0 }
 	}
 
 	tags: [{ type: String }]
@@ -216,7 +218,7 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 	self = @
 	if ''+user.id is ''+self.id # Can't follow myself
 		return cb(true)
-
+	
 	Follow.findOne {follower:self, followee:user},
 		(err, doc) =>
 			unless doc
@@ -225,6 +227,7 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 					followee: user
 				}
 				doc.save()
+				user.update {$inc: {'stats.followers': 1}}, ->
 			cb(err, !!doc)
 
 			# Notify followed user
@@ -244,11 +247,12 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 					Inbox.fillUserInboxWithResources(self, docs, ->)
 
 UserSchema.methods.unfollowUser = (user, cb) ->
-	assert user instanceof User, 'Passed argument not a user document'
+	assertArgs({$isModel:User}, '$isCb')
 	Follow.findOne { follower:@, followee:user },
 		(err, doc) =>
 			return cb(err) if err
 			if doc then doc.remove cb
+			user.update {$dec: {'stats.followers': 1}}, ->
 
 ################################################################################
 ## related to fetching Timelines and Inboxes ###################################
@@ -484,41 +488,53 @@ Generate stuffed profile for the controller.
 ###
 UserSchema.methods.genProfile = (cb) ->
 	self = @
-	@getPopulatedFollowers (err, followers) =>
-		if err then return cb(err)
 
-		@getPopulatedFollowing (err, following) =>
-			if err then return cb(err)
-			console.log 'following', following
+	profile = _.extend(self.toJSON(), {
+		stats: {
+			following: self.stats.following
+			followers: self.stats.followers
+			posts: self.stats.posts
+			votes: self.stats.votes
+		}
+	})
 
-			self.populate 'memberships.group', (err, me) =>
-				if err then return cb(err)
+	cb(null, profile)
 
-				groups = _.filter(me.memberships, (i) -> i and i.group)
+	# @getPopulatedFollowers (err, followers) =>
+	# 	if err then return cb(err)
 
-				profile = _.extend(self.toJSON(), {
-					followers: {
-						docs: followers.slice(0,20)
-						count: followers.length
-					}
-					following: {
-						docs: following.slice(0,20)
-						count: following.length
-					}
-					followingIds: _.pluck(following, '_id')
-					# groups: {
-					# 	docs: _.pluck(groups,'group').slice(0,20)
-					# 	count: _.pluck(groups,'group').length
-					# }
-					stats: {
-						following: following.length
-						followers: followers.length
-						posts: self.stats.posts
-						votes: self.stats.votes
-					}
-				})
+	# 	@getPopulatedFollowing (err, following) =>
+	# 		if err then return cb(err)
+	# 		console.log 'following', following
 
-				cb(null, profile)
+	# 		self.populate 'memberships.group', (err, me) =>
+	# 			if err then return cb(err)
+
+	# 			groups = _.filter(me.memberships, (i) -> i and i.group)
+
+	# 			profile = _.extend(self.toJSON(), {
+	# 				followers: {
+	# 					docs: followers.slice(0,20)
+	# 					count: followers.length
+	# 				}
+	# 				following: {
+	# 					docs: following.slice(0,20)
+	# 					count: following.length
+	# 				}
+	# 				followingIds: _.pluck(following, '_id')
+	# 				# groups: {
+	# 				# 	docs: _.pluck(groups,'group').slice(0,20)
+	# 				# 	count: _.pluck(groups,'group').length
+	# 				# }
+	# 				stats: {
+	# 					following: following.length
+	# 					followers: followers.length
+	# 					posts: self.stats.posts
+	# 					votes: self.stats.votes
+	# 				}
+	# 			})
+
+	# 			cb(null, profile)
 
 ################################################################################
 ## related to the notification #################################################

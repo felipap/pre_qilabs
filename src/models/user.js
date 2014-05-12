@@ -71,6 +71,14 @@ UserSchema = new mongoose.Schema({
     votes: {
       type: Number,
       "default": 0
+    },
+    followers: {
+      type: Number,
+      "default": 0
+    },
+    following: {
+      type: Number,
+      "default": 0
     }
   },
   tags: [
@@ -322,6 +330,11 @@ UserSchema.methods.dofollowUser = function(user, cb) {
           followee: user
         });
         doc.save();
+        user.update({
+          $inc: {
+            'stats.followers': 1
+          }
+        }, function() {});
       }
       cb(err, !!doc);
       Notification.Trigger(self, Notification.Types.NewFollower)(self, user, function() {});
@@ -350,7 +363,9 @@ UserSchema.methods.dofollowUser = function(user, cb) {
 };
 
 UserSchema.methods.unfollowUser = function(user, cb) {
-  assert(user instanceof User, 'Passed argument not a user document');
+  assertArgs({
+    $isModel: User
+  }, '$isCb');
   return Follow.findOne({
     follower: this,
     followee: user
@@ -360,8 +375,13 @@ UserSchema.methods.unfollowUser = function(user, cb) {
         return cb(err);
       }
       if (doc) {
-        return doc.remove(cb);
+        doc.remove(cb);
       }
+      return user.update({
+        $dec: {
+          'stats.followers': 1
+        }
+      }, function() {});
     };
   })(this));
 };
@@ -614,48 +634,17 @@ Generate stuffed profile for the controller.
  */
 
 UserSchema.methods.genProfile = function(cb) {
-  var self;
+  var profile, self;
   self = this;
-  return this.getPopulatedFollowers((function(_this) {
-    return function(err, followers) {
-      if (err) {
-        return cb(err);
-      }
-      return _this.getPopulatedFollowing(function(err, following) {
-        if (err) {
-          return cb(err);
-        }
-        console.log('following', following);
-        return self.populate('memberships.group', function(err, me) {
-          var groups, profile;
-          if (err) {
-            return cb(err);
-          }
-          groups = _.filter(me.memberships, function(i) {
-            return i && i.group;
-          });
-          profile = _.extend(self.toJSON(), {
-            followers: {
-              docs: followers.slice(0, 20),
-              count: followers.length
-            },
-            following: {
-              docs: following.slice(0, 20),
-              count: following.length
-            },
-            followingIds: _.pluck(following, '_id'),
-            stats: {
-              following: following.length,
-              followers: followers.length,
-              posts: self.stats.posts,
-              votes: self.stats.votes
-            }
-          });
-          return cb(null, profile);
-        });
-      });
-    };
-  })(this));
+  profile = _.extend(self.toJSON(), {
+    stats: {
+      following: self.stats.following,
+      followers: self.stats.followers,
+      posts: self.stats.posts,
+      votes: self.stats.votes
+    }
+  });
+  return cb(null, profile);
 };
 
 UserSchema.methods.getNotifications = function(cb) {
