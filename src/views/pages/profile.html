@@ -14,7 +14,8 @@ set navbarOpts = {
 
 {% block head %}
 	{% parent %}
-	<script>conf={postsRoot:'/api/users/{{ profile.id }}/posts'};</script>
+	<script>conf={postsRoot:'/api/users/{{ profile.id }}/posts'};
+	user_profile={id:'{{profile.id}}', name:'{{profile.name}}', path:'{{profile.path}}', avatarUrl: '{{profile.avatarUrl}}'}</script>
 {% endblock %}
 
 {% block globalHeader %}
@@ -56,12 +57,16 @@ set navbarOpts = {
 
 				<div class="stats">
 					<div>
+						<a href="#followers">
 						<h3>{{ profile.stats.followers }}</h3>
 						seguidores
+						</a>
 					</div>
 					<div>
+						<a href="#following">
 						<h3>{{ profile.stats.following }}</h3>
 						seguindo
+						</a>
 					</div>
 					<div>
 						<h3>{{ profile.stats.posts }}</h3>

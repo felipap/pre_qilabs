@@ -12,7 +12,7 @@
 	{% include 'layouts/navbar.html' with navbarOpts %}
 	{% include 'layouts/sidebar.html' %}
 
-	<div id="globalContainer">
+	<div class="globalContainer" id="globalContainer">
 
 		{% block globalHeader %}
 		{% endblock %}
@@ -657,6 +657,8 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="globalContainer" id="rightContainer"></div>
 
 	<script>
 		function resizeCardsPanel() {

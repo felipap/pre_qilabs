@@ -3,29 +3,6 @@
 	.transition-transform();
 	.translate(-@widthSidebar);
 }
-#globalContainer {
-	.transition-transform();
-}
-
-body.sidebarOpen {
-	// margin-left: @widthSidebar;
-	#sidebarPanel {
-		.translate(0);
-	}
-
-	#globalContainer {
-		.translate(@widthSidebar);
-	}
-
-	nav.bar {
-		ul li .openSidebar {
-			color: white;
-			&:hover, &:active, &:focus {
-				color: #F8F8F8;
-			}
-		}
-	}
-}
 
 body.hasScrolled #sidebarPanel {
 	padding-top: @navbar-small-height;

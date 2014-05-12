@@ -84,7 +84,6 @@ define([
 		render: function () {
 			var post = this.props.model.attributes;
 
-			// test for type, QA for example
 			var postType = this.props.model.get('type');
 			if (postType in postViews) {
 				var postView = postViews[postType];
@@ -171,6 +170,38 @@ define([
 		},
 	});
 
+	var FollowList = React.createClass({
+		render: function () {
+			var items = _.map(this.props.list, function (person) {
+				return (
+					<li>
+						<label>{person.name}</label>
+						<button className="btn-follow" data-action="unfollow"></button>
+					</li>
+				);
+			});
+			if (this.props.isFollowingList)
+				var label = this.props.profile.name+" segue "+this.props.list.length+" pessoas";
+			else
+				var label = this.props.list.length+" pessoas seguem "+this.props.profile.name;
+
+			return (
+				<div className="listView">
+					<div className="userAvatar">
+						<div className="avatarWrapper">
+							<a href="#">
+							<div className="avatar" style={ {background: 'url("'+this.props.profile.avatarUrl+'")'} }>
+							</div>
+							</a>
+						</div>
+					</div>
+					<label>{label}</label>
+					{items}
+				</div>
+			);
+		},
+	});
+
 	var CardsPanelView = React.createClass({
 		getInitialState: function () {
 			return {selectedForm:null};
@@ -214,25 +245,53 @@ define([
 		initialize: function () {
 			console.log('initialized')
 			window.app = this;
-			this.renderList(window.conf.postsRoot || '/api/me/timeline/posts');
 		},
 
 		routes: {
-			'u/:profileId':
+			'following':
 				function () {
-					this.renderList(window.conf.postsRoot);
+					var self = this;
+					console.log('oi')
+					$.getJSON('/api/users/'+user_profile.id+'/following')
+						.done(function (response) {
+							if (response.error)
+								alert('vish fu')
+							console.log('foi!', response)
+							self.renderList(response.data, {isFollowing: true});
+						})
+						.fail(function (response) {
+							alert('vish');
+						})
+					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
+				},
+			'followers':
+				function () {
+					var self = this;
+					console.log('oi')
+					$.getJSON('/api/users/'+user_profile.id+'/following')
+						.done(function (response) {
+							if (response.error)
+								alert('vish fu')
+							console.log('foi!', response)
+							self.renderList(response.data, {isFollowing: false});
+						})
+						.fail(function (response) {
+							alert('vish');
+						})
+					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
 				},
 			'posts/:postId':
 				 function (postId) {
+				 	var self = this;
 					$.getJSON('/api/posts/'+postId)
 						.done(function (response) {
 							if (response.data.parentPost) {
 								return app.navigate('/posts/'+response.data.parentPost, {trigger:true});
 							}
 							console.log('response, data', response)
-							this.postItem = new postModels.postItem(response.data);
+							self.postItem = new postModels.postItem(response.data);
 							React.renderComponent(FullPostView(
-								{model:this.postItem}),
+								{model:self.postItem}),
 								document.getElementById('fullPostContainer'));
 							$("#fullPostContainer").addClass('active');
 						})
@@ -240,22 +299,36 @@ define([
 							alert("não achei");
 						});
 				},
+			'':
+				function () {
+					$('body').removeClass('rightContainerOpen');
+					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
+				},
 		},
 
-		renderList: function (url, opts) {
+		renderList: function (list, opts) {
+			React.renderComponent(
+				<FollowList list={list} isFollowing={opts.isFollowing} profile={user_profile} />,
+				document.getElementById('rightContainer')
+			);
+			$('body').addClass('rightContainerOpen');
+		},
+
+		renderWall: function (url, opts) {
 			// return;
 			this.postList = new postModels.postList([], {url:url});
-			React.renderComponent(CardsPanelView(
-				_.extend(opts || {},{collection:this.postList})),
-				document.getElementById('resultsContainer'));
-
+			if (!this.postWall) {
+				this.postWall = React.renderComponent(CardsPanelView(
+					_.extend(opts || {},{collection:this.postList})),
+					document.getElementById('resultsContainer'));
+			}
 			this.postList.fetch({reset:true});
-
-			var fetchMore = _.throttle(this.postList.tryFetchMore.bind(app.postList),1000);
 			var fetchMore = this.postList.tryFetchMore.bind(app.postList);
+
 
 			$('#globalContainer').scroll(function() {
 				if ($('#content').outerHeight()-($('#globalContainer').scrollTop()+$('#globalContainer').outerHeight())<5) {
+					console.log('fetching more')
 					fetchMore();
 				}
 			});

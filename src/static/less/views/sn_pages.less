@@ -8,7 +8,6 @@
 @import "../common.less";
 @import "../components/cards.less";
 @import "../components/postbox.less";
-// @import "../components/layout.less";
 @import "../components/sidebar.less";
 @import "./guides.less";
 
@@ -24,6 +23,55 @@ html {
 	.xbtn(white, @COLOR1);
 }
 
+#rightContainer {
+	.translate(100%);
+	height: 100%;
+	background: #EEE;
+}
+
+body.rightContainerOpen {
+	#globalContainer {
+		.translate(-100%);
+	}
+	#rightContainer {
+		.translate(0);		
+	}
+}
+
+.globalContainer {
+	.transition-transform();
+}
+
+body.sidebarOpen {
+	// margin-left: @widthSidebar;
+	#sidebarPanel {
+		.translate(0);
+	}
+
+	#globalContainer {
+		.translate(@widthSidebar);
+	}
+
+	nav.bar {
+		ul li .openSidebar {
+			color: white;
+			&:hover, &:active, &:focus {
+				color: #F8F8F8;
+			}
+		}
+	}
+}
+
+body.sidebarOpen.rightContainerOpen {
+	#rightContainer {
+		.translate(@widthSidebar);
+	}
+	
+	#globalContainer {
+		.translate(-100%);
+	}
+}
+
 .topBar {
 	position: fixed;
 	border-top: 2px solid #222;
@@ -32,7 +80,7 @@ html {
 	width: 100%;
 }
 
-#globalContainer {
+.globalContainer {
 	background: #F0F0F0; // url(/static/images/project_papper.png);
 	background-position-y: -1px;
 	z-index: 10;
@@ -42,7 +90,9 @@ html {
 	width: 100%;
 	min-width: @minPageWidth;
 	border-top: 1px solid #DDD;
+}
 
+#globalContainer {
 	#cards {
 		// border-top: 1px solid #AAA;
 		padding-top: 20px;
@@ -79,6 +129,50 @@ html {
 &::-webkit-scrollbar-track {
 	background-clip: padding-box;
 	border-left: 1px solid #AAA;
+}
+
+.listView {
+
+	width: 800px;
+	margin: 0 auto;
+	position: relative;
+	padding-bottom: 50px;
+
+	& > label {
+		font-size: 25px;
+		text-align: left;
+		display: block;
+		font: normal 25px museo-sans;
+		margin: 20px 0;
+		color: #666;
+	}
+
+	.userAvatar {
+		position: absolute;
+		left: -120px;
+
+		.avatarWrapper {
+			height: 100px;
+			width: 100px;
+		}
+	}
+
+	li {
+		clear: both;
+		list-style: none;
+		text-align: left;
+
+		padding-bottom: 10px;
+		border-bottom: 1px solid #DDD;
+		margin-bottom: 10px;
+
+		label {
+			font: normal 14px museo-sans;
+		}
+		button {
+			float: right;
+		}
+	}
 }
 
 [data-page=tag] {
@@ -290,6 +384,14 @@ html {
 						display: inline-block;
 						padding: 10px;
 						text-align: center;
+						color: #EFEFEF;
+						a {
+							text-decoration: none;
+							display: block;
+						}
+						&:hover {
+							color: white;
+						}
 					}
 				}
 
