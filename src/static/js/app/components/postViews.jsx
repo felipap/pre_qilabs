@@ -367,7 +367,9 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 													<a href={answer.profileUrl} className="username">
 														{answer.author.name}
 													</a>
-													<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+													{
+													userIsAuthor?null:<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+													}
 												</div>
 												<div className="bio">
 													{

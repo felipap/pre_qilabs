@@ -367,7 +367,9 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 													React.DOM.a( {href:answer.profileUrl, className:"username"}, 
 														answer.author.name
 													),
-													React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
+													
+													userIsAuthor?null:React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})
+													
 												),
 												React.DOM.div( {className:"bio"}, 
 													

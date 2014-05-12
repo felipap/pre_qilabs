@@ -83,6 +83,7 @@ define([
 
 		render: function () {
 			var post = this.props.model.attributes;
+			var author = this.props.model.get('author');
 
 			var postType = this.props.model.get('type');
 			if (postType in postViews) {
@@ -93,6 +94,8 @@ define([
 
 			var self = this;
 
+			var userIsAuthor = window.user && author.id===window.user.id;
+
 			return (
 				<div className="postBox" data-post-type={this.props.model.get('type')} data-post-id={this.props.model.get('id')}>
 					<div className="postCol">
@@ -102,21 +105,25 @@ define([
 						<div className="box authorInfo">
 							<div className="identification">
 								<div className="avatarWrapper">
-									<div className="avatar" style={ { background: 'url('+post.author.avatarUrl+')' } }></div>
+									<div className="avatar" style={ { background: 'url('+author.avatarUrl+')' } }></div>
 								</div>
-								<a href={post.author.path} className="username">
-									{post.author.name}
+								<a href={author.path} className="username">
+									{author.name}
 								</a>
-								<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+								{
+									userIsAuthor?
+									null
+									:<button className="btn-follow btn-follow" data-action="unfollow" data-user={author.id}></button>
+								}
 							</div>
 							<div className="bio">
-								{post.author.profile.bio}
+								{author.profile.bio}
 							</div>
 						</div>
 
 						<div className="flatBtnBox">
 							{
-								(window.user.id === post.author.id)?
+								(window.user.id === author.id)?
 								<div className="item edit" onClick={this.onClickEdit} data-toggle="tooltip" title="Editar publicação" data-placement="bottom" data-container="body">
 									<i className="icon-edit"></i>
 								</div>
@@ -127,7 +134,7 @@ define([
 								</div>
 							}
 							{
-								(window.user.id === post.author.id)?
+								(window.user.id === author.id)?
 								<div className="item remove" onClick={this.onClickTrash} data-toggle="tooltip" title="Excluir publicação" data-placement="bottom" data-container="body">
 									<i className="icon-trash"></i>
 								</div>

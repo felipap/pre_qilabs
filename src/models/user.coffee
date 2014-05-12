@@ -500,42 +500,6 @@ UserSchema.methods.genProfile = (cb) ->
 
 	cb(null, profile)
 
-	# @getPopulatedFollowers (err, followers) =>
-	# 	if err then return cb(err)
-
-	# 	@getPopulatedFollowing (err, following) =>
-	# 		if err then return cb(err)
-	# 		console.log 'following', following
-
-	# 		self.populate 'memberships.group', (err, me) =>
-	# 			if err then return cb(err)
-
-	# 			groups = _.filter(me.memberships, (i) -> i and i.group)
-
-	# 			profile = _.extend(self.toJSON(), {
-	# 				followers: {
-	# 					docs: followers.slice(0,20)
-	# 					count: followers.length
-	# 				}
-	# 				following: {
-	# 					docs: following.slice(0,20)
-	# 					count: following.length
-	# 				}
-	# 				followingIds: _.pluck(following, '_id')
-	# 				# groups: {
-	# 				# 	docs: _.pluck(groups,'group').slice(0,20)
-	# 				# 	count: _.pluck(groups,'group').length
-	# 				# }
-	# 				stats: {
-	# 					following: following.length
-	# 					followers: followers.length
-	# 					posts: self.stats.posts
-	# 					votes: self.stats.votes
-	# 				}
-	# 			})
-
-	# 			cb(null, profile)
-
 ################################################################################
 ## related to the notification #################################################
 
