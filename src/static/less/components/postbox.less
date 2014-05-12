@@ -226,7 +226,7 @@
 
 						border: 1px solid #DDD;
 						cursor: pointer;
-						.transition(all, .2s, linear);
+						.transition(border-color, .2s, linear);
 						&:hover {
 							color: #444;
 						}
@@ -537,7 +537,7 @@
 									width: 100%;
 									display: table-cell;
 									vertical-align: top;
-									border-bottom: 1px solid #EEE;
+									// border-bottom: 1px solid #EEE;
 
 									.answerBody {
 										font-size: 15px;
@@ -549,24 +549,29 @@
 
 								.answerBodyWrapper {
 									font-size: 15px;
-									min-height: 100px;
-									padding: 5px;
 									resize: vertical;
-									border: 1px solid transparent;
-									.transition(border, .2s, ease);
 
 									.answerBody {
-										padding: 5px;
+										.transition(border, .2s, ease);
+										border: 1px solid transparent;
+										min-height: 100px;
+										padding: 10px;
 										color: #444;
 										.answerFormatting;
+										.transition;
 									}
 								}
 								
 								&.editing {
 									.answerBodyWrapper {
-										border-color: #DDD;
 										.answerBody {
-											padding: 5px;
+											border: 1px solid #AAA;
+											// border-left: 2px solid #28E;
+											&:focus {
+												border: 1px solid;
+												border-color: #888 #888 #888 #08C;
+												border-width: 1px 1px 1px 2px;
+											}
 											color: #111;
 										}
 									}

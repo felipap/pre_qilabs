@@ -100,12 +100,19 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 
 			componentDidUpdate: function () {
+				var self = this;
+				// This only works because showInput starts out as false.
 				if (this.refs && this.refs.input) {
 					$(this.refs.input.getDOMNode()).autosize();
 					if (this.props.small) {
-						$(this.refs.input.getDOMNode()).keypress(function (e) {
-							if (e.keyCode == 13) {
+						$(this.refs.input.getDOMNode()).keyup(function (e) {
+							// Prevent newlines in comments.
+							if (e.keyCode == 13) { // enter
 								e.preventDefault();
+							} else if (e.keyCode == 27) { // esc
+								// Hide box if the content is "empty".
+								if (self.refs.input.getDOMNode().value.match(/^\s*$/))
+									self.setState({showInput:false});
 							}
 						});
 					}
@@ -283,7 +290,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 				var voteControl = (
 					<div className={" voteControl "+(userHasVoted?"voted":"")}>
-						<button className="thumbs" onClick={this.toggleVote} disabled={userIsAuthor?"disabled":""}>
+						<button className="thumbs" onClick={this.toggleVote} disabled={userIsAuthor?"disabled":""}
+						title={userIsAuthor?"Você não pode votar na sua própria resposta.":""}>
 							<i className="icon-tup"></i>
 						</button>
 						<div className="count">
@@ -759,6 +767,81 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				);
 			},
 		}),
+		'Experience': React.createClass({
+			mixins: [EditablePost, backboneModel],
+
+			render: function () {
+				var post = this.props.model.attributes;
+				return (
+					<div>
+						<div className="postHeader">
+							<time data-time-count={1*new Date(post.published)} data-time-long="true">
+								{window.calcTimeFrom(post.published,true)}
+							</time>
+							<div className="type">
+								{post.translatedType}
+							</div>
+							<div className="postTitle">
+								{this.props.model.get('data').title}
+							</div>
+							<div className="tags">
+								<TagList tags={post.tags} />
+							</div>
+						</div>
+
+						<div className="postBody">
+							<span dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}} />
+						</div>
+
+						<div className="postInfobar">
+							<ul className="left">
+							</ul>
+						</div>
+						<div className="postFooter">
+							<CommentSectionView collection={this.props.model.children.Comment} postModel={this.props.model} />
+						</div>
+					</div>
+				);
+			},
+		}),
+		'Tip': React.createClass({
+			mixins: [EditablePost, backboneModel],
+
+			render: function () {
+				var post = this.props.model.attributes;
+				return (
+					<div>
+						<div className="postHeader">
+							<time data-time-count={1*new Date(post.published)} data-time-long="true">
+								{window.calcTimeFrom(post.published,true)}
+							</time>
+							<div className="type">
+								{post.translatedType}
+							</div>
+							<div className="postTitle">
+								{this.props.model.get('data').title}
+							</div>
+							<div className="tags">
+								<TagList tags={post.tags} />
+							</div>
+						</div>
+
+						<div className="postBody">
+							<span dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}} />
+						</div>
+
+						<div className="postInfobar">
+							<ul className="left">
+							</ul>
+						</div>
+						<div className="postFooter">
+							<CommentSectionView collection={this.props.model.children.Comment} postModel={this.props.model} />
+						</div>
+					</div>
+				);
+			},
+		}),
+
 	};
 });
 

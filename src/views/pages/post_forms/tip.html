@@ -3,6 +3,14 @@
 {% set requirejsView="createPost" %}
 {% set dataPage="createPost" %}
 
+{%
+set navbarOpts = {
+	hasNavbarDetail: true,
+	pageDetailLabel: 'Dica',
+	pageDetailIcon: 'icon-bulb',
+}
+%}
+
 {% block formContent %}
 
 	<div id="content">
@@ -12,7 +20,7 @@
 			<div class="bodyWrapper">
 				<div id="postBody" data-placeholder="Dê a sua dica."></div>
 			</div>
-			<input type="hidden" name="type" value="Tip" />
+			<input type="hidden" name="post_type" value="Tip" />
 			<input type="hidden" name="_csrf" value="{{ token }}" />
 		</div>
 	</div>

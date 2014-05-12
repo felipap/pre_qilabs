@@ -21,15 +21,19 @@ Types = {
   Comment: 'Comment',
   Answer: 'Answer',
   PlainPost: 'PlainPost',
-  QA: 'QA',
   Question: 'Question',
-  VideoPost: 'VideoPost',
+  Experience: 'Experience',
+  Tip: 'Tip',
   Notification: 'Notification'
 };
 
 TransTypes = {};
 
 TransTypes[Types.Question] = 'Pergunta';
+
+TransTypes[Types.Experience] = 'Experiência';
+
+TransTypes[Types.Tip] = 'Dica';
 
 PostSchema = new Resource.Schema({
   author: {

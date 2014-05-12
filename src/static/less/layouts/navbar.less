@@ -213,6 +213,7 @@ nav.bar {
 				vertical-align: top;
 				box-shadow: none;
 				.rounded(0);
+				display: table-cell;
 				background: none;
 				height: @navbar-height+1;
 				margin: 0;
@@ -227,6 +228,10 @@ nav.bar {
 					font-size: 17px;
 					vertical-align: middle;
 				}
+			}
+
+			a.plain-btn, a.icon-btn {
+				vertical-align: middle;
 			}
 
 			.icon-btn {

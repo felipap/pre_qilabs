@@ -5,26 +5,25 @@ detailOnScroll
 detailVisible
 {% endif %}
 {% endif %}" role="navigation" id="navbar">
-
 <div class="navcontent">
-		<span class="brand">
-			<a href="/" tabindex="-1">QI <i class="icon-bulb"></i> Labs</a>
-			<div style="
-				display: inline-block;
-				top: -1px;
-				position: relative;
-				width: 0;
-				">
-				<span class="pageDetailLabel">
-					{% if pageDetailLabel %}
-					<i class="iconThumbnail iconThumbnailSmall iconShadowed {{ pageDetailIcon }}"></i>
-					<span class="pageLabel">
-						{{ pageDetailLabel }}
-					</span>
-					{% endif %}
+	<span class="brand">
+		<a href="/" tabindex="-1">QI <i class="icon-bulb"></i> Labs</a>
+		<div style="
+			display: inline-block;
+			top: -1px;
+			position: relative;
+			width: 0;
+			">
+			<span class="pageDetailLabel">
+				{% if pageDetailLabel %}
+				<i class="iconThumbnail iconThumbnailSmall iconShadowed {{ pageDetailIcon }}"></i>
+				<span class="pageLabel">
+					{{ pageDetailLabel }}
 				</span>
-			</div>
-		</span>
+				{% endif %}
+			</span>
+		</div>
+	</span>
 	{% if user %}
 		<ul>
 			<li>
@@ -37,7 +36,7 @@ detailVisible
 		{% if dataPage === "createPost" %}
 			<ul class="pull-right">
 				<li>
-					<button class="plain-btn" data-action="discart-post">Cancelar</button>
+					<a href="/" class="button plain-btn" data-action="discart-post">Cancelar</a>
 				</li>
 				<li>
 					<button data-action="send-post">Publicar</button>
@@ -109,7 +108,6 @@ detailVisible
 			</li>
 		</ul>
 		{% endif %}
-
 	{% else %}
 		<ul class="nav navbar-nav pull-right">
 			<a data-action="show-signin" href="#signin" class="blue-high" data-toggle="dialog">
@@ -168,7 +166,7 @@ detailVisible
 					<div class="info">
 						<label>Dica</label>
 						<p>
-							Divulgue uma dica ou evento para os usuários.
+							Divulgue uma dica ou evento.
 						</p>
 					</div>
 				</li>
@@ -179,7 +177,7 @@ detailVisible
 					<div class="info">
 						<label>Experiência</label>
 						<p>
-							Compartilhe com os outros usuários uma experiência ou conquista sua.
+							Compartilhe uma experiência ou conquista.
 						</p>
 					</div>
 				</li>

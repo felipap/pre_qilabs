@@ -153,14 +153,13 @@ require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-
 		var data = {
 			body: editor.serialize().postBody.value,
 			title: $("[name=post_title]").val(),
-			type: 'Question',
+			type: $("[name=post_type]").val(),
 			tags: tagSelectionBox.getSelectedTagsIds(),
 		};
 		console.log(data)
 		$.ajax({
 			dataType: 'JSON',
 			data: data,
-			type: 'Question',
 			url: "/api/me/timeline/posts",
 			type: "POST",
 		}).done(function () {

@@ -18,14 +18,18 @@ Types =
 	Comment: 'Comment'
 	Answer: 'Answer'
 	PlainPost: 'PlainPost'
-	QA: 'QA'
 	Question: 'Question'
-	VideoPost: 'VideoPost'
-	Notification: 'Notification
-'	# QuizPost: 'QuizPost'
+	Experience: 'Experience'
+	Tip: 'Tip'
+	Notification: 'Notification'
+	# QA: 'QA'
+	# VideoPost: 'VideoPost'
+	# QuizPost: 'QuizPost'
 
 TransTypes = {}
 TransTypes[Types.Question] = 'Pergunta'
+TransTypes[Types.Experience] = 'Experiência'
+TransTypes[Types.Tip] = 'Dica'
 
 ################################################################################
 ## Schema ######################################################################

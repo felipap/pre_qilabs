@@ -18,13 +18,6 @@
 
 {% block body %}
 
-	{% set navbarOpts = {
-		hasNavbarDetail: true,
-		pageDetailLabel: 'Nova Publicação',
-		pageDetailIcon: 'icon-pencil',
-	}
-	%}
-
 	{% include '../../layouts/navbar.html' with navbarOpts %}
 	{% include '../../layouts/sidebar.html' %}
 
@@ -55,14 +48,6 @@
 				</div>
 				#}
 				{% block formContent %}
-					<textarea class="title autosize" name="post_title" placeholder="Pergunta" data-toggle="tooltip" data-placement="right" title="Sua pergunta aqui!" data-trigger="focus"></textarea>
-					<!-- <textarea class="subtitle autosize" name="post_subtitle" placeholder="Subtítulo"></textarea> -->
-					<div id="tagSelectionBoxWrapper"></div>
-					<div class="bodyWrapper">
-						<div id="postBody" data-placeholder="Escreva a sua experiência"></div>
-					</div>
-					<input type="hidden" name="type" value="PlainPost" />
-					<input type="hidden" name="_csrf" value="{{ token }}" />
 				{% endblock %}
 			</div>
 		</div>
