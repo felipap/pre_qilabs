@@ -175,7 +175,9 @@ define([
 			var items = _.map(this.props.list, function (person) {
 				return (
 					React.DOM.li(null, 
-						React.DOM.label(null, person.name),
+						React.DOM.a( {href:person.path}, 
+						React.DOM.label(null, person.name)
+						),
 						React.DOM.button( {className:"btn-follow", 'data-action':"unfollow"})
 					)
 				);

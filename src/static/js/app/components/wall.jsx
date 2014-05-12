@@ -175,7 +175,9 @@ define([
 			var items = _.map(this.props.list, function (person) {
 				return (
 					<li>
+						<a href={person.path}>
 						<label>{person.name}</label>
+						</a>
 						<button className="btn-follow" data-action="unfollow"></button>
 					</li>
 				);
