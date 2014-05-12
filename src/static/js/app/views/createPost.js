@@ -162,7 +162,12 @@ require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-
 			data: data,
 			url: "/api/me/timeline/posts",
 			type: "POST",
-		}).done(function () {
+		}).done(function (response) {
+			if (response.error)
+				alert(response.error)
+			else {
+				window.location.href = response.data.path;
+			}
 		});
 	});
 });
