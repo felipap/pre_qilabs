@@ -577,7 +577,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			render: function () {
 
 				function gotoPost () {
-					app.navigate('#posts/'+post.id, {trigger:true});
+					app.navigate('/posts/'+post.id, {trigger:true});
 					// app.navigate('')
 				}
 				var post = this.props.model.attributes;

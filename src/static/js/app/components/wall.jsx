@@ -105,7 +105,7 @@ define([
 								<div className="avatarWrapper">
 									<div className="avatar" style={ { background: 'url('+post.author.avatarUrl+')' } }></div>
 								</div>
-								<a href={post.profileUrl} className="username">
+								<a href={post.author.path} className="username">
 									{post.author.name}
 								</a>
 								<button className="btn-follow btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>

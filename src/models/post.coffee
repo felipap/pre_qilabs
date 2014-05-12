@@ -42,14 +42,12 @@ PostSchema = new Resource.Schema {
 	updated:	{ type: Date }
 	published:	{ type: Date, indexed: 1 }
 	
-	title:		{ type: String }
 	type: 		{ type: String, required: true, enum:_.values(Types) }
-	data: {
-		title:		{ type: String }
-		body:	{ type: String, required: true }
-	},
-
 	tags:		[{ type: String }]
+	data: {
+		title:	{ type: String }
+		body:	{ type: String, required: true }
+	}
 	
 	votes: 		{ type: [{ type: String, ref: 'User', required: true }], select: true, default: [] }
 }, {

@@ -59,14 +59,16 @@ PostSchema = new Resource.Schema({
     type: Date,
     indexed: 1
   },
-  title: {
-    type: String
-  },
   type: {
     type: String,
     required: true,
     "enum": _.values(Types)
   },
+  tags: [
+    {
+      type: String
+    }
+  ],
   data: {
     title: {
       type: String
@@ -76,11 +78,6 @@ PostSchema = new Resource.Schema({
       required: true
     }
   },
-  tags: [
-    {
-      type: String
-    }
-  ],
   votes: {
     type: [
       {

@@ -63,6 +63,16 @@ UserSchema = new mongoose.Schema({
     avatarUrl: '',
     badges: []
   },
+  stats: {
+    posts: {
+      type: Number,
+      "default": 0
+    },
+    votes: {
+      type: Number,
+      "default": 0
+    }
+  },
   tags: [
     {
       type: String
@@ -550,6 +560,11 @@ UserSchema.methods.createPost = function(data, cb) {
       if (post.group) {
         return;
       }
+      self.update({
+        $inc: {
+          'stats.posts': 1
+        }
+      }, function() {});
       return self.getPopulatedFollowers(function(err, followers) {
         return Inbox.fillInboxes([self].concat(followers), {
           resource: post.id,
@@ -566,7 +581,18 @@ UserSchema.methods.upvotePost = function(post, cb) {
     $isModel: Post
   }, '$isCb');
   post.votes.addToSet('' + this.id);
-  return post.save(cb);
+  post.save(cb);
+  if (!post.parentPost) {
+    return User.findById(post.author, function(err, author) {
+      if (!err) {
+        return author.update({
+          $inc: {
+            'stats.votes': 1
+          }
+        }, function() {});
+      }
+    });
+  }
 };
 
 UserSchema.methods.unupvotePost = function(post, cb) {
@@ -621,8 +647,8 @@ UserSchema.methods.genProfile = function(cb) {
             stats: {
               following: following.length,
               followers: followers.length,
-              posts: 0,
-              votes: '23k'
+              posts: self.stats.posts,
+              votes: self.stats.votes
             }
           });
           return cb(null, profile);

@@ -105,7 +105,7 @@ define([
 								React.DOM.div( {className:"avatarWrapper"}, 
 									React.DOM.div( {className:"avatar", style: { background: 'url('+post.author.avatarUrl+')' } })
 								),
-								React.DOM.a( {href:post.profileUrl, className:"username"}, 
+								React.DOM.a( {href:post.author.path, className:"username"}, 
 									post.author.name
 								),
 								React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':"{{ profile.id }}"})

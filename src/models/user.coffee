@@ -51,6 +51,11 @@ UserSchema = new mongoose.Schema {
 		badges: 	[]
 	},
 
+	stats: {
+		posts:	{ type: Number, default: 0 }
+		votes:	{ type: Number, default: 0 }
+	}
+
 	tags: [{ type: String }]
 	# memberships: { type: [{
 	# 	group: { type: String, required: true, ref: 'Group' }
@@ -441,6 +446,9 @@ UserSchema.methods.createPost = (data, cb) ->
 		if err then return
 		if post.group
 			return
+
+		self.update { $inc: { 'stats.posts': 1 }}, ->
+
 		# Make separate job for this.
 		# Iter through followers and fill inboxes.
 		self.getPopulatedFollowers (err, followers) =>
@@ -454,6 +462,11 @@ UserSchema.methods.upvotePost = (post, cb) ->
 	assertArgs({$isModel:Post}, '$isCb')
 	post.votes.addToSet(''+@id)
 	post.save(cb)
+
+	if not post.parentPost
+		User.findById post.author, (err, author) ->
+			if not err
+				author.update { $inc: { 'stats.votes': 1 }}, ->
 
 UserSchema.methods.unupvotePost = (post, cb) ->
 	assertArgs({$isModel:Post}, '$isCb')
@@ -498,10 +511,10 @@ UserSchema.methods.genProfile = (cb) ->
 					# 	count: _.pluck(groups,'group').length
 					# }
 					stats: {
-						following: following.length,
-						followers: followers.length,
-						posts: 0,
-						votes: '23k'
+						following: following.length
+						followers: followers.length
+						posts: self.stats.posts
+						votes: self.stats.votes
 					}
 				})
 
