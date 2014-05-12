@@ -618,9 +618,11 @@ UserSchema.methods.genProfile = function(cb) {
               count: following.length
             },
             followingIds: _.pluck(following, '_id'),
-            groups: {
-              docs: _.pluck(groups, 'group').slice(0, 20),
-              count: _.pluck(groups, 'group').length
+            stats: {
+              following: following.length,
+              followers: followers.length,
+              posts: 0,
+              votes: '23k'
             }
           });
           return cb(null, profile);

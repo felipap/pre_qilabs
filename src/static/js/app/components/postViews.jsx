@@ -599,16 +599,16 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 									&nbsp;
 									{post.voteSum}
 								</div>
-								<div>
-									<i className="icon-comment-o"></i>&nbsp;
-									{this.props.model.get('childrenCount').Comment}
-								</div>
-								{post.type === "QA"?
+								{post.type === "Question"?
 									<div>
 										<i className="icon-bulb"></i>&nbsp;
 										{this.props.model.get('childrenCount').Answer}
 									</div>
-									:null}
+									:<div>
+										<i className="icon-comment-o"></i>&nbsp;
+										{this.props.model.get('childrenCount').Comment}
+									</div>
+								}
 							</div>
 						</div>
 

@@ -214,13 +214,13 @@ define([
 		initialize: function () {
 			console.log('initialized')
 			window.app = this;
-			this.renderList('/api/me/timeline/posts',{canPostForm:true});
+			this.renderList(window.conf.postsRoot || '/api/me/timeline/posts');
 		},
 
 		routes: {
 			'u/:profileId':
 				function () {
-					this.renderList(window.conf.postsRoot,{canPostForm:false});
+					this.renderList(window.conf.postsRoot);
 				},
 			'posts/:postId':
 				 function (postId) {
@@ -246,7 +246,7 @@ define([
 			// return;
 			this.postList = new postModels.postList([], {url:url});
 			React.renderComponent(CardsPanelView(
-				_.extend(opts,{collection:this.postList})),
+				_.extend(opts || {},{collection:this.postList})),
 				document.getElementById('resultsContainer'));
 
 			this.postList.fetch({reset:true});

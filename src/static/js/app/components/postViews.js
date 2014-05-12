@@ -599,16 +599,16 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 									" ",
 									post.voteSum
 								),
-								React.DOM.div(null, 
-									React.DOM.i( {className:"icon-comment-o"})," ",
-									this.props.model.get('childrenCount').Comment
-								),
-								post.type === "QA"?
+								post.type === "Question"?
 									React.DOM.div(null, 
 										React.DOM.i( {className:"icon-bulb"})," ",
 										this.props.model.get('childrenCount').Answer
 									)
-									:null
+									:React.DOM.div(null, 
+										React.DOM.i( {className:"icon-comment-o"})," ",
+										this.props.model.get('childrenCount').Comment
+									)
+								
 							)
 						),
 
