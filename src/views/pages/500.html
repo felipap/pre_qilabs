@@ -1,29 +1,36 @@
 {% extends '../stdbody.html' %}
 {% set dataPage="500" %}
 
+{% block title %}
+500 · Alguém vai ser despedido...
+{% endblock %}
+
 {% block head %}
 	<link rel="stylesheet" href="{{ getMediaUrl('css','snpages.min.css') }}" />
 {% endblock %}
 
 {% block body %}
-
 	<div class="jumbo">
-		<h1><i id="malfunctioningBulb" class="icon-bulb"></i></h1>
+		<h1><a href="/"><i id="malfunctioningBulb" class="icon-bulb"></i></a></h1>
 		
 		<h1>Ops! <span>:(</span></h1>
 		<h2>Estamos com problemas técnicos!</h2>
 		
 		{% if app.env === 'development' %}
-		<div style="">
-			<h2><em>{{ error_code }}</em></h2>
-			<small>{{ error_msg }}</small>
-			<ul>
-				<small>{{ error_stack|safe }}</small>
-			</ul>
-		</div>
+			<div style="">
+				<h2><em>{{ error_code }}</em></h2>
+				<small>{{ error_msg }}</small>
+				<ul>
+					<small>{{ error_stack|safe }}</small>
+				</ul>
+			</div>
+		{% else %}
+			<div style="">
+				<h2><em>{{ message }}</em></h2>
+			</div>
 		{% endif %}
 
-		<a href="/" class="btn0 inverted-btn">
+		<a data-action="go-back" href="/" class="button">
 			Voltar para o site
 		</a>
 

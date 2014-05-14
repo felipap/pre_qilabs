@@ -19,18 +19,13 @@ Subscriber = mongoose.model('Subscriber');
 module.exports = {
   '/': {
     name: 'index',
-    get: function(req, res) {
+    get: function(req, res, next) {
       if (req.user) {
         req.user.lastUpdate = new Date();
-        req.user.save();
-        return req.user.genProfile(function(err, profile) {
-          if (err) {
-            console.log('Serving /. err:', err);
-          }
-          return res.render('pages/main', {
-            user_profile: profile
-          });
+        res.render('pages/main', {
+          user_profile: req.user
         });
+        return req.user.save();
       } else {
         return res.render('pages/front');
       }

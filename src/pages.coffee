@@ -19,15 +19,12 @@ Subscriber = mongoose.model 'Subscriber'
 module.exports = {
 	'/':
 		name: 'index'
-		get: (req, res) ->
+		get: (req, res, next) ->
 			if req.user
 				req.user.lastUpdate = new Date()
+				res.render 'pages/main',
+					user_profile: req.user
 				req.user.save()
-				req.user.genProfile (err, profile) ->
-					if err then console.log 'Serving /. err:', err
-					# res.endJson profile
-					res.render 'pages/main',
-						user_profile: profile
 			else
 				res.render 'pages/front'
 

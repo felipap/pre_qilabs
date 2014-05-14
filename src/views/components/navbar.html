@@ -109,46 +109,10 @@ detailVisible
 		</ul>
 		{% endif %}
 	{% else %}
-		<ul class="pull-right">
-			<li>
-				<a data-action="show-signin" href="#signin" class="blue-high" data-toggle="dialog">
-					<strong>Peça um Convite</strong>
-				</a>
-			</li>
-			<li>
-				<a href="/auth/facebook" class="plain-btn" data-action="login">
-					Entrar
-				</a>
-			</li>
-			<li>
-				<a href="{{ getPageUrl('about') }}" class="plain-btn">
-					<i class="icon-question"></i>
-				</a>
-			</li>
-		</ul>
 	{% endif %}
 </div>
 </nav>
-{% if !user %}
-<div class="dialog" id="signin">
-	<div class="box">
-		<button type="button" data-action="close-dialog" class="close" onClick="location.href='#'" aria-hidden="true">&times;</button>
-		<div class="content">
-			<h1>Quer ajudar a testar? \o/</h1>
-			<h3>Coloca aqui o seu email</h3>
-			<small>(Pode ficar tranquilo, a gente odeia spam!)</small>
-			<div>
-				<form method="post" action="/api/testers">
-					<input type="text" name="email" placeholder="seu email aqui..." />
-					<input type="hidden" name="_csrf" value="{{ token }}" />
-					<button data-action="send-tester-email">Enviar</button>
-				</form>
-			</div>
-		</div>
-	</div>
-	<div class="box-blackout" data-action="close-dialog"></div>
-</div>
-{% else %}
+{% if user %}
 <div id="newPostPopup" name="newPostPopup" style="display: none" onClick="$(this).fadeOut()">
 	<div class="postSelectionWrapper">
 		<label>Selecione um Tipo de Publicação</label>

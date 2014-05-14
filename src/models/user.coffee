@@ -480,18 +480,7 @@ UserSchema.methods.unupvotePost = (post, cb) ->
 Generate stuffed profile for the controller.
 ###
 UserSchema.methods.genProfile = (cb) ->
-	self = @
-
-	profile = _.extend(self.toJSON(), {
-		stats: {
-			following: self.stats.following
-			followers: self.stats.followers
-			posts: self.stats.posts
-			votes: self.stats.votes
-		}
-	})
-
-	cb(null, profile)
+	cb(null, @toJSON())
 
 ################################################################################
 ## related to the notification #################################################

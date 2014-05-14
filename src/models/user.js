@@ -618,17 +618,7 @@ Generate stuffed profile for the controller.
  */
 
 UserSchema.methods.genProfile = function(cb) {
-  var profile, self;
-  self = this;
-  profile = _.extend(self.toJSON(), {
-    stats: {
-      following: self.stats.following,
-      followers: self.stats.followers,
-      posts: self.stats.posts,
-      votes: self.stats.votes
-    }
-  });
-  return cb(null, profile);
+  return cb(null, this.toJSON());
 };
 
 UserSchema.methods.getNotifications = function(cb) {

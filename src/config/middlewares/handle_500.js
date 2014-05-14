@@ -19,7 +19,10 @@ module.exports = function(err, req, res, next) {
 
 	if (req.app.get('env') === 'production') {
 		if (~accept.indexOf('html')) {
-			res.render('pages/500', { user: req.user });
+			res.render('pages/500', {
+				user: req.user,
+				message: err.human_message
+			});
 		} else {
 			var error = { message: err.message, stack: err.stack };
 			for (var prop in err) error[prop] = err[prop];

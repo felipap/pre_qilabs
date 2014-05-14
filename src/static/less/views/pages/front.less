@@ -7,10 +7,13 @@
 }
 
 @-webkit-keyframes wallterfall { .cascade; }
+@-moz-keyframes wallterfall { .cascade; }
+@-o-keyframes wallterfall { .cascade; }
+@keyframes wallterfall { .cascade; }
 
 [data-page="front"] {
 
-	background: #EEE; // url(/static/images/cubes.png);
+	background: #EEE;
 
 	#wallterfall {
 		z-index: -1;
@@ -21,6 +24,10 @@
 		right: -150px;
 		.cardsContainer {
 			-webkit-animation: wallterfall linear 120s infinite;
+			-moz-animation: wallterfall linear 120s infinite;
+			-o-animation: wallterfall linear 120s infinite;
+			animation: wallterfall linear 120s infinite;
+			
 			.cardsContainer;
 			.cardView {
 				text-align: center;
@@ -141,7 +148,7 @@
 				button {
 					width: 100%;
 					text-transform: uppercase;
-					.high-xbtn(white, @COLOR1);
+					.high-xbtn(white, @COLOR3);
 				}
 			}
 			#abientot {
