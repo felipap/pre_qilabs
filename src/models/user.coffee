@@ -26,7 +26,7 @@ Group 	= Resource.model 'Group'
 Post 	= Resource.model 'Post'
 
 # PopulateFields = 'name username path profileUrl avatarUrl data followee follower updated published parentPost type voteSum'
-PopulateFields = '-memberships -accesssToken -firstAccess -lastAccess -lastUpdate -notifiable'
+PopulateFields = '-memberships -accesssToken -firstAccess -followingTags'
 
 ObjectId = mongoose.Types.ObjectId
 
@@ -41,6 +41,8 @@ UserSchema = new mongoose.Schema {
 	firstAccess:	{ type: Date, select: false }
 	facebookId:		{ type: String }
 	accessToken:	{ type: String, select: false }
+
+	followingTags: 	[]
 
 	profile: {
 		fullName: 	''
@@ -57,13 +59,6 @@ UserSchema = new mongoose.Schema {
 		followers:	{ type: Number, default: 0 }
 		following:	{ type: Number, default: 0 }
 	}
-
-	tags: [{ type: String }]
-	groups: Array
-
-	# I don't know what to do with these (2-mar-14)
-	followingTags: 	[]
-	lastUpdate:		{ type: Date, default: Date(0) }
 }, {
 	toObject:	{ virtuals: true }
 	toJSON: 	{ virtuals: true }

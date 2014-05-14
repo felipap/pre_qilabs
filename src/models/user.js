@@ -29,7 +29,7 @@ Group = Resource.model('Group');
 
 Post = Resource.model('Post');
 
-PopulateFields = '-memberships -accesssToken -firstAccess -lastAccess -lastUpdate -notifiable';
+PopulateFields = '-memberships -accesssToken -firstAccess -followingTags';
 
 ObjectId = mongoose.Types.ObjectId;
 
@@ -55,6 +55,7 @@ UserSchema = new mongoose.Schema({
     type: String,
     select: false
   },
+  followingTags: [],
   profile: {
     fullName: '',
     birthday: Date,
@@ -80,17 +81,6 @@ UserSchema = new mongoose.Schema({
       type: Number,
       "default": 0
     }
-  },
-  tags: [
-    {
-      type: String
-    }
-  ],
-  groups: Array,
-  followingTags: [],
-  lastUpdate: {
-    type: Date,
-    "default": Date(0)
   }
 }, {
   toObject: {
