@@ -57,6 +57,9 @@ module.exports = {
 			Tag.getAll (err, tags) ->
 				res.render 'pages/feed',
 					tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
+	'/entrar':
+		get: (req, res) ->
+			res.redirect('/auth/facebook')
 
 	'/painel':
 		name: 'panel'

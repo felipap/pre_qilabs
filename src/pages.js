@@ -96,6 +96,11 @@ module.exports = {
       });
     }
   },
+  '/entrar': {
+    get: function(req, res) {
+      return res.redirect('/auth/facebook');
+    }
+  },
   '/painel': {
     name: 'panel',
     permissions: [required.login],
