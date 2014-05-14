@@ -23,30 +23,33 @@
 			[data-action=edit-profile] {
 				position: absolute;
 				right: 10px;
-				top: 10px;
+				bottom: 10px;
 
 				.reset-button;
+				.rounded(0);
 				.rounded(30px);
+				border: 2px solid white;
+				// background: @COLOR2;
+				
 				height: 30px;
 				width: 30px;
-				border: 2px solid white;
 
 				i {
 					color: white;
-					font-size: 17px;
+					font-size: 20px;
 					margin-top: -1px;
 				}
 
-				opacity: .8;
-				&:hover {
-					opacity: 1;
-				}
+				// opacity: .8;
+				// &:hover {
+				// 	opacity: 1;
+				// }
 				.transition;
 			}
 
-			&:hover [data-action=edit-profile] {
-				opacity: .9;
-			}
+			// &:hover [data-action=edit-profile] {
+			// 	opacity: .9;
+			// }
 
 			.bigUser {
 				text-align: center;

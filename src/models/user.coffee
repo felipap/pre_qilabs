@@ -102,12 +102,12 @@ UserSchema.virtual('profile.from').get ->
 
 UserSchema.virtual('profile.bgUrl').get ->
 	if @username is 'felipearagaopires'
-		'/static/images/u/mit.jpg'
+		'/static/images/u/sta.jpg'
+		# '/static/images/u/mit.jpg'
 	else
 		'/static/images/rio.jpg'
 		# if Math.random()>.5
 		# else
-		# 	'/static/images/u/sta.jpg'
 
 UserSchema.virtual('profile.bio').get ->
 	if @username is 'felipearagaopires'

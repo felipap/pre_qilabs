@@ -153,13 +153,13 @@ button, .button {
 	&[data-action=unfollow]:not(:hover) {
 		.rounded(5px);
 		.xbtn(@color: white, @bg: @COLOR1);
-		padding: 4px, 0px;
+		padding: 4px 0px;
 		&::before { content: "Seguindo"; }
 	}
 	&[data-action=unfollow]:hover{
 		&:empty::before { content: "Desfazer"; }
 		.xbtn(@color: white, @bg: desaturate(@COLOR4,10%));
-		padding: 4px, 0px;
+		padding: 4px 0px;
 	}
 
 	text-transform: uppercase;
