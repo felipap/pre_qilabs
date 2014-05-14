@@ -65,6 +65,8 @@ UserSchema = new mongoose.Schema {
 		permission: { type: String, enum: _.values(Group.MembershipTypes), required:true, default:'Moderator' }
 	}]}
 
+	notifiable: Boolean
+
 	# I don't know what to do with these (2-mar-14)
 	followingTags: 	[]
 	lastUpdate:		{ type: Date, default: Date(0) }

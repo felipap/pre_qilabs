@@ -107,6 +107,7 @@ UserSchema = new mongoose.Schema({
       }
     ]
   },
+  notifiable: Boolean,
   followingTags: [],
   lastUpdate: {
     type: Date,
