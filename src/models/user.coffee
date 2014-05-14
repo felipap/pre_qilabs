@@ -59,13 +59,7 @@ UserSchema = new mongoose.Schema {
 	}
 
 	tags: [{ type: String }]
-	memberships: { type: [{
-		group: { type: String, required: true, ref: 'Group' }
-		since: { type: Date, default: Date.now }
-		permission: { type: String, enum: _.values(Group.MembershipTypes), required:true, default:'Moderator' }
-	}]}
-
-	notifiable: Boolean
+	groups: Array
 
 	# I don't know what to do with these (2-mar-14)
 	followingTags: 	[]

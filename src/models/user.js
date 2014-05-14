@@ -86,28 +86,7 @@ UserSchema = new mongoose.Schema({
       type: String
     }
   ],
-  memberships: {
-    type: [
-      {
-        group: {
-          type: String,
-          required: true,
-          ref: 'Group'
-        },
-        since: {
-          type: Date,
-          "default": Date.now
-        },
-        permission: {
-          type: String,
-          "enum": _.values(Group.MembershipTypes),
-          required: true,
-          "default": 'Moderator'
-        }
-      }
-    ]
-  },
-  notifiable: Boolean,
+  groups: Array,
   followingTags: [],
   lastUpdate: {
     type: Date,
