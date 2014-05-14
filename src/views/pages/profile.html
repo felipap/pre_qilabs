@@ -24,6 +24,11 @@ set navbarOpts = {
 		<div class="elBlackout"></div>
 
 		<div class="profileWrapper">
+			{% if profile.id == user.id %}
+				<button data-action="edit-profile">
+					<i class="icon-pencil"></i>
+				</button>
+			{% endif %}
 			
 			<div class="bigUser">
 				<div class="avatarWrapper">
@@ -34,11 +39,11 @@ set navbarOpts = {
 					<span class="name">{{ profile.name }}</span>
 					<div style="display: inline-block; width: 0">
 						{% if profile.id != user.id %}
-						{% if follows %}
-							<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-						{% else %}
-							<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
-						{% endif %}
+							{% if follows %}
+								<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+							{% else %}
+								<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
+							{% endif %}
 						{% endif %}
 					</div>
 				</section>

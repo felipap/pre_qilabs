@@ -104,7 +104,7 @@ UserSchema.virtual('avatarUrl').get(function() {
   if (this.username === 'felipearagaopires') {
     return '/static/images/avatar.png';
   } else {
-    return 'https://graph.facebook.com/' + this.facebookId + '/picture';
+    return 'https://graph.facebook.com/' + this.facebookId + '/picture?width=200&height=200';
   }
 });
 

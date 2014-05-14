@@ -80,7 +80,7 @@ UserSchema.virtual('avatarUrl').get ->
 	if @username is 'felipearagaopires'
 		'/static/images/avatar.png'
 	else
-		'https://graph.facebook.com/'+@facebookId+'/picture'
+		'https://graph.facebook.com/'+@facebookId+'/picture?width=200&height=200'
 
 UserSchema.virtual('profile.strAge').get ->
 	if @username is 'felipearagaopires'

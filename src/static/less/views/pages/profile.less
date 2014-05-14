@@ -18,6 +18,35 @@
 			color: white;
 			font-family: museo-sans;
 			padding: 50px;
+			position: relative;
+
+			[data-action=edit-profile] {
+				position: absolute;
+				right: 10px;
+				top: 10px;
+
+				.reset-button;
+				.rounded(30px);
+				height: 30px;
+				width: 30px;
+				border: 2px solid white;
+
+				i {
+					color: white;
+					font-size: 17px;
+					margin-top: -1px;
+				}
+
+				opacity: .8;
+				&:hover {
+					opacity: 1;
+				}
+				.transition;
+			}
+
+			&:hover [data-action=edit-profile] {
+				opacity: .9;
+			}
 
 			.bigUser {
 				text-align: center;
