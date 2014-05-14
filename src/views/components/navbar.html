@@ -109,16 +109,22 @@ detailVisible
 		</ul>
 		{% endif %}
 	{% else %}
-		<ul class="nav navbar-nav pull-right">
-			<a data-action="show-signin" href="#signin" class="blue-high" data-toggle="dialog">
-				<strong>Peça um Convite</strong>
-			</a>
-			<a href="/auth/facebook" class="plain-btn" data-action="login">
-				Entrar
-			</a>
-			<a href="{{ getPageUrl('about') }}" class="plain-btn">
-				<i class="icon-question"></i>
-			</a>
+		<ul class="pull-right">
+			<li>
+				<a data-action="show-signin" href="#signin" class="blue-high" data-toggle="dialog">
+					<strong>Peça um Convite</strong>
+				</a>
+			</li>
+			<li>
+				<a href="/auth/facebook" class="plain-btn" data-action="login">
+					Entrar
+				</a>
+			</li>
+			<li>
+				<a href="{{ getPageUrl('about') }}" class="plain-btn">
+					<i class="icon-question"></i>
+				</a>
+			</li>
 		</ul>
 	{% endif %}
 </div>

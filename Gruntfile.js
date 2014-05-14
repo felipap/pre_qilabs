@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 		less: {
 			dist: {
 				files: { // change to singular?
-					'src/static/css/sn_pages.min.css':'src/static/less/views/sn_pages.less',
+					'src/static/css/snpages.min.css':'src/static/less/views/snpages.less',
 				},
 				options: { cleancss: true },
 			},

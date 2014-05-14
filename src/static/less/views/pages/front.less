@@ -1,0 +1,169 @@
+
+@import "../components/wall.less";
+
+.cascade {
+	0% { margin-top: -(5*(@square-card-height+@square-card-margin-bottom)); }
+	100% { margin-top: 0px; }
+}
+
+@-webkit-keyframes wallterfall { .cascade; }
+
+[data-page="front"] {
+
+	background: #EEE; // url(/static/images/cubes.png);
+
+	#wallterfall {
+		z-index: -1;
+		position: absolute;
+		bottom: 0;
+		top: 0;
+		left: -150px;
+		right: -150px;
+		.cardsContainer {
+			-webkit-animation: wallterfall linear 120s infinite;
+			.cardsContainer;
+			.cardView {
+				text-align: center;
+				i {
+					font-size: 100px;
+					line-height: @square-card-height;
+					color: #CCC;
+				}
+			}
+		}
+	}
+
+	.blackout {
+		.blackout(.1);
+	}
+
+	.jumbo {
+		position: absolute;
+
+		width: 600px;
+		left: 50%; margin-left: -300px;
+		height: 500px;
+		top: 50%; margin-top: -250px;
+		text-align: center;
+
+		.top {
+			a {
+				color: #444;
+				text-decoration: none;
+			}
+			.icon-bulb {
+				font-size: 115px;
+				margin-bottom: 10px;
+				.transition(color);
+			}
+			.message {
+				font: 23px museo-sans;
+			}
+		}
+
+		.board {
+			background: white;
+			width: 350px;
+			margin: 20px auto;
+			display: block;
+			position: relative;
+			padding: 30px 30px 20px;
+			.box-shadow(4px, .2);
+
+			form {
+				#bubbleMaster {
+					background: mix(@COLOR4, @COLOR3);
+					padding: 10px;
+					display: none;
+					cursor: pointer;
+					left: 0; right: 0;
+					top: 0;
+
+					position: absolute;
+
+					text-transform: uppercase;
+					color: white;
+					font: bolder 14px museo-sans;
+				}
+
+				.bubble {
+					display: none;
+					cursor: pointer;
+					position: absolute;
+					width: 130px;
+					right: -130px;
+					background: mix(@COLOR4, @COLOR3);
+					color: white;
+					margin-top: -6px;
+					font: bold 12px museo-sans, "Open Sans";
+					padding: 8px;
+					text-transform: uppercase;
+
+					&::before {
+						content: " ";
+						position: absolute;
+						border: 11px solid transparent;
+						left: -22px;
+						top: 12px;
+						border-right-color: mix(@COLOR4, @COLOR3);
+					}
+				}
+
+				label {
+					margin: 0 0 5px;
+					text-align: left;
+					display: block;
+					font: 14px museo-sans;
+					text-transform: uppercase;
+					color: #666;
+				}
+
+				input {
+					margin: auto;
+					display: block;
+					margin-bottom: 20px;
+					width: 100%;
+					outline: none;
+					font: 18px museo-sans;
+					border: none;
+					padding: 7px 0;
+					border-bottom: 2px solid #DDD;
+					.transition;
+					&:focus {
+						// border: 2px solid #AAA;
+						border-bottom-color: #08C;
+					}
+					&.invalid {
+						border-bottom-color: @COLOR4;
+					}
+				}
+
+				button {
+					width: 100%;
+					text-transform: uppercase;
+					.high-xbtn(white, @COLOR1);
+				}
+			}
+			#abientot {
+				display: none;
+				h1 {
+					font: bold 28px museo-sans;
+				}
+				h2 {
+					margin-top: 0;
+					font: normal 25px museo-sans;					
+				}
+				.me {
+					text-align: right;
+				}
+			}
+		}
+
+		.footer {
+			font: 13px museo-sans;
+			text-transform: uppercase;
+			color: #444;
+		}
+	}
+	
+}

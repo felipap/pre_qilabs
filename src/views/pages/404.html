@@ -1,18 +1,39 @@
-{% extends '../full_bg_page.html' %}
+{% extends '../stdbody.html' %}
+{% set dataPage="404" %}
 
-{% block content %}
-<section>
-	
-	<h1>Ops! <span>:(</span></h1>
-	{% if msg %}
-	<h2>{{ msg }}</h2>
-	{% else %}
-	<h2>Parece que a página que você estava tentando visualizar não existe...</h2>
-	{% endif %}
+{% block head %}
+	<link rel="stylesheet" href="{{ getMediaUrl('css','snpages.min.css') }}" />
+{% endblock %}
 
-	<a href="/" class="btn0 inverted-btn">
-		Voltar para o site
-	</a>
+{% block body %}
 
-</section>
+	<div class="jumbo">
+		<h1><i id="malfunctioningBulb" class="icon-bulb"></i></h1>
+		<h1>Quem apagou a luz?</h1>
+
+		{% if msg %}
+			<h2>{{ msg }}</h2>
+		{% else %}
+			<h2>Não encontramos a página que você estava tentando visualizar...</h2>
+		{% endif %}
+
+		<a href="/" class="button" data-action="go-back">
+			Voltar para o site
+		</a>
+
+		<script>
+			var bulb = document.getElementById('malfunctioningBulb');
+			setTimeout(function doIt() {
+				var isYellow = /(^|\s+)yellow(\s+|$)/.test(bulb.className);
+				if (isYellow)
+					bulb.className = bulb.className.replace(/(^|\s+)yellow(\s+|$)/,' ');
+				else 
+					bulb.className += " yellow";
+				setTimeout(doIt, Math.random()*(isYellow?2000:(Math.random()>.5?200:500)));
+			}, 300);
+		</script>
+		<footer>
+			QI Labs.org, 2014
+		</footer>
+	</div>
 {% endblock %}

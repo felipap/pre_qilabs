@@ -68,7 +68,6 @@ UserSchema = new mongoose.Schema {
 	# I don't know what to do with these (2-mar-14)
 	followingTags: 	[]
 	lastUpdate:		{ type: Date, default: Date(0) }
-	notifiable:		{ type: Boolean, default: true }
 }, {
 	toObject:	{ virtuals: true }
 	toJSON: 	{ virtuals: true }
@@ -200,12 +199,6 @@ UserSchema.methods.getFollowingIds = (cb) ->
 		cb(err, _.pluck(docs or [], 'followee'))
 
 #### Stats
-
-UserSchema.methods.countFollowers = (cb) ->
-	Follow.count {followee: @}, cb
-
-UserSchema.methods.countFollowees = (cb) ->
-	Follow.count {follower: @}, cb
 
 UserSchema.methods.doesFollowUser = (user, cb) ->
 	assert user instanceof User, 'Passed argument not a user document'

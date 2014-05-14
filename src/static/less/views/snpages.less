@@ -1,0 +1,231 @@
+
+/*
+** sn_pages.less
+** Copyright QIlabs.org
+** Styles of the internal pages.
+*/
+
+@import "../common.less";
+
+@import "components/wall.less";
+@import "components/postbox.less";
+@import "components/sidebar.less";
+
+@import "pages/profile.less";
+@import "pages/tag.less";
+@import "pages/post_forms.less";
+@import "pages/guides.less";
+@import "pages/front.less";
+@import "pages/404.less";
+
+@widthSidebar: 230px;
+@bgSidebar: #20201F;
+
+html {
+	overflow: hidden;
+}
+
+.jumbo {
+	width: 1000px;
+	margin: auto;
+}
+
+#rightContainer {
+	height: 100%;
+	background: #EEE;
+	.translate(100%);
+}
+
+body.rightContainerOpen {
+	#globalContainer {
+		.translate(-100%);
+	}
+	#rightContainer {
+		.translate(0);		
+	}
+}
+
+.globalContainer {
+	.transition-transform();
+}
+
+body.sidebarOpen {
+	// margin-left: @widthSidebar;
+	#sidebarPanel {
+		.translate(0);
+	}
+
+	#globalContainer {
+		.translate(@widthSidebar);
+	}
+
+	nav.bar {
+		ul li .openSidebar {
+			color: white;
+			&:hover, &:active, &:focus {
+				color: #F8F8F8;
+			}
+		}
+	}
+}
+
+body.sidebarOpen.rightContainerOpen {
+	#rightContainer {
+		.translate(@widthSidebar);
+	}
+	
+	#globalContainer {
+		.translate(-100%);
+	}
+}
+
+.globalContainer,
+#globalContainer {
+	background: #F0F0F0; // url(/static/images/project_papper.png);
+	background-position-y: -1px;
+	z-index: 10;
+	position: absolute;
+	overflow-x: hidden;
+	overflow-y: auto;
+	width: 100%;
+	min-width: @minPageWidth;
+	border-top: 1px solid #DDD;
+}
+
+#globalContainer {
+	#cards {
+		// border-top: 1px solid #AAA;
+		padding-top: 20px;
+		margin: 0 auto;
+		.cardsContainer;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		.transition(all, .2s, linear);
+		background-color: #BBB;
+		border: 1px solid #AAA;
+		border-width: 0 0 0 1px;
+		&:hover {
+			background: #AAA;
+			border: 1px solid #AAA;
+		}
+		&:active {
+			background: #999;
+			border: 1px solid #999;
+		}
+	}
+
+	&::-webkit-scrollbar {
+		width: 15px;
+		background: white;
+	}
+
+	&::-webkit-scrollbar-track {
+		background-clip: padding-box;
+		border-left: 1px solid #AAA;
+	}
+	
+	&::-webkit-scrollbar {
+		background: #e8e8e8;
+		width: 13px;
+	}
+}
+
+#newPostPopup {
+	position: fixed;
+	display: none;
+	top: 0;
+	bottom: 0;
+	left: 0; 
+	right: 0;
+	z-index: 30;
+
+	background: fadeout(black, 20%);
+
+	.postSelectionWrapper {
+		// width: 700px;
+		display: table;
+		margin: 80px auto 0;
+		height: 300px;
+		position: relative;
+
+		& > label {
+			display: block;
+			text-align: center;
+			font: 18px museo-sans;
+			color: white;
+			margin: 20px 0;
+		}
+
+		.optionsBox {
+			padding: 10px;
+
+			& > ul {
+				& > li {
+					text-align: center;
+					height: 290px;
+					display: inline-block;
+					width: 240px;
+					font-family: museo-sans;
+					padding: 10px;
+					.rounded(6px);
+					vertical-align: top;
+					cursor: pointer;
+					color: white;
+
+					.image {
+						.rounded(6px);
+						// border: 1px solid #EEE;
+						height: 170px;
+						line-height: 170px;
+						i {
+							font-size: 150px;
+							.text-shadow(0, 0, 0, 0);
+						}
+						i.icon-question {
+							font-size: 170px;
+						}
+						i.icon-question {
+							color: @COLOR1;
+						}
+						i.icon-bulb {
+							color: @COLOR4;
+						}
+						i.icon-trophy {
+							color: mix(@COLOR4, yellow, 20%);
+						}
+					}
+
+					.info {
+						label {
+							margin: 10px;
+							font: bold 19px museo-sans;
+						}
+						p {
+							font-size: 12px museo-sans;
+							text-align: center;
+							margin: 0;
+							opacity: 1;
+						}
+					}
+
+					&:hover {
+						background: #EEE;
+						.transition;
+						.info {
+							.transition;
+							color: #222;
+							p {
+								opacity: 1;
+							}
+						}
+						i {
+							.transition;
+							.text-shadow(3px, 3px, 0, .2);
+						}
+					}
+				}
+			}
+		}
+	}
+}

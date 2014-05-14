@@ -4,13 +4,11 @@
 ** Copyright QIlabs.org
 */
 
-@COLOR: @COLOR1; // #fc6255;
-
 @WidthSidebar: 280px;
 @WidthContent: 1150px;
 @ColorLink: #08C;
 
-@BgSidebarLabel: darken(desaturate(@COLOR, 15%), 5%);
+@BgSidebarLabel: darken(desaturate(@COLOR1, 15%), 5%);
 
 .guide {
 	width: @WidthContent;
@@ -64,7 +62,7 @@
 			border-bottom: 1px solid #DDD;
 
 			&:not(.active):hover {
-				background: desaturate(darken(@COLOR, 20%),20%);
+				background: desaturate(darken(@COLOR1, 20%),20%);
 				font-weight: bold;
 				color: white;
 			}
@@ -72,7 +70,7 @@
 			&.active {
 				background: #EFEFEF;
 				font-weight: bold;
-				color: darken(@COLOR, 10%);
+				color: darken(@COLOR1, 10%);
 			}
 		}
 	}
@@ -88,7 +86,7 @@
 		.backgrounded {
 			color: white;
 			a { 
-				color: lighten(@COLOR, 50%);
+				color: lighten(@COLOR1, 50%);
 			}
 		}
 
@@ -99,7 +97,7 @@
 		& > .header {
 			padding: 35px;
 			margin: -1px;
-			background: @COLOR;
+			background: @COLOR1;
 			border: none;
 
 			h1 { font-size: 54px; }
@@ -118,7 +116,7 @@
 		}
 
 		.backgrounded {
-			background: @COLOR;
+			background: @COLOR1;
 			color: white;			
 		}
 

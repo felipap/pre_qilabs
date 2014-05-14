@@ -1,0 +1,69 @@
+{% extends '../stdbody.html' %}
+{% set dataPage="front" %}
+{% set requirejsView="front" %}
+
+{% block head %}
+	<link rel="stylesheet" href="{{ getMediaUrl('css','snpages.min.css') }}" />
+{% endblock %}
+
+{% block body %}
+	<div id="wallterfall">
+		<div class="cardsContainer grid">
+			<div class="cardView">
+				<i></i>
+			</div>
+		</div>
+		<script>
+			(function () {
+				var icons = ['icon-exclamation', 'icon-trophy', 'icon-bullhorn', 'icon-question', 'icon-comments-o', 'icon-guide', 'icon-puzzle', 'icon-rocket','icon-compass','icon-bulb','icon-flask','icon-sum']
+				var cv = document.querySelector(".cardView"),
+					cc = document.querySelector(".cardsContainer");
+				for (var i=0; i<100; i++) {
+					var nc = cv.cloneNode(true);
+					if (Math.random() > 0.70) {
+						var icon = icons[Math.floor(Math.random()*icons.length)];
+						nc.querySelector('i').className += ' '+icon;
+					}
+					cc.appendChild(nc);
+				}
+			})();
+		</script>
+	</div>
+
+	<div class="blackout"></div>
+
+	<section class="jumbo">
+		<div class="top">
+			<a href="/" class="us">
+				<i class="icon-bulb"></i>
+			</a>
+			<div class="message">
+				Junte-se à lista de espera
+			</div>
+		</div>
+		<div class="board">
+			<form onSubmit="return false">
+				<div id="bubbleMaster">
+					OPS!<br /> Não conseguimos processar o seu convite.
+				</div>
+				<label>Seu nome</label>
+				<input type="text" name="name" />
+				<div class="bubble" id="nameBubble"></div>
+				<label>Seu email</label>
+				<div class="bubble" id="emailBubble"></div>
+				<input type="email" name="email" />
+				<input type="hidden" name="_csrf" value="{{ token }}" />
+				<button disabled data-action="send-form">Solicitar convite</button>
+			</form>
+			<div id="abientot">
+				<h1>Pedido processado! :)</h1>
+				<h2>Nos falaremos em breve.</h2>
+				<div class="me">– Felipe</div>
+			</div>
+		</div>
+		<div class="footer">
+			QI Labs.org, 2014
+		</div>
+	</section>
+
+{% endblock %}

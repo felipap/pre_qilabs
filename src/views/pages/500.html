@@ -1,13 +1,20 @@
-{% extends '../full_bg_page.html' %}
+{% extends '../stdbody.html' %}
+{% set dataPage="500" %}
 
-{% block content %}
-	<section>
+{% block head %}
+	<link rel="stylesheet" href="{{ getMediaUrl('css','snpages.min.css') }}" />
+{% endblock %}
 
+{% block body %}
+
+	<div class="jumbo">
+		<h1><i id="malfunctioningBulb" class="icon-bulb"></i></h1>
+		
 		<h1>Ops! <span>:(</span></h1>
-		<h2>Estamos com problemas no servidor.</h2>
+		<h2>Estamos com problemas técnicos!</h2>
 		
 		{% if app.env === 'development' %}
-		<div style="margin: 0 -200px; color: white; font-size: 14px; word-wrap: break-word;">
+		<div style="">
 			<h2><em>{{ error_code }}</em></h2>
 			<small>{{ error_msg }}</small>
 			<ul>
@@ -20,6 +27,20 @@
 			Voltar para o site
 		</a>
 
-	</section>
+		<script>
+			var bulb = document.getElementById('malfunctioningBulb');
+			setTimeout(function doIt() {
+				var isYellow = /(^|\s+)yellow(\s+|$)/.test(bulb.className);
+				if (isYellow)
+					bulb.className = bulb.className.replace(/(^|\s+)yellow(\s+|$)/,' ');
+				else 
+					bulb.className += " yellow";
+				setTimeout(doIt, Math.random()*(isYellow?2000:(Math.random()>.5?200:500)));
+			}, 300);
+		</script>
+		<footer>
+			QI Labs.org, 2014
+		</footer>
+	</div>
 
 {% endblock %}

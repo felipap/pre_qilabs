@@ -59,9 +59,8 @@ define([
 				this.props.model.destroy();
 				this.destroy();
 				// Signal to the wall that the post with this ID must be removed.
-				// This isn't automatic (as in comments) because the models on the wall
-				// aren't the same as those on post FullPostView.
-
+				// This isn't automatic (as in deleting comments) because the models on
+				// the wall aren't the same as those on post FullPostView.
 				app.postList.remove({id:this.props.model.get('id')})
 				$(".tooltip").remove(); // fuckin bug
 			}
@@ -183,13 +182,16 @@ define([
 				return (
 					React.DOM.li(null, 
 						React.DOM.a( {href:person.path}, 
-						React.DOM.label(null, person.name)
+							React.DOM.div( {className:"avatarWrapper"}, 
+								React.DOM.div( {className:"avatar", style: {background: 'url("'+person.avatarUrl+'")'} })
+							),
+							React.DOM.span( {className:"name"}, person.name)
 						),
 						React.DOM.button( {className:"btn-follow", 'data-action':"unfollow"})
 					)
 				);
 			});
-			if (this.props.isFollowing)
+			if (this.props.isFollowin)
 				var label = this.props.profile.name+" segue "+this.props.list.length+" pessoas";
 			else
 				var label = this.props.list.length+" pessoas seguem "+this.props.profile.name;
@@ -271,7 +273,6 @@ define([
 						.fail(function (response) {
 							alert('vish');
 						})
-					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
 				},
 			'followers':
 				function () {
@@ -287,7 +288,6 @@ define([
 						.fail(function (response) {
 							alert('vish');
 						})
-					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
 				},
 			'posts/:postId':
 				 function (postId) {
@@ -324,7 +324,7 @@ define([
 		},
 
 		renderWall: function (url, opts) {
-			// return;
+			return;
 			this.postList = new postModels.postList([], {url:url});
 			if (!this.postWall) {
 				this.postWall = React.renderComponent(CardsPanelView(

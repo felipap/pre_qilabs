@@ -8,12 +8,11 @@ requirejs.config({
 		'plugins':			'app/plugins',
 		// App
 		'views.common':		'app/views/common',
-		'views.timeline':	'app/views/timeline',
 		'views.cards':		'app/views/wall',
 		'views.profile':	'app/views/profile',
-		'views.lab':		'app/views/lab',
 		'views.panel':		'app/views/panel',
 		'views.createPost':	'app/views/createPost',
+		'views.front':		'app/views/front',
 		// 'app.guide':		'app/app/guide',
 		// 'app.mural':		'app/app/mural',
 		// Components

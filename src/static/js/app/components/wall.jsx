@@ -59,9 +59,8 @@ define([
 				this.props.model.destroy();
 				this.destroy();
 				// Signal to the wall that the post with this ID must be removed.
-				// This isn't automatic (as in comments) because the models on the wall
-				// aren't the same as those on post FullPostView.
-
+				// This isn't automatic (as in deleting comments) because the models on
+				// the wall aren't the same as those on post FullPostView.
 				app.postList.remove({id:this.props.model.get('id')})
 				$(".tooltip").remove(); // fuckin bug
 			}
@@ -183,13 +182,16 @@ define([
 				return (
 					<li>
 						<a href={person.path}>
-						<label>{person.name}</label>
+							<div className="avatarWrapper">
+								<div className="avatar" style={ {background: 'url("'+person.avatarUrl+'")'} }></div>
+							</div>
+							<span className="name">{person.name}</span>
 						</a>
 						<button className="btn-follow" data-action="unfollow"></button>
 					</li>
 				);
 			});
-			if (this.props.isFollowin)g
+			if (this.props.isFollowin)
 				var label = this.props.profile.name+" segue "+this.props.list.length+" pessoas";
 			else
 				var label = this.props.list.length+" pessoas seguem "+this.props.profile.name;
@@ -271,7 +273,6 @@ define([
 						.fail(function (response) {
 							alert('vish');
 						})
-					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
 				},
 			'followers':
 				function () {
@@ -287,7 +288,6 @@ define([
 						.fail(function (response) {
 							alert('vish');
 						})
-					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
 				},
 			'posts/:postId':
 				 function (postId) {

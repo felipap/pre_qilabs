@@ -1,0 +1,56 @@
+
+/*
+** 404.less
+** Copyright QILabs.org
+** by @f03lipe
+*/
+
+[data-page="500"] {
+
+	nav.bar {
+		background: #F8F8F8;
+	}
+
+	#globalContainer {
+		border-top: none;
+	}
+
+	.jumbo {
+		width: 700px;
+		margin: auto;
+		margin-top: 80px;
+		color: white;
+
+		& > section {
+			text-align: center;
+			
+			#malfunctioningBulb {
+				font-size: 150px;
+				color: #555;
+
+				&.yellow {
+					color: #ffe700;
+				}
+			}
+
+			h1 {
+				font-weight: 800;
+				font-family: museo-sans;
+				font-size: 70px;
+			}
+
+			p {
+				font-size: 22px;
+				font-weight: 500;
+			}
+
+		}
+
+		[data-action=go-back] {
+			.xbtn(white, @COLOR1);
+			font-weight: bold;
+			margin: 20px 0;
+		}
+	}
+	
+}

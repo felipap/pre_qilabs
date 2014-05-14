@@ -6,8 +6,10 @@
 mongoose = require 'mongoose'
 
 SubscriberSchema = new mongoose.Schema {
-		email: String
+		name: { type: String, required: true }
+		email: { type: String, required: true }
 		authorized: { type: Boolean, default: false }
+		when: { type: Date, default: Date.now }
 	}, { id: true } # default
 
 SubscriberSchema.statics.findOrCreate = require './lib/findOrCreate'

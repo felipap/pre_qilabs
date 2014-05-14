@@ -131,68 +131,11 @@ button, .button {
 //////////////////////////////////////////////////////////////////////////////////////////
 
 .btn0 {
-	// padding: @padding-base-vertical @padding-base-horizontal;
-	// font-size: @font-size-base;
-	// line-height: @line-height-base;
-	// border-radius: 0;	
-	// .button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
-	// font-size: 13px;
-
-	// .button-variant(@btn-default-color; @btn-default-bg; @btn-default-border);
-	// font-size: 13px;
 	outline: none;
 	font-weight: bold;
 	padding: 8px 20px;
 	border: none;
 	.rounded(2px);
-}
-
-// Second flavor
-
-// .ibtn (@color) {
-// 	.btn0;
-
-// 	.color-btn-focus(white, transparent, @color);
-// 	border: 2px solid transparent;
-// 	.color-btn(white, transparent, @color);
-// 	.color-btn-hover(white, @color, @color);
-// 	.color-btn-active(white, lighten(@color, 5%), darken(@color, 12%));
-// }
-
-// .transparent-ibtn (@color) {
-// 	.btn0;
-
-// 	.color-btn-focus(@color, transparent, @color);
-// 	border: 2px solid transparent;
-// 	.color-btn(@color, transparent, @color);
-// 	.color-btn-hover(white, @color, @color);
-// 	.color-btn-active(white, lighten(@color, 5%), darken(@color, 12%));
-// }
-
-.high-xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px, @shadowSize:2px) {
-	padding: @vertical @horizontal;
-	padding-bottom: @shadowSize+@vertical;
-	margin-top: @verticalMargin;
-	margin-bottom: @verticalMargin;
-
-	&:active {
-		.no-text-shadow;
-		.no-box-shadow;
-		margin-top: @verticalMargin+@shadowSize;
-		margin-bottom: @verticalMargin; // -2+1 (from padding-bottom)
-		padding-bottom: @vertical;
-	}
-}
-
-.xbtn-padding (@vertical, @horizontal, @verticalMargin: 8px) {
-	padding: @vertical @horizontal;
-	margin-top: @verticalMargin;
-	margin-bottom: @verticalMargin;
-
-	&:active {
-		.no-text-shadow;
-		// .no-box-shadow;
-	}
 }
 
 /* Don't change a thing. */
@@ -204,26 +147,38 @@ button, .button {
 	.color-btn(@color, @bg, @bg);
 	.color-btn-hover(white, lighten(@bg, 8%), darken(@bg, 12%));
 	.color-btn-active(white, darken(@bg, 8%), darken(@bg, 12%));
+
+	&:active {
+		.no-text-shadow;
+		.no-box-shadow;
+	}
 }
 
-.high-xbtn (@color: white, @bg: @COLOR1, @shadowSize:2px) {
+.high-xbtn (@color: white, @bg: @COLOR1, @shadowSize: 3px, @verticalpadding: 11px, @horizontalPadding: 20px, @verticalMargin: 8px) {
 	.btn0;
 
+	.transition;
 	.color-btn-focus(@color, @bg, transparent);
-	.inner-shadow(0, -@shadowSize, rgba(0,0,0,.2));
+	.box-shadow(0, @shadowSize, 0, darken(@bg, 10%));
 	.color-btn(@color, @bg, transparent);
 
+	padding: @verticalpadding @horizontalPadding;
+	margin-top: @verticalMargin;
+	margin-bottom: @verticalMargin+@shadowSize;
+
 	&:hover {
-	.text-shadow(2px, 2px, 0, rgba(0,0,0,.1));
-		.color-btn(@color, lighten(@bg, 2%), transparent);
-		.inner-shadow(0, -@shadowSize, rgba(0,0,0,.4));
+		.text-shadow(2px, 2px, 0, rgba(0,0,0,.1));
+		background: lighten(@bg, 5%);
+	}
+	&[disabled] {
+		.no-box-shadow;
 	}
 
-	.high-xbtn-padding(9px, 20px, 6px, 2px);
-}
-
-.small-xbtn () {
-	.xbtn-padding(4px, 5px, 4px);
+	&:active {
+		.no-text-shadow;
+		.no-box-shadow;
+		.translate(0, @shadowSize);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -234,19 +189,18 @@ button, .button {
 	&[data-action=follow] {
 		.rounded(5px);
 		&:empty::before { content: "Seguir"; }
-		.high-xbtn(@color: white, @bg: @COLOR2);
-		.high-xbtn-padding(6px, 0px, 5px);
+		.high-xbtn(@color: white, @bg: @COLOR2, 6px, 0px, 5px);
 	}
 	&[data-action=unfollow]:not(:hover) {
 		.rounded(5px);
 		.xbtn(@color: white, @bg: @COLOR1);
-		.high-xbtn-padding(4px, 0px, 5px);
+		padding: 4px, 0px;
 		&::before { content: "Seguindo"; }
 	}
 	&[data-action=unfollow]:hover{
 		&:empty::before { content: "Desfazer"; }
 		.xbtn(@color: white, @bg: desaturate(@COLOR4,10%));
-		.high-xbtn-padding(4px, 0px, 5px);
+		padding: 4px, 0px;
 	}
 
 	text-transform: uppercase;

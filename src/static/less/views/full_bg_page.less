@@ -19,28 +19,7 @@ body {
 }
 
 nav.bar {
-	.navcontent {
-		width: 100%;
-		margin: 0 auto;
-	}
-
-	position: fixed;
-	padding: 5px 10px;
-	.transition(all, .2s, linear);
-
-	&:not(.opaque) {
-		background: fadeout(white, 100%);
-		color: white;
-
-		position: fixed;
-		z-index: 10;
-	
-		.brand,
-		.brand sup.version,
-		.plain-btn { color: white !important; }
-		.separator { border: none !important; }
-	}
-	border-bottom: none;
+	background: white;
 }
 
 .box-blackout {
@@ -52,21 +31,14 @@ nav.bar {
 	height: 100%;
 	width: 100%;
 
-	background: url(../img/asm.jpg) no-repeat center bottom;
-	background-clip: content-box;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
-
 	.content {
-		color: white;
+		// color: white;
 		position: absolute;
 		text-align: center;
 		
 		width: 600px;
 		height: 340px;
-		top: 50%; margin-top: -180px;
+		top: 50%; margin-top: -150px;
 		left: 50%; margin-left: -300px;
 
 		& > section {
@@ -78,14 +50,14 @@ nav.bar {
 			text-align: center;
 
 			h1 {
-				.text-shadow(0, 0, 3px, 1);
+				// .text-shadow(0, 0, 3px, 1);
 				font-weight: 800;
 				font-family: Lato;
 				font-size: 70px;
 			}
 
 			p {
-				.text-shadow(0, 0, 3px, 1);
+				// .text-shadow(0, 0, 3px, 1);
 				font-size: 22px;
 				font-weight: 500;
 			}
@@ -108,90 +80,14 @@ dfn, .credits {
 	position: absolute;
 	text-align: right;
 }
+
 .credits {
 	left: 15px;
 	bottom: 15px;
 }
+
 dfn {
 	.text-shadow(2px, 1);
 	right: 15px;
 	bottom: 15px;
 }
-
-#last-signins {
-	position: relative;
-
-	width: 100%;
-	overflow: hidden;
-	height: 50px;
-
-	.box-blackout {
-		.blackout(.2);
-	}
-
-	h1 {
-		line-height: 165px;
-		position: relative;
-		font-weight: 700;
-		color: white;
-		.text-shadow(0, 0, 3px, 1);
-	}
-
-	.avatars {
-		position: absolute;
-		top: 1px;
-		left: 0;
-		width: 105%;
-		height: 100%;
-
-		li {
-			list-style: none;
-			float: left;
-		}
-	}
-}
-
-footer {
-	border: none;
-
-	.reg {
-		display: none;
-		// padding: 10px;
-		width: 400px;
-		margin: auto;
-		text-align: center;
-		font: 14px "Open Sans";
-		color: #AAA;
-	}
-	
-	padding: 10px;
-	height: auto;
-
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	background: transparent;
-
-	.links {
-		text-align: center;
-		width: 400px;
-		padding: 12px;
-		margin: auto;
-		font: 700 14px "Open Sans";
-		text-transform: uppercase;
-
-		& > a, & > li {
-		
-			color: white;
-			margin: 5px;
-
-			&:hover {
-				text-decoration: none;
-			}
-			&:active {
-			}
-		}
-	}
-
-}
-

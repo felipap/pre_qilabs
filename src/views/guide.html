@@ -5,7 +5,7 @@
 
 {% block head %}
 {% parent %}
-	{{ tagMacros.stylesheet(getMediaUrl('css','sn_pages.min.css')) }}
+	{{ tagMacros.stylesheet(getMediaUrl('css','snpages.min.css')) }}
 {% endblock %}
 
 
@@ -16,7 +16,7 @@
 		detailOnScroll: true,
 	}
 	%}
-	{% include 'layouts/navbar.html' %}
+	{% include 'components/navbar.html' %}
 
 	<div id="globalContainer">
 		<div id="content" class="guide">

@@ -29,8 +29,25 @@ module.exports = {
 					res.render 'pages/main',
 						user_profile: profile
 			else
-				res.render 'pages/frontpage'
+				res.render 'pages/front'
 
+	'/waitlist':
+		permissions: [required.logout]
+		post: (req, res) ->
+			req.assert('email', 'Email inválido.').notEmpty().isEmail()
+
+			if errors = req.validationErrors()
+				return res.endJson({error:true,field:'email',message:'Esse email não é inválido? ;)'})
+			Subscriber.findOne {email:req.body.email}, (err, doc) ->
+				if err
+					return res.endJson({error:true, message:'Estamos com problemas para processar o seu pedido.'})
+				if doc
+					return res.endJson({error:true, field:'email', message:'Esse email já foi registrado.'})
+				s = new Subscriber { name: req.body.name, email: req.body.email }
+				s.save (err, t) ->
+					if err
+						return res.endJson({error:true, message:'Estamos com problemas para processar o seu pedido.'})
+					res.endJson({error:false})
 	'/feed':
 		name: 'feed'
 		permissions: [required.login]
@@ -66,28 +83,6 @@ module.exports = {
 					res.render 'pages/tag',
 						profile: profile
 						follows: bool
-
-	# '/labs':
-	# 	permissions: [required.login],
-	# 	children: {
-	# 		'create':
-	# 			methods:
-	# 				get: (req, res) ->
-	# 					res.render 'pages/lab_create'
-	# 		':slug': {
-	# 			permissions: [required.labs.selfCanSee('slug')],
-	# 			get: (req, res) ->
-	# 				unless req.params.slug
-	# 					return res.render404()
-	# 				Group.findOne {slug: req.params.slug},
-	# 					req.handleErrResult (group) ->
-	# 						group.genGroupProfile req.handleErrResult (groupProfile) ->
-	# 							# console.log('groupProfile', groupProfile)
-	# 							console.log('group', groupProfile)
-	# 							res.render 'pages/lab',
-	# 								group: groupProfile
-	# 		}
-	# 	}
 
 	'/u/:username':
 		name: 'profile'

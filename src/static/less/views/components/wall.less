@@ -1,18 +1,27 @@
 
+@block-card-width: 750px;
+@block-card-height: 145px;
+@block-card-margin: 250px;
+@block-card-margin-bottom: 23px;
+@block-card-body-fontsize: 20px;
+
+@block-header-height: 30px;
+@block-footer-height: 36px;
+
+@square-card-width: 234px;
+@square-card-height: 200px;
+@square-card-margin: 27px;
+@square-card-margin-bottom: 27px;
+@square-card-body-fontsize: 17px;
+
+@square-header-height: 35px;
+@square-footer-height: 36px;
+
 .cardsContainer ()
 {
 	text-align: center;
 
 	&:not(.grid) {
-		@block-card-width: 750px;
-		@block-card-height: 145px;
-		@block-card-margin: 250px;
-		@block-card-margin-bottom: 23px;
-		@block-card-body-fontsize: 20px;
-
-		@block-header-height: 30px;
-		@block-footer-height: 36px;
-		
 		.cardView {
 			display: block;
 			width: @block-card-width;
@@ -39,14 +48,6 @@
 	}
 
 	&.grid {
-		@square-card-width: 234px;
-		@square-card-height: 200px;
-		@square-card-margin: 27px;
-		@square-card-margin-bottom: 27px;
-		@square-card-body-fontsize: 17px;
-
-		@square-header-height: 35px;
-		@square-footer-height: 36px;
 		padding-left: @square-card-margin;
 		
 		.cardView {

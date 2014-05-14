@@ -1,0 +1,233 @@
+
+[data-page=profile] {
+	#globalHead {
+		background: #444;
+		position: relative;
+		overflow: hidden;
+		
+		.elBackground { .cover }
+		.elBlackout { .blackout(.7); }
+		.elBackground, .elBlackout { z-index: 2; }
+
+		.profileWrapper, nav { position: relative; z-index: 10; }
+		
+		.profileWrapper {
+			width: 100%;
+			display: table;
+			margin: auto;
+			color: white;
+			font-family: museo-sans;
+			padding: 50px;
+
+			.bigUser {
+				text-align: center;
+
+				& > section {
+					font-size: 15px;
+					max-width: 600px;
+					margin: 0 auto;
+					margin-bottom: 10px;
+				}
+
+				.avatarWrapper {
+					.rounded(2px);
+					.box-shadow(4px, .4);
+					margin-right: 5px;
+					height: 120px;
+					width: 120px;
+					margin-top: 10px;
+				}
+				
+				.profileUser {
+					margin-top: 20px;
+					.name {
+						font-size: 40px;
+						font-weight: bold;
+						vertical-align: middle;
+					}
+				}
+
+				.address {
+					font-size: 12px;
+					font-weight: 400;
+					font-family: museo-sans;
+					text-transform: uppercase;
+
+					i { margin-right: 3px; }
+					span {
+						margin: 0 5px;
+					}
+				}
+
+				.stats {
+					display: inline-block;
+
+					& > div {
+						display: inline-block;
+						padding: 10px;
+						text-align: center;
+						color: #EFEFEF;
+						a {
+							text-decoration: none;
+							display: block;
+						}
+						&:hover {
+							color: white;
+						}
+					}
+				}
+
+				a { color: white; }
+			
+				.socialLine {
+					margin-bottom: 20px;
+					// background: black;
+					&:before, &::after {
+						border-bottom: 1px solid rgba(255,255,255,.4);
+						width: 200px;
+						display: inline-block;
+						height: 1px;
+						margin: 5px 10px;
+						content: ' ';
+					}
+					font-weight: bold;
+				}
+			}
+
+			
+			table {
+				width: 100%;
+				.left {
+					padding-right: 40px;
+					vertical-align: top;
+				}
+
+				.middle {
+					width: 300px;
+					padding-right: 20px;
+
+					.tag {
+						background: #888;
+					}
+
+					& > section {
+						margin-bottom: 30px;
+						&:last-child {
+							margin-bottom: 0;
+						}
+					}
+
+					
+					.userList {
+						label {
+							text-align: left;
+							display: block;
+							font-size: 13px;
+							font-weight: bold;
+							font-family: museo-sans;
+
+							& > .detail {
+								// float: right;
+								color: #EEE;
+								font-size: 12px;
+								font-weight: normal;
+								margin: 0 5px;
+							}
+						}
+						li {
+							margin-right: 4px;
+							list-style: none;
+							display: inline-block;
+						}
+						.avatarWrapper {
+							.rounded(0px);
+							height: 35px;
+							width: 35px;
+						}
+					}
+				}
+			}
+		}
+
+		.headPanel {
+			position: absolute;
+			left: 0;
+			top: 0;
+			z-index: 20;
+
+			.panelIcons {
+				margin: 30px 0;
+
+				li {
+					list-style: none;
+					padding: 10px;
+					.transition(background, .2s, linear);
+					&:hover {
+						background: #08C;
+					}
+					i {
+						font-size: 40px;
+						color: white;
+					}
+				}
+			}
+		}
+	}
+
+	
+.listView {
+
+	width: 800px;
+	margin: 0 auto;
+	position: relative;
+	padding-bottom: 50px;
+
+	& > label {
+		font-size: 25px;
+		text-align: left;
+		display: block;
+		font: normal 25px museo-sans;
+		margin: 20px 0;
+		color: #666;
+	}
+
+	.userAvatar {
+		position: absolute;
+		left: -120px;
+
+		.avatarWrapper {
+			height: 100px;
+			width: 100px;
+		}
+	}
+
+	li {
+		clear: both;
+		list-style: none;
+		text-align: left;
+
+		padding-bottom: 10px;
+		border-bottom: 1px solid #DDD;
+		margin-bottom: 10px;
+		
+		a {
+			cursor: pointer;
+			.avatarWrapper {
+				height: 30px;
+				width: 30px;
+				margin-right: 10px;
+				vertical-align: middle;
+			}
+		}
+
+		.name {
+			font: normal 16px museo-sans;
+		}
+
+		button {
+			float: right;
+			margin: 0;
+		}
+	}
+}
+}

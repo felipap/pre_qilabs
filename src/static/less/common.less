@@ -224,32 +224,38 @@ h3:first-child {
 }
 
 
-.cover (@blur: 2) {
+.cover () {
 	position: absolute;
-	top: -4*@blur; bottom: -4*@blur;
-	left: -4*@blur; right: -4*@blur;
-	.blur(@blur);
 	z-index: -1;
-
 	background: #FFFFFF no-repeat center bottom;
 	background-clip: content-box;
 	.background-size(cover);
+	top: 0; bottom: 0;
+	width: 100%;
+}
+.bg-blur(@blur: 2px) {
+	top: -4*@blur; bottom: -4*@blur;
+	left: -4*@blur; right: -4*@blur;
+	.blur(@blur);
 }
 
 .bg-cover {
-	.cover(3px);
+	.cover;
 }
+
 .bg-cover.bg-pattern {
 	background-image: url(/static/images/icons-green.jpg);
 	background-repeat: repeat;
 	background-clip: content-box;
 	background-size: initial;
-	.blur(0);
+	top: 0; bottom: 0;
+	left: 0; right: 0;
 }
 
 body > .bg-cover {
 	position: fixed;
-	.cover(2px);
+	.cover;
+	.bg-blur(3px);
 }
 
 .bg-img {

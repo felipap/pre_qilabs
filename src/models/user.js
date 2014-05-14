@@ -90,10 +90,6 @@ UserSchema = new mongoose.Schema({
   lastUpdate: {
     type: Date,
     "default": Date(0)
-  },
-  notifiable: {
-    type: Boolean,
-    "default": true
   }
 }, {
   toObject: {
@@ -286,18 +282,6 @@ UserSchema.methods.getFollowingIds = function(cb) {
   return this.getFollowsAsFollower(function(err, docs) {
     return cb(err, _.pluck(docs || [], 'followee'));
   });
-};
-
-UserSchema.methods.countFollowers = function(cb) {
-  return Follow.count({
-    followee: this
-  }, cb);
-};
-
-UserSchema.methods.countFollowees = function(cb) {
-  return Follow.count({
-    follower: this
-  }, cb);
 };
 
 UserSchema.methods.doesFollowUser = function(user, cb) {
