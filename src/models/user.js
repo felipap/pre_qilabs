@@ -58,7 +58,10 @@ UserSchema = new mongoose.Schema({
   followingTags: [],
   profile: {
     location: '',
-    bio: '',
+    bio: {
+      type: String,
+      "default": 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
+    },
     home: '',
     avatarUrl: ''
   },
@@ -97,12 +100,12 @@ UserSchema.virtual('avatarUrl').get(function() {
   }
 });
 
-UserSchema.virtual('profile.strAge').get(function() {
-  if (this.username === 'felipearagaopires') {
-    return '18 anos';
-  } else {
-    return '19 anos';
-  }
+UserSchema.virtual('profile.location').get(function() {
+  return this.profile.location || 'Stanford, Palo Alto, Estados Unidos';
+});
+
+UserSchema.virtual('profile.from').get(function() {
+  return this.profile.location || 'Rio de Janeiro, Brasil';
 });
 
 UserSchema.virtual('profile.bgUrl').get(function() {

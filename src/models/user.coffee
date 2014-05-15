@@ -49,7 +49,7 @@ UserSchema = new mongoose.Schema {
 		# birthday: 	Date
 		# email: 		String
 		location:	''
-		bio: 		''
+		bio: 		{ type: String, default: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'}
 		home: 		''
 		# badges: 	[]
 		avatarUrl: 	''
@@ -75,30 +75,17 @@ UserSchema.virtual('avatarUrl').get ->
 	else
 		'https://graph.facebook.com/'+@facebookId+'/picture?width=200&height=200'
 
-UserSchema.virtual('profile.strAge').get ->
-	if @username is 'felipearagaopires'
-		'18 anos'
-	else
-		'19 anos'
-
-# UserSchema.virtual('profile.location').get ->
+# UserSchema.virtual('profile.strAge').get ->
 # 	if @username is 'felipearagaopires'
-# 		'Harvard University, USA' # 'Massachusetts Institute of Technology, Cambridge, US'
+# 		'18 anos'
 # 	else
-# 		'Stanford, Palo Alto, Estados Unidos'
+# 		'19 anos'
 
-# UserSchema.virtual('profile.from').get ->
-# 	if @username is 'felipearagaopires'
-# 		'Rio de Janeiro, Brasil'
-# 	else
-# 		'Rio de Janeiro, Brasil'
+UserSchema.virtual('profile.location').get ->
+	@profile.location or 'Stanford, Palo Alto, Estados Unidos'
 
-# UserSchema.virtual('profile.bio').get ->
-# 	if @username is 'felipearagaopires'
-# 		'QI Labs Founder. Open source enthusiast. I believe I can program my way into changing the world. My heros are Richard Feynman, Alan Turing and Valesca Popozuda.'
-# 	else
-# 		'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' 
-
+UserSchema.virtual('profile.from').get ->
+	@profile.location or 'Rio de Janeiro, Brasil'
 
 UserSchema.virtual('profile.bgUrl').get ->
 	if @username is 'felipearagaopires'

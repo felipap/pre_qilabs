@@ -148,13 +148,16 @@ module.exports = {
           ],
           post: [
             required.posts.selfCanComment('id'), function(req, res) {
-              var data, postId;
+              var data, htmlEntities, postId;
               if (!(postId = req.paramToObjectId('id'))) {
                 return;
               }
+              htmlEntities = function(str) {
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+              };
               data = {
                 content: {
-                  body: req.body.content.body
+                  body: htmlEntities(req.body.content.body)
                 },
                 type: Post.Types.Comment
               };

@@ -85,9 +85,15 @@ module.exports = {
 					]
 					post: [required.posts.selfCanComment('id'), (req, res) ->
 						return if not postId = req.paramToObjectId('id')
+						htmlEntities = (str) ->
+							String(str)
+								.replace(/&/g, '&amp;')
+								.replace(/</g, '&lt;')
+								.replace(/>/g, '&gt;')
+								.replace(/"/g, '&quot;')
 						data = {
 							content: {
-								body: req.body.content.body
+								body: htmlEntities(req.body.content.body)
 							}
 							type: Post.Types.Comment
 						}
