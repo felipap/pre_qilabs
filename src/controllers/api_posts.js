@@ -35,15 +35,22 @@ module.exports = {
       ],
       put: [
         required.posts.selfOwns('id'), function(req, res) {
-          var postId, sanitizer;
+          var postId;
           if (!(postId = req.paramToObjectId('id'))) {
             return;
           }
-          sanitizer = require('sanitizer');
-          console.log(req.body.data.body);
-          console.log('final:', req.body.tags, sanitizer.sanitize(req.body.data.body));
           return Post.findById(postId, req.handleErrResult((function(_this) {
             return function(post) {
+              var sanitizer;
+              if (post.type === 'Comment') {
+                return res.endJson({
+                  error: true,
+                  message: ''
+                });
+              }
+              sanitizer = require('sanitizer');
+              console.log(req.body.data.body);
+              console.log('final:', req.body.tags, sanitizer.sanitize(req.body.data.body));
               post.data.body = sanitizer.sanitize(req.body.data.body);
               return post.save(req.handleErrResult(function(me) {
                 return post.stuff(req.handleErrResult(function(stuffedPost) {

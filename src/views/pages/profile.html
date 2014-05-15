@@ -25,10 +25,10 @@ set navbarOpts = {
 
 		<div class="profileWrapper">
 			{% if profile.id == user.id %}
-				<button data-action="edit-profile">
-					<i class="icon-pencil"></i>
+				<button data-action="edit-profile" data-toggle="tooltip" data-placement="left" title="Editar perfil">
+					<i class="icon-lock"></i>
 				</button>
-				<button data-action="save-profile">
+				<button data-action="save-profile" data-toggle="tooltip" data-placement="left" title="Salvar mudanças">
 					<i class="icon-unlock"></i>
 				</button>
 			{% endif %}
