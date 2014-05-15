@@ -128,10 +128,15 @@
 				font-weight: 400;
 				font-family: museo-sans;
 
-				i { margin-right: 3px; }
+				i { margin: -4px 0 0; }
 				span, input {
 					text-transform: uppercase;
 					margin: 0 5px;
+				}
+				span:empty {
+					display: inline-block;
+					min-width: 150px;
+					background: rgba(0,0,0,.5);
 				}
 				input {
 					width: 250px;
