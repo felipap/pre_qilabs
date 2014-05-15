@@ -86,20 +86,21 @@ module.exports = {
 
 	'/u/:username':
 		name: 'profile'
-		permissions: [required.login]
-		get: (req, res) ->
-			unless req.params.username
-				return res.render404()
-			User.findOne {username:req.params.username},
-				req.handleErrResult (pUser) ->
-					pUser.genProfile (err, profile) ->
-						if err or not profile
-							# req.logMe "err generating profile", err
-							return res.render404()
-						req.user.doesFollowUser pUser, (err, bool) ->
-							res.render 'pages/profile', 
-								profile: profile
-								follows: bool
+		get: [required.login,
+			(req, res) ->
+				unless req.params.username
+					return res.render404()
+				User.findOne {username:req.params.username},
+					req.handleErrResult (pUser) ->
+						pUser.genProfile (err, profile) ->
+							if err or not profile
+								# req.logMe "err generating profile", err
+								return res.render404()
+							req.user.doesFollowUser pUser, (err, bool) ->
+								res.render 'pages/profile', 
+									profile: profile
+									follows: bool
+			]
 
 	'/new/experience':
 		name: 'newExperience'

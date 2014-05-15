@@ -126,27 +126,28 @@ module.exports = {
   },
   '/u/:username': {
     name: 'profile',
-    permissions: [required.login],
-    get: function(req, res) {
-      if (!req.params.username) {
-        return res.render404();
-      }
-      return User.findOne({
-        username: req.params.username
-      }, req.handleErrResult(function(pUser) {
-        return pUser.genProfile(function(err, profile) {
-          if (err || !profile) {
-            return res.render404();
-          }
-          return req.user.doesFollowUser(pUser, function(err, bool) {
-            return res.render('pages/profile', {
-              profile: profile,
-              follows: bool
+    get: [
+      required.login, function(req, res) {
+        if (!req.params.username) {
+          return res.render404();
+        }
+        return User.findOne({
+          username: req.params.username
+        }, req.handleErrResult(function(pUser) {
+          return pUser.genProfile(function(err, profile) {
+            if (err || !profile) {
+              return res.render404();
+            }
+            return req.user.doesFollowUser(pUser, function(err, bool) {
+              return res.render('pages/profile', {
+                profile: profile,
+                follows: bool
+              });
             });
           });
-        });
-      }));
-    }
+        }));
+      }
+    ]
   },
   '/new/experience': {
     name: 'newExperience',

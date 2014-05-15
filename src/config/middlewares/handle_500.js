@@ -32,6 +32,10 @@ module.exports = function(err, req, res, next) {
 		}
 	} else {
 		if (~accept.indexOf('html')) {
+			if (err.permission = 'login') {
+				res.redirect('/');
+			}
+
 			res.render('pages/500', {
 				user: req.user,
 				error_code: res.statusCode,
