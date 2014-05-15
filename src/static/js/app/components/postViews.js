@@ -64,7 +64,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					React.DOM.div( {className:"commentWrapper"}, 
 						React.DOM.div( {className:"msgBody"}, 
 							React.DOM.div( {className:"arrow"}),
-							comment.data.escapedBody
+							React.DOM.span( {dangerouslySetInnerHTML:{__html: comment.data.escapedBody }})
 						),
 						React.DOM.div( {className:"infoBar"}, 
 							React.DOM.a( {className:"userLink author", href:comment.author.profileUrl}, 
