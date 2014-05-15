@@ -18,11 +18,11 @@ module.exports = function(err, req, res, next) {
 	var accept = req.headers.accept || '';
 
 	if (~accept.indexOf('html')) {
+		if (err.permission = 'login') {
+			res.redirect('/');
+		}
+		
 		if (req.app.get('env') === 'production') {
-			if (err.permission = 'login') {
-				res.redirect('/');
-			}
-
 			res.render('pages/500', {
 				user: req.user,
 				message: err.human_message
