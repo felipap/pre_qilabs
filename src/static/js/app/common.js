@@ -116,6 +116,7 @@ define([
 
 	$("body").tooltip({selector:'[data-toggle=tooltip]'});
 	$("[data-toggle=dialog]").xdialog();
+	$(".autosize").autosize();
 	// $("[data-toggle=popover]").popover();
 
 	(function setCSRFToken () {

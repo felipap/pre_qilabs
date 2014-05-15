@@ -32,6 +32,28 @@ module.exports = {
     return res.end();
   },
   children: {
+    'profile': {
+      put: function(req, res) {
+        var bio, home, location;
+        console.log('profile received', req.body.profile);
+        bio = req.body.profile.bio.replace(/^\s+|\s+$/g, '');
+        home = req.body.profile.home.replace(/^\s+|\s+$/g, '');
+        location = req.body.profile.location.replace(/^\s+|\s+$/g, '');
+        if (bio) {
+          req.user.profile.bio = bio;
+        }
+        if (home) {
+          req.user.profile.home = home;
+        }
+        if (location) {
+          req.user.profile.location = location;
+        }
+        req.user.save(function() {});
+        return res.endJson({
+          error: false
+        });
+      }
+    },
     'notifications': {
       get: function(req, res) {
         return req.user.getNotifications(req.handleErrResult(function(notes) {

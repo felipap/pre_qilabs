@@ -1,5 +1,5 @@
 {% extends '../wall.html' %}
-{% set requirejsView="cards" %}
+{% set requirejsView="profile" %}
 {% set dataPage="profile" %}
 
 {% import '../macros/user.html' as userMacros %}
@@ -28,179 +28,68 @@ set navbarOpts = {
 				<button data-action="edit-profile">
 					<i class="icon-pencil"></i>
 				</button>
+				<button data-action="save-profile">
+					<i class="icon-unlock"></i>
+				</button>
 			{% endif %}
 			
-			<div class="bigUser">
-				<div class="avatarWrapper">
-					<div class="avatar" style="background: url({{ profile.avatarUrl }})"></div>
-				</div>
-
-				<section class="profileUser">
-					<span class="name">{{ profile.name }}</span>
-					<div style="display: inline-block; width: 0">
-						{% if profile.id != user.id %}
-							{% if follows %}
-								<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-							{% else %}
-								<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
-							{% endif %}
-						{% endif %}
-					</div>
-				</section>
-
-				<section class="bio">
-					{{ profile.profile.bio }}
-				</section>
-
-				<div style="display: none"class="socialLine">
-					<a href="#"><i class="icon-twitter"></i></a> ·
-					<a href="#"><i class="icon-facebook"></i></a> · 
-					<a href="#"><i class="icon-github"></i></a>
-				</div>
-
-				<section class="address">
-					<span><i class="icon-map-marker"></i> {{ profile.profile.location }}</span>·<span><i class="icon-home"></i> {{ profile.profile.from }}</span>
-				</section>
-
-				<div class="stats">
-					<div>
-						<a href="#followers">
-						<h3>{{ profile.stats.followers }}</h3>
-						seguidores
-						</a>
-					</div>
-					<div>
-						<a href="#following">
-						<h3>{{ profile.stats.following }}</h3>
-						seguindo
-						</a>
-					</div>
-					<div>
-						<h3>{{ profile.stats.posts }}</h3>
-						posts
-					</div>
-					<div>
-						<h3>{{ profile.stats.votes }}</h3>
-						votos
-					</div>
-				</div>
+			<div class="avatarWrapper">
+				<div class="avatar" style="background: url({{ profile.avatarUrl }})"></div>
 			</div>
 
-			<table style="display:">
-				<td  style="display: none" class="middle">
-					<section>
-						<h5><i class="icon-tags"></i>&nbsp;<strong>Interesses</strong></h5>
-						<div class="tag">Application</div>
-						<div class="tag">SAT</div>
-						<div class="tag">Olimpíadas de Informática</div>
-						<div class="tag">Intercâmbio</div>
-						<div class="tag">Programação</div>
-						<div class="tag">Voluntariado</div>
-					</section>
-					<section>
-						<h5><i class="icon-trophy icon-silvser"></i>&nbsp;<strong>Destaques</strong></h5>
-						<div>Medalha de Ouro, OBXXX 2014</div>
-						<div>Prêmio Jovens Procrastinadores, 2014</div>
-					</section>
-					<section class="userList">
-						<h5>
-							Seguindo <strong>15</strong>
-						</h5>
-						<ul>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/jonnyguio">
-									<div class="avatar" style="background: url(https://graph.facebook.com/100001737803256/picture)" data-toggle="tooltip" title="João Guio" data-placement="bottom"></div>
-									</a>
-								</div>
-							</li>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/michelle.malher">
-									<div class="avatar" style="background: url(https://graph.facebook.com/100002234680040/picture)" data-toggle="tooltip" title="Michelle Malher" data-placement="bottom"></div>
-									</a>
-								</div>
-							</li>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/vivianeplobo">
-									<div class="avatar" style="background: url(https://graph.facebook.com/100001840252092/picture)" data-toggle="tooltip" title="Viviane Da Paixão Lobo" data-placement="bottom"></div>
-									</a>
-								</div>
-							</li>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/mariitope">
-									<div class="avatar" style="background: url(https://graph.facebook.com/100001115788168/picture)" data-toggle="tooltip" title="Mariam Topeshashvili" data-placement="bottom"></div>
-									</a>
-								</div>
-							</li>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/luizfernando.gomes.581">
-									<div class="avatar" style="background: url(https://graph.facebook.com/luizfernando.gomes.581/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Luiz Fernando Leal"></div>
-									</a>
-								</div>
-							</li>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/luizfernando.gomes.581">
-									<div class="avatar" style="background: url(https://graph.facebook.com/ivo.paulo.lima/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Ivo Eu"></div>
-									</a>
-								</div>
-							</li>
-						</ul>
-					</section>
-					<sction class="userList">
-						<h5>
-							<strong>23</strong> Seguidores
-						</h5>
-						<ul>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/jonnyguio">
-									<div class="avatar" style="background: url(https://graph.facebook.com/100001737803256/picture)" data-toggle="tooltip" title="João Guio" data-placement="bottom"></div>
-									</a>
-								</div>
-							</li>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/michelle.malher">
-									<div class="avatar" style="background: url(https://graph.facebook.com/100002234680040/picture)" data-toggle="tooltip" title="Michelle Malher" data-placement="bottom"></div>
-									</a>
-								</div>
-							</li>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/vivianeplobo">
-									<div class="avatar" style="background: url(https://graph.facebook.com/100001840252092/picture)" data-toggle="tooltip" title="Viviane Da Paixão Lobo" data-placement="bottom"></div>
-									</a>
-								</div>
-							</li>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/mariitope">
-									<div class="avatar" style="background: url(https://graph.facebook.com/100001115788168/picture)" data-toggle="tooltip" title="Mariam Topeshashvili" data-placement="bottom"></div>
-									</a>
-								</div>
-							</li>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/luizfernando.gomes.581">
-									<div class="avatar" style="background: url(https://graph.facebook.com/luizfernando.gomes.581/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Luiz Fernando Leal"></div>
-									</a>
-								</div>
-							</li>
-							<li>
-								<div class="avatarWrapper">
-									<a href="/u/luizfernando.gomes.581">
-									<div class="avatar" style="background: url(https://graph.facebook.com/rennan.gaio/picture)" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Garoto Precoce"></div>
-									</a>
-								</div>
-							</li>
-						</ul>
-					</sction>
-			</table>
+			<section class="usernameWrapper">
+				<div class="name profileOutput">{{ profile.name }}</div>
+				{% if profile.id == user.id %}
+					<input class="profileInput" type="text" name="name" value="{{ profile.name }}" /> 
+				{% endif %}
+				{% if profile.id != user.id %}
+					<div style="display: inline-block; width: 0">
+						{% if follows %}
+							<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
+						{% else %}
+							<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
+						{% endif %}
+					</div>
+				{% endif %}
+			</section>
+
+			<section class="bio profileOutput">
+				{{ profile.profile.bio }}
+			</section>
+			{% if profile.id == user.id %}
+				<textarea class="bio profileInput autosize" name="bio">{{ profile.profile.bio }}</textarea>
+			{% endif %}
+
+			<section class="whereabout">
+				<i class="icon-map-marker"></i><span class="location profileOutput">{{ profile.profile.location }}</span>
+				<input type="text" class="profileInput" name="location" value="{{ profile.profile.location }}"  placeholder="Local de estudo/trabalho"/>
+				·
+				<i class="icon-home"></i><span class="home profileOutput">{{ profile.profile.home }}</span>
+				<input type="text" class="profileInput" name="home" value="{{ profile.profile.home }}" placeholder="Cidade de origem" /> 
+			</section>
+
+			<div class="stats">
+				<div>
+					<a href="#followers">
+					<h3>{{ profile.stats.followers }}</h3>
+					seguidores
+					</a>
+				</div>
+				<div>
+					<a href="#following">
+					<h3>{{ profile.stats.following }}</h3>
+					seguindo
+					</a>
+				</div>
+				<div>
+					<h3>{{ profile.stats.posts }}</h3>
+					posts
+				</div>
+				<div>
+					<h3>{{ profile.stats.votes }}</h3>
+					votos
+				</div>
+			</div>
 		</div>
 	</div>
 	</nav>

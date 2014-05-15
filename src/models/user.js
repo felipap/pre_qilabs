@@ -57,12 +57,10 @@ UserSchema = new mongoose.Schema({
   },
   followingTags: [],
   profile: {
-    fullName: '',
-    birthday: Date,
-    email: String,
-    city: '',
-    avatarUrl: '',
-    badges: []
+    location: '',
+    bio: '',
+    home: '',
+    avatarUrl: ''
   },
   stats: {
     posts: {
@@ -107,35 +105,11 @@ UserSchema.virtual('profile.strAge').get(function() {
   }
 });
 
-UserSchema.virtual('profile.location').get(function() {
-  if (this.username === 'felipearagaopires') {
-    return 'Harvard University, USA';
-  } else {
-    return 'Stanford, Palo Alto, Estados Unidos';
-  }
-});
-
-UserSchema.virtual('profile.from').get(function() {
-  if (this.username === 'felipearagaopires') {
-    return 'Rio de Janeiro, Brasil';
-  } else {
-    return 'Rio de Janeiro, Brasil';
-  }
-});
-
 UserSchema.virtual('profile.bgUrl').get(function() {
   if (this.username === 'felipearagaopires') {
     return '/static/images/u/sta.jpg';
   } else {
     return '/static/images/rio.jpg';
-  }
-});
-
-UserSchema.virtual('profile.bio').get(function() {
-  if (this.username === 'felipearagaopires') {
-    return 'QI Labs Founder. Open source enthusiast. I believe I can program my way into changing the world. My heros are Richard Feynman, Alan Turing and Valesca Popozuda.';
-  } else {
-    return 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
   }
 });
 

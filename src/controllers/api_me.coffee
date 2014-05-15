@@ -23,6 +23,25 @@ module.exports = {
 			req.user.save()
 		res.end()
 	children: {
+		'profile':
+			put: (req, res) ->
+				console.log('profile received', req.body.profile)
+				# do tests 
+				# sanitize
+				bio = req.body.profile.bio.replace(/^\s+|\s+$/g, '')
+				home = req.body.profile.home.replace(/^\s+|\s+$/g, '')
+				location = req.body.profile.location.replace(/^\s+|\s+$/g, '')
+
+				if bio
+					req.user.profile.bio = bio
+				if home
+					req.user.profile.home = home
+				if location
+					req.user.profile.location = location
+					
+				req.user.save () ->
+				res.endJson { error: false} 
+
 		'notifications': {
 			get: (req, res) ->
 				req.user.getNotifications req.handleErrResult((notes) ->

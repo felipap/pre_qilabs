@@ -45,12 +45,14 @@ UserSchema = new mongoose.Schema {
 	followingTags: 	[]
 
 	profile: {
-		fullName: 	''
-		birthday: 	Date
-		email: 		String
-		city: 		''
+		# fullName: 	''
+		# birthday: 	Date
+		# email: 		String
+		location:	''
+		bio: 		''
+		home: 		''
+		# badges: 	[]
 		avatarUrl: 	''
-		badges: 	[]
 	},
 
 	stats: {
@@ -79,17 +81,24 @@ UserSchema.virtual('profile.strAge').get ->
 	else
 		'19 anos'
 
-UserSchema.virtual('profile.location').get ->
-	if @username is 'felipearagaopires'
-		'Harvard University, USA' # 'Massachusetts Institute of Technology, Cambridge, US'
-	else
-		'Stanford, Palo Alto, Estados Unidos'
+# UserSchema.virtual('profile.location').get ->
+# 	if @username is 'felipearagaopires'
+# 		'Harvard University, USA' # 'Massachusetts Institute of Technology, Cambridge, US'
+# 	else
+# 		'Stanford, Palo Alto, Estados Unidos'
 
-UserSchema.virtual('profile.from').get ->
-	if @username is 'felipearagaopires'
-		'Rio de Janeiro, Brasil'
-	else
-		'Rio de Janeiro, Brasil'
+# UserSchema.virtual('profile.from').get ->
+# 	if @username is 'felipearagaopires'
+# 		'Rio de Janeiro, Brasil'
+# 	else
+# 		'Rio de Janeiro, Brasil'
+
+# UserSchema.virtual('profile.bio').get ->
+# 	if @username is 'felipearagaopires'
+# 		'QI Labs Founder. Open source enthusiast. I believe I can program my way into changing the world. My heros are Richard Feynman, Alan Turing and Valesca Popozuda.'
+# 	else
+# 		'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' 
+
 
 UserSchema.virtual('profile.bgUrl').get ->
 	if @username is 'felipearagaopires'
@@ -100,11 +109,6 @@ UserSchema.virtual('profile.bgUrl').get ->
 		# if Math.random()>.5
 		# else
 
-UserSchema.virtual('profile.bio').get ->
-	if @username is 'felipearagaopires'
-		'QI Labs Founder. Open source enthusiast. I believe I can program my way into changing the world. My heros are Richard Feynman, Alan Turing and Valesca Popozuda.'
-	else
-		'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.' 
 
 UserSchema.virtual('profileUrl').get ->
 	'/u/'+@username
