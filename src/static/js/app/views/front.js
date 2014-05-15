@@ -16,7 +16,7 @@ require(['common'], function (common) {
 		}
 	});
 
-	$(".bubble","#bubbleMaster").click(function () {
+	$(".bubble, #bubbleMaster").click(function () {
 		$(this).fadeOut();
 	});
 
@@ -36,8 +36,16 @@ require(['common'], function (common) {
 			} else {
 				if (response.field == 'email') {
 					$("#emailBubble").html(response.message).fadeIn();
+					$("[name=email]").addClass('invalid');
+					$("[name=email]").one('keypress keyup', function () {
+						$(this).removeClass('invalid');
+					});
 				} else if (response.field == 'name') {
 					$("#nameBubble").html(response.message).fadeIn();
+					$("[name=name]").addClass('invalid');
+					$("[name=name]").one('keypress keyup', function () {
+						$(this).removeClass('invalid');
+					});
 				} else if (response.message) {
 					$("#bubbleMaster").html(response.message).fadeIn();
 				}

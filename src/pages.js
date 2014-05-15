@@ -43,6 +43,7 @@ module.exports = {
           message: 'Esse email não é inválido? ;)'
         });
       }
+      req.body.email = req.body.email.toLowerCase();
       return Subscriber.findOne({
         email: req.body.email
       }, function(err, doc) {

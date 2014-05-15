@@ -110,9 +110,11 @@
 					&::before {
 						content: " ";
 						position: absolute;
-						border: 11px solid transparent;
+						@height: 22px;
+						border: (@height/2) solid transparent;
 						left: -22px;
-						top: 12px;
+						top: 50%;
+						margin-top: (-@height/2);
 						border-right-color: mix(@COLOR4, @COLOR3);
 					}
 				}

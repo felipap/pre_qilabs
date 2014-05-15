@@ -35,6 +35,9 @@ module.exports = {
 
 			if errors = req.validationErrors()
 				return res.endJson({error:true,field:'email',message:'Esse email não é inválido? ;)'})
+			
+			req.body.email = req.body.email.toLowerCase()
+			
 			Subscriber.findOne {email:req.body.email}, (err, doc) ->
 				if err
 					return res.endJson({error:true, message:'Estamos com problemas para processar o seu pedido.'})
