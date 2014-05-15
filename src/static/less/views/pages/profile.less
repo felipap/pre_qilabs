@@ -63,6 +63,9 @@
 					margin: 5px auto;
 					padding: 0;
 					line-height: 60px;
+					display: inline-block;
+				}
+				input[name=name] {
 					width: 400px;
 				}
 			}
@@ -92,7 +95,7 @@
 			}
 
 			.profileInput {
-				display: none;
+				display: none !important;
 				text-align: center;
 				display: none;
 				background: rgba(0,0,0,.3);
@@ -106,10 +109,10 @@
 
 			&.editing {
 				.profileOutput {
-					display: none;
+					display: none !important;
 				}
 				.profileInput {
-					display: initial;
+					display: initial !important;
 				}
 				background: #444;
 				[data-action=save-profile] {

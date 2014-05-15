@@ -47,6 +47,7 @@ UserSchema = new mongoose.Schema {
 	profile: {
 		# fullName: 	''
 		# birthday: 	Date
+		# strAge:		String
 		# email: 		String
 		location:	''
 		bio: 		{ type: String, default: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'}
@@ -75,12 +76,6 @@ UserSchema.virtual('avatarUrl').get ->
 	else
 		'https://graph.facebook.com/'+@facebookId+'/picture?width=200&height=200'
 
-# UserSchema.virtual('profile.strAge').get ->
-# 	if @username is 'felipearagaopires'
-# 		'18 anos'
-# 	else
-# 		'19 anos'
-
 UserSchema.virtual('profile.location').get ->
 	@profile.location or 'Stanford, Palo Alto, Estados Unidos'
 
@@ -95,7 +90,6 @@ UserSchema.virtual('profile.bgUrl').get ->
 		'/static/images/rio.jpg'
 		# if Math.random()>.5
 		# else
-
 
 UserSchema.virtual('profileUrl').get ->
 	'/u/'+@username
