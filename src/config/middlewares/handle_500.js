@@ -19,7 +19,7 @@ module.exports = function(err, req, res, next) {
 
 	if (~accept.indexOf('html')) {
 		if (err.permission = 'login') {
-			res.redirect('/');
+			return res.redirect('/');
 		}
 		
 		if (req.app.get('env') === 'production') {
