@@ -12,6 +12,7 @@ try { require('./config/env.js') } catch (e) {}
 // Libraries
 var _
 ,	express = require('express')				// *THE* nodejs framework
+,	helmet 	= require('helmet')					// Middlewares with security headers
 ,	passport= require('passport') 				// Authentication framework
 ,	swig 	= require('swig')					// template language processor
 ,	expressWinston = require('express-winston')
@@ -45,6 +46,7 @@ if (app.get('env') === 'development') {
 
 /******************************************************************************/
 /* BEGINNING of a DO_NO_TOUCH_ZONE ********************************************/
+app.use(helmet.defaults())
 app.use(express.methodOverride());
 app.use(express.bodyParser());
 app.use(require('express-validator')());
@@ -55,7 +57,8 @@ app.use(express.session({
 	maxAge: new Date(Date.now() + 3600000),
 	store: 	new (require('connect-mongo')(express))({
 		mongoose_connection: mongoose.connection
-	})
+	}),
+	cookie: {httpOnly: true}, // secure: true},
 }));
 app.use(express.csrf());
 /** END of a DO_NO_TOUCH_ZONE -----------------------------------------------**/

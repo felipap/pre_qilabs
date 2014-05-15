@@ -1,0 +1,168 @@
+
+1. deixar trello fixado
+2. todos fazendo uma lista de ideias
+3. arquivo "Visão"
+
+studentwall.org
+
+- botão de "seguir pergunta"
+
+popularity strategy:
+  1. for global feed:
+    Job that adds popular cards to the inbox of those who follow its tags.
+  2. for "popular" feed:
+    Job that adds popular cards to a feed whose recipient is the card unique id.
+
+Deletar card do feed.
+
+http://stackoverflow.com/questions/14612143/node-js-express-framework-security-issues
+Assert more: http://stackoverflow.com/questions/10827108/mongoose-check-if-object-is-mongoose-object
+
+Implement events
+
+ ☐ Prevent users from self-adding themselves and others already members
+ ☐ Prevent multiple fetches from middlewares (use res.locals to persist results)
+
+Ver como fazer stream de grupos
+ver como fazer stream de tags (-> constante para recipient?)
+ver como fazer posts agnósticos em relação a comentários
+
+Experiment with a @hasComments attribute for posts
+
+Highlight focused comments
+
+"Meu sonho"
+"Você está indo para uma área de procrastinação! :D"
+
+INFOBARS:
+http://www.chromium.org/user-experience/infobars
+http://ux.stackexchange.com/questions/1539/the-notification-tray-at-the-top-of-stack-exchange-sites-what-is-it-called-and
+
+ ☐ prevent process from being used in views
+
+ ☐ implement fan-out on read for unactive users
+ ✔ Prevent seeing comments as /posts/* @done (14-03-06 03:15)
+ ✔ prevent unauthorized view of group posts as /posts/* @done (14-03-14 02:26)
+ ✔ Tercerizar inbox bucket filling @done (14-03-14 02:26)
+ ☐ Keep pooling for comment updates.
+ 
+Make inbox online for active users
+
+green icon = online?
+fix leaks in backbone
+
+Places where we can use tasks:
+  ☐ fanning out inboxes
+  ☐ removing inboxes/posts/memberships/follows on leave
+
+IDEIAS:
+- em cada tag, explicar o que significa (principalmente em caso de olimpíadas) <= "esses usuários já participaram, pode pedir ajuda a eles"
+- botão de "Mande conteúdo pra gente!", com um formulário pre-definido ("que tipo de conteúdo?" olimpiadas, oportunidade etc) : mande conteúdo com essa tag
+- na página de participe "sou instituição" "sou pessoa física" "sou professor"
+
+Brainstorming:
+- Be like LinkedIn for students, or geeklist
+ ☐ chat
+ ☐ "leituras pendentes" tipo wunderlist
+ ☐ quiet mode (fecha o usuário das atualizações na timeline) <= boa propaganda: "Rede social impede você de fazer alguma coisa além de estudar". Talvez uma extensão que acompanhe...
+
+COISAS para implementar: Jonny e ninja:
+  ☐ Detecção de tags ideias para usuário (questionário na hora de cadastro)
+  ☐ Compartilhar das redes sociais nos posts
+
+pages for teachers
+video teach people how to do something
+
+Custom avatars: - intellectual - 
+"Apresente-se para o grupo" → cria um post de apresentação
+
+DEIXAR IMPRIMIR PORTFOLIO!!!!S
+essays padrão
+
+equivalent of karma for students = ?
+- sat ranking => stupid idea
+☐ study append prepend memcache
+
+Design:
+  ☐ flash messages
+  ☐ Improve flash messages look
+
+Programação:
+  ✔ subscribe dialog for testers @done (14-01-05 04:58)
+  ✔ scroolbars for #sidebar @done (14-02-20 01:47)
+  ✔ pagination for home page (posts) @done (14-01-14 05:58)
+  ✔ stop pagination requests after api sends page=-1. @done (14-02-21 02:06)
+  ✔ '/post/:id' page @done (14-02-21 02:06)
+  ✔ Add timestamp to timeline requests @done (14-03-05 17:17)
+  ✔ auto updating counters for comments/posts ('há 3 minutos → há 5 minutos') @done (14-02-21 02:07)
+  ✔ conexões: amigos, follow, unfollow, followers @done (14-02-21 02:31)
+  ✔ prevent usage of static methods that don't call mongoose middlewares @done (14-03-02 22:00)
+  ☐ páginas automatizadas para cada tag, com estatísticas de uso
+
+Guia pages:
+  ✔ Botão de "Nos Avise!" @done (14-01-16 11:19)
+    ☐ Formulário insite
+  ☐ 'source:' para posts <= vai precisar de algo a mais pro tumblr
+
+Futuro Muito Distante:
+ ☐ página para editores <= incentivo. "essa pessoa é reponsável por essas tags"
+ ☐ suportar RSS para Quadro de Avisos
+ ☐ admin panel e editor panel https://drywall.nodejitsu.com
+ ☐ calendario pessoal para usuários saberem as datas <<< SAPORRA TÁ VIRANDO APPLYKIT
+ ☐ estatísticas na página de cada tag
+ ☐ separação por região <= linkar com quiz inicial ?
+
+---- ✄ -----------------------
+- personal support ("você pode falar com essa pessoa sobre preparação para OBM")
+
+Business:
+ ☐ Contas Twitter e Facebook
+     contas individuais para cada sessão?: "Meavisa Concursos, Meavisa Olimpíadas"
+ ☐ newsletter (usar algum sistema já existente - caro?) e blog
+
+
+
+  # ###
+  # # Merge inboxes posts with those from followed users but that preceed "followship".
+  # # Limit search to those posts made after @minDate.
+  # ###
+  # mergeNonInboxedPosts = (minDate, ips) => # ips => Inboxed PostS
+  #   # Get all "followships" created after @minDate.
+  #   Follow.find { follower:self, dateBegin:{$gt:minDate} }, (err, follows) =>
+  #       return callback(err) if err
+        
+  #       # Get posts from these users created before "followship" or maxDate
+  #       # (whichever is older) and after minDate.
+  #       async.mapLimit follows, 5, ((follow, done) =>
+  #         ltDate = Math.min(follow.dateBegin, opts.maxDate) 
+  #         Post
+  #           .find {
+  #             author: follow.followee,
+  #             group: null,
+  #             parentPost: null,
+  #             published: {$lt:ltDate, $gt:minDate}
+  #           }
+  #           .limit opts.limit
+  #           .exec done
+  #         ), (err, _docs) ->
+  #           # Flatten lists. Remove undefined (from .limit queries).
+  #           nips = _.flatten(_docs).filter((i)->i)
+  #           console.log "#{nips.length} posts gathered from follow"
+  #           onGetNonInboxedPosts(err, nips)
+
+  #   onGetNonInboxedPosts = (err, nips) ->
+  #     return callback(err) if err
+      
+  #     all = _.sortBy(nips.concat(ips), (p) -> -p.published) # merge'n'sort by date
+
+  #     # Populate author in all docs (nips and ips)
+  #     Resource.populate all, {path: 'author actor target object'}, (err, docs) =>
+  #       return callback(err) if err
+  #       # console.log 'docs', docs
+  #       # Fill comments in all docs.
+  #       console.log 'dates:\n'+_.map(docs,(i)->i.published).join('\n')
+
+  #       minDate = if docs.length then docs[docs.length-1].published else 0
+  #       console.log 'minDate', minDate
+  #       Post.fillComments docs, (err, docs) ->
+  #         callback(err, docs, minDate)

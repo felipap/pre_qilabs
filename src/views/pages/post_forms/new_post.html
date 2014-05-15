@@ -1,41 +1,18 @@
-{% extends '../../stdbody.html' %}
+{% extends '../../snpage.html' %}
 {% import '../../macros/tags.html' as tagMacros %}
+
 {% set requirejsView="createPost" %}
 {% set dataPage="createPost" %}
 
-{% block head %}
-{% parent %}
-	{{ tagMacros.stylesheet(getMediaUrl('css','snpages.min.css')) }}
-{% endblock %}
+{% block globalContainer %}
 
-{% block pageNavbarDetail %}
-	<i class="iconThumbnail iconThumbnailSmall iconShadowed icon-bullhorn"></i>
-	<span class="pageLabel">
-		Nova Publicação
-	</span>
-{% endblock %}
-
-
-{% block body %}
-
-	{% include '../../components/navbar.html' with navbarOpts %}
-	{% include '../../components/sidebar.html' %}
-
-	<div id="globalContainer">
-		<div id="content">
-			<div id="formCreatePost">
-				{% block formContent %}
-				{% endblock %}
-			</div>
+	<div id="content">
+		<div id="formCreatePost">
+			{% block formContent %}
+			{% endblock %}
 		</div>
-
-		<div class="wordCounter"></div>
 	</div>
 
-	<script>
-		function resizeCardsPanel() {
-			document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top + 10)+"px";
-		}
-		resizeCardsPanel();
-	</script>
+	<div class="wordCounter"></div>
+
 {% endblock %}

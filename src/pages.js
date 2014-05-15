@@ -170,6 +170,7 @@ module.exports = {
   },
   '/posts/:postId': {
     name: 'profile',
+    permissions: [required.login],
     get: function(req, res) {
       return res.redirect('/#posts/' + req.params.postId);
     },

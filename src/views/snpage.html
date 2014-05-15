@@ -4,6 +4,7 @@
 
 {% block head %}
 {% parent %}
+	<script>tagData = {{ getTags()|json }};</script>
 	{{ tagMacros.stylesheet(getMediaUrl('css','snpages.min.css')) }}
 {% endblock %}
 

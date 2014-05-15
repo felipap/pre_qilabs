@@ -1,10 +1,8 @@
 {% extends '../wall.html' %}
-{% set requirejsView="cards" %}
 {% set dataPage="timeline" %}
+{% set requirejsView="cards" %}
 
-{% import '../macros/user.html' as userMacros %}
-
-{% block bodyEnd %}
+{% block body %}
 	{% parent %}
 	<script>conf={postsRoot:'/api/me/timeline/posts'};</script>
 {% endblock %}

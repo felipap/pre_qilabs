@@ -124,6 +124,7 @@ module.exports = {
 		name: 'profile'
 		# slugs: {post:'postId'}
 		# permissions: [required.posts.selfCanSee('post')]
+		permissions: [required.login]
 		get: (req, res) ->
 			res.redirect('/#posts/'+req.params.postId)
 		# get: [required.posts.selfCanSee('postId'), (req, res) ->

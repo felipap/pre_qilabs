@@ -21,16 +21,6 @@ Post = Resource.model('Post');
 
 module.exports = {
   permissions: [required.login],
-  post: function(req, res) {
-    if ('off' === req.query.notifiable) {
-      req.user.notifiable = false;
-      req.user.save();
-    } else if (__indexOf.call(req.query.notifiable, 'on') >= 0) {
-      req.user.notifiable = true;
-      req.user.save();
-    }
-    return res.end();
-  },
   children: {
     'profile': {
       put: function(req, res) {

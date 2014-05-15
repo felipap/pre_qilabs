@@ -13,15 +13,7 @@ Resource = mongoose.model 'Resource'
 Post = Resource.model 'Post'
 
 module.exports = {
-	permissions: [required.login],
-	post: (req, res) ->
-		if 'off' is req.query.notifiable
-			req.user.notifiable = off
-			req.user.save()
-		else if 'on' in req.query.notifiable
-			req.user.notifiable = on
-			req.user.save()
-		res.end()
+	permissions: [required.login]
 	children: {
 		'profile':
 			put: (req, res) ->
@@ -38,7 +30,7 @@ module.exports = {
 					req.user.profile.home = home
 				if location
 					req.user.profile.location = location
-					
+
 				req.user.save () ->
 				res.endJson { error: false} 
 
