@@ -52,6 +52,7 @@ UserSchema = new mongoose.Schema {
 		location:	''
 		bio: 		{ type: String, default: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'}
 		home: 		''
+		bgUrl: 		{ type: String, default: '/static/images/rio.jpg' }
 		# badges: 	[]
 		avatarUrl: 	''
 	},
@@ -81,15 +82,6 @@ UserSchema.virtual('profile.location').get ->
 
 UserSchema.virtual('profile.from').get ->
 	@profile.location or 'Rio de Janeiro, Brasil'
-
-UserSchema.virtual('profile.bgUrl').get ->
-	if @username is 'felipearagaopires'
-		'/static/images/u/sta.jpg'
-		# '/static/images/u/mit.jpg'
-	else
-		'/static/images/rio.jpg'
-		# if Math.random()>.5
-		# else
 
 UserSchema.virtual('profileUrl').get ->
 	'/u/'+@username

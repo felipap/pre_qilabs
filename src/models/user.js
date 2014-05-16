@@ -63,6 +63,10 @@ UserSchema = new mongoose.Schema({
       "default": 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
     },
     home: '',
+    bgUrl: {
+      type: String,
+      "default": '/static/images/rio.jpg'
+    },
     avatarUrl: ''
   },
   stats: {
@@ -106,14 +110,6 @@ UserSchema.virtual('profile.location').get(function() {
 
 UserSchema.virtual('profile.from').get(function() {
   return this.profile.location || 'Rio de Janeiro, Brasil';
-});
-
-UserSchema.virtual('profile.bgUrl').get(function() {
-  if (this.username === 'felipearagaopires') {
-    return '/static/images/u/sta.jpg';
-  } else {
-    return '/static/images/rio.jpg';
-  }
 });
 
 UserSchema.virtual('profileUrl').get(function() {

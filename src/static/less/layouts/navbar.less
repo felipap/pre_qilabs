@@ -2,6 +2,7 @@
 @import "../common.less";
 
 @navbar-height: 50px;
+@navbar-small-height: 40px;
 
 nav.bar {
 	.brand {
@@ -26,8 +27,6 @@ nav.bar {
 		}
 	} 
 }
-
-@navbar-small-height: 40px;
 
 body.hasScrolled nav.bar {
 
@@ -129,7 +128,7 @@ nav.bar {
 		position: absolute;
 		right: 50%;
 		width: 500px;
-		margin-right: (-250px + 6);
+		margin-right: (-250px + 3px);
 
 		text-align: center;
 		font-size: @brandFontSize;
@@ -356,7 +355,7 @@ nav.bar {
 				box-shadow: none;
 				margin: 0;
 
-				background: saturate(@COLOR3,5%);
+				background: mix(@COLOR3,@COLOR4);
 				height: @navbar-height+1;
 				line-height: @navbar-height;
 				width: 43px;
@@ -460,15 +459,7 @@ nav.bar {
 	}
 }
 
-.dialog {
-	[data-action=send-tester-email] {
-		.high-xbtn;
-	}
-}
-
-
 .popover {
-
 	background: #222;
 	margin-right: 3px;
 	.rounded(3px);

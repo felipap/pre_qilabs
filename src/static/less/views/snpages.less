@@ -102,16 +102,16 @@ body.sidebarOpen.rightContainerOpen {
 
 	&::-webkit-scrollbar-thumb {
 		.transition(all, .2s, linear);
-		background-color: #BBB;
-		border: 1px solid #AAA;
+		background-color: #AAA;
+		// border: 1px solid transparent;
 		border-width: 0 0 0 1px;
 		&:hover {
-			background: #AAA;
-			border: 1px solid #AAA;
+			background: #999;
+			// border: 1px solid #AAA;
 		}
 		&:active {
-			background: #999;
-			border: 1px solid #999;
+			background: #888;
+			// border: 1px solid #999;
 		}
 	}
 
@@ -122,7 +122,7 @@ body.sidebarOpen.rightContainerOpen {
 
 	&::-webkit-scrollbar-track {
 		background-clip: padding-box;
-		border-left: 1px solid #AAA;
+		// border-left: 1px solid transparent;
 	}
 	
 	&::-webkit-scrollbar {

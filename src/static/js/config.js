@@ -8,7 +8,7 @@ requirejs.config({
 		'plugins':			'app/plugins',
 		// App
 		'views.common':		'app/views/common',
-		'views.cards':		'app/views/wall',
+		'views.wall':		'app/views/wall',
 		'views.profile':	'app/views/profile',
 		'views.panel':		'app/views/panel',
 		'views.createPost':	'app/views/createPost',

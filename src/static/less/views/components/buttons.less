@@ -1,19 +1,4 @@
 
-// @padding-base-vertical:     6px;
-// @padding-base-horizontal:   12px;
-// @padding-large-vertical:    10px;
-// @padding-large-horizontal:  16px;
-// @padding-small-vertical:    5px;
-// @padding-small-horizontal:  10px;
-// @padding-xs-vertical:       1px;
-// @padding-xs-horizontal:     5px;
-
-@line-height-large:         1.33;
-@line-height-small:         1.5;
-@border-radius-base:        0;
-@border-radius-large:       6px;
-@border-radius-small:       3px;
-
 @btn-font-weight: 		normal;
 @btn-default-color: 	#333;
 @btn-default-bg: 		#fff;
@@ -104,7 +89,7 @@ button, .button {
 	.color-btn-focus(@color, @bg, transparent);
 	border: 2px solid transparent;
 	.color-btn(@color, @bg, @bg);
-	.color-btn-hover(white, lighten(@bg, 8%), darken(@bg, 12%));
+	.color-btn-hover(white, lighten(@bg, 8%), lighten(@bg, 8%));
 	.color-btn-active(white, darken(@bg, 8%), darken(@bg, 12%));
 
 	&:active {
@@ -148,18 +133,18 @@ button, .button {
 	&[data-action=follow] {
 		.rounded(5px);
 		&:empty::before { content: "Seguir"; }
-		.high-xbtn(@color: white, @bg: @COLOR2, 6px, 0px, 5px);
+		.high-xbtn(@color: white, @bg: @COLOR2, 2px, 6px, 3px);
 	}
 	&[data-action=unfollow]:not(:hover) {
 		.rounded(5px);
 		.xbtn(@color: white, @bg: @COLOR1);
-		padding: 4px 0px;
+		padding: 5px 0px;
 		&::before { content: "Seguindo"; }
 	}
 	&[data-action=unfollow]:hover{
 		&:empty::before { content: "Desfazer"; }
 		.xbtn(@color: white, @bg: desaturate(@COLOR4,10%));
-		padding: 4px 0px;
+		padding: 5px 0px;
 	}
 
 	text-transform: uppercase;

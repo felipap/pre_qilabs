@@ -89,29 +89,18 @@ define([
 
 	$(".btn-follow").click(function (evt) {
 		var self = this;
-		switch (this.dataset.action) {
-			case 'unfollow':
-				self.dataset.action = 'follow';
-				$.post('/api/users/'+this.dataset.user+'/unfollow',
-					function (data) {
-						if (data.error) {
-							alert(data.error);
-						} else {
-							self.dataset.action = 'follow';
-						}
-				});
-				break;
-			case 'follow':
-				self.dataset.action = 'unfollow';
-				$.post('/api/users/'+this.dataset.user+'/follow',
-					function (data) {
-						if (data.error) {
-							alert(data.error);
-						} else {
-							self.dataset.action = 'unfollow';
-						}
-				});
-		}
+
+		if (this.dataset.action !== 'follow' && this.dataset.action !== 'unfollow')
+			return alert('damn');
+
+		var neew = (this.dataset.action==='follow')?'unfollow':'follow';
+		$.post('/api/users/'+this.dataset.user+'/'+this.dataset.action, function (data) {
+			if (data.error) {
+				alert(data.error);
+			} else {
+				self.dataset.action = neew;
+			}
+		});
 	});
 
 	$("body").tooltip({selector:'[data-toggle=tooltip]'});
@@ -126,19 +115,6 @@ define([
 			}
 		});
 	})();
-
-	// 
-
-	// (function showFlashPosts (msgs) {
-	// 	if (!$(".flash-msgs")[0])
-	// 		$("<div class='flash-msgs'>").prependTo($('body > section')[0]);
-	// 	for (var i=0; msgs.warn && i<msgs.warn.length; i++)
-	// 		$("<div class='warn'><button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>"+msgs.warn[i]+"</div>")
-	// 			.hide().appendTo($(".flash-msgs")).slideDown();
-	// 	for (var i=0; msgs.info && i<msgs.info.length; i++)
-	// 		$("<div class='info'><button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>"+msgs.info[i]+"</div>")
-	// 			.hide().appendTo($(".flash-msgs")).slideDown();
-	// })(window._flash_msgs);
 
 	// GOSTAVA TANTO DE NUTELLA
 		

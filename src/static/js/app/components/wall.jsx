@@ -178,6 +178,7 @@ define([
 
 	var FollowList = React.createClass({
 		render: function () {
+			// <button className="btn-follow" data-action="unfollow"></button>
 			var items = _.map(this.props.list, function (person) {
 				return (
 					<li>
@@ -187,7 +188,6 @@ define([
 							</div>
 							<span className="name">{person.name}</span>
 						</a>
-						<button className="btn-follow" data-action="unfollow"></button>
 					</li>
 				);
 			});

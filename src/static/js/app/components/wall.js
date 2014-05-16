@@ -178,6 +178,7 @@ define([
 
 	var FollowList = React.createClass({displayName: 'FollowList',
 		render: function () {
+			// <button className="btn-follow" data-action="unfollow"></button>
 			var items = _.map(this.props.list, function (person) {
 				return (
 					React.DOM.li(null, 
@@ -186,8 +187,7 @@ define([
 								React.DOM.div( {className:"avatar", style: {background: 'url("'+person.avatarUrl+'")'} })
 							),
 							React.DOM.span( {className:"name"}, person.name)
-						),
-						React.DOM.button( {className:"btn-follow", 'data-action':"unfollow"})
+						)
 					)
 				);
 			});
