@@ -11,20 +11,16 @@ async = require('async');
 
 assertArgs = require('./lib/assertArgs');
 
-ObjectId = mongoose.Schema.ObjectId;
-
 Notification = mongoose.model('Notification');
 
 Resource = mongoose.model('Resource');
 
 Types = {
-  Comment: 'Comment',
-  Answer: 'Answer',
-  PlainPost: 'PlainPost',
-  Question: 'Question',
   Experience: 'Experience',
   Tip: 'Tip',
-  Notification: 'Notification'
+  Question: 'Question',
+  Comment: 'Comment',
+  Answer: 'Answer'
 };
 
 TransTypes = {};
@@ -35,17 +31,18 @@ TransTypes[Types.Experience] = 'Experiência';
 
 TransTypes[Types.Tip] = 'Dica';
 
+TransTypes[Types.Answer] = 'Resposta';
+
+TransTypes[Types.Comment] = 'Comentário';
+
+ObjectId = mongoose.Schema.ObjectId;
+
 PostSchema = new Resource.Schema({
   author: {
     type: ObjectId,
     ref: 'User',
     required: true,
     indexed: 1
-  },
-  group: {
-    type: ObjectId,
-    ref: 'Group',
-    required: false
   },
   parentPost: {
     type: ObjectId,
@@ -119,7 +116,7 @@ PostSchema.virtual('apiPath').get(function() {
 });
 
 smallify = function(url) {
-  if (url.length > 30) {
+  if (url.length > 50) {
     return '...' + /https?:(?:\/\/)?[A-Za-z0-9][A-Za-z0-9\-]*([A-Za-z0-9\-]{2}\.[A-Za-z0-9\.\-]+(\/.{0,20})?)/.exec(url)[1] + '...';
   } else {
     return url;

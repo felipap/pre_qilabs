@@ -9,34 +9,30 @@ _ = require 'underscore'
 async = require 'async'
 assertArgs = require './lib/assertArgs'
 
-ObjectId = mongoose.Schema.ObjectId
-
 Notification = mongoose.model 'Notification'
 Resource = mongoose.model 'Resource'
 
 Types = 
-	Comment: 'Comment'
-	Answer: 'Answer'
-	PlainPost: 'PlainPost'
-	Question: 'Question'
 	Experience: 'Experience'
 	Tip: 'Tip'
-	Notification: 'Notification'
-	# QA: 'QA'
-	# VideoPost: 'VideoPost'
-	# QuizPost: 'QuizPost'
+	Question: 'Question'
+	Comment: 'Comment'
+	Answer: 'Answer'
 
 TransTypes = {}
 TransTypes[Types.Question] = 'Pergunta'
 TransTypes[Types.Experience] = 'Experiência'
 TransTypes[Types.Tip] = 'Dica'
+TransTypes[Types.Answer] = 'Resposta'
+TransTypes[Types.Comment] = 'Comentário'
 
 ################################################################################
 ## Schema ######################################################################
 
+ObjectId = mongoose.Schema.ObjectId
+
 PostSchema = new Resource.Schema {
 	author:		{ type: ObjectId, ref: 'User', required: true, indexed: 1 }
-	group:		{ type: ObjectId, ref: 'Group', required: false }
 	parentPost:	{ type: ObjectId, ref: 'Post', required: false }
 	
 	updated:	{ type: Date }
@@ -77,7 +73,7 @@ PostSchema.virtual('apiPath').get ->
 	"/api/posts/{id}".replace(/{id}/, @id)
 
 smallify = (url) ->
-	if url.length > 30
+	if url.length > 50
 	# src = /((https?:(?:\/\/)?)(?:www\.)?[A-Za-z0-9\.\-]+).{20}/.exec(url)[0]
 	# '...'+src.slice(src.length-30)
 		'...'+/https?:(?:\/\/)?[A-Za-z0-9][A-Za-z0-9\-]*([A-Za-z0-9\-]{2}\.[A-Za-z0-9\.\-]+(\/.{0,20})?)/.exec(url)[1]+'...'

@@ -19,7 +19,7 @@ requirejs.config({
 		'components.bell':		'app/components/bell',
 		'components.cards':		'app/components/wall',
 		'components.timeline':	'app/components/timeline',
-		'components.postForms':	'app/components/postForms',
+		// 'components.postForms':	'app/components/postForms',
 		'components.postModels':'app/components/postModels',
 		'components.postViews':	'app/components/postViews',
 		// Third-party

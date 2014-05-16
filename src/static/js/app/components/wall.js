@@ -7,13 +7,10 @@
 ** by @f03lipe
 */
 
-define([
-	'jquery', 'backbone', 'components.postForms', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
-	function ($, Backbone, postForms, postModels, postViews, _, React, Showdown) {
 
-	$(window).resize(function resizeCardsPanel() {
-		document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top + 10)+"px";
-	});
+define([
+	'jquery', 'backbone', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
+	function ($, Backbone, postModels, postViews, _, React, Showdown) {
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
@@ -225,7 +222,6 @@ define([
 		},
 		render: function () {
 			var self = this;
-			var postForm = postForms.Plain;
 			function fetchMore () {
 				self.props.collection.tryFetchMore();
 			}

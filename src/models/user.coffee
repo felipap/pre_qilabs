@@ -276,8 +276,7 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 								Post.count {type:'Answer', parentPost:post}, (err, acount) ->
 									done(err, _.extend(post.toJSON(), {childrenCount:{Answer:acount,Comment:ccount}}))
 						else done(null, post.toJSON)
-					, (err, results) ->
-						callback(err, results, minDate)
+					, (err, results) -> callback(err, results, minDate)
 
 UserSchema.statics.PopulateFields = PopulateFields
 
@@ -289,73 +288,6 @@ UserSchema.statics.getUserTimeline = (user, opts, cb) ->
 		{actor:user, group:null},
 		(err, all, minPostDate) -> cb(err, all, minPostDate)
 	)
-
-# UserSchema.methods.getLabTimeline = (group, opts, cb) ->
-# 	assertArgs({$isModel:Group}, {$contains:'maxDate'}) # isId:'User', }
-# 	fetchTimelinePostAndActivities(
-# 		{maxDate: opts.maxDate},
-# 		{group:group, parentPost:null},
-# 		{group:group},
-# 		(err, all, minPostDate) -> console.log('err', err); cb(err, all, minPostDate)
-# 	)
-
-################################################################################
-## related to Groups ###########################################################
-
-# UserSchema.methods.createGroup = (data, cb) ->
-# 	# assertArgs
-# 	self = @
-# 	group = new Group {
-# 		name: data.profile.name
-# 		profile: {
-# 			name: data.profile.name
-# 		}
-# 	}
-# 	group.save (err, group) =>
-# 		console.log(err, group)
-# 		return cb(err) if err
-# 		self.update {$push: {
-# 			memberships: {
-# 				member: self
-# 				permission: Group.MembershipTypes.Moderator
-# 				group: group.id
-# 			}
-# 		}}, () ->
-# 			cb(null, group)
-# 			Activity.Trigger(@, Activity.Types.GroupCreated)({group:group, creator:self}, ->)
-
-# UserSchema.methods.addUserToGroup = (user, group, cb) ->
-# 	self = @
-# 	assertArgs({$isModel:'User'}, {$isModel:'Group'}, '$isCb')
-# 	if mem = _.findWhere(user.memberships, {group:group.id})
-# 		return cb()
-# 	else
-# 		user.update {$push: {
-# 			memberships: {
-# 				member: user
-# 				permission: Group.MembershipTypes.Member
-# 				group: group.id
-# 			}
-# 		}}, (err) =>
-# 			cb(err, mem)
-# 			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
-# 				group:group, actor:@, member:user
-# 			}, ->)
-
-
-# UserSchema.methods.removeUserFromGroup = (member, group, type, cb) ->
-# 	self = @
-# 	mem = _.findWhere(user.memberships, {group:group.id})
-# 	if mem
-# 		return cb()
-# 	else
-# 		user.update {$pull: { memberships: { group: group.id } }}, (err) =>
-# 			cb(err, mem)
-# 			Activity.Trigger(@, Activity.Types.GroupMemberAdded)({
-# 				group:group, actor:@, member:user
-# 			}, ->)
-
-
 
 ################################################################################
 ## related to the Posting ######################################################

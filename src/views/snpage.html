@@ -24,7 +24,12 @@
 	<script>
 		(window.resizeCardsPanel = function () {
 			document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top + 10)+"px";
+			// var minMargin = 27;
+			// var cardWidth = 200; // document.querySelector('.cardView').getClientRects()[0].width;
+			// var many = document.getElementById("globalContainer").clientWidth/(minMargin+cardWidth);
+			// console.log(many)
 		})();
+		window.addEventListener('resize', resizeCardsPanel);
 	</script>
 
 
