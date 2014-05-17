@@ -97,6 +97,13 @@ module.exports = {
       return res.redirect('/auth/facebook');
     }
   },
+  '/config': {
+    name: 'config',
+    permissions: [required.login],
+    get: function(req, res) {
+      return res.render('pages/config', {});
+    }
+  },
   '/painel': {
     name: 'panel',
     permissions: [required.login],
@@ -106,6 +113,13 @@ module.exports = {
   },
   '/guias/vestibular': {
     name: 'guia',
+    permissions: [required.login],
+    get: function(req, res) {
+      return res.render('guide', {});
+    }
+  },
+  '/guias': {
+    name: 'guides',
     permissions: [required.login],
     get: function(req, res) {
       return res.render('guide', {});

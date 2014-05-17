@@ -6,8 +6,8 @@ detailVisible
 {% endif %}
 {% endif %}" role="navigation" id="navbar">
 <div class="navcontent">
-	<span class="brand">
-		<a href="/" tabindex="-1">QI <i class="icon-bulb"></i> Labs</a>
+	<span class="center">
+		<a class="brand" href="/" tabindex="-1">QI <i class="icon-bulb"></i> Labs</a>
 		<div style="
 			display: inline-block;
 			top: -1px;
@@ -25,25 +25,15 @@ detailVisible
 		</div>
 	</span>
 	{% if user %}
-		<ul>
+		<ul class="left">
 			<li>
-				<button class="openSidebar">
+				<button class="icon-btn openSidebar">
 					<i class="icon-bars"></i>
 				</button>
 			</li>
 		</ul>
 
-		{% if dataPage === "createPost" %}
-			<ul class="pull-right">
-				<li>
-					<a href="/" class="button plain-btn" data-action="discart-post">Cancelar</a>
-				</li>
-				<li>
-					<button data-action="send-post">Publicar</button>
-				</li>
-			</ul>
-		{% else %}
-		<ul class="pull-right noPadding">
+		<ul class="right">
 			<li id="bellPlacement">
 				<button class="icon-btn bell-btn" data-action="show-notifications">
 					<i class="icon-bell-o"></i><sup class="count"></sup>
@@ -102,12 +92,11 @@ detailVisible
 					</li>
 				</ul>
 			</li><li>
-				<a href="javascript:$('#newPostPopup').fadeIn()" class="button newPost" title="Nova Publicação">
+				<a href="#new" class="button newPost" title="Criar Publicação">
 					<i class="icon-pencil"></i>
 				</a>
 			</li>
 		</ul>
-		{% endif %}
 	{% else %}
 	{% endif %}
 </div>

@@ -18,13 +18,6 @@ module.exports = function(grunt) {
 				},
 				options: { cleancss: true },
 			},
-			others: {
-				files: {
-					// 'src/static/css/about_pages.min.css':'src/static/less/views/about_pages.less',
-					'src/static/css/full_bg_page.min.css':'src/static/less/views/full_bg_page.less',
-				},
-				options: { cleancss: true },
-			}
 		},
 		
 		coffee: {
@@ -58,11 +51,11 @@ module.exports = function(grunt) {
 			// Less
 			css: {
 				files: ['src/static/less/**/*.less'],
-				tasks: ['less:dist'],
+				tasks: ['less'],
 				options: { spawn: false },
 			},
 			// // Require.js
-			// scripts_lab: {
+			// buildRequirejs: {
 			// 	files: ['src/static/js/app/**/*'],
 			// 	tasks: ['requirejs'],
 			// },
@@ -97,14 +90,12 @@ module.exports = function(grunt) {
 				options: {
 					removeCombined: true,
 					modules: [
-						{name: 'app/views/panel'},
-						{name: 'app/views/timeline'},
-						{name: 'app/views/cards'},
-						{name: 'app/views/lab'},
-						{name: 'app/views/profile'},
-						{name: 'app/views/createPost'},
-						// {name: 'app/views/guide'},
-						// {name: 'app/views/mural'},
+						{name: 'views.common'},
+						{name: 'views.wall'},
+						{name: 'views.profile'},
+						{name: 'views.panel'},
+						{name: 'views.createPost'},
+						{name: 'views.front'},
 					]
 				}
 			}

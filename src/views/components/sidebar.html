@@ -1,58 +1,51 @@
+
+{% import "../macros/user.html" as userMacros %}
+
 <div id="sidebarPanel">
-	<div class="horBar"></div>
-<!-- 	<section>
-		<label>Publicações</label>
-		<li>
-			<a href="#">
-				<i class="icon-home"></i>
-				<span>De quem você segue</span>
-			</a>
-		</li>
-		<li>
-			<a href="#">
-				<i class="icon-fire"></i>
-				<span>Populares</span>
-			</a>
-		</li>
-	</section>
-	
-	<hr>
- -->
 	<section>
-		<label>Páginas</label>
-		<li>
-			<a href="#">
-				<i class="icon-home"></i>
-				<span>Home</span>
-			</a>
-		</li>
-		<li class="active">
-			<a href="#">
-				<i class="icon-user"></i>
+		<li class="me">
+			<a href="{{ user.path }}">
+				{{ userMacros.render(user) }}
 				<span>Meu Perfil</span>
 			</a>
-		</li>
-		<li>
-			<a href="#">
-				<i class="icon-group"></i>
-				<span>Pessoas</span>
+			<a class="cog" href="{{ getPageUrl('config') }}">
+				<i class="icon-cog"></i>
 			</a>
 		</li>
 		<li>
-			<a href="#">
+			<a href="#notifications">
+				<em data-info="unseen-notifs">13</em>
+				<span>Notificações</span>
+			</a>
+		</li>
+		<li>
+			<a href="#mine">
+				<i class="icon-folder"></i>
+				Minhas Publicações
+			</a>
+		</li>
+		<li>
+			<a href="#mine">
+				<i class="icon-pencil"></i>
+				Nova Publicação
+			</a>
+		</li>
+		<li>
+			<a href="#mine">
 				<i class="icon-tags"></i>
-				<span>Assuntos</span>
+				Editar Interesses
 			</a>
 		</li>
 		<li>
-			<a href="#">
-				<i class="icon-archive"></i>
-				<span>Guias</span>
-			</a>
+			<button data-action="explore">
+				<span>EXPLORAR GUIAS</span>
+			</button>
 		</li>
 	</section>
-	<hr />
-	<section>
+
+	{#
+	<section class="switch">
+		Layout: 
 		<div class="onoffswitch">
 			<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked onChange="$('#cards').toggleClass('grid')">
 			<label class="onoffswitch-label" for="myonoffswitch">
@@ -61,12 +54,12 @@
 			</label>
 		</div>
 	</section>
-	<hr />
+	#}
+
 	<section class="sidebarBottom">
-		<li><a href="#">Ajuda</a></li> ·
-		<li><a href="#">FAQ</a></li> ·
-		<li><a href="#" data-ajax-post-href="{{ getPageUrl('logout') }}" data-redirect-href="/">Logout</a></li>
-		<div>QI Labs · Copyright 2014</div>
+		QI LABS 2014 ·
+		<a href="#">AJUDA</a> ·
+		<a href="#" data-action="logout" data-ajax-post-href="{{ getPageUrl('logout') }}" data-redirect-href="/">LOGOUT</a>
 	</section>
 </div>
 

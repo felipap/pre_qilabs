@@ -61,6 +61,12 @@ module.exports = {
 		get: (req, res) ->
 			res.redirect('/auth/facebook')
 
+	'/config':
+		name: 'config'
+		permissions: [required.login]
+		get: (req, res) ->
+			res.render 'pages/config', {}
+
 	'/painel':
 		name: 'panel'
 		permissions: [required.login]
@@ -69,6 +75,12 @@ module.exports = {
 
 	'/guias/vestibular':
 		name: 'guia'
+		permissions: [required.login]
+		get: (req, res) ->
+			res.render 'guide', {}
+
+	'/guias':
+		name: 'guides'
 		permissions: [required.login]
 		get: (req, res) ->
 			res.render 'guide', {}

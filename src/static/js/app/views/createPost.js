@@ -1,24 +1,7 @@
 /** @jsx React.DOM */
 
-require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-bundle'], function (common, React) {
-
-	$(window).resize(function resizeCardsPanel() {
-		document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top + 10)+"px";
-	});
-
-	var editor = new MediumEditor('#postBody');
-	$('#postBody').mediumInsert({
-		editor: editor,
-		addons: {
-			images: {
-				imagesUploadScript: "http://notrelative.com",
-				formatData: function (data) {
-					console.log(arguments);
-				}
-			}
-		},
-	});	//
-
+define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-bundle'], function (common, React) {
+	
 	var tagStates = new Bloodhound({
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -78,10 +61,12 @@ require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-
 			$(this.refs.input.getDOMNode())
 				.on('focusout', function () {
 					$('#tagSelectionBox').removeClass('focused');
+					$(self.refs.input.getDOMNode()).val('asdf');
+					console.log('oi caraio')
 				})
 				.on('keydown', function (e) {
 					var key = e.keyCode || e.charCode;
-					if (key == 8 && e.target.value.match(/^\s*$/)) {
+					if (key == 8 && e.target.value.match(/^\s*$/)) { // delete on backspace
 						self.popTag();
 					}
 				});
@@ -94,20 +79,20 @@ require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-
 			var self = this;
 			var tags = _.map(this.state.selectedTagsIds, function (tagId) {
 				return (
-					React.DOM.li( {className:"tag"}, 
+					React.DOM.li( {className:"tag", key:tagId}, 
 						React.DOM.span(null, 
-							self.props.data[tagId].name
+							this.props.data[tagId].name
 						),
 						React.DOM.span( {onClick:function(){self.removeTag(tagId)}}, React.DOM.i( {className:"icon-times"}))
 					)
 				);
-			});
+			}.bind(this));
 			return (
 				React.DOM.div( {className:tags.length?'':' empty ', id:"tagSelectionBox"}, 
 					React.DOM.i( {className:"iconThumbnail iconThumbnailSmall icon-tags"}),
 					React.DOM.ul(null, 
 						tags.length?
-						tags
+							React.addons.CSSTransitionGroup({transitionName:"animateFade"},tags)
 						:(
 							React.DOM.div( {className:"placeholder"}, "Tópicos relacionados")
 						)
@@ -117,57 +102,102 @@ require(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-
 			);
 		},
 	});
-	
-	var tagSelectionBox = React.renderComponent(TagSelectionBox( {data:_.indexBy(tagData,'id')} ), document.getElementById('tagSelectionBoxWrapper'));
 
-	// var page = React.createClass({
-	// 	render: function () {
-	// 		return (
-	// 			<tagSelectionBox>
-	// 		);
-	// 	}
-	// })
+	return React.createClass({
+		componentDidMount: function () {
+			var postBody = this.refs.postBody.getDOMNode();
+			var self = this;
 
-	$("#postBody").on('input keyup', function () {
-		function countWords (s){
-			var ocs = s.slice(0,s.length-4)
-				.replace(/(^\s*)|(\s*$)/gi,"")
-				.replace(/[ ]{2,}/gi," ")
-				.replace(/\n /,"\n")
-				.split(' ');
-			return ocs[0]===''?(ocs.length-1):ocs.length;
-		}
-		var count = countWords($('#postBody').text());
-		$(".wordCounter").html(count?(count==1?count+" palavra":count+" palavras"):'');
-	});
+			this.editor = new MediumEditor(postBody);
+			$(this.refs.titleInput.getDOMNode()).keypress(function (e) {
+				if (e.keyCode == 13) {
+					e.preventDefault();
+				}
+			});
 
-	$(".autosize").autosize();
-	$(".autosize").keypress(function (e) {
-		if (e.keyCode == 13) {
-			e.preventDefault();
-		}
-	});
+			$(postBody).mediumInsert({
+				editor: this.editor,
+				addons: {
+					images: {
+						imagesUploadScript: "http://notrelative.com",
+						formatData: function (data) {
+							console.log(arguments);
+						}
+					}
+				},
+			});
 
-	$("[data-action=send-post]").click(function () {
-		console.log('body', editor.serialize().postBody)
-		var data = {
-			body: editor.serialize().postBody.value,
-			title: $("[name=post_title]").val(),
-			type: $("[name=post_type]").val(),
-			tags: tagSelectionBox.getSelectedTagsIds(),
-		};
-		console.log(data)
-		$.ajax({
-			dataType: 'JSON',
-			data: data,
-			url: "/api/me/timeline/posts",
-			type: "POST",
-		}).done(function (response) {
-			if (response.error)
-				alert(response.error)
-			else {
-				window.location.href = response.data.path;
-			}
-		});
+			$(postBody).on('input keyup', function () {
+				function countWords (s){
+					var ocs = s.slice(0,s.length-4)
+						.replace(/(^\s*)|(\s*$)/gi,"")
+						.replace(/[ ]{2,}/gi," ")
+						.replace(/\n /,"\n")
+						.split(' ');
+					return ocs[0]===''?(ocs.length-1):ocs.length;
+				}
+				var count = countWords($(postBody).text());
+				$(self.refs.wordCount.getDOMNode()).html(count?(count==1?count+" palavra":count+" palavras"):'');
+			});
+
+		},
+		sendPost: function () {
+			var postBody = this.refs.postBody.getDOMNode();
+
+			console.log('body', this.editor.serialize().postBody)
+			var data = {
+				body: this.editor.serialize().postBody.value,
+				title: $("[name=post_title]").val(),
+				type: $("[name=post_type]").val(),
+				tags: this.refs.tagSelectionBox.getSelectedTagsIds(),
+			};
+			console.log(data)
+			$.ajax({
+				dataType: 'JSON',
+				data: data,
+				url: "/api/me/timeline/posts",
+				type: "POST",
+			}).done(function (response) {
+				if (response.error)
+					alert(response.error)
+				else {
+					window.location.href = response.data.path;
+				}
+			});
+		},
+		render: function () {
+			var CSSTransition = React.addons.CSSTransitionGroup;
+			return (
+				CSSTransition( {transitionName:"animateFade"}, 
+					React.DOM.div( {'data-page':"createPost", className:""}, 
+						React.DOM.nav( {className:"bar"}, 
+							React.DOM.div( {className:"navcontent"}, 
+								React.DOM.ul( {className:"right padding"}, 
+									React.DOM.li(null, 
+										React.DOM.a( {href:"#", class:"button plain-btn", 'data-action':"discart-post"}, "Cancelar")
+									),
+									React.DOM.li(null, 
+										React.DOM.button( {onClick:this.sendPost, 'data-action':"send-post"}, "Publicar")
+									)
+								)
+							)
+						),
+
+						React.DOM.div( {id:"content"}, 
+							React.DOM.div( {id:"formCreatePost"}, 
+								React.DOM.textarea( {ref:"titleInput", className:"title autosize", name:"post_title", placeholder:"Título da Publicação", 'data-toggle':"tooltip", 'data-placement':"right", title:"", 'data-trigger':"focus"}),
+								TagSelectionBox( {ref:"tagSelectionBox", data:_.indexBy(tagData,'id')} ),
+								React.DOM.div( {className:"bodyWrapper"}, 
+									React.DOM.div( {id:"postBody", ref:"postBody", 'data-placeholder':"Conte a sua experiência aqui. Mínimo de 100 palavras."})
+								),
+								React.DOM.input( {type:"hidden", name:"post_type", value:"Experience"} ),
+								React.DOM.input( {type:"hidden", name:"_csrf", value:"{{ token }}"} )
+							)
+						),
+						React.DOM.div( {ref:"wordCount", className:"wordCounter"})
+					)
+				)
+			);
+		},
 	});
 });

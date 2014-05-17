@@ -13,21 +13,18 @@
 	{% include 'components/navbar.html' with navbarOpts %}
 	{% include 'components/sidebar.html' %}
 
-	<div class="globalContainer" id="globalContainer">
+	<div class="gContainer" id="globalContainer">
 		{% block globalContainer %}
 		{% endblock %}
 	</div>
 
-	<div class="globalContainer" id="rightContainer"></div>
+	<div class="gContainer" id="rightContainer"></div>
+
 	<div id="fullPostContainer"></div>
 
 	<script>
 		(window.resizeCardsPanel = function () {
 			document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top + 10)+"px";
-			// var minMargin = 27;
-			// var cardWidth = 200; // document.querySelector('.cardView').getClientRects()[0].width;
-			// var many = document.getElementById("globalContainer").clientWidth/(minMargin+cardWidth);
-			// console.log(many)
 		})();
 		window.addEventListener('resize', resizeCardsPanel);
 	</script>

@@ -2,19 +2,14 @@
 @import "../common.less";
 
 @navbar-height: 50px;
-@navbar-small-height: 40px;
+@navbar-small-height: 50px;
 
-// Put transition
-nav.bar {
-	.brand {
+// add transitions for .hasScrolled
+#navbar {
+	.center {
 		.transition(line-height, .2s, linear);
 	}
-  	.navcontent > ul {
-		.plain-btn {
-		}
-		.openSidebar {
-			.transition(left, .2s, linear);
-		}
+ 	.navcontent > ul {
 		.newPost {
 			.transition(line-height, .2s, linear);
 			.transition(width, .2s, linear);
@@ -22,11 +17,11 @@ nav.bar {
 	} 
 }
 
-body.hasScrolled nav.bar {
+body.DhasScrolled #navbar {
 
 	height: @navbar-small-height;
 
-	.brand  {
+	.center  {
 		line-height: (@navbar-small-height - 1);
 		font-size: 20px;
 	}
@@ -40,10 +35,6 @@ body.hasScrolled nav.bar {
 		.plain-btn,
 		.icon-btn {
 			height: @navbar-small-height+1;
-		}
-		.openSidebar {
-			height: @navbar-small-height;
-			left: 5px;
 		}
 		.newPost {
 			width: @navbar-small-height;
@@ -73,20 +64,15 @@ nav.bar {
 	&:extend(.clearfix all); // Prevent floats from breaking the navbar
 
 	.navcontent {
-		margin: 0 auto;
-		padding: 0 0 0 20px;
+		width: 100%;
+		& > .right { float: right !important; }
+		& > .left { float: left !important; }
 	}
 
 	.tooltip .tooltip-inner {}
 
-	.pull-right { float: right !important; }
-	.pull-left { float: left !important; }
-	.navcontent > ul:not(.pull-right) {
-		.pull-left;
-	}
-
 	&.detailOnScroll {
-		.brand {
+		.center {
 			.transition(margin-right, none);
 			body.hasScrolled & {
 				margin-right: -180px;
@@ -104,7 +90,7 @@ nav.bar {
 	}
 
 	&.detailVisible {
-		.brand {
+		.center {
 			.transition(margin-right, none);
 			margin-right: -180px;
 			.transition(margin-right, .1s, linear);
@@ -117,6 +103,21 @@ nav.bar {
 	}
 
 	.brand {
+		color: @brandColor;
+		font-family: @BrandFontFamily;
+		text-transform: uppercase;
+		font-family: "museo";
+		outline: none !important;
+
+		&:focus, &:hover {
+			text-decoration: none;
+		}
+		i {
+			margin-top: -2px;
+		}
+	}
+
+	.center {
 		.unselectable;
 		position: absolute;
 		right: 50%;
@@ -127,21 +128,6 @@ nav.bar {
 		font-size: @brandFontSize;
 		line-height: (@navbar-height - 1);
 		vertical-align: middle;
-
-		a {
-			color: @brandColor;
-			font-family: @BrandFontFamily;
-			text-transform: uppercase;
-			font-family: "museo";
-			outline: none !important;
-
-			&:focus, &:hover {
-				text-decoration: none;
-			}
-			i {
-				margin-top: -2px;
-			}
-		}
 
 		.pageDetailLabel {
 			position: relative;
@@ -171,10 +157,9 @@ nav.bar {
 	}
 
 	.navcontent > ul {
-		margin: 0 10px;
 
-		&.noPadding {
-			margin: 0 !important;
+		&.padding {
+			margin: 0 10px;
 		}
 
 		& > li {
@@ -206,7 +191,7 @@ nav.bar {
 				margin: 0;
 				border-bottom: 1px solid transparent;
 				&:hover, &:focus {
-					background: #F0F0F0;
+					// background: #F0F0F0;
 					// border-bottom: 2px solid #AAA;
 				}
 				.transition(font-size, .2s, linear);
@@ -225,7 +210,9 @@ nav.bar {
 			}
 
 			.icon-btn {
-				border-left: 1px solid #DDD;
+				// border-left: 1px solid #DDD;
+				padding: 8px 20px;
+				margin-left: -6px;
 			}
 
 			&.sortingMenu {
@@ -303,15 +290,11 @@ nav.bar {
 				}
 			}
 
-			.openSidebar {
-				position: absolute;
-				top: 0;
-				left: 10px;
-				
+			.openSidebar {				
 				line-height: 1;
 				border: none;
-				padding: 8px 12px;
-				height: @navbar-height;
+				padding: 8px 22px;
+				height: @navbar-height+1;
 				margin: 0;
 				text-align: left;
 				opacity: .6;
@@ -319,6 +302,7 @@ nav.bar {
 				color: @compColor;
 				font-weight: 700;
 				vertical-align: top;
+				.rounded(0);
 				box-shadow: none;
 				background: none;
 
@@ -326,7 +310,7 @@ nav.bar {
 					background: none;
 					box-shadow: none;
 				}
-				.transition(opacity, .2s, linear);
+				.transition(all, .4s, linear);
 
 				i {
 					font-size: 21px !important;
@@ -489,7 +473,7 @@ nav.bar {
 			.transition(all, .2s, linear);
 		
 			&:not(:last-child) {
-				border-bottom: 1px solid #1A1A1A;
+				// border-bottom: 1px solid #1A1A1A;
 			}
 
 			&[data-accessed=false]::before {

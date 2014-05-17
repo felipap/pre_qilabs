@@ -18,16 +18,8 @@
 @import "pages/front.less";
 @import "pages/error_pages.less";
 
-@widthSidebar: 230px;
-@bgSidebar: #20201F;
-
 html {
 	overflow: hidden;
-}
-
-.jumbo {
-	width: 1000px;
-	margin: auto;
 }
 
 #rightContainer {
@@ -45,9 +37,30 @@ body.rightContainerOpen {
 	}
 }
 
-.globalContainer {
-	.transition-transform();
+.pContainer {
+	position: absolute;
+	top: 0; bottom: 0;
+	width: 100%;
+
+	z-index: 30;
+	.transition-transform;
+
+	// background: #EEE;
+	[data-page] {
+		display: table;
+		width: 100%;
+
+		nav.bar {
+			background: white;
+		}
+	}
+
 }
+
+.gContainer {
+	.transition-transform;
+}
+
 
 body.sidebarOpen {
 	// margin-left: @widthSidebar;
@@ -61,6 +74,7 @@ body.sidebarOpen {
 
 	nav.bar {
 		ul li .openSidebar {
+			opacity: .9;
 			color: white;
 			&:hover, &:active, &:focus {
 				color: #F8F8F8;
@@ -79,9 +93,9 @@ body.sidebarOpen.rightContainerOpen {
 	}
 }
 
-.globalContainer,
+.gContainer,
 #globalContainer {
-	background: #F0F0F0; // url(/static/images/project_papper.png);
+	background: #EAEAEA; // url(/static/images/cubes.png);
 	background-position-y: -1px;
 	z-index: 10;
 	position: absolute;

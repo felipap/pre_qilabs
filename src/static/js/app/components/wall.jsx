@@ -7,10 +7,9 @@
 ** by @f03lipe
 */
 
-
 define([
-	'jquery', 'backbone', 'components.postModels', 'components.postViews', 'underscore', 'react', 'showdown'],
-	function ($, Backbone, postModels, postViews, _, React, Showdown) {
+	'jquery', 'backbone', 'components.postModels', 'components.postViews', 'underscore', 'react', 'views.createPost'],
+	function ($, Backbone, postModels, postViews, _, React, PostFormView) {
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
@@ -18,23 +17,6 @@ define([
 		});
 		setTimeout(updateCounters, 1000);
 	}, 1000);
-
-	// Extend PATCH:true option of Backbone.
-	// When model.save([attrs], {patch:true}) is called:
-	// - the method is changed to PUT;
-	// - the data sent is a hash with the passed attributes and their values;
-	var originalSync = Backbone.sync;
-	Backbone.sync = function(method, model, options) {
-		if (method === 'patch' && options.attrs instanceof Array) {
-			// pop attributes and add their values
-			while (e = options.attrs.pop())
-				options.attrs[e] = model.get(e);
-			options.type = 'PUT';
-			// turn options.attrs into an Object
-			options.attrs = _.extend({}, options.attrs);
-		}
-		return originalSync(method, model, options);
-	};
 
 	var FullPostView = React.createClass({
 
@@ -234,13 +216,6 @@ define([
 			return (
 				<div className="timeline">
 					{cards}
-					{this.props.collection.EOF?
-					<div className="streamSign">
-						<i className="icon-exclamation"></i> Nenhuma outra atividade encontrada.
-					</div>
-					:<a className="streamSign" href="#" onClick={fetchMore}>
-						Procurando mais atividades.
-					</a>}
 				</div>
 			);
 		},
@@ -252,9 +227,17 @@ define([
 		initialize: function () {
 			console.log('initialized')
 			window.app = this;
+			this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
 		},
 
 		routes: {
+			'new':
+				function () {
+					var pc = $('<div class="pContainer">');
+					React.renderComponent(<PostFormView user={window.user} />, pc[0], function () {
+						pc.appendTo('body');
+					});
+				},
 			'following':
 				function () {
 					var self = this;
@@ -307,6 +290,7 @@ define([
 			'':
 				function () {
 					$('body').removeClass('rightContainerOpen');
+					$('.pContainer').remove();
 					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
 				},
 		},
@@ -326,17 +310,17 @@ define([
 				this.postWall = React.renderComponent(CardsPanelView(
 					_.extend(opts || {},{collection:this.postList})),
 					document.getElementById('resultsContainer'));
+				this.postList.fetch({reset:true});
+				var fetchMore = this.postList.tryFetchMore.bind(app.postList);
+
+
+				$('#globalContainer').scroll(function() {
+					if ($('#content').outerHeight()-($('#globalContainer').scrollTop()+$('#globalContainer').outerHeight())<5) {
+						console.log('fetching more')
+						fetchMore();
+					}
+				});
 			}
-			this.postList.fetch({reset:true});
-			var fetchMore = this.postList.tryFetchMore.bind(app.postList);
-
-
-			$('#globalContainer').scroll(function() {
-				if ($('#content').outerHeight()-($('#globalContainer').scrollTop()+$('#globalContainer').outerHeight())<5) {
-					console.log('fetching more')
-					fetchMore();
-				}
-			});
 		},
 	});
 

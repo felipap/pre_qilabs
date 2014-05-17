@@ -105,13 +105,12 @@ define([
 					dataType: 'json',
 				}).done(function (response) {
 
-					var count = _.filter(response.data, function(i){return !i.accessed;}).length,
-						allSeen = _.all(response.data, function(i){return i.seen;}),
+					var allSeen = _.all(response.data, function(i){return i.seen;}),
 						allAccessed = _.all(response.data, function(i){return i.accessed;});
 
 					if (!allAccessed || !allSeen) {
 						$(self.getDOMNode()).addClass('nonempty');
-						self.refs.nCount.getDOMNode().innerHTML = count;
+						self.refs.nCount.getDOMNode().innerHTML = _.filter(response.data, function(i){return !i.accessed;}).length;
 					} else {
 						$(self.getDOMNode()).removeClass('nonempty');
 						self.refs.nCount.getDOMNode().innerHTML = '';
@@ -122,6 +121,9 @@ define([
 					} else {
 						$(self.getDOMNode()).removeClass('green');						
 					}
+
+					$('[data-info=unseen-notifs]').html(_.filter(response.data, function(i){return !i.seen;}).length);
+					$('[data-info=unseen-notifs]').addClass(allSeen?'zero':'nonzero');
 
 					this.seen = !allSeen;
 
