@@ -172,6 +172,13 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 					React.DOM.div( {'data-page':"createPost", className:""}, 
 						React.DOM.nav( {className:"bar"}, 
 							React.DOM.div( {className:"navcontent"}, 
+								React.DOM.ul( {className:"left"}, 
+									React.DOM.li(null, 
+										React.DOM.button( {className:"icon-btn openSidebar"}, 
+											React.DOM.i( {className:"icon-bars"})
+										)
+									)
+								),
 								React.DOM.ul( {className:"right padding"}, 
 									React.DOM.li(null, 
 										React.DOM.a( {href:"#", class:"button plain-btn", 'data-action':"discart-post"}, "Cancelar")
@@ -183,18 +190,20 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 							)
 						),
 
-						React.DOM.div( {id:"content"}, 
-							React.DOM.div( {id:"formCreatePost"}, 
-								React.DOM.textarea( {ref:"titleInput", className:"title autosize", name:"post_title", placeholder:"Título da Publicação", 'data-toggle':"tooltip", 'data-placement':"right", title:"", 'data-trigger':"focus"}),
-								TagSelectionBox( {ref:"tagSelectionBox", data:_.indexBy(tagData,'id')} ),
-								React.DOM.div( {className:"bodyWrapper"}, 
-									React.DOM.div( {id:"postBody", ref:"postBody", 'data-placeholder':"Conte a sua experiência aqui. Mínimo de 100 palavras."})
-								),
-								React.DOM.input( {type:"hidden", name:"post_type", value:"Experience"} ),
-								React.DOM.input( {type:"hidden", name:"_csrf", value:"{{ token }}"} )
+						React.DOM.div( {className:"gContentContainer"}, 
+							React.DOM.div( {id:"content"}, 
+								React.DOM.div( {id:"formCreatePost"}, 
+									React.DOM.textarea( {ref:"titleInput", className:"title autosize", name:"post_title", placeholder:"Título da Publicação", 'data-toggle':"tooltip", 'data-placement':"right", title:"", 'data-trigger':"focus"}),
+									TagSelectionBox( {ref:"tagSelectionBox", data:_.indexBy(tagData,'id')} ),
+									React.DOM.div( {className:"bodyWrapper"}, 
+										React.DOM.div( {id:"postBody", ref:"postBody", 'data-placeholder':"Conte a sua experiência aqui. Mínimo de 100 palavras."})
+									),
+									React.DOM.input( {type:"hidden", name:"post_type", value:"Experience"} ),
+									React.DOM.input( {type:"hidden", name:"_csrf", value:"{{ token }}"} )
+								)
+							),
+							React.DOM.div( {ref:"wordCount", className:"wordCounter"})
 							)
-						),
-						React.DOM.div( {ref:"wordCount", className:"wordCounter"})
 					)
 				)
 			);

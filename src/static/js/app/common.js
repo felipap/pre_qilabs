@@ -52,7 +52,7 @@ define([
 	'components.bell',
 	], function ($, _) {
 
-	$('.openSidebar').click(function (e) {
+	$(document).on('click', '.openSidebar', function (e) {
 		$('body').toggleClass('sidebarOpen');
 	});
 
