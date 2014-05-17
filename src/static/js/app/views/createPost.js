@@ -169,16 +169,9 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 			var CSSTransition = React.addons.CSSTransitionGroup;
 			return (
 				CSSTransition( {transitionName:"animateFade"}, 
-					React.DOM.div( {'data-page':"createPost", className:""}, 
+					React.DOM.div(null, 
 						React.DOM.nav( {className:"bar"}, 
 							React.DOM.div( {className:"navcontent"}, 
-								React.DOM.ul( {className:"left"}, 
-									React.DOM.li(null, 
-										React.DOM.button( {className:"icon-btn openSidebar"}, 
-											React.DOM.i( {className:"icon-bars"})
-										)
-									)
-								),
 								React.DOM.ul( {className:"right padding"}, 
 									React.DOM.li(null, 
 										React.DOM.a( {href:"#", class:"button plain-btn", 'data-action':"discart-post"}, "Cancelar")
@@ -190,8 +183,8 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 							)
 						),
 
-						React.DOM.div( {className:"gContentContainer"}, 
-							React.DOM.div( {id:"content"}, 
+						React.DOM.div( {className:"cContainer"}, 
+							React.DOM.div( {className:"formWrapper"}, 
 								React.DOM.div( {id:"formCreatePost"}, 
 									React.DOM.textarea( {ref:"titleInput", className:"title autosize", name:"post_title", placeholder:"Título da Publicação", 'data-toggle':"tooltip", 'data-placement':"right", title:"", 'data-trigger':"focus"}),
 									TagSelectionBox( {ref:"tagSelectionBox", data:_.indexBy(tagData,'id')} ),

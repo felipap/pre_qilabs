@@ -59,6 +59,7 @@ nav.bar {
 
 	position: relative;
 	z-index: 20;
+	background: white;
 	height: @navbar-height;
 	min-width: @minPageWidth;
 	&:extend(.clearfix all); // Prevent floats from breaking the navbar
@@ -287,41 +288,6 @@ nav.bar {
 					i, .count {
 						color: #2ebc71;
 					}
-				}
-			}
-
-			.openSidebar {				
-				line-height: 1;
-				border: none;
-				padding: 8px 22px;
-				height: @navbar-height+1;
-				margin: 0;
-				text-align: left;
-				opacity: .6;
-				
-				color: @compColor;
-				font-weight: 700;
-				vertical-align: top;
-				.rounded(0);
-				box-shadow: none;
-				background: none;
-
-				&:hover, &:focus, &:active {
-					background: none;
-					box-shadow: none;
-				}
-				.transition(all, .4s, linear);
-
-				i {
-					font-size: 21px !important;
-					vertical-align: middle;
-				}
-
-				&:hover, &:focus, &:active {
-					outline: none;
-					color: @compColor;
-					.no-box-shadow;
-					opacity: 1;
 				}
 			}
 

@@ -233,7 +233,7 @@ define([
 		routes: {
 			'new':
 				function () {
-					var pc = $('<div class="pContainer">');
+					var pc = $('<div class="pContainer" data-page="createPost">');
 					React.renderComponent(PostFormView( {user:window.user} ), pc[0], function () {
 						pc.appendTo('body');
 					});

@@ -169,16 +169,9 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 			var CSSTransition = React.addons.CSSTransitionGroup;
 			return (
 				<CSSTransition transitionName="animateFade">
-					<div data-page="createPost" className="">
+					<div>
 						<nav className="bar">
 							<div className="navcontent">
-								<ul className="left">
-									<li>
-										<button className="icon-btn openSidebar">
-											<i className="icon-bars"></i>
-										</button>
-									</li>
-								</ul>
 								<ul className="right padding">
 									<li>
 										<a href="#" class="button plain-btn" data-action="discart-post">Cancelar</a>
@@ -190,8 +183,8 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 							</div>
 						</nav>
 
-						<div className="gContentContainer">
-							<div id="content">
+						<div className="cContainer">
+							<div className="formWrapper">
 								<div id="formCreatePost">
 									<textarea ref="titleInput" className="title autosize" name="post_title" placeholder="Título da Publicação" data-toggle="tooltip" data-placement="right" title="" data-trigger="focus"></textarea>
 									<TagSelectionBox ref="tagSelectionBox" data={_.indexBy(tagData,'id')} />
