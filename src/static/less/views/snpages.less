@@ -22,12 +22,12 @@ html {
 	overflow: hidden;
 }
 
-#sidebarPanel {
-	z-index: 19;
-	box-shadow: inset -3px 0 5px -4px rgba(0,0,0,1);
-	.translate(0);
-	border-right: 1px solid #111;
-}
+// #sidebarPanel {
+// 	z-index: 19;
+// 	box-shadow: inset -3px 0 5px -4px rgba(0,0,0,1);
+// 	.translate(0);
+// 	border-right: 1px solid #111;
+// }
 
 // #navbar {
 // 	z-index: 21;
@@ -41,19 +41,21 @@ html {
 // 	height: 50px;
 // 	background: white;
 // }
+//
+// body.sidebarOpen {
+// 	nav.bar {
+// 		.translate(@widthSidebar);
+// 	}
+// }
 
 nav.bar {
 	.transition-transform;
 }
 
 body.sidebarOpen {
-	nav.bar {
-		.translate(@widthSidebar);
+	#sidebarPanel {
+		.translate(0);
 	}
-
-	// .navcontent {
-	// 	margin-left: @widthSidebar;
-	// }
 
 	.cContainer {
 		.translate(@widthSidebar);
