@@ -4,6 +4,11 @@
 
 {% block head %}
 {% parent %}
+	{% if user %}
+	<script>window.user = {id: '{{user.id}}', name: '{{user.name}}', avatarUrl: '{{user.avatarUrl}}', following: '{{user_profile.followingIds|json}}'}</script>
+	{% else %}
+	<script>window.user={}</script>
+	{% endif %}
 	<script>tagData = {{ getTags()|json }};</script>
 	{{ tagMacros.stylesheet(getMediaUrl('css/snpages.min.css')) }}
 {% endblock %}

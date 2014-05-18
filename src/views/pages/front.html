@@ -3,12 +3,12 @@
 {% set requirejsView="front" %}
 
 {% block head %}
-	<link rel="stylesheet" href="{{ getMediaUrl('css','snpages.min.css') }}" />
+	<link rel="stylesheet" href="{{ getMediaUrl('css/snpages.min.css') }}" />
 {% endblock %}
 
 {% block body %}
 	<div id="wallterfall">
-		<div class="cardsContainer grid">
+		<div class="wall grid">
 			<div class="cardView">
 				<i></i>
 			</div>
@@ -17,7 +17,7 @@
 			(function () {
 				var icons = ['icon-exclamation', 'icon-trophy', 'icon-question', 'icon-comments-o', 'icon-guide', 'icon-puzzle', 'icon-rocket','icon-compass','icon-bulb','icon-flask','icon-sum','icon-university','icon-cap']
 				var cv = document.querySelector(".cardView"),
-					cc = document.querySelector(".cardsContainer");
+					cc = document.querySelector(".wall");
 				for (var i=0; i<100; i++) {
 					var nc = cv.cloneNode(true);
 					if (Math.random() > 0.50) {

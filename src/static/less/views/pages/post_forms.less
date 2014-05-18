@@ -2,6 +2,7 @@
 
 @import "../plugins/medium-editor-insert-plugin.less";
 @import "../plugins/medium-editor.less";
+@import "../components/formatting.less";
 
 .animateFade-enter {
   opacity: 0.01;
@@ -49,9 +50,16 @@
 		margin: 0 auto;
 	}
 
+	.cardDemo {
+		position: absolute;
+		left: 100%;
+		top: 0;
+
+		.cardView { margin: 0; }
+	}
+
 	#formCreatePost {
 		position: relative;
-		padding: 20px 0;
 
 		.menu {
 			display: none;
@@ -69,7 +77,7 @@
 			font: 800 45px "Open Sans";
 			margin-left: -4px;
 			letter-spacing: -3px;
-			// min-height: 66px;
+			height: 66px;
 			resize: none !important;
 			overflow: hidden;
 
@@ -79,7 +87,7 @@
 			width: 100%;
 			background: transparent;
 
-			border-bottom: 1px solid #EEE;
+			border-bottom: 1px solid #CCC;
 
 			::-webkit-input-placeholder,
 			:-moz-placeholder,
@@ -94,7 +102,7 @@
 			padding-bottom: 15px;
 			margin: 15px 0;
 			font-family: museo-sans;
-			border-bottom: 1px solid #EEE;
+			border-bottom: 1px solid #CCC;
 			cursor: text;
 
 			&.focused {
@@ -216,6 +224,7 @@
 			// }
 		}
 
+
 		.bodyWrapper {
 			color: black;
 			font-size: 16px;
@@ -228,41 +237,7 @@
 				font-size: 17px;
 			}
 
-			p {
-				margin: 0 0 20px;
-				line-height: 24px;
-			}
-			margin-bottom: 20px;
-
-			& > img, & > iframe {
-				width: 100%;
-				margin: 30px -50px;
-				border: none;
-
-				& + small {
-					display: block;
-					margin-top: -10px;
-					font-size: 13px;
-					margin-bottom: 20px;
-				}
-			}
-
-			& > pre {
-				width: 700px;
-				margin: 15px -20px;
-			}
-			
-			h1 + img, .h1 + img, h1 + iframe, .h1 + iframe, 
-			h2 + img, .h2 + img, h2 + iframe, .h2 + iframe
-			{
-				margin-top: 0px;
-			}
-
-			pre {
-				border: 1px solid #EEE;
-				background: #FAFAFA;
-				.rounded(0);
-			}
+			.postBodyFormatting;
 		}
 	}
 

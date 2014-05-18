@@ -7,7 +7,8 @@
 ** by @f03lipe
 */
 
-define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'medium-editor',], function ($, Backbone, _, postModels, React) {
+define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'medium-editor',],
+	function ($, Backbone, _, postModels, React) {
 
 	var mediumEditorAnswerOpts = {
 		firstHeader: 'h1',
@@ -77,7 +78,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								</span>
 							</a>&nbsp;·&nbsp;
 
-							<time data-time-count={1*new Date(comment.published)} data-time-long="true">
+							<time data-time-count={1*new Date(comment.published)}>
 								{window.calcTimeFrom(comment.published)}
 							</time>
 
@@ -564,7 +565,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					</div>
 				);
 			});
-			console.log(tags, this.props.tags)
 			return (
 				<div className="tags">
 					{tags}
@@ -576,6 +576,12 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 	return {
 		'CardView': React.createClass({
 			mixins: [backboneModel],
+			componentDidMount: function () {
+				// var cardBodySpan = this.refs.cardBodySpan.getDOMNode();
+				// if ($(cardBodySpan).height() < 70) {
+				// 	$(cardBodySpan).css('font-size', '21px');
+				// }
+			},
 			render: function () {
 
 				function gotoPost () {
@@ -615,7 +621,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						</div>
 
 						<div className="cardBody">
-							<span dangerouslySetInnerHTML={{__html: post.data.title }} />
+							<span ref="cardBodySpan">{post.data.title}</span>
 						</div>
 
 						<div className="cardFoot">
@@ -630,106 +636,13 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								</div>
 							</div>
 
-							<time data-time-count={1*new Date(post.published)} data-time-long="true">
+							<time data-time-count={1*new Date(post.published)}>
 								{window.calcTimeFrom(post.published,true)}
 							</time>
 						</div>
 					</div>
 				);
 			}
-		}),
-		'PlainPost': React.createClass({
-			mixins: [EditablePost, backboneModel],
-
-			render: function () {
-				var post = this.props.model.attributes;
-
-				var postBody = (
-					<div className="postBody">
-						<p>
-							It&apos;s been over five years since the day I first learned about the existence of MIT.
-						</p>
-						You know MIT, right?
-
-						<img src="http://sloansocialimpact.mit.edu/wp-content/uploads/2014/02/MIT_Dome_night1_Edit.jpg" />
-
-						<small>The pornographically-cool MIT Dome.</small>
-
-						<blockquote>
-							Massachusetts Institute of Technology (MIT) is a private research university in Cambridge, Massachusetts known traditionally for research and education in the physical sciences and engineering
-							<footer><a href="http://en.wikipedia.org/wiki/Massachusetts_Institute_of_Technology">Wikipedia</a></footer>
-						</blockquote>
-
-						<p>
-							But MIT isn't just any "private research university", though: it's arguably the best technology
-							university in the world.
-						</p>
-						<hr />
-						<p>
-							Someday in 2009, while surfing around the internet, in an uncalculated move, I clicked a link on Info Magazine homepage,
-							taking me to <a href="http://info.abril.com.br/noticias/internet/aulas-do-mit-e-de-harvard-gratis-no-youtube-09042009-18.shl">this post</a>.
-							"Free MIT and Harvard classes on Youtube", it said.
-						</p>
-						<h2><q>MIT??</q></h2>
-						<p>Harvard I had heard of, sure. But <q>what is MIT?</q> The choice to google it (rather than just leaving it be), was one that changed my life.
-						</p>
-						<p>
-							No... <em>seriously</em>.<br />
-							I kept reading about it for hours, days even, I presume, because next thing you know MIT was my obsession.
-							I began collecting MIT wallpapers – admittedly I still do that –,
-							and videos related to the institution, including one of <a href="https://www.youtube.com/watch?v=jJ5EwCA2H4Y">Burton Conner students singing Switch</a>.
-						</p>
-						<h2>MIT OpenCourseWare</h2>
-						<p>
-							Another important MIT-related collection was one of CD-ROMs filled with OCW classes. The MIT OpenCourseWare is an MIT project lauched in 2002 that aims at providing MIT courses videolectured for free (as in beer). The first video I watched was a 2007 version of Gilbert Strang's Linear Algebra lectures. I didn't get past the 6th video. I also watched Single Variable Calculus course, and, of course, Walter Lewin's Classical Mechanics. I must have burned half a dozen CDs with these video-lectures. I don't know why.
-						</p>
-						<iframe width="720" height="495" src="//www.youtube.com/embed/ZK3O402wf1c" frameborder="0" allowfullscreen></iframe>
-						<small>Seriously, what a sweet guy.</small>
-
-						
-						<h2>MIT Media Lab</h2>
-						<img src="http://upload.wikimedia.org/wikipedia/commons/b/ba/The_MIT_Media_Lab_-_Flickr_-_Knight_Foundation.jpg" />
-						
-						<h1></h1>
-						<code>
-							oi
-						</code>
-
-						<pre>var postType = this.props.model.get('type')</pre>
-					</div>
-				);
-
-				return (
-					<div>
-						<div className="postHeader">
-							<time data-time-count={1*new Date(post.published)} data-time-long="true">
-								{window.calcTimeFrom(post.published,true)}
-							</time>
-							<div className="type">
-								{post.translatedType}
-							</div>
-							<div className="postTitle">
-								{this.props.model.get('data').title}
-							</div>
-							<div className="tags">
-								<TagList tags={post.tags} />
-							</div>
-						</div>
-
-						<div className="postBody">
-							<span dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}} />
-						</div>
-
-						<div className="postInfobar">
-							<ul className="left">
-							</ul>
-						</div>
-						<div className="postFooter">
-							<CommentSectionView collection={this.props.model.children.Comment} postModel={this.props.model} />
-						</div>
-					</div>
-				);
-			},
 		}),
 		'Question': React.createClass({
 			mixins: [EditablePost, backboneModel],
@@ -741,7 +654,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				return (
 					<div>
 						<div className="postHeader">
-							<time data-time-count={1*new Date(post.published)} data-time-long="true">
+							<time data-time-count={1*new Date(post.published)}>
 								{window.calcTimeFrom(post.published,true)}
 							</time>
 							<div className="type">
@@ -777,7 +690,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				return (
 					<div>
 						<div className="postHeader">
-							<time data-time-count={1*new Date(post.published)} data-time-long="true">
+							<time data-time-count={1*new Date(post.published)}>
 								{window.calcTimeFrom(post.published,true)}
 							</time>
 							<div className="type">
@@ -814,7 +727,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				return (
 					<div>
 						<div className="postHeader">
-							<time data-time-count={1*new Date(post.published)} data-time-long="true">
+							<time data-time-count={1*new Date(post.published)}>
 								{window.calcTimeFrom(post.published,true)}
 							</time>
 							<div className="type">

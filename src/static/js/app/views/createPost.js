@@ -103,55 +103,113 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 		},
 	});
 
-	var PostTypeSelector = React.createClass({displayName: 'PostTypeSelector',
+	var PageSelectPostType = React.createClass({displayName: 'PageSelectPostType',
 		render: function () {
-			var options = [{
-				label: 'Pergunta',
-				id: 'question',
-				iconClass: 'icon-question'
-			}, {
-				label: 'Dica',
-				id: 'tip',
-				iconClass: 'icon-bulb',
-			}, {
-				label: 'Achievement',
-				id: 'Experience',
-				iconClass: 'icon-trophy'
-			}];
-			var optionEls = _.map(options, function (option) {
+			var optionEls = _.map(_(TypeData).pairs(), function (pair) {
 				var self = this;
 				return (
-					React.DOM.div( {className:"postOption", onClick:function(){self.props.onClickOption(option.id)}}, 
+					React.DOM.div( {className:"postOption", key:pair[0], onClick:function(){self.props.onClickOption(pair[0])}}, 
 						React.DOM.div( {className:"card"}, 
-							React.DOM.i( {className:option.iconClass})
+							React.DOM.i( {className:pair[1].iconClass})
 						),
-						React.DOM.div( {className:"info"}, React.DOM.label(null, option.label))
+						React.DOM.div( {className:"info"}, React.DOM.label(null, pair[1].label))
 					)
 				);
 			}.bind(this));
 			return (
-				React.DOM.div( {className:"cContainer"}, 
-					React.DOM.div( {id:"postTypeSelection"}, 
-						React.DOM.label(null, "Que tipo de publicação você quer fazer?"),
-						React.DOM.div( {className:"optionsWrapper"}, optionEls)
+				React.DOM.div( {className:""}, 
+					React.DOM.nav( {className:"bar"}, 
+						React.DOM.div( {className:"navcontent"}, 
+							React.DOM.ul( {className:"right padding"}, 
+								React.DOM.li(null, 
+									React.DOM.a( {className:"button plain-btn", href:"/"}, "Voltar")
+								)
+							)
+						)
+					),
+					React.DOM.div( {className:"cContainer"}, 
+						React.DOM.div( {id:"postTypeSelection"}, 
+							React.DOM.label(null, "Que tipo de publicação você quer fazer?"),
+							React.DOM.div( {className:"optionsWrapper"}, optionEls)
+						)
 					)
 				)
 			);
 		},
 	});
 
-	var PostForm = React.createClass({displayName: 'PostForm',
+	var TypeData = {
+		'Question': {
+			label: 'Pergunta',
+			iconClass: 'icon-question'
+		},
+		'Tip': {
+			label: 'Dica',
+			iconClass: 'icon-bulb',
+		},
+		'Experience': {
+			label: 'Experiência',
+			iconClass: 'icon-trophy'
+		}
+	};
+
+	var FakeCard = React.createClass({displayName: 'FakeCard',
+		getInitialState: function () {
+			return {title:"Título da "+TypeData[this.props.type].label};
+		},
+		setData: function (data) {
+			this.setState(data);
+		},
+		render: function () {
+			return (
+				React.DOM.div( {className:"cardView"} , 
+					React.DOM.div( {className:"cardHeader"}, 
+						React.DOM.span( {className:"cardType"}, 
+							TypeData[this.props.type].label
+						),
+						React.DOM.div( {className:"iconStats"}, 
+							React.DOM.div(null, 
+								React.DOM.i( {className:"icon-heart icon-red"})," 0"
+							),
+							this.props.type === "Question"?
+								React.DOM.div(null, React.DOM.i( {className:"icon-bulb"})," 0")
+								:React.DOM.div(null, React.DOM.i( {className:"icon-comment-o"})," 0")
+							
+						)
+					),
+
+					React.DOM.div( {className:"cardBody"}, 
+						this.state.title
+					),
+
+					React.DOM.div( {className:"cardFoot"}, 
+						React.DOM.div( {className:"authorship"}, 
+							React.DOM.span( {className:"username"}, 
+								this.props.author.name
+							),
+							React.DOM.div( {className:"avatarWrapper"}, 
+								React.DOM.span(null, 
+									React.DOM.div( {className:"avatar", style: { 'background': 'url('+this.props.author.avatarUrl+')' } })
+								)
+							)
+						),
+
+						React.DOM.time(null, "agora")
+					)
+				)
+			);
+		}
+	});
+
+	var PagePostForm = React.createClass({displayName: 'PagePostForm',
 		componentDidMount: function () {
-			var postBody = this.refs.postBody.getDOMNode();
-			var self = this;
+			
+			var postBody = this.refs.postBody.getDOMNode(),
+				postTitle = this.refs.postTitle.getDOMNode(),
+				wordCount = this.refs.wordCount.getDOMNode();
 
+			// Medium Editor
 			this.editor = new MediumEditor(postBody);
-			$(this.refs.titleInput.getDOMNode()).keypress(function (e) {
-				if (e.keyCode == 13) {
-					e.preventDefault();
-				}
-			});
-
 			$(postBody).mediumInsert({
 				editor: this.editor,
 				addons: {
@@ -164,26 +222,28 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				},
 			});
 
-			setTimeout(function () {
-				$('.autosize').autosize({
-					append: '',
-				});
-			}, 1000);
-
+			$(postTitle).autosize();
+			$(postTitle).on('input keyup', function (e) {
+				if (e.keyCode == 13) {
+					e.preventDefault();
+					return;
+				}
+				this.refs.cardDemo.setData({
+					title: this.refs.postTitle.getDOMNode().value,
+				})
+			}.bind(this));
 
 			$(postBody).on('input keyup', function () {
 				function countWords (s){
-					var ocs = s.slice(0,s.length-4)
-						.replace(/(^\s*)|(\s*$)/gi,"")
+					var ocs = s.slice(0,s.length-4).replace(/(^\s*)|(\s*$)/gi,"")
 						.replace(/[ ]{2,}/gi," ")
 						.replace(/\n /,"\n")
 						.split(' ');
 					return ocs[0]===''?(ocs.length-1):ocs.length;
 				}
 				var count = countWords($(postBody).text());
-				$(self.refs.wordCount.getDOMNode()).html(count?(count==1?count+" palavra":count+" palavras"):'');
-			});
-
+				$(wordCount).html(count?(count==1?count+" palavra":count+" palavras"):'');
+			}.bind(this));
 		},
 		sendPost: function () {
 			var postBody = this.refs.postBody.getDOMNode();
@@ -192,7 +252,7 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 			var data = {
 				body: this.editor.serialize().postBody.value,
 				title: $("[name=post_title]").val(),
-				type: $("[name=post_type]").val(),
+				type: this.props.type,
 				tags: this.refs.tagSelectionBox.getSelectedTagsIds(),
 			};
 			console.log(data)
@@ -211,25 +271,43 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 		},
 		render: function () {
 			return (
-				React.DOM.div( {className:"cContainer"}, 
-					React.DOM.div( {className:"formWrapper"}, 
-						React.DOM.div( {id:"formCreatePost"}, 
-							React.DOM.textarea( {ref:"titleInput", className:"title autosize", name:"post_title", placeholder:"Título da Publicação"}),
-							TagSelectionBox( {ref:"tagSelectionBox", data:_.indexBy(tagData,'id')} ),
-							React.DOM.div( {className:"bodyWrapper"}, 
-								React.DOM.div( {id:"postBody", ref:"postBody", placeholder:"Conte a sua experiência aqui. Mínimo de 100 palavras."})
-							),
-							React.DOM.input( {type:"hidden", name:"post_type", value:this.props.type} ),
-							React.DOM.input( {type:"hidden", name:"_csrf", value:"{{ token }}"} )
+				React.DOM.div(null, 
+					React.DOM.nav( {className:"bar"}, 
+						React.DOM.div( {className:"navcontent"}, 
+							React.DOM.ul( {className:"right padding"}, 
+								React.DOM.li(null, 
+									React.DOM.a( {href:"#", className:"button plain-btn", 'data-action':"discart-post"}, "Cancelar")
+								),
+								React.DOM.li(null, 
+									React.DOM.button( {onClick:this.sendPost, 'data-action':"send-post"}, "Publicar")
+								)
+							)
 						)
 					),
-					React.DOM.div( {ref:"wordCount", className:"wordCounter"})
+
+					React.DOM.div( {className:"cContainer"}, 
+						React.DOM.div( {className:"formWrapper"}, 
+							React.DOM.div( {id:"formCreatePost"}, 
+								React.DOM.div( {className:"cardDemo wall grid"}, 
+									React.DOM.h5(null, "Visualização"),
+									FakeCard( {ref:"cardDemo", type:this.props.type, author:window.user})
+								),
+								React.DOM.textarea( {ref:"postTitle", className:"title", name:"post_title", placeholder:"Título da "+TypeData[this.props.type].label}
+								),
+								TagSelectionBox( {ref:"tagSelectionBox", data:_.indexBy(tagData,'id')} ),
+								React.DOM.div( {className:"bodyWrapper"}, 
+									React.DOM.div( {id:"postBody", ref:"postBody", 'data-placeholder':"Conte a sua experiência aqui. Mínimo de 100 palavras."})
+								)
+							)
+						),
+						React.DOM.div( {ref:"wordCount", className:"wordCounter"})
+					)
 				)
 			);
 		},
 	});
 
-	return React.createClass({
+	var PostCreationView = React.createClass({displayName: 'PostCreationView',
 		getInitialState: function () {
 			return {};
 		},
@@ -237,32 +315,12 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 			this.setState({chosenForm:type});
 		},
 		render: function () {
-			var CSSTransition = React.addons.CSSTransitionGroup;
-			return (
-				CSSTransition( {transitionName:"animateFade"}, 
-					React.DOM.div(null, 
-						React.DOM.nav( {className:"bar"}, 
-						this.state.chosenForm?(
-							React.DOM.div( {className:"navcontent"}, 
-								React.DOM.ul( {className:"right padding"}, 
-									React.DOM.li(null, 
-										React.DOM.a( {href:"#", className:"button plain-btn", 'data-action':"discart-post"}, "Cancelar")
-									),
-									React.DOM.li(null, 
-										React.DOM.button( {onClick:this.sendPost, 'data-action':"send-post"}, "Publicar")
-									)
-								)
-							)
-						):null
-						),
-						
-							this.state.chosenForm?
-							PostForm( {type:this.state.chosenForm} )
-							:PostTypeSelector( {onClickOption:this.selectFormType} )
-						
-					)
-				)
-			);
+			return this.state.chosenForm?
+				PagePostForm( {ref:"postForm", type:this.state.chosenForm} )
+				:PageSelectPostType( {onClickOption:this.selectFormType} )
+			;
 		},
 	});
+
+	return PostCreationView;
 });

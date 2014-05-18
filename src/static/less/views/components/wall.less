@@ -17,7 +17,7 @@
 @square-header-height: 35px;
 @square-footer-height: 36px;
 
-.cardsContainer ()
+.wall
 {
 	text-align: center;
 
@@ -60,7 +60,8 @@
 			}
 
 			.cardBody {
-				padding: 17px 20px;
+				border: 1px solid white;
+				border-width: 12px 17px 20px;
 				font-size: @square-card-body-fontsize;
 				height: @square-card-height - @square-header-height - @square-footer-height - 3;
 			}
@@ -152,10 +153,7 @@
 
 			span {
 				overflow: hidden;
-				width: 100%;
 				text-overflow: ellipsis;
-				display: block;
-				height: 100%;
 			}
 
 			a {

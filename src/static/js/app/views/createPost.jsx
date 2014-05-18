@@ -103,55 +103,113 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 		},
 	});
 
-	var PostTypeSelector = React.createClass({
+	var PageSelectPostType = React.createClass({
 		render: function () {
-			var options = [{
-				label: 'Pergunta',
-				id: 'question',
-				iconClass: 'icon-question'
-			}, {
-				label: 'Dica',
-				id: 'tip',
-				iconClass: 'icon-bulb',
-			}, {
-				label: 'Achievement',
-				id: 'Experience',
-				iconClass: 'icon-trophy'
-			}];
-			var optionEls = _.map(options, function (option) {
+			var optionEls = _.map(_(TypeData).pairs(), function (pair) {
 				var self = this;
 				return (
-					<div className="postOption" onClick={function(){self.props.onClickOption(option.id)}}>
+					<div className="postOption" key={pair[0]} onClick={function(){self.props.onClickOption(pair[0])}}>
 						<div className="card">
-							<i className={option.iconClass}></i>
+							<i className={pair[1].iconClass}></i>
 						</div>
-						<div className="info"><label>{option.label}</label></div>
+						<div className="info"><label>{pair[1].label}</label></div>
 					</div>
 				);
 			}.bind(this));
 			return (
-				<div className="cContainer">
-					<div id="postTypeSelection">
-						<label>Que tipo de publicação você quer fazer?</label>
-						<div className="optionsWrapper">{optionEls}</div>
+				<div className="">
+					<nav className="bar">
+						<div className="navcontent">
+							<ul className="right padding">
+								<li>
+									<a className="button plain-btn" href="/">Voltar</a>
+								</li>
+							</ul>
+						</div>
+					</nav>
+					<div className="cContainer">
+						<div id="postTypeSelection">
+							<label>Que tipo de publicação você quer fazer?</label>
+							<div className="optionsWrapper">{optionEls}</div>
+						</div>
 					</div>
 				</div>
 			);
 		},
 	});
 
-	var PostForm = React.createClass({
+	var TypeData = {
+		'Question': {
+			label: 'Pergunta',
+			iconClass: 'icon-question'
+		},
+		'Tip': {
+			label: 'Dica',
+			iconClass: 'icon-bulb',
+		},
+		'Experience': {
+			label: 'Experiência',
+			iconClass: 'icon-trophy'
+		}
+	};
+
+	var FakeCard = React.createClass({
+		getInitialState: function () {
+			return {title:"Título da "+TypeData[this.props.type].label};
+		},
+		setData: function (data) {
+			this.setState(data);
+		},
+		render: function () {
+			return (
+				<div className="cardView" >
+					<div className="cardHeader">
+						<span className="cardType">
+							{TypeData[this.props.type].label}
+						</span>
+						<div className="iconStats">
+							<div>
+								<i className="icon-heart icon-red"></i>&nbsp;0
+							</div>
+							{this.props.type === "Question"?
+								<div><i className="icon-bulb"></i>&nbsp;0</div>
+								:<div><i className="icon-comment-o"></i>&nbsp;0</div>
+							}
+						</div>
+					</div>
+
+					<div className="cardBody">
+						{this.state.title}
+					</div>
+
+					<div className="cardFoot">
+						<div className="authorship">
+							<span className="username">
+								{this.props.author.name}
+							</span>
+							<div className="avatarWrapper">
+								<span>
+									<div className="avatar" style={ { 'background': 'url('+this.props.author.avatarUrl+')' } }></div>
+								</span>
+							</div>
+						</div>
+
+						<time>agora</time>
+					</div>
+				</div>
+			);
+		}
+	});
+
+	var PagePostForm = React.createClass({
 		componentDidMount: function () {
-			var postBody = this.refs.postBody.getDOMNode();
-			var self = this;
+			
+			var postBody = this.refs.postBody.getDOMNode(),
+				postTitle = this.refs.postTitle.getDOMNode(),
+				wordCount = this.refs.wordCount.getDOMNode();
 
+			// Medium Editor
 			this.editor = new MediumEditor(postBody);
-			$(this.refs.titleInput.getDOMNode()).keypress(function (e) {
-				if (e.keyCode == 13) {
-					e.preventDefault();
-				}
-			});
-
 			$(postBody).mediumInsert({
 				editor: this.editor,
 				addons: {
@@ -164,26 +222,28 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				},
 			});
 
-			setTimeout(function () {
-				$('.autosize').autosize({
-					append: '',
-				});
-			}, 1000);
-
+			$(postTitle).autosize();
+			$(postTitle).on('input keyup', function (e) {
+				if (e.keyCode == 13) {
+					e.preventDefault();
+					return;
+				}
+				this.refs.cardDemo.setData({
+					title: this.refs.postTitle.getDOMNode().value,
+				})
+			}.bind(this));
 
 			$(postBody).on('input keyup', function () {
 				function countWords (s){
-					var ocs = s.slice(0,s.length-4)
-						.replace(/(^\s*)|(\s*$)/gi,"")
+					var ocs = s.slice(0,s.length-4).replace(/(^\s*)|(\s*$)/gi,"")
 						.replace(/[ ]{2,}/gi," ")
 						.replace(/\n /,"\n")
 						.split(' ');
 					return ocs[0]===''?(ocs.length-1):ocs.length;
 				}
 				var count = countWords($(postBody).text());
-				$(self.refs.wordCount.getDOMNode()).html(count?(count==1?count+" palavra":count+" palavras"):'');
-			});
-
+				$(wordCount).html(count?(count==1?count+" palavra":count+" palavras"):'');
+			}.bind(this));
 		},
 		sendPost: function () {
 			var postBody = this.refs.postBody.getDOMNode();
@@ -192,7 +252,7 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 			var data = {
 				body: this.editor.serialize().postBody.value,
 				title: $("[name=post_title]").val(),
-				type: $("[name=post_type]").val(),
+				type: this.props.type,
 				tags: this.refs.tagSelectionBox.getSelectedTagsIds(),
 			};
 			console.log(data)
@@ -211,25 +271,43 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 		},
 		render: function () {
 			return (
-				<div className="cContainer">
-					<div className="formWrapper">
-						<div id="formCreatePost">
-							<textarea ref="titleInput" className="title autosize" name="post_title" placeholder="Título da Publicação"></textarea>
-							<TagSelectionBox ref="tagSelectionBox" data={_.indexBy(tagData,'id')} />
-							<div className="bodyWrapper">
-								<div id="postBody" ref="postBody" placeholder="Conte a sua experiência aqui. Mínimo de 100 palavras."></div>
-							</div>
-							<input type="hidden" name="post_type" value={this.props.type} />
-							<input type="hidden" name="_csrf" value="{{ token }}" />
+				<div>
+					<nav className="bar">
+						<div className="navcontent">
+							<ul className="right padding">
+								<li>
+									<a href="#" className="button plain-btn" data-action="discart-post">Cancelar</a>
+								</li>
+								<li>
+									<button onClick={this.sendPost} data-action="send-post">Publicar</button>
+								</li>
+							</ul>
 						</div>
+					</nav>
+
+					<div className="cContainer">
+						<div className="formWrapper">
+							<div id="formCreatePost">
+								<div className="cardDemo wall grid">
+									<h5>Visualização</h5>
+									<FakeCard ref="cardDemo" type={this.props.type} author={window.user}/>
+								</div>
+								<textarea ref="postTitle" className="title" name="post_title" placeholder={"Título da "+TypeData[this.props.type].label}>
+								</textarea>
+								<TagSelectionBox ref="tagSelectionBox" data={_.indexBy(tagData,'id')} />
+								<div className="bodyWrapper">
+									<div id="postBody" ref="postBody" data-placeholder="Conte a sua experiência aqui. Mínimo de 100 palavras."></div>
+								</div>
+							</div>
+						</div>
+						<div ref="wordCount" className="wordCounter"></div>
 					</div>
-					<div ref="wordCount" className="wordCounter"></div>
 				</div>
 			);
 		},
 	});
 
-	return React.createClass({
+	var PostCreationView = React.createClass({
 		getInitialState: function () {
 			return {};
 		},
@@ -237,32 +315,12 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 			this.setState({chosenForm:type});
 		},
 		render: function () {
-			var CSSTransition = React.addons.CSSTransitionGroup;
-			return (
-				<CSSTransition transitionName="animateFade">
-					<div>
-						<nav className="bar">
-						{this.state.chosenForm?(
-							<div className="navcontent">
-								<ul className="right padding">
-									<li>
-										<a href="#" className="button plain-btn" data-action="discart-post">Cancelar</a>
-									</li>
-									<li>
-										<button onClick={this.sendPost} data-action="send-post">Publicar</button>
-									</li>
-								</ul>
-							</div>
-						):null}
-						</nav>
-						{
-							this.state.chosenForm?
-							<PostForm type={this.state.chosenForm} />
-							:<PostTypeSelector onClickOption={this.selectFormType} />
-						}
-					</div>
-				</CSSTransition>
-			);
+			return this.state.chosenForm?
+				<PagePostForm ref="postForm" type={this.state.chosenForm} />
+				:<PageSelectPostType onClickOption={this.selectFormType} />
+			;
 		},
 	});
+
+	return PostCreationView;
 });
