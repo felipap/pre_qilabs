@@ -53,7 +53,7 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				}
 			});
 			var self = this;
-			$(this.getDOMNode()).on('focusin focus', function () {
+			$(this.getDOMNode()).on('click focusin focus', function () {
 				$(self.getDOMNode()).addClass('focused');
 				$('#tagInput').focus();
 				$(self.getDOMNode()).find(".placeholder").hide();
@@ -61,8 +61,9 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 			$(this.refs.input.getDOMNode())
 				.on('focusout', function () {
 					$('#tagSelectionBox').removeClass('focused');
-					$(self.refs.input.getDOMNode()).val('asdf');
-					console.log('oi caraio')
+					_.defer(function () {
+						$(self.refs.input.getDOMNode()).val('').prop('placeholder','Tópicos relacionados');
+					});
 				})
 				.on('keydown', function (e) {
 					var key = e.keyCode || e.charCode;
