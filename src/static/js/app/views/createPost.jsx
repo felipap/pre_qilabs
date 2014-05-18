@@ -45,9 +45,7 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				source: tagStates.ttAdapter(),
 				templates: {
 					empty: [
-						'<div class="empty-message">',
-						'Tag não encontrada',
-						'</div>'
+						'<div class="empty-message">Assunto não encontrado</div>'
 					].join('\n'),
 					suggestion: _.template('<p><%= name %></p>'),
 				}
@@ -62,7 +60,7 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				.on('focusout', function () {
 					$('#tagSelectionBox').removeClass('focused');
 					_.defer(function () {
-						$(self.refs.input.getDOMNode()).val('').prop('placeholder','Tópicos relacionados');
+						// $(self.refs.input.getDOMNode()).val('').prop('placeholder','Tópicos relacionados');
 					});
 				})
 				.on('keydown', function (e) {
@@ -84,7 +82,7 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 						<span>
 							{this.props.data[tagId].name}
 						</span>
-						<span onClick={function(){self.removeTag(tagId)}}><i className="icon-times"></i></span>
+						<span onClick={function(){self.removeTag(tagId)}}><i className="close-btn"></i></span>
 					</li>
 				);
 			}.bind(this));
@@ -121,6 +119,8 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				<div className="">
 					<nav className="bar">
 						<div className="navcontent">
+							<span className="center"><a className="brand" href="/" tabindex="-1">QI <i className="icon-bulb"></i> Labs</a></span>
+
 							<ul className="right padding">
 								<li>
 									<a className="button plain-btn" href="/">Voltar</a>
@@ -275,6 +275,8 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				<div>
 					<nav className="bar">
 						<div className="navcontent">
+							<span className="center"><a className="brand" href="/" tabindex="-1">QI <i className="icon-bulb"></i> Labs</a></span>
+
 							<ul className="right padding">
 								<li>
 									<a href="#" className="button plain-btn" data-action="discart-post">Cancelar</a>

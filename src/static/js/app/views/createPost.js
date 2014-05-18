@@ -45,9 +45,7 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				source: tagStates.ttAdapter(),
 				templates: {
 					empty: [
-						'<div class="empty-message">',
-						'Tag não encontrada',
-						'</div>'
+						'<div class="empty-message">Assunto não encontrado</div>'
 					].join('\n'),
 					suggestion: _.template('<p><%= name %></p>'),
 				}
@@ -62,7 +60,7 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				.on('focusout', function () {
 					$('#tagSelectionBox').removeClass('focused');
 					_.defer(function () {
-						$(self.refs.input.getDOMNode()).val('').prop('placeholder','Tópicos relacionados');
+						// $(self.refs.input.getDOMNode()).val('').prop('placeholder','Tópicos relacionados');
 					});
 				})
 				.on('keydown', function (e) {
@@ -84,7 +82,7 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 						React.DOM.span(null, 
 							this.props.data[tagId].name
 						),
-						React.DOM.span( {onClick:function(){self.removeTag(tagId)}}, React.DOM.i( {className:"icon-times"}))
+						React.DOM.span( {onClick:function(){self.removeTag(tagId)}}, React.DOM.i( {className:"close-btn"}))
 					)
 				);
 			}.bind(this));
@@ -121,6 +119,8 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				React.DOM.div( {className:""}, 
 					React.DOM.nav( {className:"bar"}, 
 						React.DOM.div( {className:"navcontent"}, 
+							React.DOM.span( {className:"center"}, React.DOM.a( {className:"brand", href:"/", tabindex:"-1"}, "QI ", React.DOM.i( {className:"icon-bulb"}), " Labs")),
+
 							React.DOM.ul( {className:"right padding"}, 
 								React.DOM.li(null, 
 									React.DOM.a( {className:"button plain-btn", href:"/"}, "Voltar")
@@ -275,6 +275,8 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 				React.DOM.div(null, 
 					React.DOM.nav( {className:"bar"}, 
 						React.DOM.div( {className:"navcontent"}, 
+							React.DOM.span( {className:"center"}, React.DOM.a( {className:"brand", href:"/", tabindex:"-1"}, "QI ", React.DOM.i( {className:"icon-bulb"}), " Labs")),
+
 							React.DOM.ul( {className:"right padding"}, 
 								React.DOM.li(null, 
 									React.DOM.a( {href:"#", className:"button plain-btn", 'data-action':"discart-post"}, "Cancelar")

@@ -44,11 +44,11 @@ body.sidebarOpen {
 	height: 100%;
 	background: #EEE;
 	.translate(100%);
+	&.visible {
+		.translate(0);
+	}
 }
 
-body.rightContainerOpen #rightContainer {
-	.translate(0);		
-}
 
 .pContainer {
 	position: absolute;
@@ -59,6 +59,30 @@ body.rightContainerOpen #rightContainer {
 
 	z-index: 20;
 	.transition-transform;
+
+	[data-action=close-page] {
+		position: absolute;
+		top: 3px;
+		right: 9px;
+		opacity: .9;
+		&:hover {
+			opacity: 1;
+		}
+	}
+}
+
+.close-btn {
+	color: #EEE;
+	font-style: normal;
+	// font-weight: bold;
+	font-size: 22px;
+	cursor: pointer;
+	color: white;
+	.transition;
+
+	&::before {
+		content: "×";
+	}
 }
 
 .cContainer {
@@ -74,6 +98,7 @@ body.rightContainerOpen #rightContainer {
 	border-top: 1px solid #DDD;
 	.transition-transform(.3s, ease-out);
 	z-index: 15;
+
 }
 
 &::-webkit-scrollbar-thumb {

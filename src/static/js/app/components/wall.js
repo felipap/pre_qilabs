@@ -77,6 +77,8 @@ define([
 
 			return (
 				React.DOM.div( {className:"postBox", 'data-post-type':this.props.model.get('type'), 'data-post-id':this.props.model.get('id')}, 
+					React.DOM.i( {className:"close-btn", 'data-action':"close-page"}),
+
 					React.DOM.div( {className:"postCol"}, 
 						postView( {model:this.props.model} )
 					),
@@ -291,7 +293,6 @@ define([
 				},
 			'':
 				function () {
-					$('body').removeClass('rightContainerOpen');
 					$('.pContainer').remove();
 					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
 				},
@@ -302,7 +303,7 @@ define([
 				FollowList( {list:list, isFollowing:opts.isFollowing, profile:user_profile} ),
 				document.getElementById('rightContainer')
 			);
-			$('body').addClass('rightContainerOpen');
+			$('#rightContainer').addClass('visible');
 		},
 
 		renderWall: function (url, opts) {
