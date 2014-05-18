@@ -68,6 +68,7 @@ define([
 				var postView = postViews[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
+				var postView = postViews.Question;
 			}
 
 			var self = this;

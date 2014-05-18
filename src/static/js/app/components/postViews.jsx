@@ -235,6 +235,10 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			componentDidMount: function () {
 				if (window.user && this.props.model.get('author').id === window.user.id) {
 					this.editor = new MediumEditor(this.refs.answerBody.getDOMNode(), mediumEditorAnswerOpts); 
+					$(this.refs.answerBody.getDOMNode()).mediumInsert({
+						editor: this.editor,
+					});
+
 					this.editor.deactivate();
 				} else {
 					this.editor = null;
