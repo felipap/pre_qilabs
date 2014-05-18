@@ -5,7 +5,7 @@
 {% block head %}
 {% parent %}
 	<script>tagData = {{ getTags()|json }};</script>
-	{{ tagMacros.stylesheet(getMediaUrl('css','snpages.min.css')) }}
+	{{ tagMacros.stylesheet(getMediaUrl('css/snpages.min.css')) }}
 {% endblock %}
 
 {% block body %}
@@ -19,8 +19,6 @@
 	</div>
 
 	<div class="cContainer" id="rightContainer"></div>
-
-	<div id="fullPostContainer"></div>
 
 	<script>
 		(window.resizeCardsPanel = function () {

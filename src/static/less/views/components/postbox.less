@@ -5,19 +5,9 @@
 @postSidebarWidth: 340px;
 @postColWidth: 760px;
 
-#fullPostContainer {
-	position: absolute;
-	top: 0; bottom: 0;
-	left: 0; right: 0;
-	z-index: 20;
-	overflow: auto;
-	overflow-x: hidden;	
+[data-page=post] {
 	background: fadeout(black, 10%);
-	display: none;
-
-	&.active {
-		display: block;
-	}
+	z-index: 60 !important;
 
 	.postBox {
 		min-width: (@postSidebarWidth+@postColWidth);

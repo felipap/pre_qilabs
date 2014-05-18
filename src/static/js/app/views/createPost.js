@@ -103,7 +103,44 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 		},
 	});
 
-	return React.createClass({
+	var PostTypeSelector = React.createClass({displayName: 'PostTypeSelector',
+		render: function () {
+			var options = [{
+				label: 'Pergunta',
+				id: 'question',
+				iconClass: 'icon-question'
+			}, {
+				label: 'Dica',
+				id: 'tip',
+				iconClass: 'icon-bulb',
+			}, {
+				label: 'Achievement',
+				id: 'Experience',
+				iconClass: 'icon-trophy'
+			}];
+			var optionEls = _.map(options, function (option) {
+				var self = this;
+				return (
+					React.DOM.div( {className:"postOption", onClick:function(){self.props.onClickOption(option.id)}}, 
+						React.DOM.div( {className:"card"}, 
+							React.DOM.i( {className:option.iconClass})
+						),
+						React.DOM.div( {className:"info"}, React.DOM.label(null, option.label))
+					)
+				);
+			}.bind(this));
+			return (
+				React.DOM.div( {className:"cContainer"}, 
+					React.DOM.div( {id:"postTypeSelection"}, 
+						React.DOM.label(null, "Que tipo de publicação você quer fazer?"),
+						React.DOM.div( {className:"optionsWrapper"}, optionEls)
+					)
+				)
+			);
+		},
+	});
+
+	var PostForm = React.createClass({displayName: 'PostForm',
 		componentDidMount: function () {
 			var postBody = this.refs.postBody.getDOMNode();
 			var self = this;
@@ -126,6 +163,13 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 					}
 				},
 			});
+
+			setTimeout(function () {
+				$('.autosize').autosize({
+					append: '',
+				});
+			}, 1000);
+
 
 			$(postBody).on('input keyup', function () {
 				function countWords (s){
@@ -166,37 +210,56 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 			});
 		},
 		render: function () {
+			return (
+				React.DOM.div( {className:"cContainer"}, 
+					React.DOM.div( {className:"formWrapper"}, 
+						React.DOM.div( {id:"formCreatePost"}, 
+							React.DOM.textarea( {ref:"titleInput", className:"title autosize", name:"post_title", placeholder:"Título da Publicação"}),
+							TagSelectionBox( {ref:"tagSelectionBox", data:_.indexBy(tagData,'id')} ),
+							React.DOM.div( {className:"bodyWrapper"}, 
+								React.DOM.div( {id:"postBody", ref:"postBody", placeholder:"Conte a sua experiência aqui. Mínimo de 100 palavras."})
+							),
+							React.DOM.input( {type:"hidden", name:"post_type", value:this.props.type} ),
+							React.DOM.input( {type:"hidden", name:"_csrf", value:"{{ token }}"} )
+						)
+					),
+					React.DOM.div( {ref:"wordCount", className:"wordCounter"})
+				)
+			);
+		},
+	});
+
+	return React.createClass({
+		getInitialState: function () {
+			return {};
+		},
+		selectFormType: function (type) {
+			this.setState({chosenForm:type});
+		},
+		render: function () {
 			var CSSTransition = React.addons.CSSTransitionGroup;
 			return (
 				CSSTransition( {transitionName:"animateFade"}, 
 					React.DOM.div(null, 
 						React.DOM.nav( {className:"bar"}, 
+						this.state.chosenForm?(
 							React.DOM.div( {className:"navcontent"}, 
 								React.DOM.ul( {className:"right padding"}, 
 									React.DOM.li(null, 
-										React.DOM.a( {href:"#", class:"button plain-btn", 'data-action':"discart-post"}, "Cancelar")
+										React.DOM.a( {href:"#", className:"button plain-btn", 'data-action':"discart-post"}, "Cancelar")
 									),
 									React.DOM.li(null, 
 										React.DOM.button( {onClick:this.sendPost, 'data-action':"send-post"}, "Publicar")
 									)
 								)
 							)
+						):null
 						),
-
-						React.DOM.div( {className:"cContainer"}, 
-							React.DOM.div( {className:"formWrapper"}, 
-								React.DOM.div( {id:"formCreatePost"}, 
-									React.DOM.textarea( {ref:"titleInput", className:"title autosize", name:"post_title", placeholder:"Título da Publicação", 'data-toggle':"tooltip", 'data-placement':"right", title:"", 'data-trigger':"focus"}),
-									TagSelectionBox( {ref:"tagSelectionBox", data:_.indexBy(tagData,'id')} ),
-									React.DOM.div( {className:"bodyWrapper"}, 
-										React.DOM.div( {id:"postBody", ref:"postBody", 'data-placeholder':"Conte a sua experiência aqui. Mínimo de 100 palavras."})
-									),
-									React.DOM.input( {type:"hidden", name:"post_type", value:"Experience"} ),
-									React.DOM.input( {type:"hidden", name:"_csrf", value:"{{ token }}"} )
-								)
-							),
-							React.DOM.div( {ref:"wordCount", className:"wordCounter"})
-							)
+						
+							this.state.chosenForm?
+							PostForm( {type:this.state.chosenForm} )
+							:PostTypeSelector( {onClickOption:this.selectFormType} )
+						
 					)
 				)
 			);

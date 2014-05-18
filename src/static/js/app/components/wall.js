@@ -278,10 +278,11 @@ define([
 							}
 							console.log('response, data', response)
 							self.postItem = new postModels.postItem(response.data);
-							React.renderComponent(FullPostView(
-								{model:self.postItem}),
-								document.getElementById('fullPostContainer'));
-							$("#fullPostContainer").addClass('active');
+							var pc = $('<div class="pContainer" data-page="post">');
+							React.renderComponent(FullPostView({model:self.postItem}),
+								pc[0], function () {
+									pc.appendTo('body');
+								});
 						})
 						.fail(function (response) {
 							alert("não achei");

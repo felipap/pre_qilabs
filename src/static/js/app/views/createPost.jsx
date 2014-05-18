@@ -103,7 +103,44 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 		},
 	});
 
-	return React.createClass({
+	var PostTypeSelector = React.createClass({
+		render: function () {
+			var options = [{
+				label: 'Pergunta',
+				id: 'question',
+				iconClass: 'icon-question'
+			}, {
+				label: 'Dica',
+				id: 'tip',
+				iconClass: 'icon-bulb',
+			}, {
+				label: 'Achievement',
+				id: 'Experience',
+				iconClass: 'icon-trophy'
+			}];
+			var optionEls = _.map(options, function (option) {
+				var self = this;
+				return (
+					<div className="postOption" onClick={function(){self.props.onClickOption(option.id)}}>
+						<div className="card">
+							<i className={option.iconClass}></i>
+						</div>
+						<div className="info"><label>{option.label}</label></div>
+					</div>
+				);
+			}.bind(this));
+			return (
+				<div className="cContainer">
+					<div id="postTypeSelection">
+						<label>Que tipo de publicação você quer fazer?</label>
+						<div className="optionsWrapper">{optionEls}</div>
+					</div>
+				</div>
+			);
+		},
+	});
+
+	var PostForm = React.createClass({
 		componentDidMount: function () {
 			var postBody = this.refs.postBody.getDOMNode();
 			var self = this;
@@ -126,6 +163,13 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 					}
 				},
 			});
+
+			setTimeout(function () {
+				$('.autosize').autosize({
+					append: '',
+				});
+			}, 1000);
+
 
 			$(postBody).on('input keyup', function () {
 				function countWords (s){
@@ -166,37 +210,56 @@ define(['common', 'react', 'medium-editor', 'medium-editor-insert', 'typeahead-b
 			});
 		},
 		render: function () {
+			return (
+				<div className="cContainer">
+					<div className="formWrapper">
+						<div id="formCreatePost">
+							<textarea ref="titleInput" className="title autosize" name="post_title" placeholder="Título da Publicação"></textarea>
+							<TagSelectionBox ref="tagSelectionBox" data={_.indexBy(tagData,'id')} />
+							<div className="bodyWrapper">
+								<div id="postBody" ref="postBody" placeholder="Conte a sua experiência aqui. Mínimo de 100 palavras."></div>
+							</div>
+							<input type="hidden" name="post_type" value={this.props.type} />
+							<input type="hidden" name="_csrf" value="{{ token }}" />
+						</div>
+					</div>
+					<div ref="wordCount" className="wordCounter"></div>
+				</div>
+			);
+		},
+	});
+
+	return React.createClass({
+		getInitialState: function () {
+			return {};
+		},
+		selectFormType: function (type) {
+			this.setState({chosenForm:type});
+		},
+		render: function () {
 			var CSSTransition = React.addons.CSSTransitionGroup;
 			return (
 				<CSSTransition transitionName="animateFade">
 					<div>
 						<nav className="bar">
+						{this.state.chosenForm?(
 							<div className="navcontent">
 								<ul className="right padding">
 									<li>
-										<a href="#" class="button plain-btn" data-action="discart-post">Cancelar</a>
+										<a href="#" className="button plain-btn" data-action="discart-post">Cancelar</a>
 									</li>
 									<li>
 										<button onClick={this.sendPost} data-action="send-post">Publicar</button>
 									</li>
 								</ul>
 							</div>
+						):null}
 						</nav>
-
-						<div className="cContainer">
-							<div className="formWrapper">
-								<div id="formCreatePost">
-									<textarea ref="titleInput" className="title autosize" name="post_title" placeholder="Título da Publicação" data-toggle="tooltip" data-placement="right" title="" data-trigger="focus"></textarea>
-									<TagSelectionBox ref="tagSelectionBox" data={_.indexBy(tagData,'id')} />
-									<div className="bodyWrapper">
-										<div id="postBody" ref="postBody" data-placeholder="Conte a sua experiência aqui. Mínimo de 100 palavras."></div>
-									</div>
-									<input type="hidden" name="post_type" value="Experience" />
-									<input type="hidden" name="_csrf" value="{{ token }}" />
-								</div>
-							</div>
-							<div ref="wordCount" className="wordCounter"></div>
-							</div>
+						{
+							this.state.chosenForm?
+							<PostForm type={this.state.chosenForm} />
+							:<PostTypeSelector onClickOption={this.selectFormType} />
+						}
 					</div>
 				</CSSTransition>
 			);

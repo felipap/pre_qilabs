@@ -88,10 +88,12 @@ module.exports = {
 					res.endJson {error:true, name:'empty title'}
 				if not req.body.body
 					res.endJson {error:true, name:'empty body'}
+				if not req.body.type.toLowerCase() in ['question','tip','experience']
+					res.endJson {error:true, name:'wtf type'}
 
 				req.user.createPost {
 					groupId: null
-					type: req.body.type
+					type: req.body.type.toLowerCase()
 					content:
 						title: req.body.title
 						body: sanitizer.sanitize(req.body.body)

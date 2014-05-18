@@ -135,7 +135,7 @@ define([
 						trigger: 'manual'
 					});
 				}).always(function () {
-					setTimeout(self.getNotifications, 5*60*1000);
+					// setTimeout(self.getNotifications, 5*60*1000);
 				});
 			},
 			onClickBell: function () {

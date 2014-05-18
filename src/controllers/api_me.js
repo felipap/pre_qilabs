@@ -112,7 +112,7 @@ module.exports = {
         }));
       },
       post: function(req, res) {
-        var sanitizer, tag, tags;
+        var sanitizer, tag, tags, _ref;
         sanitizer = require('sanitizer');
         console.log(req.body.body);
         console.log('final:', req.body.tags, sanitizer.sanitize(req.body.body));
@@ -141,9 +141,15 @@ module.exports = {
             name: 'empty body'
           });
         }
+        if ((_ref = !req.body.type.toLowerCase()) === 'question' || _ref === 'tip' || _ref === 'experience') {
+          res.endJson({
+            error: true,
+            name: 'wtf type'
+          });
+        }
         return req.user.createPost({
           groupId: null,
-          type: req.body.type,
+          type: req.body.type.toLowerCase(),
           content: {
             title: req.body.title,
             body: sanitizer.sanitize(req.body.body)

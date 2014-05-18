@@ -22,36 +22,6 @@ html {
 	overflow: hidden;
 }
 
-// #sidebarPanel {
-// 	z-index: 19;
-// 	box-shadow: inset -3px 0 5px -4px rgba(0,0,0,1);
-// 	.translate(0);
-// 	border-right: 1px solid #111;
-// }
-
-// #navbar {
-// 	z-index: 21;
-// 	background: transparent;
-
-// }
-// .navcontent {
-// 	width: auto;
-// 	margin-left: 0;
-// 	.transition;
-// 	height: 50px;
-// 	background: white;
-// }
-//
-// body.sidebarOpen {
-// 	nav.bar {
-// 		.translate(@widthSidebar);
-// 	}
-// }
-
-nav.bar {
-	.transition-transform;
-}
-
 body.sidebarOpen {
 	#sidebarPanel {
 		.translate(0);
@@ -87,17 +57,6 @@ body.rightContainerOpen #rightContainer {
 
 	z-index: 20;
 	.transition-transform;
-
-	// background: #EEE;
-	[data-page] {
-		display: table;
-		width: 100%;
-
-		nav.bar {
-			background: white;
-		}
-	}
-
 }
 
 .cContainer {
@@ -112,7 +71,7 @@ body.rightContainerOpen #rightContainer {
 	min-width: @minPageWidth;
 	border-top: 1px solid #DDD;
 	.transition-transform(.3s, ease-out);
-	z-index: 20;
+	z-index: 15;
 
 	&::-webkit-scrollbar-thumb {
 		.transition(all, .2s, linear);
@@ -143,7 +102,6 @@ body.rightContainerOpen #rightContainer {
 
 #globalContainer {
 	#cards {
-		// border-top: 1px solid #AAA;
 		padding-top: 20px;
 		margin: 0 auto;
 		.cardsContainer;
@@ -152,7 +110,7 @@ body.rightContainerOpen #rightContainer {
 
 #newPostPopup {
 	position: fixed;
-	display: none;
+	// display: none;
 	top: 0;
 	bottom: 0;
 	left: 0; 

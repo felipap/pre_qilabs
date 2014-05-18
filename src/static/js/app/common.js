@@ -73,7 +73,7 @@ define([
 
 	$("body").tooltip({selector:'[data-toggle=tooltip]'});
 	$("[data-toggle=dialog]").xdialog();
-	$(".autosize").autosize();
+	// $(".autosize").autosize();
 
 	(function setCSRFToken () {
 		$.ajaxPrefilter(function(options, _, xhr) {
