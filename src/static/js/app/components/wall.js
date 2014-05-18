@@ -68,7 +68,7 @@ define([
 				var postView = postViews[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
-				var postView = postViews.Question;
+				return React.DOM.div(null);
 			}
 
 			var self = this;
@@ -109,7 +109,7 @@ define([
 								:
 								React.DOM.div( {className:"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":""),
 									onClick:this.toggleVote}, 
-									post.voteSum, " ", React.DOM.i( {className:"icon-tup"})
+									post.voteSum, " ", React.DOM.i( {className:"icon-heart-o"})
 								),
 							
 							

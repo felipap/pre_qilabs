@@ -35,7 +35,9 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 				console.log('response', response);
 				if (!response.error) {
 					self.liked = !self.liked;
-					delete response.data.author;
+					if (response.data.author) {
+						delete response.data.author;
+					}
 					self.set(response.data);
 					self.trigger('change');
 				}

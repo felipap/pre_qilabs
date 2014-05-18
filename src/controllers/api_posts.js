@@ -104,7 +104,7 @@ module.exports = {
                 return function(post) {
                   return req.user.upvotePost(post, function(err, doc) {
                     return res.endJson({
-                      err: err,
+                      error: err,
                       data: doc
                     });
                   });
@@ -124,7 +124,7 @@ module.exports = {
                 return function(post) {
                   return req.user.unupvotePost(post, function(err, doc) {
                     return res.endJson({
-                      err: err,
+                      error: err,
                       data: doc
                     });
                   });

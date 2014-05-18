@@ -68,7 +68,7 @@ define([
 				var postView = postViews[postType];
 			} else {
 				console.warn("Couldn't find view for post of type "+postType);
-				var postView = postViews.Question;
+				return <div></div>;
 			}
 
 			var self = this;
@@ -109,7 +109,7 @@ define([
 								:
 								<div className={"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":"")}
 									onClick={this.toggleVote}>
-									{post.voteSum} <i className="icon-tup"></i>
+									{post.voteSum} <i className="icon-heart-o"></i>
 								</div>
 							}
 							{

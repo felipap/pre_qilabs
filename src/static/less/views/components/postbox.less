@@ -945,16 +945,20 @@
 				.remove { .flatBtn(desaturate(@COLOR4, 15%)); }
 
 				.like {
-					.flatBtn(desaturate(@COLOR3, 10%));
+					.flatBtn(#444);
 					.transition(all, .2s, ease);
 					&.liked {
-						.flatBtn(@COLOR3);						
+						.flatBtn(@COLOR4);				
 						i::before {
-							content: "\f164"; // "\f087"; // thumbs-o
+							content: "\f08a"; //"\f164"; // "\f087"; // thumbs-o
+							color: darken(@COLOR4,10%);
 						}
 					}
 					&:hover {
-						.flatBtn(@COLOR3);
+						// .flatBtn(@COLOR4);
+						i {
+							color: @COLOR4;
+						}
 					}
 					i {
 						margin-left: 5px;

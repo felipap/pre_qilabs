@@ -238,7 +238,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					$(this.refs.answerBody.getDOMNode()).mediumInsert({
 						editor: this.editor,
 					});
-
 					this.editor.deactivate();
 				} else {
 					this.editor = null;
