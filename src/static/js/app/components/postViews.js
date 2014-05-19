@@ -24,7 +24,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 	var EditablePost = {
 		onClickTrash: function () {
-			if (confirm('Tem certeza que deseja excluir essa postagem?')) {
+			if (confirm('Tem certeza que quer excluir essa postagem?')) {
 				this.props.model.destroy();
 			}
 		},
@@ -506,7 +506,13 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 
 			showInput: function () {
-				this.setState({showInput:true});
+				if (this.props.model.children.Answer.all(function (answer) {
+					return answer.get('author').id != window.user.id;
+				})) {
+					this.setState({showInput:true});
+				} else {
+					app.alert('Você não pode responder a mesma pergunta mais de uma vez. Edite a sua resposta antiga se quiser adicionar mais informações.', 'danger');
+				}
 			},
 
 			render: function () {
@@ -526,7 +532,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								
 									this.props.small?
 									null
-									:React.DOM.label(null, "Responda à pergunta \"",this.props.model.get('data').title,"\""),
+									:React.DOM.label(null, "Responder à pergunta \"",this.props.model.get('data').title,"\""),
 								
 									React.DOM.div( {className:"editorWrapper"}, 
 										React.DOM.div( {className:"editor answerBody", ref:"input", name:"teste", 'data-placeholder':"Resposta da pergunta aqui..."})
@@ -561,10 +567,10 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 	var TagList = React.createClass({displayName: 'TagList',
 		render: function () {
-			var tags = _.map(this.props.tags, function (label) {
+			var tags = _.map(this.props.tags, function (tagId) {
 				return (
-					React.DOM.div( {className:"tag"}, 
-						label
+					React.DOM.div( {className:"tag", key:tagId}, 
+						tagMap[tagId]
 					)
 				);
 			});

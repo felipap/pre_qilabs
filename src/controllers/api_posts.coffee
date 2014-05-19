@@ -40,7 +40,7 @@ module.exports = {
 			tags: tags
 		}, req.handleErrResult((doc) ->
 			doc.populate 'author', (err, doc) ->
-				res.endJson {error:false, data:doc}
+				res.endJson doc
 		)
 
 	children: {
@@ -56,7 +56,7 @@ module.exports = {
 			put: [required.posts.selfOwns('id'),
 				(req, res) ->
 					return if not postId = req.paramToObjectId('id')
-					# For security, handle each option
+					# For security, handle each option separately
 
 					Post.findById postId, req.handleErrResult (post) =>
 						if post.type is 'Comment'
@@ -83,6 +83,9 @@ module.exports = {
 				return if not postId = req.paramToObjectId('id')
 				Post.findOne {_id: postId, author: req.user},
 					req.handleErrResult (doc) ->
+						if doc.type not in ['Answer','Comment']
+							req.user.update {$inc:{'stats.posts':-1}},()->
+								console.log(arguments)
 						doc.remove()
 						res.endJson(doc)
 				]

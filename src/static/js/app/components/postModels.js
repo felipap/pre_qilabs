@@ -59,6 +59,9 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 			Backbone.Collection.apply(this, arguments);
 			this.url = options.url || app.postsRoot || '/api/me/timeline/posts';
 			this.EOF = false;
+			this.on('remove', function () {
+				console.log('removed!');
+			});
 		},
 		comparator: function (i) {
 			return -1*new Date(i.get('published'));

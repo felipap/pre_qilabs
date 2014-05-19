@@ -178,59 +178,63 @@
 	}
 
 	
-.listView {
+[data-page=listView] {
 
-	width: 800px;
-	margin: 0 auto;
-	position: relative;
-	padding-bottom: 50px;
+	.listWrapper {
+		width: 800px;
+		margin: 0 auto;
+		position: relative;
+		padding-bottom: 50px;
 
-	& > label {
-		font-size: 25px;
-		text-align: left;
-		display: block;
-		font: normal 25px museo-sans;
-		margin: 20px 0;
-		color: #666;
-	}
 
-	.userAvatar {
-		position: absolute;
-		left: -120px;
-
-		.avatarWrapper {
-			height: 100px;
-			width: 100px;
+		& > label {
+			font-size: 25px;
+			text-align: left;
+			display: block;
+			font: normal 25px museo-sans;
+			margin: 20px 0;
+			color: #666;
 		}
-	}
 
-	li {
-		clear: both;
-		list-style: none;
-		text-align: left;
+		.userAvatar {
+			position: absolute;
+			left: -120px;
 
-		padding-bottom: 10px;
-		border-bottom: 1px solid #DDD;
-		margin-bottom: 10px;
-		
-		a {
-			cursor: pointer;
 			.avatarWrapper {
-				height: 30px;
-				width: 30px;
-				margin-right: 10px;
-				vertical-align: middle;
+				height: 100px;
+				width: 100px;
 			}
 		}
 
-		.name {
-			font: normal 16px museo-sans;
-		}
+		li {
+			clear: both;
+			list-style: none;
+			text-align: left;
 
-		button {
-			float: right;
-			margin: 0;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #DDD;
+			margin-bottom: 10px;
+			
+			a {
+				cursor: pointer;
+				.avatarWrapper {
+					height: 30px;
+					width: 30px;
+					margin-right: 10px;
+					vertical-align: middle;
+				}
+			}
+
+			.name {
+				font: normal 16px museo-sans;
+			}
+
+			button {
+				float: right;
+				margin: 0;
+			}
 		}
+		
 	}
 }
 }

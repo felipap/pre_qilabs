@@ -65,10 +65,7 @@ module.exports = {
       tags: tags
     }, req.handleErrResult(function(doc) {
       return doc.populate('author', function(err, doc) {
-        return res.endJson({
-          error: false,
-          data: doc
-        });
+        return res.endJson(doc);
       });
     }));
   },
@@ -142,6 +139,16 @@ module.exports = {
             _id: postId,
             author: req.user
           }, req.handleErrResult(function(doc) {
+            var _ref;
+            if ((_ref = doc.type) !== 'Answer' && _ref !== 'Comment') {
+              req.user.update({
+                $inc: {
+                  'stats.posts': -1
+                }
+              }, function() {
+                return console.log(arguments);
+              });
+            }
             doc.remove();
             return res.endJson(doc);
           }));

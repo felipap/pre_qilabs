@@ -240,9 +240,20 @@
 							background: @COLOR3;
 							color: white;
 						}
+						&:not(:last-child) {
+							border-bottom: 1px solid #DDD;
+							
+						}
 						
-						p {
-							margin: 0;
+						label {
+							margin: 0 0 6px;
+							font: normal 17px museo-sans;
+						}
+
+						.detail {
+							font: normal 13px museo-sans;
+							font-weight: normal !important;
+							strong { font-weight: normal; }
 						}
 						
 						&.tt-cursor {

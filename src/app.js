@@ -190,7 +190,6 @@ app.locals({
 						throw "Invalid argument '"+argName+"' to url '"+url+"'' getPageUrl. ";
 					return args[occ.slice(1,occ.length)];
 				});
-				// console.log (a)
 				return a
 			} else {
 				return url;
@@ -202,6 +201,28 @@ app.locals({
 			}
 			return "#";
 		}
+	},
+	getTagMap: function () {
+		return {
+			'application': {
+				label: 'Application',
+			}, 
+			'vestibular': {
+				label: 'Vestibular',
+			}, 
+			'olimpiadas-de-matematica': {
+				label: 'Olimpíadas de Matemática',
+			}, 
+			'olimpiadas-de-informatica': {
+				label: 'Olimpíadas de Informática',
+			}, 
+			'olimpiadas-cientificas': {
+				label: 'Olimpíadas Científicas',
+			}, 
+			'obi': {
+				label: 'Olimpíada Brasileira de Informática',
+			}, 
+		};
 	},
 	getTags: function () {
 		return [

@@ -52,7 +52,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 					empty: [
 						'<div class="empty-message">Assunto não encontrado</div>'
 					].join('\n'),
-					suggestion: _.template('<p><%= name %></p>'),
+					suggestion: _.template('<div><label><%= name %></label><div class="detail">Lorem Ipsum Dolor Sit Amet</div></div>'),
 				}
 			});
 			var self = this;
@@ -267,6 +267,13 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 				$(this.refs.wordCount.getDOMNode()).html(count?(count==1?count+" palavra":count+" palavras"):'');
 			}.bind(this));
 		},
+		componentWillUnmount: function () {
+			// Destroy this.editor and unbind autosize.
+			this.editor.deactivate();
+			$(this.editor.anchorPreview).remove();
+			$(this.editor.toolbar).remove();
+			$(this.refs.postTitle.getDOMNode()).trigger('autosize.destroy');
+		},
 		onChangeTags: function () {
 			this.props.model.set('tags', this.refs.tagSelectionBox.getSelectedTagsIds());
 		},
@@ -277,7 +284,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 					window.location.href = model.get('path');
 				},
 				error: function (response) {
-					alert('erro')
+					app.alert(response.message, 'danger');
 				}
 			});
 		},
@@ -349,7 +356,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 	});
 
 	return {
-		postCreate: PostCreationView,
-		postEdit: PostEdit, 
+		create: PostCreationView,
+		edit: PostEdit, 
 	};
 });

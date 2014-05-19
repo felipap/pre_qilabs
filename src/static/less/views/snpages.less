@@ -10,6 +10,7 @@
 @import "components/wall.less";
 @import "components/postbox.less";
 @import "components/sidebar.less";
+@import "components/alerts.less";
 
 @import "pages/profile.less";
 @import "pages/tag.less";
@@ -21,6 +22,7 @@
 html {
 	overflow: hidden;
 }
+
 
 body.sidebarOpen {
 	#sidebarPanel {
@@ -60,14 +62,10 @@ body.sidebarOpen {
 	z-index: 20;
 	.transition-transform;
 
-	[data-action=close-page] {
-		position: absolute;
-		top: 3px;
-		right: 9px;
-		opacity: .9;
-		&:hover {
-			opacity: 1;
-		}
+	& > .close-btn {
+		position: fixed;
+		top: 10px;
+		right: 20px;
 	}
 }
 
@@ -79,6 +77,10 @@ body.sidebarOpen {
 	color: white;
 	.transition;
 
+	opacity: .8;
+	&:hover {
+		opacity: 1;
+	}
 	&::before {
 		content: "×";
 	}
@@ -98,6 +100,13 @@ body.sidebarOpen {
 	.transition-transform(.3s, ease-out);
 	z-index: 15;
 
+	& > .close-btn {
+		position: absolute;
+		top: 5px;
+		right: 20px;
+		font-size: 26px;
+		color: #777;
+	}
 }
 
 &::-webkit-scrollbar-thumb {

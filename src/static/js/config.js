@@ -16,10 +16,10 @@ requirejs.config({
 		// 'app.mural':		'app/app/mural',
 		// Components
 		'components.postForms': 'app/components/postForms',
+		'components.postViews':	'app/components/postViews',
 		'components.bell':		'app/components/bell',
 		'components.cards':		'app/components/wall',
 		'components.postModels':'app/components/postModels',
-		'components.postViews':	'app/components/postViews',
 		// Third-party
 		'jquery':				'vendor/jquery-2.0.3.min',
 		'bootstrap':			'vendor/bootstrap-3.0.0.min',

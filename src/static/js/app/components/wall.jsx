@@ -11,6 +11,34 @@ define([
 	'jquery', 'backbone', 'components.postModels', 'components.postViews', 'underscore', 'react', 'components.postForms'],
 	function ($, Backbone, postModels, postViews, _, React, postForms) {
 
+	var FlashDiv = React.createClass({
+		getInitialState: function () {
+			return {message:'', action:''};
+		},
+		message: function (text, className, wait) {
+			var wp = this.refs.message.getDOMNode();
+			$(wp).fadeOut(function () {
+				function removeAfterWait() {
+					setTimeout(function () {
+						$(this).fadeOut();
+					}.bind(this), wait || 5000);
+				}
+				$(this.refs.messageContent.getDOMNode()).html(text);
+				$(wp).prop('class', 'message '+className).fadeIn('fast', removeAfterWait);
+			}.bind(this)); 
+		},
+		hide: function () {
+			$(this.refs.message.getDOMNode()).fadeOut();
+		},
+		render: function () {
+			return (
+				<div ref="message" className="message" style={{ 'display': 'none' }} onClick={this.hide}>
+					<span ref="messageContent"></span> <i className="close-btn" onClick={this.hide}></i>
+				</div>
+			);
+		},
+	})
+
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
 			this.innerHTML = calcTimeFrom(parseInt(this.dataset.timeCount), this.dataset.timeLong);
@@ -27,10 +55,8 @@ define([
 			this.props.model.on('add reset remove change', update.bind(this));
 		},
 
-		destroy: function () {
-			React.unmountComponentAtNode(document.getElementById('fullPostContainer'));
-			$("#fullPostContainer").removeClass('active');
-			app.navigate('/', {trigger:true});
+		close: function () {
+			this.props.page.destroy(true);
 		},
 
 		onClickEdit: function () {
@@ -40,10 +66,11 @@ define([
 		onClickTrash: function () {
 			if (confirm('Tem certeza que deseja excluir essa postagem?')) {
 				this.props.model.destroy();
-				this.destroy();
+				this.close();
 				// Signal to the wall that the post with this ID must be removed.
 				// This isn't automatic (as in deleting comments) because the models on
 				// the wall aren't the same as those on post FullPostView.
+				console.log('id being removed:',this.props.model.get('id'))
 				app.postList.remove({id:this.props.model.get('id')})
 				$(".tooltip").remove(); // fuckin bug
 			}
@@ -57,7 +84,7 @@ define([
 			var self = this;
 			$(this.getDOMNode().parentElement).on('click', function onClickOut (e) {
 				if (e.target === this || e.target === self.getDOMNode()) {
-					self.destroy();
+					self.close();
 					$(this).unbind('click', onClickOut);
 				}
 			});
@@ -81,7 +108,7 @@ define([
 
 			return (
 				<div className="postBox" data-post-type={this.props.model.get('type')} data-post-id={this.props.model.get('id')}>
-					<i className="close-btn" data-action="close-page" onClick={this.destroy}></i>
+					<i className="close-btn" data-action="close-page" onClick={this.close}></i>
 
 					<div className="postCol">
 						<postView model={this.props.model} />
@@ -163,6 +190,9 @@ define([
 	});
 
 	var FollowList = React.createClass({
+		close: function () {
+			this.props.page.destroy(true);
+		},
 		render: function () {
 			// <button className="btn-follow" data-action="unfollow"></button>
 			var items = _.map(this.props.list, function (person) {
@@ -183,17 +213,20 @@ define([
 				var label = this.props.list.length+" pessoas seguem "+this.props.profile.name;
 
 			return (
-				<div className="listView">
-					<div className="userAvatar">
-						<div className="avatarWrapper">
-							<a href="#">
-							<div className="avatar" style={ {background: 'url("'+this.props.profile.avatarUrl+'")'} }>
+				<div className="cContainer">
+					<i className="close-btn" onClick={this.close}></i>
+					<div className="listWrapper">
+						<div className="userAvatar">
+							<div className="avatarWrapper">
+								<a href="#">
+								<div className="avatar" style={ {background: 'url("'+this.props.profile.avatarUrl+'")'} }>
+								</div>
+								</a>
 							</div>
-							</a>
 						</div>
+						<label>{label}</label>
+						{items}
 					</div>
-					<label>{label}</label>
-					{items}
 				</div>
 			);
 		},
@@ -204,18 +237,19 @@ define([
 			return {selectedForm:null};
 		},
 		componentWillMount: function () {
+			var self = this;
 			function update (evt) {
-				this.forceUpdate(function(){});
+				console.log('updating!', arguments)
+				self.forceUpdate(function(){});
 			}
-			this.props.collection.on('add change remove reset statusChange', update.bind(this));
+			_.defer(function () {
+				app.postList.on('add change remove reset statusChange', update, this);
+			});
 		},
 		render: function () {
 			var self = this;
-			function fetchMore () {
-				self.props.collection.tryFetchMore();
-			}
 
-			var cards = this.props.collection.map(function (post) {
+			var cards = app.postList.map(function (post) {
 				if (post.get('__t') === 'Post')
 					return postViews.CardView({model:post, key:post.id});
 				return null;
@@ -230,17 +264,24 @@ define([
 
 	var Page = function (component, dataPage, callback) {
 
+		component.props.page = this;
 		var e = document.createElement('div');
 		this.e = e;
 		this.c = component;
 		$(e).addClass('pContainer');
-		e.dataset.page = dataPage;
+		if (dataPage)
+			e.dataset.page = dataPage;
 		React.renderComponent(component, e, callback || function(){});
 		$(e).hide().appendTo('body').fadeIn();
 
-		this.destroy = function () {
-			React.unmountComponentAtNode(e);
-			$(e).fadeOut().remove();
+		this.destroy = function (navigate) {
+			$(e).fadeOut(function () {
+				React.unmountComponentAtNode(e);
+				$(e).remove();
+				if (navigate) {
+					app.navigate('/', {trigger:false});
+				}
+			});
 		};
 	};
 
@@ -252,6 +293,11 @@ define([
 			window.app = this;
 			this.pages = [];
 			this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
+			this.fd = React.renderComponent(<FlashDiv />, $('<div id="flash-wrapper">').appendTo('body')[0]);
+		},
+
+		alert: function (message, className, wait) {
+			this.fd.message(message, className, wait);
 		},
 
 		closePages: function () {
@@ -264,7 +310,7 @@ define([
 			'new':
 				function () {
 					this.closePages();
-					var p = new Page(postForms.postCreate({user: window.user}), 'createPost');
+					var p = new Page(postForms.create({user: window.user}), 'createPost');
 					console.log('oi',p)
 					this.pages.push(p);
 				},
@@ -299,6 +345,8 @@ define([
 				},
 			'posts/:postId':
 				function (postId) {
+					this.closePages();
+
 					$.getJSON('/api/posts/'+postId)
 						.done(function (response) {
 							if (response.data.parentPost) {
@@ -310,11 +358,12 @@ define([
 							this.pages.push(p);
 						}.bind(this))
 						.fail(function (response) {
-							alert("não achei");
+							app.alert('Ops! Não conseguimos encontrar essa publicação. Ela pode ter sido excluída.', 'error');
 						}.bind(this));
 				},
 			'posts/:postId/edit':
 				function (postId) {
+					this.closePages();
 					$.getJSON('/api/posts/'+postId)
 						.done(function (response) {
 							if (response.data.parentPost) {
@@ -322,7 +371,7 @@ define([
 							}
 							console.log('response, data', response)
 							var postItem = new postModels.postItem(response.data);
-							var p = new Page(postForms.postEdit({model: postItem}), 'createPost');
+							var p = new Page(postForms.edit({model: postItem}), 'createPost');
 							this.pages.push(p);
 						}.bind(this))
 						.fail(function (response) {
@@ -331,7 +380,7 @@ define([
 				},
 			'':
 				function () {
-					$('.pContainer').remove();
+					this.closePages();
 					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
 				},
 		},
@@ -341,20 +390,21 @@ define([
 				<FollowList list={list} isFollowing={opts.isFollowing} profile={user_profile} />,
 				document.getElementById('rightContainer')
 			);
-			$('#rightContainer').addClass('visible');
+			var p = new Page(<FollowList list={list} isFollowing={opts.isFollowing} profile={user_profile} />,
+				'listView');
+			this.pages.push(p);
 		},
 
-		renderWall: function (url, opts) {
+		renderWall: function (url) {
 			// return;
 			this.postList = new postModels.postList([], {url:url});
 			if (!this.postWall) {
-				this.postWall = React.renderComponent(CardsPanelView(
-					_.extend(opts || {},{collection:this.postList})),
+				this.postWall = React.renderComponent(<CardsPanelView />,
 					document.getElementById('resultsContainer'));
-				this.postList.fetch({reset:true});
+				_.defer(function () {
+					this.postList.fetch({reset:true});
+				}.bind(this));
 				var fetchMore = this.postList.tryFetchMore.bind(app.postList);
-
-
 				$('#globalContainer').scroll(function() {
 					if ($('#content').outerHeight()-($('#globalContainer').scrollTop()+$('#globalContainer').outerHeight())<5) {
 						console.log('fetching more')

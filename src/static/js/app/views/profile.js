@@ -6,6 +6,8 @@ require(['common', 'components.cards'], function (common, wall) {
 		$(".profileWrapper").addClass('editing');
 	});
 
+	$('.autosize').autosize();
+
 	$("[data-action=save-profile]").click(function () {
 		var profile = {
 			bio: $("[name=bio]").val(),
