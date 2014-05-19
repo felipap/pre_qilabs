@@ -90,7 +90,14 @@
 .medium-editor-toolbar-anchor-preview {
     background: @medium_editor_bgcolor;
     color: #fff;
-    border-radius: @medium_editor_border_radius;
+    // changed
+    font-size: 15px;
+    .rounded(2px);
+    .medium-editor-toolbar-anchor-preview-inner {
+        font-size: 13px;
+        box-shadow: 0 0 3px rgba(0,0,0,.2);
+        font-size: museo-sans, "Open Sans", sans-serif;
+    }
 }
 
 .medium-editor-placeholder:after {

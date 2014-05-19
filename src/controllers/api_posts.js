@@ -18,52 +18,87 @@ Group = mongoose.model('Group');
 module.exports = {
   permissions: [required.login],
   post: function(req, res) {
-    var data, sanitizer, tag, tags, type, _ref;
+    var body, data, sanitizer, tag, tags, title, type, _ref;
     sanitizer = require('sanitizer');
-    console.log(req.body);
     data = req.body;
-    console.log('final:', data.tags, sanitizer.sanitize(data.data.body), 'porra');
+    console.log('Checking type');
+    if (_ref = !data.type.toLowerCase(), __indexOf.call(_.keys(req.app.locals.postTypes), _ref) >= 0) {
+      return res.status(400).endJson({
+        error: true,
+        message: 'Tipo de publicação inválido.'
+      });
+    }
+    type = data.type[0].toUpperCase() + data.type.slice(1).toLowerCase();
+    console.log('Checking tags');
+    if (!data.tags || !data.tags instanceof Array) {
+      return res.status(400).endJson({
+        error: true,
+        message: 'Selecione pelo menos um assunto relacionado a esse post.'
+      });
+    }
     tags = (function() {
-      var _i, _len, _ref, _results;
-      _ref = data.tags;
+      var _i, _len, _ref1, _results;
+      _ref1 = data.tags;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        tag = _ref[_i];
-        if (__indexOf.call(_.pluck(req.app.locals.getTags(), 'id'), tag) >= 0) {
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        tag = _ref1[_i];
+        if (__indexOf.call(_.keys(req.app.locals.getTagMap()), tag) >= 0) {
           _results.push(tag);
         }
       }
       return _results;
     })();
-    console.log(data.tags, tags, req.app.locals.getTags(), _.pluck(req.app.locals.getTags(), 'id'));
-    if (!data.data.title) {
+    if (tags.length === 0) {
       return res.status(400).endJson({
         error: true,
-        name: 'empty title'
+        message: 'Selecione pelo menos um assunto relacionado a esse post.'
       });
     }
+    console.log('Checking title');
+    if (!data.data.title || !data.data.title.length) {
+      return res.status(400).endJson({
+        error: true,
+        message: 'Erro! Cadê o título da sua ' + req.app.locals.postTypes[type].translated + '?'
+      });
+    }
+    if (data.data.title.length < 10) {
+      return res.status(400).endJson({
+        error: true,
+        message: 'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
+      });
+    }
+    if (data.data.title.length < 10) {
+      return res.status(400).endJson({
+        error: true,
+        message: 'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
+      });
+    }
+    title = data.data.title;
     if (!data.data.body) {
       return res.status(400).endJson({
         error: true,
-        name: 'empty body'
+        message: 'Escreva um corpo para a sua publicação.'
       });
     }
-    if ((_ref = !data.type.toLowerCase()) === 'question' || _ref === 'tip' || _ref === 'experience') {
+    if (data.data.body.length < 20 * 1000) {
       return res.status(400).endJson({
         error: true,
-        name: 'wtf type'
+        message: 'Erro! Você escreveu tudo isso?'
       });
     }
-    type = data.type[0].toUpperCase() + data.type.slice(1).toLowerCase();
-    return req.user.createPost({
-      groupId: null,
+    body = sanitizer.sanitize(data.data.body, function(uri) {
+      return uri;
+    });
+    data = {
       type: type,
+      tags: tags,
       content: {
-        title: data.data.title,
-        body: sanitizer.sanitize(data.data.body)
-      },
-      tags: tags
-    }, req.handleErrResult(function(doc) {
+        title: title,
+        body: body
+      }
+    };
+    console.log('Final:', data);
+    return req.user.createPost(data, req.handleErrResult(function(doc) {
       return doc.populate('author', function(err, doc) {
         return res.endJson(doc);
       });
@@ -269,22 +304,20 @@ module.exports = {
                 return;
               }
               sanitizer = require('sanitizer');
-              console.log(req.body.body);
-              console.log('final:', req.body.tags, sanitizer.sanitize(req.body.body));
               data = {
                 content: {
-                  body: sanitizer.sanitize(req.body.body)
+                  body: sanitizer.sanitize(req.body.body, function(uri) {
+                    return uri;
+                  })
                 },
                 type: Post.Types.Answer
               };
+              console.log('final data:', data);
               return Post.findById(postId, req.handleErrResult((function(_this) {
                 return function(parentPost) {
                   return req.user.postToParentPost(parentPost, data, req.handleErrResult(function(doc) {
                     return doc.populate('author', req.handleErrResult(function(doc) {
-                      return res.endJson({
-                        error: false,
-                        data: doc
-                      });
+                      return res.endJson(data);
                     }));
                   }));
                 };

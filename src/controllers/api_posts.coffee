@@ -16,29 +16,61 @@ module.exports = {
 
 	post: (req, res) ->
 		sanitizer = require 'sanitizer'
-		console.log req.body
-
 		data = req.body
-		console.log 'final:', data.tags, sanitizer.sanitize(data.data.body), 'porra'
 
-		tags = (tag for tag in data.tags when tag in _.pluck(req.app.locals.getTags(), 'id'))
-		console.log(data.tags, tags, req.app.locals.getTags(), _.pluck(req.app.locals.getTags(), 'id'))
-		if not data.data.title
-			return res.status(400).endJson {error:true, name:'empty title'}
-		if not data.data.body
-			return res.status(400).endJson {error:true, name:'empty body'}
-		if not data.type.toLowerCase() in ['question','tip','experience']
-			return res.status(400).endJson {error:true, name:'wtf type'}
+		console.log('Checking type')
+		# Check and sanitize type
+		if not data.type.toLowerCase() in _.keys(req.app.locals.postTypes)
+			return res.status(400).endJson(error:true, message:'Tipo de publicação inválido.')
 		type = data.type[0].toUpperCase()+data.type.slice(1).toLowerCase()
 
-		req.user.createPost {
-			groupId: null
+		console.log('Checking tags')
+		# Sanitize tags
+		if not data.tags or not data.tags instanceof Array
+			return res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
+		tags = (tag for tag in data.tags when tag in _.keys(req.app.locals.getTagMap()))
+		if tags.length == 0
+			return res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
+			
+		console.log('Checking title')
+		# Check title
+		if not data.data.title or not data.data.title.length
+			return res.status(400).endJson({
+				error:true,
+				message:'Erro! Cadê o título da sua '+req.app.locals.postTypes[type].translated+'?',
+			})
+		if data.data.title.length < 10
+			return res.status(400).endJson({
+				error:true,
+				message:'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
+			})
+
+
+		if data.data.title.length < 10
+			return res.status(400).endJson({
+				error:true,
+				message:'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
+			})
+		title = data.data.title
+
+		# Check and sanitize body
+		if not data.data.body
+			return res.status(400).endJson({error:true, message:'Escreva um corpo para a sua publicação.'})
+
+		if data.data.body.length < 20*1000
+			return res.status(400).endJson({error:true, message:'Erro! Você escreveu tudo isso?'})
+		body = sanitizer.sanitize(data.data.body, (uri) -> uri)
+
+		data = {
 			type: type
-			content:
-				title: data.data.title
-				body: sanitizer.sanitize(data.data.body)
 			tags: tags
-		}, req.handleErrResult((doc) ->
+			content:
+				title: title
+				body: body
+		}
+		console.log('Final:', data)
+
+		req.user.createPost data, req.handleErrResult((doc) ->
 			doc.populate 'author', (err, doc) ->
 				res.endJson doc
 		)
@@ -155,15 +187,15 @@ module.exports = {
 				'/answers':
 					post: [required.posts.selfCanComment('id'), (req, res) ->
 						return if not postId = req.paramToObjectId('id')
+
 						sanitizer = require 'sanitizer'
-						console.log req.body.body
-						console.log 'final:', req.body.tags, sanitizer.sanitize(req.body.body)
 						data = {
 							content: {
-								body: sanitizer.sanitize(req.body.body)
+								body: sanitizer.sanitize(req.body.body, (uri) -> uri)
 							}
 							type: Post.Types.Answer
 						}
+						console.log 'final data:', data
 
 						Post.findById postId,
 							req.handleErrResult (parentPost) =>
@@ -171,7 +203,7 @@ module.exports = {
 									req.handleErrResult (doc) =>
 										doc.populate('author',
 											req.handleErrResult (doc) =>
-												res.endJson(error:false, data:doc)
+												res.endJson data
 										)
 					]
 

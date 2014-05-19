@@ -202,6 +202,20 @@ app.locals({
 			return "#";
 		}
 	},
+	postTypes: {
+		question: {
+			translated: 'Pergunta',
+			iconClass: 'icon-question'
+		},
+		tip: {
+			translated: 'Dica',
+			iconClass: 'icon-bulb',
+		},
+		experience: {
+			translated: 'Experiência',
+			iconClass: 'icon-trophy'
+		},
+	},
 	getTagMap: function () {
 		return {
 			'application': {

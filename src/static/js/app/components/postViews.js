@@ -16,7 +16,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 		buttons: ['bold', 'italic', 'quote', 'anchor', 'underline', 'orderedlist'],
 		buttonLabels: {
 			quote: '<i class="icon-quote"></i>',
-			orderedlist: '<i class="icon-list"></i>'
+			orderedlist: '<i class="icon-list"></i>',
+			anchor: '<i class="icon-link"></i>'
 		}
 	};
 
@@ -501,7 +502,12 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					self.editor.innerHTML = "";
 					self.setState({showInput:false});
 					console.log('response', response);
-					self.props.model.children.Answer.add(new postModels.answerItem(response.data));
+					self.props.model.children.Answer.add(new postModels.answerItem(response));
+				}).fail(function(response) {
+					if (response.message) {
+						app.alert(response.message,'error');
+					} else
+						app.alert('Erro!', 'error');
 				});
 			},
 

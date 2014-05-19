@@ -8,15 +8,12 @@ module.exports = function(err, req, res, next) {
 	console.error('Error stack:', err);
 	console.trace();
 
-	if (err.status) {
+	if (err.status)
 		res.status(err.status);
-	}
-	else if (err.permission) {
+	else if (err.permission)
 		res.status(401);
-	}
-	else if (res.statusCode < 400) {
+	else if (res.statusCode < 400)
 		res.status(500);
-	}
 
 	var accept = req.headers.accept || '';
 
@@ -39,18 +36,18 @@ module.exports = function(err, req, res, next) {
 			});
 		}
 	} else {
-		if (req.app.get('env') === 'production') {
-			var error = { message: err.message, stack: err.stack };
-			for (var prop in err) error[prop] = err[prop];
-			res
-				.set('Content-Type', 'application/json')
-				.end(JSON.stringify({ error: error }));
-		} else {	
-			var error = { message: err.message, stack: err.stack };
-			for (var prop in err) error[prop] = err[prop];
-			var json = JSON.stringify({ error: error });
-			res.setHeader('Content-Type', 'application/json');
-			res.end(json);
-		}
+		var error = { message: err.message, stack: err.stack };
+		for (var prop in err) error[prop] = err[prop];
+		return res
+			.set('Content-Type', 'application/json')
+			.end(JSON.stringify({ error: error, message: err.message || 'Erro.' }));
+		// if (req.app.get('env') === 'production') {
+		// } else {	
+		// 	var error = { message: err.message, stack: err.stack };
+		// 	for (var prop in err) error[prop] = err[prop];
+		// 	var json = JSON.stringify({ error: error });
+		// 	res.setHeader('Content-Type', 'application/json');
+		// 	res.end(json);
+		// }
 	}
 }

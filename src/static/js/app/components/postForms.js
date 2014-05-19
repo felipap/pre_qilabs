@@ -3,6 +3,37 @@
 define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-editor-insert', 'typeahead-bundle'],
 	function (common, React, postModels) {
 	
+	var mediumEditorPostOpts = {
+		'question': {
+			buttons: ['bold', 'italic', 'quote', 'anchor', 'underline', 'orderedlist'],
+			buttonLabels: {
+				quote: '<i class="icon-quote"></i>',
+				orderedlist: '<i class="icon-list"></i>',
+				anchor: '<i class="icon-link"></i>'
+			}
+		},
+		'tip': {
+			firstHeader: 'h1',
+			secondHeader: 'h2',
+			buttons: ['bold', 'italic', 'header1', 'header2', 'quote', 'anchor', 'underline', 'orderedlist'],
+			buttonLabels: {
+				quote: '<i class="icon-quote"></i>',
+				orderedlist: '<i class="icon-list"></i>',
+				anchor: '<i class="icon-link"></i>'
+			}
+		},
+		'experience': {
+			firstHeader: 'h1',
+			secondHeader: 'h2',
+			buttons: ['bold', 'italic', 'header1', 'header2', 'quote', 'anchor', 'underline', 'orderedlist'],
+			buttonLabels: {
+				quote: '<i class="icon-quote"></i>',
+				orderedlist: '<i class="icon-list"></i>',
+				anchor: '<i class="icon-link"></i>'
+			}
+		},
+	};
+
 	var tagStates = new Bloodhound({
 		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -65,7 +96,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 				.on('focusout', function () {
 					$('#tagSelectionBox').removeClass('focused');
 					_.defer(function () {
-						// $(self.refs.input.getDOMNode()).val('').prop('placeholder','Tópicos relacionados');
+						$(self.refs.input.getDOMNode()).val(''); // .prop('placeholder','Tópicos relacionados');
 					});
 				})
 				.on('keydown', function (e) {
@@ -171,7 +202,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 						),
 						React.DOM.div( {className:"iconStats"}, 
 							React.DOM.div(null, 
-								React.DOM.i( {className:"icon-heart icon-red"})," 0"
+								React.DOM.i( {className:"icon-heart-o"})," 0"
 							),
 							this.props.type === "Question"?
 								React.DOM.div(null, React.DOM.i( {className:"icon-bulb"})," 0")
@@ -224,7 +255,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 				postTitle = this.refs.postTitle.getDOMNode();
 
 			// Medium Editor
-			this.editor = new MediumEditor(postBody);
+			this.editor = new MediumEditor(postBody, mediumEditorPostOpts[this.props.model.get('type').toLowerCase()]);
 			$(postBody).mediumInsert({
 				editor: this.editor,
 				addons: {
@@ -283,8 +314,9 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 				success: function (model) {
 					window.location.href = model.get('path');
 				},
-				error: function (response) {
-					app.alert(response.message, 'danger');
+				error: function (model, xhr, options) {
+					var data = xhr.responseJSON;
+					app.alert(data.message, 'danger');
 				}
 			});
 		},
@@ -309,7 +341,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 							React.DOM.div( {id:"formCreatePost"}, 
 								React.DOM.div( {className:"cardDemo wall grid"}, 
 									FakeCard( {ref:"cardDemo", type:this.props.model.get('type'), author:this.props.model.get('author')}, 
-										this.props.model.get('data').title || defaultTitle
+										this.props.model.get('data').title
 									)
 								),
 								React.DOM.textarea( {ref:"postTitle", className:"title", name:"post_title", placeholder:defaultTitle, defaultValue:this.props.model.get('data').title}
