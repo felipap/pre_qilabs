@@ -1,7 +1,5 @@
 
 mongoose = require 'mongoose'
-_ = require 'underscore'
-ObjectId = mongoose.Types.ObjectId
 
 required = require '../lib/required.js'
 
@@ -73,35 +71,6 @@ module.exports = {
 								data: docs
 							}
 						)
-
-			post: (req, res) ->
-				# if not req.body.type in _.values(Post.Types)
-				# 	console.log 'typo', req.body.type, 'invalido', _.values(Post.Types)
-				# 	return res.endJSON {error:true,type:'InvalidPostType'}
-				sanitizer = require 'sanitizer'
-				console.log req.body.body
-				console.log 'final:', req.body.tags, sanitizer.sanitize(req.body.body)
-				
-				tags = (tag for tag in req.body.tags when tag in _.pluck(req.app.locals.tags, 'id'))
-				console.log(req.body.tags, tags, req.app.locals.tags, _.pluck(req.app.locals.tags, 'id'))
-				if not req.body.title
-					res.endJson {error:true, name:'empty title'}
-				if not req.body.body
-					res.endJson {error:true, name:'empty body'}
-				if not req.body.type.toLowerCase() in ['question','tip','experience']
-					res.endJson {error:true, name:'wtf type'}
-
-				req.user.createPost {
-					groupId: null
-					type: req.body.type.toLowerCase()
-					content:
-						title: req.body.title
-						body: sanitizer.sanitize(req.body.body)
-					tags: tags
-				}, req.handleErrResult((doc) ->
-					doc.populate 'author', (err, doc) ->
-						res.endJson {error:false, data:doc}
-				)
 		}
 		# 'leave': {
 		# 	name: 'user_quit'

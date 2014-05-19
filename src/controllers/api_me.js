@@ -1,11 +1,6 @@
-var Activity, Inbox, Notification, ObjectId, Post, Resource, mongoose, required, _,
-  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+var Activity, Inbox, Notification, Post, Resource, mongoose, required;
 
 mongoose = require('mongoose');
-
-_ = require('underscore');
-
-ObjectId = mongoose.Types.ObjectId;
 
 required = require('../lib/required.js');
 
@@ -108,59 +103,6 @@ module.exports = {
           return res.endJson({
             minDate: minDate,
             data: docs
-          });
-        }));
-      },
-      post: function(req, res) {
-        var sanitizer, tag, tags, _ref;
-        sanitizer = require('sanitizer');
-        console.log(req.body.body);
-        console.log('final:', req.body.tags, sanitizer.sanitize(req.body.body));
-        tags = (function() {
-          var _i, _len, _ref, _results;
-          _ref = req.body.tags;
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            tag = _ref[_i];
-            if (__indexOf.call(_.pluck(req.app.locals.tags, 'id'), tag) >= 0) {
-              _results.push(tag);
-            }
-          }
-          return _results;
-        })();
-        console.log(req.body.tags, tags, req.app.locals.tags, _.pluck(req.app.locals.tags, 'id'));
-        if (!req.body.title) {
-          res.endJson({
-            error: true,
-            name: 'empty title'
-          });
-        }
-        if (!req.body.body) {
-          res.endJson({
-            error: true,
-            name: 'empty body'
-          });
-        }
-        if ((_ref = !req.body.type.toLowerCase()) === 'question' || _ref === 'tip' || _ref === 'experience') {
-          res.endJson({
-            error: true,
-            name: 'wtf type'
-          });
-        }
-        return req.user.createPost({
-          groupId: null,
-          type: req.body.type.toLowerCase(),
-          content: {
-            title: req.body.title,
-            body: sanitizer.sanitize(req.body.body)
-          },
-          tags: tags
-        }, req.handleErrResult(function(doc) {
-          return doc.populate('author', function(err, doc) {
-            return res.endJson({
-              error: false,
-              data: doc
-            });
           });
         }));
       }

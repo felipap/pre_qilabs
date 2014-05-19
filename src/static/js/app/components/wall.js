@@ -8,8 +8,8 @@
 */
 
 define([
-	'jquery', 'backbone', 'components.postModels', 'components.postViews', 'underscore', 'react', 'views.createPost'],
-	function ($, Backbone, postModels, postViews, _, React, PostFormView) {
+	'jquery', 'backbone', 'components.postModels', 'components.postViews', 'underscore', 'react', 'components.postForms'],
+	function ($, Backbone, postModels, postViews, _, React, postForms) {
 
 	setTimeout(function updateCounters () {
 		$('[data-time-count]').each(function () {
@@ -31,6 +31,10 @@ define([
 			React.unmountComponentAtNode(document.getElementById('fullPostContainer'));
 			$("#fullPostContainer").removeClass('active');
 			app.navigate('/', {trigger:true});
+		},
+
+		onClickEdit: function () {
+			window.location.href = this.props.model.get('path')+'/edit';
 		},
 
 		onClickTrash: function () {
@@ -77,7 +81,7 @@ define([
 
 			return (
 				React.DOM.div( {className:"postBox", 'data-post-type':this.props.model.get('type'), 'data-post-id':this.props.model.get('id')}, 
-					React.DOM.i( {className:"close-btn", 'data-action':"close-page"}),
+					React.DOM.i( {className:"close-btn", 'data-action':"close-page", onClick:this.destroy}),
 
 					React.DOM.div( {className:"postCol"}, 
 						postView( {model:this.props.model} )
@@ -105,7 +109,7 @@ define([
 						React.DOM.div( {className:"flatBtnBox"}, 
 							
 								(window.user.id === author.id)?
-								React.DOM.div( {className:"item edit", onClick:this.onClickEdit, 'data-toggle':"tooltip", title:"Editar publicação", 'data-placement':"bottom", 'data-container':"body"}, 
+								React.DOM.div( {className:"item edit", onClick:this.onClickEdit}, 
 									React.DOM.i( {className:"icon-edit"})
 								)
 								:
@@ -116,16 +120,16 @@ define([
 							
 							
 								(window.user.id === author.id)?
-								React.DOM.div( {className:"item remove", onClick:this.onClickTrash, 'data-toggle':"tooltip", title:"Excluir publicação", 'data-placement':"bottom", 'data-container':"body"}, 
+								React.DOM.div( {className:"item remove", onClick:this.onClickTrash}, 
 									React.DOM.i( {className:"icon-trash"})
 								)
 								:null,
 							
 
-							React.DOM.div( {className:"item link", 'data-toggle':"tooltip", title:"Compartilhar", 'data-placement':"bottom", 'data-container':"body"}, 
+							React.DOM.div( {className:"item link"}, 
 								React.DOM.i( {className:"icon-link"})
 							),
-							React.DOM.div( {className:"item flag", 'data-toggle':"tooltip", title:"Sinalizar conteúdo impróprio", 'data-placement':"bottom", 'data-container':"body"}, 
+							React.DOM.div( {className:"item flag"}, 
 								React.DOM.i( {className:"icon-flag"})
 							)
 						)
@@ -224,22 +228,45 @@ define([
 		},
 	});
 
+	var Page = function (component, dataPage, callback) {
+
+		var e = document.createElement('div');
+		$(e).addClass('pContainer');
+		e.dataset.page = dataPage;
+		React.renderComponent(component, e, callback || function(){});
+		$(e).hide().appendTo('body').fadeIn();
+
+		this.destroy = function () {
+			React.unmountComponentAtNode(e);
+			$(e).fadeOut().remove();
+		};
+	};
+
 	// Central functionality of the app.
 	var WorkspaceRouter = Backbone.Router.extend({
 		
 		initialize: function () {
 			console.log('initialized')
 			window.app = this;
+			this.pages = [];
 			this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
+
+			this.on('route', function () {
+				this.closePages();
+			}.bind(this));
+		},
+
+		closePages: function () {
+			for (var i=0; i<this.pages.length; i++) {
+				this.pages[i].destroy();
+			}
 		},
 
 		routes: {
 			'new':
 				function () {
-					var pc = $('<div class="pContainer" data-page="createPost">');
-					React.renderComponent(PostFormView( {user:window.user} ), pc[0], function () {
-						pc.appendTo('body');
-					});
+					var p = new Page(postForms.postCreate({user: window.user}), 'createPost');
+					this.pages.push(p);
 				},
 			'following':
 				function () {
@@ -259,7 +286,6 @@ define([
 			'followers':
 				function () {
 					var self = this;
-					console.log('oi')
 					$.getJSON('/api/users/'+user_profile.id+'/followers')
 						.done(function (response) {
 							if (response.error)
@@ -272,24 +298,36 @@ define([
 						})
 				},
 			'posts/:postId':
-				 function (postId) {
-				 	var self = this;
+				function (postId) {
 					$.getJSON('/api/posts/'+postId)
 						.done(function (response) {
 							if (response.data.parentPost) {
 								return app.navigate('/posts/'+response.data.parentPost, {trigger:true});
 							}
 							console.log('response, data', response)
-							self.postItem = new postModels.postItem(response.data);
-							var pc = $('<div class="pContainer" data-page="post">');
-							React.renderComponent(FullPostView({model:self.postItem}),
-								pc[0], function () {
-									pc.appendTo('body');
-								});
-						})
+							var postItem = new postModels.postItem(response.data);
+							var p = new Page(FullPostView( {model:postItem} ), 'post');
+							this.pages.push(p);
+						}.bind(this))
 						.fail(function (response) {
 							alert("não achei");
-						});
+						}.bind(this));
+				},
+			'posts/:postId/edit':
+				function (postId) {
+					$.getJSON('/api/posts/'+postId)
+						.done(function (response) {
+							if (response.data.parentPost) {
+								return alert('eerrooo');
+							}
+							console.log('response, data', response)
+							var postItem = new postModels.postItem(response.data);
+							var p = new Page(postForms.postEdit({model: postItem}), 'createPost');
+							this.pages.push(p);
+						}.bind(this))
+						.fail(function (response) {
+							alert("não achei");
+						}.bind(this));
 				},
 			'':
 				function () {

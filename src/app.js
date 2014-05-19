@@ -98,11 +98,9 @@ app.use(function(req, res, next) {
 		var self = this;
 		return function (err, result) {
 			if (err) {
-				return next({ type:"ErrResult",
-					args:_.extend({err:err},options) });
+				return next({ type:"ErrResult", status: 400, args:_.extend({err:err},options) });
 			} else if (!result) {
-				return next({ type:"ObsoleteId",
-					args:_.extend({err:err},options) });
+				return next({ type:"ObsoleteId", status: 404, args:_.extend({err:err},options) });
 			} else {
 				return callback.apply(self, [].splice.call(arguments,1));
 			}

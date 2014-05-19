@@ -4,6 +4,8 @@ required = require '../lib/required.js'
 
 Resource = mongoose.model 'Resource'
 
+_ = require 'underscore'
+
 User = Resource.model 'User'
 Post = Resource.model 'Post'
 Group  = mongoose.model 'Group'
@@ -11,6 +13,36 @@ Group  = mongoose.model 'Group'
 module.exports = {
 
 	permissions: [required.login],
+
+	post: (req, res) ->
+		sanitizer = require 'sanitizer'
+		console.log req.body
+
+		data = req.body
+		console.log 'final:', data.tags, sanitizer.sanitize(data.data.body), 'porra'
+
+		tags = (tag for tag in data.tags when tag in _.pluck(req.app.locals.getTags(), 'id'))
+		console.log(data.tags, tags, req.app.locals.getTags(), _.pluck(req.app.locals.getTags(), 'id'))
+		if not data.data.title
+			return res.status(400).endJson {error:true, name:'empty title'}
+		if not data.data.body
+			return res.status(400).endJson {error:true, name:'empty body'}
+		if not data.type.toLowerCase() in ['question','tip','experience']
+			return res.status(400).endJson {error:true, name:'wtf type'}
+		type = data.type[0].toUpperCase()+data.type.slice(1).toLowerCase()
+
+		req.user.createPost {
+			groupId: null
+			type: type
+			content:
+				title: data.data.title
+				body: sanitizer.sanitize(data.data.body)
+			tags: tags
+		}, req.handleErrResult((doc) ->
+			doc.populate 'author', (err, doc) ->
+				res.endJson {error:false, data:doc}
+		)
+
 	children: {
 		'/:id': {
 			# get: [required.posts.selfCanSee('id'), (req, res) ->
@@ -21,7 +53,8 @@ module.exports = {
 							res.endJson( data: stuffedPost )
 					)
 				]
-			put: [required.posts.selfOwns('id'), (req, res) ->
+			put: [required.posts.selfOwns('id'),
+				(req, res) ->
 					return if not postId = req.paramToObjectId('id')
 					# For security, handle each option
 
@@ -31,11 +64,15 @@ module.exports = {
 							return res.endJson {error:true, message:''}
 
 						sanitizer = require 'sanitizer'
-						console.log req.body.data.body
-						console.log 'final:', req.body.tags, sanitizer.sanitize(req.body.data.body)
 
+						data = req.body
 
-						post.data.body = sanitizer.sanitize(req.body.data.body)
+						console.log data.data.body
+						console.log 'final:', data.tags, sanitizer.sanitize(data.data.body)
+
+						post.data.body = sanitizer.sanitize(data.data.body)
+
+						post.tags = (tag for tag in data.tags when tag in _.pluck(req.app.locals.getTags(), 'id'))
 						post.save req.handleErrResult((me) ->
 							post.stuff req.handleErrResult (stuffedPost) ->
 								res.endJson stuffedPost

@@ -7,11 +7,14 @@ module.exports = function(err, req, res, next) {
 
 	console.error('Error stack:', err);
 	console.trace();
-	
+
 	if (err.status) {
 		res.status(err.status);
 	}
-	if (res.statusCode < 400) {
+	else if (err.permission) {
+		res.status(401);
+	}
+	else if (res.statusCode < 400) {
 		res.status(500);
 	}
 

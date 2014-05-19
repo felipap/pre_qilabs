@@ -11,11 +11,11 @@ requirejs.config({
 		'views.wall':		'app/views/wall',
 		'views.profile':	'app/views/profile',
 		'views.panel':		'app/views/panel',
-		'views.createPost':	'app/views/createPost',
 		'views.front':		'app/views/front',
 		// 'app.guide':		'app/app/guide',
 		// 'app.mural':		'app/app/mural',
 		// Components
+		'components.postForms': 'app/components/postForms',
 		'components.bell':		'app/components/bell',
 		'components.cards':		'app/components/wall',
 		'components.postModels':'app/components/postModels',

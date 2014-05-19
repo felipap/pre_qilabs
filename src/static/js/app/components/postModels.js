@@ -46,12 +46,7 @@ define(['jquery', 'backbone', 'underscore', 'react'], function ($, Backbone, _, 
 
 		initialize: function () {
 			var children = this.get('children') || {};
-
 			this.children = {};
-			// for (var k in children)
-			// if (children.hasOwnProperty(k)) {
-			// 	this.children[k] = new ChildrenCollections[k](children[k]);
-			// }
 			this.children.Answer = new ChildrenCollections.Answer(children.Answer);
 			this.children.Comment = new ChildrenCollections.Comment(children.Comment);
 		},
