@@ -172,10 +172,7 @@ app.use(app.router);
 // app.use(express.logger());
 
 app.locals({
-	tags: {},
 	errors: {},
-	version_label: "alpha",
-	version_str: 'versão 0.5, alpha',
 	getPageUrl: function (name, args) { // (name, args... to fill pageurl if known)
 		if (typeof app.locals.urls[name] !== 'undefined') {
 			/* Fill in arguments to url passed in arguments. */

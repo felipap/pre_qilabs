@@ -13,7 +13,8 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 
 	var TagSelectionBox = React.createClass({
 		getInitialState: function () {
-			return {selectedTagsIds:[]};
+			console.log(this.props.children)
+			return {selectedTagsIds:this.props.children || []};
 		},
 		addTag: function (id) {
 			if (this.state.selectedTagsIds.indexOf(id) === -1)
@@ -156,7 +157,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 
 	var FakeCard = React.createClass({
 		getInitialState: function () {
-			return {title:"Título da "+TypeData[this.props.type].label};
+			return {title:this.props.children};
 		},
 		setData: function (data) {
 			this.setState(data);
@@ -248,9 +249,10 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 				});
 				this.props.model.get('data').title = title;
 			}.bind(this));
+			
 			setTimeout(function () {
 				$(postTitle).autosize();
-			}, 1000);
+			}, 1);
 
 			$(postBody).on('input keyup', function () {
 				function countWords (s){
@@ -280,6 +282,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 			});
 		},
 		render: function () {
+			var defaultTitle = "Título da "+TypeData[this.props.model.get('type')].label;
 			return (
 				<div>
 					<Navbar>
@@ -298,13 +301,15 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 						<div className="formWrapper">
 							<div id="formCreatePost">
 								<div className="cardDemo wall grid">
-									<FakeCard ref="cardDemo"
-										type={this.props.model.get('type')}
-										author={this.props.model.get('author')}/>
+									<FakeCard ref="cardDemo" type={this.props.model.get('type')} author={this.props.model.get('author')}>
+										{this.props.model.get('data').title || defaultTitle}
+									</FakeCard>
 								</div>
-								<textarea ref="postTitle" className="title" name="post_title" placeholder={"Título da "+TypeData[this.props.model.get('type')].label} defaultValue={this.props.model.get('data').title}>
+								<textarea ref="postTitle" className="title" name="post_title" placeholder={defaultTitle} defaultValue={this.props.model.get('data').title}>
 								</textarea>
-								<TagSelectionBox ref="tagSelectionBox" onChangeTags={this.onChangeTags} data={_.indexBy(tagData,'id')} />
+								<TagSelectionBox ref="tagSelectionBox" onChangeTags={this.onChangeTags} data={_.indexBy(tagData,'id')}>
+									{this.props.model.get('tags')}
+								</TagSelectionBox>
 								<div className="bodyWrapper">
 									<div id="postBody" ref="postBody"
 										data-placeholder="Conte a sua experiência aqui. Mínimo de 100 palavras."

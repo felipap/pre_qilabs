@@ -150,7 +150,7 @@ define([
 			// 		<span className="question">O Site que Nunca Saiu</span> – <span className="asker">Felipe Aragão</span>
 			// 	</li>
 			// </div>
-			
+
 			// <div className="box editedByBox">
 			// 	<div className="avatarWrapper">
 			// 		<div className="avatar" style={ { background: 'url('+'/static/images/avatar2.png'+')'} }></div>

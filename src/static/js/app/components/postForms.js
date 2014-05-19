@@ -13,7 +13,8 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 
 	var TagSelectionBox = React.createClass({displayName: 'TagSelectionBox',
 		getInitialState: function () {
-			return {selectedTagsIds:[]};
+			console.log(this.props.children)
+			return {selectedTagsIds:this.props.children || []};
 		},
 		addTag: function (id) {
 			if (this.state.selectedTagsIds.indexOf(id) === -1)
@@ -156,7 +157,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 
 	var FakeCard = React.createClass({displayName: 'FakeCard',
 		getInitialState: function () {
-			return {title:"Título da "+TypeData[this.props.type].label};
+			return {title:this.props.children};
 		},
 		setData: function (data) {
 			this.setState(data);
@@ -248,9 +249,10 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 				});
 				this.props.model.get('data').title = title;
 			}.bind(this));
+			
 			setTimeout(function () {
 				$(postTitle).autosize();
-			}, 1000);
+			}, 1);
 
 			$(postBody).on('input keyup', function () {
 				function countWords (s){
@@ -280,6 +282,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 			});
 		},
 		render: function () {
+			var defaultTitle = "Título da "+TypeData[this.props.model.get('type')].label;
 			return (
 				React.DOM.div(null, 
 					Navbar(null, 
@@ -298,13 +301,15 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 						React.DOM.div( {className:"formWrapper"}, 
 							React.DOM.div( {id:"formCreatePost"}, 
 								React.DOM.div( {className:"cardDemo wall grid"}, 
-									FakeCard( {ref:"cardDemo",
-										type:this.props.model.get('type'),
-										author:this.props.model.get('author')})
+									FakeCard( {ref:"cardDemo", type:this.props.model.get('type'), author:this.props.model.get('author')}, 
+										this.props.model.get('data').title || defaultTitle
+									)
 								),
-								React.DOM.textarea( {ref:"postTitle", className:"title", name:"post_title", placeholder:"Título da "+TypeData[this.props.model.get('type')].label, defaultValue:this.props.model.get('data').title}
+								React.DOM.textarea( {ref:"postTitle", className:"title", name:"post_title", placeholder:defaultTitle, defaultValue:this.props.model.get('data').title}
 								),
-								TagSelectionBox( {ref:"tagSelectionBox", onChangeTags:this.onChangeTags, data:_.indexBy(tagData,'id')} ),
+								TagSelectionBox( {ref:"tagSelectionBox", onChangeTags:this.onChangeTags, data:_.indexBy(tagData,'id')}, 
+									this.props.model.get('tags')
+								),
 								React.DOM.div( {className:"bodyWrapper"}, 
 									React.DOM.div( {id:"postBody", ref:"postBody",
 										'data-placeholder':"Conte a sua experiência aqui. Mínimo de 100 palavras.",
