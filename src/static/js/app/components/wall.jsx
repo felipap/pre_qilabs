@@ -231,6 +231,8 @@ define([
 	var Page = function (component, dataPage, callback) {
 
 		var e = document.createElement('div');
+		this.e = e;
+		this.c = component;
 		$(e).addClass('pContainer');
 		e.dataset.page = dataPage;
 		React.renderComponent(component, e, callback || function(){});
@@ -250,10 +252,6 @@ define([
 			window.app = this;
 			this.pages = [];
 			this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
-
-			this.on('route', function () {
-				this.closePages();
-			}.bind(this));
 		},
 
 		closePages: function () {
@@ -265,7 +263,9 @@ define([
 		routes: {
 			'new':
 				function () {
+					this.closePages();
 					var p = new Page(postForms.postCreate({user: window.user}), 'createPost');
+					console.log('oi',p)
 					this.pages.push(p);
 				},
 			'following':
