@@ -105,9 +105,9 @@ PostSchema.virtual('voteSum').get(function() {
 
 PostSchema.virtual('path').get(function() {
   if (this.parentPost) {
-    return "/posts/" + this.parentPost + "#" + this.id;
+    return "/#posts/" + this.parentPost + "#" + this.id;
   } else {
-    return "/posts/{id}".replace(/{id}/, this.id);
+    return "/#posts/{id}".replace(/{id}/, this.id);
   }
 });
 
