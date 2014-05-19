@@ -80,7 +80,7 @@ module.exports = {
         message: 'Escreva um corpo para a sua publicação.'
       });
     }
-    if (data.data.body.length < 20 * 1000) {
+    if (data.data.body.length > 20 * 1000) {
       return res.status(400).endJson({
         error: true,
         message: 'Erro! Você escreveu tudo isso?'

@@ -23,6 +23,10 @@ html {
 	overflow: hidden;
 }
 
+.invisible {
+	opacity: 0 !important;
+}
+
 
 body.sidebarOpen {
 	#sidebarPanel {
@@ -63,7 +67,7 @@ body.sidebarOpen {
 	.transition-transform;
 
 	& > .close-btn {
-		position: fixed;
+		position: absolute;
 		top: 10px;
 		right: 20px;
 	}
@@ -109,6 +113,13 @@ body.sidebarOpen {
 	}
 }
 
+#globalContainer {
+	#cards {
+		padding-top: 20px;
+		margin: 0 auto;
+	}
+}
+
 &::-webkit-scrollbar-thumb {
 	.transition(all, .2s, linear);
 	background-color: #AAA;
@@ -133,11 +144,4 @@ body.sidebarOpen {
 &::-webkit-scrollbar {
 	background: #e8e8e8;
 	width: 13px;
-}
-
-#globalContainer {
-	#cards {
-		padding-top: 20px;
-		margin: 0 auto;
-	}
 }

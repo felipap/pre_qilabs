@@ -31,7 +31,7 @@ module.exports = {
 		tags = (tag for tag in data.tags when tag in _.keys(req.app.locals.getTagMap()))
 		if tags.length == 0
 			return res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
-			
+
 		console.log('Checking title')
 		# Check title
 		if not data.data.title or not data.data.title.length
@@ -57,7 +57,7 @@ module.exports = {
 		if not data.data.body
 			return res.status(400).endJson({error:true, message:'Escreva um corpo para a sua publicação.'})
 
-		if data.data.body.length < 20*1000
+		if data.data.body.length > 20*1000
 			return res.status(400).endJson({error:true, message:'Erro! Você escreveu tudo isso?'})
 		body = sanitizer.sanitize(data.data.body, (uri) -> uri)
 

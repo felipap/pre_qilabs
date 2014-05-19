@@ -239,7 +239,6 @@ define([
 		componentWillMount: function () {
 			var self = this;
 			function update (evt) {
-				console.log('updating!', arguments)
 				self.forceUpdate(function(){});
 			}
 			_.defer(function () {
@@ -262,26 +261,28 @@ define([
 		},
 	});
 
-	var Page = function (component, dataPage, callback) {
+	var Page = function (component, dataPage, cContainer, callback) {
 
 		component.props.page = this;
 		var e = document.createElement('div');
 		this.e = e;
 		this.c = component;
-		$(e).addClass('pContainer');
+		$(e).addClass('pContainer invisible').hide().appendTo('body');
 		if (dataPage)
 			e.dataset.page = dataPage;
-		React.renderComponent(component, e, callback || function(){});
-		$(e).hide().appendTo('body').fadeIn();
+
+		React.renderComponent(component, e, function () {
+				$(e).show().removeClass('invisible');
+				if (callback) callback();
+		});
 
 		this.destroy = function (navigate) {
-			$(e).fadeOut(function () {
-				React.unmountComponentAtNode(e);
-				$(e).remove();
-				if (navigate) {
-					app.navigate('/', {trigger:false});
-				}
-			});
+			$(e).addClass('invisible');
+			React.unmountComponentAtNode(e);
+			$(e).remove();
+			if (navigate) {
+				app.navigate('/', {trigger:false});
+			}
 		};
 	};
 
@@ -304,6 +305,7 @@ define([
 			for (var i=0; i<this.pages.length; i++) {
 				this.pages[i].destroy();
 			}
+			this.pages = [];
 		},
 
 		routes: {
