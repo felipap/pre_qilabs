@@ -659,7 +659,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							),
 
 							React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
-								window.calcTimeFrom(post.published,true)
+								window.calcTimeFrom(post.published)
 							)
 						)
 					)
@@ -676,7 +676,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					React.DOM.div(null, 
 						React.DOM.div( {className:"postHeader"}, 
 							React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
-								window.calcTimeFrom(post.published,true)
+								window.calcTimeFrom(post.published)
 							),
 							React.DOM.div( {className:"type"}, 
 								post.translatedType
@@ -711,7 +711,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					React.DOM.div(null, 
 						React.DOM.div( {className:"postHeader"}, 
 							React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
-								window.calcTimeFrom(post.published,true)
+								window.calcTimeFrom(post.published)
 							),
 							React.DOM.div( {className:"type"}, 
 								post.translatedType
@@ -747,7 +747,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					React.DOM.div(null, 
 						React.DOM.div( {className:"postHeader"}, 
 							React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
-								window.calcTimeFrom(post.published,true)
+								window.calcTimeFrom(post.published)
 							),
 							React.DOM.div( {className:"type"}, 
 								post.translatedType

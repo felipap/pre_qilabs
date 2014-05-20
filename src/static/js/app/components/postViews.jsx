@@ -659,7 +659,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							</div>
 
 							<time data-time-count={1*new Date(post.published)}>
-								{window.calcTimeFrom(post.published,true)}
+								{window.calcTimeFrom(post.published)}
 							</time>
 						</div>
 					</div>
@@ -676,7 +676,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					<div>
 						<div className="postHeader">
 							<time data-time-count={1*new Date(post.published)}>
-								{window.calcTimeFrom(post.published,true)}
+								{window.calcTimeFrom(post.published)}
 							</time>
 							<div className="type">
 								{post.translatedType}
@@ -711,7 +711,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					<div>
 						<div className="postHeader">
 							<time data-time-count={1*new Date(post.published)}>
-								{window.calcTimeFrom(post.published,true)}
+								{window.calcTimeFrom(post.published)}
 							</time>
 							<div className="type">
 								{post.translatedType}
@@ -747,7 +747,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					<div>
 						<div className="postHeader">
 							<time data-time-count={1*new Date(post.published)}>
-								{window.calcTimeFrom(post.published,true)}
+								{window.calcTimeFrom(post.published)}
 							</time>
 							<div className="type">
 								{post.translatedType}

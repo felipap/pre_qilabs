@@ -227,6 +227,55 @@ define([
 		},
 	});
 
+	var NotificationsPage = React.createClass({
+		getInitialState: function () {
+			return {notes:[]};
+		},
+		close: function () {
+			this.props.page.destroy(true);
+		},
+		componentDidMount: function () {
+			var self = this;
+			$.ajax({
+				url: '/api/me/notifications',
+				type: 'get',
+				dataType: 'json',
+			}).done(function (response) {
+				if (response.error) {
+					if (response.message)
+						app.alert(response.message, 'error');
+				} else {
+					self.setState({notes:response.data});
+				}
+			});
+		},
+		render: function () {
+			var notes = _.map(this.state.notes, function (item) {
+				return (
+					<li className="notification" key={item.id} onClick={function(){window.location.href=item.url}}
+						data-seen={item.seen} data-accessed={item.accessed}>
+						<img className="thumbnail" src={item.thumbnailUrl} />
+						<p>
+							{item.msg}
+						</p>
+						<time data-time-count={1*new Date(item.dateSent)}>
+							{window.calcTimeFrom(item.dateSent)}
+						</time>
+					</li>
+				);
+			});
+
+			return (
+				<div className="cContainer">
+					<i className="close-btn" onClick={this.close}></i>
+					<ul className="notificationsWrapper">
+						{notes}
+					</ul>
+				</div>
+			)
+		},
+	});
+
 	var CardsPanelView = React.createClass({
 		getInitialState: function () {
 			return {selectedForm:null};
@@ -309,6 +358,12 @@ define([
 				function () {
 					this.closePages();
 					var p = new Page(postForms.create({user: window.user}), 'createPost');
+					this.pages.push(p);
+				},
+			'notifications':
+				function () {
+					this.closePages();
+					var p = new Page(<NotificationsPage />, 'notes', true);
 					this.pages.push(p);
 				},
 			'following':

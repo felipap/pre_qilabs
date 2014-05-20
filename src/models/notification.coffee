@@ -129,7 +129,6 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 							doc.remove(()->)
 						notifyUser followeeObj, followerObj, {
 							type: Types.NewFollower
-							url: followerObj.profileUrl
 							# resources: []
 						}, cb
 

@@ -181,8 +181,7 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
             doc.remove(function() {});
           }
           return notifyUser(followeeObj, followerObj, {
-            type: Types.NewFollower,
-            url: followerObj.profileUrl
+            type: Types.NewFollower
           }, cb);
         });
       };

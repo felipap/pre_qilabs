@@ -27,6 +27,42 @@ html {
 	opacity: 0 !important;
 }
 
+[data-page=notes] {
+
+
+	.notificationsWrapper {
+
+		width: 900px;
+		margin: 40px auto;
+
+		.notification {
+			padding: 10px;
+			list-style: none;
+			border-bottom: 1px solid #AAA;
+
+			.thumbnail {
+				width: 40px;
+				margin: 0 10px 0 -10px;
+				height: 40px;
+			}
+
+			p {
+				display: inline-block;
+			}
+
+			time {
+				float: right;
+			}
+
+			&[data-seen=false] p {
+				font-weight: bold;
+			}
+		}
+
+	}
+
+}
+
 
 body.sidebarOpen {
 	#sidebarPanel {

@@ -33,7 +33,7 @@ define([
 		var Notification = React.createClass({displayName: 'Notification',
 			handleClick: function () {
 				var self = this;
-				if (self.props.data.seen) {
+				if (self.props.data.accessed) {
 					window.location.href = self.props.data.url;	
 				} else {
 					$.ajax({
@@ -69,7 +69,7 @@ define([
 			render: function () {
 				var notifications = this.props.data.map(function (i) {
 					return (
-						Notification( {data:i} )
+						Notification( {key:i.id, data:i} )
 					);
 				});
 				return (
