@@ -10,7 +10,7 @@ User = Resource.model 'User'
 Post = Resource.model 'Post'
 Group  = mongoose.model 'Group'
 
-sanitizerOptions = {
+defaultSanitizerOptions = {
 	allowedTags: ['h1','h2','b','em','strong','a','img','u','ul','blockquote'],
 	allowedAttributes: {
 		'a': ['href'],
@@ -23,49 +23,57 @@ sanitizerOptions = {
 		return frame.tag in ['a','span'] and not frame.text.trim()
 }
 
+sanitizerOptions = {
+	'Question': _.extend(defaultSanitizerOptions, {
+		allowedTags: ['b','em','strong','a','u','ul','blockquote'],
+	}),
+	'Tip': defaultSanitizerOptions,
+	'Experience': defaultSanitizerOptions
+}
 
-getValidData = (data, app) ->
+
+getValidPostData = (data, app) ->
 	# Sanitize tags
 	if not data.tags or not data.tags instanceof Array
-		res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
+		res.status(400).endJson(error:true, msg:'Selecione pelo menos um assunto relacionado a esse post.')
 		return null
 	tags = (tag for tag in data.tags when tag in _.keys(app.locals.getTagMap()))
 	if tags.length == 0
-		res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
+		res.status(400).endJson(error:true, msg:'Selecione pelo menos um assunto relacionado a esse post.')
 		return null
 
 	# Check title
 	if not data.data.title or not data.data.title.length
 		res.status(400).endJson({
 			error:true,
-			message:'Erro! Cadê o título da sua '+app.locals.postTypes[type].translated+'?',
+			msg:'Erro! Cadê o título da sua '+app.locals.postTypes[type].translated+'?',
 		})
 		return null
 	if data.data.title.length < 10
 		res.status(400).endJson({
 			error:true,
-			message:'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
+			msg:'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
 		})
 		return null
 	if data.data.title.length > 100
 		res.status(400).endJson({
 			error:true,
-			message:'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
+			msg:'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
 		})
 		return null
 	title = data.data.title
 
 	# Check and sanitize body
 	if not data.data.body
-		res.status(400).endJson({error:true, message:'Escreva um corpo para a sua publicação.'})
+		res.status(400).endJson({error:true, msg:'Escreva um corpo para a sua publicação.'})
 		return null
 
 	if data.data.body.length > 20*1000
-		res.status(400).endJson({error:true, message:'Erro! Você escreveu tudo isso?'})
+		res.status(400).endJson({error:true, msg:'Erro! Você escreveu tudo isso?'})
 		return null
 
 	sanitizer = require 'sanitize-html'
-	body = sanitizer(data.data.body, sanitizerOptions)
+	body = sanitizer(data.data.body, sanitizerOptions[type])
 
 	return {
 		tags: tags,
@@ -84,10 +92,10 @@ module.exports = {
 		console.log('Checking type')
 		# Check and sanitize type
 		if not data.type.toLowerCase() in _.keys(req.app.locals.postTypes)
-			return res.status(400).endJson(error:true, message:'Tipo de publicação inválido.')
+			return res.status(400).endJson(error:true, msg:'Tipo de publicação inválido.')
 		type = data.type[0].toUpperCase()+data.type.slice(1).toLowerCase()
 
-		return unless sanitized = getValidData(req.body, req.app)
+		return unless sanitized = getValidPostData(req.body, req.app)
 		console.log('Final:', sanitized)
 
 		req.user.createPost {
@@ -119,7 +127,7 @@ module.exports = {
 					Post.findById postId, req.handleErrResult (post) =>
 						if post.type is 'Comment'
 							# Disallow edition of comments.
-							return res.endJson {error:true, message:''}
+							return res.endJson {error:true, msg:''}
 
 						return unless sanitized = getValidData(req.body, req.app)
 
@@ -210,7 +218,19 @@ module.exports = {
 					post: [required.posts.selfCanComment('id'), (req, res) ->
 						return if not postId = req.paramToObjectId('id')
 
-						sanitizer = require 'sanitizer'
+						sanitizer = require 'sanitize-html'
+						body = sanitizer(req.body.body, {
+							allowedTags: ['h1','h2','b','em','strong','a','img','u','ul','blockquote'],
+							allowedAttributes: {
+								'a': ['href'],
+								'img': ['src'],
+							},
+							transformTags: {
+								'div': 'span',
+							},
+							exclusiveFilter: (frame) ->
+								return frame.tag in ['a','span'] and not frame.text.trim()
+						})
 						data = {
 							content: {
 								body: sanitizer.sanitize(req.body.body, (uri) -> uri)

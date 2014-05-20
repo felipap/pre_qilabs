@@ -40,7 +40,7 @@ module.exports = function(err, req, res, next) {
 		for (var prop in err) error[prop] = err[prop];
 		return res
 			.set('Content-Type', 'application/json')
-			.end(JSON.stringify({ error: error, message: err.message || 'Erro.' }));
+			.end(JSON.stringify({ error: error, message: err.msg || 'Erro.' }));
 		// if (req.app.get('env') === 'production') {
 		// } else {	
 		// 	var error = { message: err.message, stack: err.stack };

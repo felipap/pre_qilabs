@@ -1,4 +1,4 @@
-var Group, Post, Resource, User, getValidData, mongoose, required, sanitizerOptions, _,
+var Group, Post, Resource, User, defaultSanitizerOptions, getValidPostData, mongoose, required, sanitizerOptions, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -15,7 +15,7 @@ Post = Resource.model('Post');
 
 Group = mongoose.model('Group');
 
-sanitizerOptions = {
+defaultSanitizerOptions = {
   allowedTags: ['h1', 'h2', 'b', 'em', 'strong', 'a', 'img', 'u', 'ul', 'blockquote'],
   allowedAttributes: {
     'a': ['href'],
@@ -30,12 +30,20 @@ sanitizerOptions = {
   }
 };
 
-getValidData = function(data, app) {
+sanitizerOptions = {
+  'Question': _.extend(defaultSanitizerOptions, {
+    allowedTags: ['b', 'em', 'strong', 'a', 'u', 'ul', 'blockquote']
+  }),
+  'Tip': defaultSanitizerOptions,
+  'Experience': defaultSanitizerOptions
+};
+
+getValidPostData = function(data, app) {
   var body, sanitizer, tag, tags, title;
   if (!data.tags || !data.tags instanceof Array) {
     res.status(400).endJson({
       error: true,
-      message: 'Selecione pelo menos um assunto relacionado a esse post.'
+      msg: 'Selecione pelo menos um assunto relacionado a esse post.'
     });
     return null;
   }
@@ -54,28 +62,28 @@ getValidData = function(data, app) {
   if (tags.length === 0) {
     res.status(400).endJson({
       error: true,
-      message: 'Selecione pelo menos um assunto relacionado a esse post.'
+      msg: 'Selecione pelo menos um assunto relacionado a esse post.'
     });
     return null;
   }
   if (!data.data.title || !data.data.title.length) {
     res.status(400).endJson({
       error: true,
-      message: 'Erro! Cadê o título da sua ' + app.locals.postTypes[type].translated + '?'
+      msg: 'Erro! Cadê o título da sua ' + app.locals.postTypes[type].translated + '?'
     });
     return null;
   }
   if (data.data.title.length < 10) {
     res.status(400).endJson({
       error: true,
-      message: 'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
+      msg: 'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
     });
     return null;
   }
   if (data.data.title.length > 100) {
     res.status(400).endJson({
       error: true,
-      message: 'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
+      msg: 'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
     });
     return null;
   }
@@ -83,19 +91,19 @@ getValidData = function(data, app) {
   if (!data.data.body) {
     res.status(400).endJson({
       error: true,
-      message: 'Escreva um corpo para a sua publicação.'
+      msg: 'Escreva um corpo para a sua publicação.'
     });
     return null;
   }
   if (data.data.body.length > 20 * 1000) {
     res.status(400).endJson({
       error: true,
-      message: 'Erro! Você escreveu tudo isso?'
+      msg: 'Erro! Você escreveu tudo isso?'
     });
     return null;
   }
   sanitizer = require('sanitize-html');
-  body = sanitizer(data.data.body, sanitizerOptions);
+  body = sanitizer(data.data.body, sanitizerOptions[type]);
   return {
     tags: tags,
     title: title,
@@ -112,11 +120,11 @@ module.exports = {
     if (_ref = !data.type.toLowerCase(), __indexOf.call(_.keys(req.app.locals.postTypes), _ref) >= 0) {
       return res.status(400).endJson({
         error: true,
-        message: 'Tipo de publicação inválido.'
+        msg: 'Tipo de publicação inválido.'
       });
     }
     type = data.type[0].toUpperCase() + data.type.slice(1).toLowerCase();
-    if (!(sanitized = getValidData(req.body, req.app))) {
+    if (!(sanitized = getValidPostData(req.body, req.app))) {
       return;
     }
     console.log('Final:', sanitized);
@@ -164,7 +172,7 @@ module.exports = {
               if (post.type === 'Comment') {
                 return res.endJson({
                   error: true,
-                  message: ''
+                  msg: ''
                 });
               }
               if (!(sanitized = getValidData(req.body, req.app))) {
@@ -317,11 +325,25 @@ module.exports = {
         '/answers': {
           post: [
             required.posts.selfCanComment('id'), function(req, res) {
-              var data, postId, sanitizer;
+              var body, data, postId, sanitizer;
               if (!(postId = req.paramToObjectId('id'))) {
                 return;
               }
-              sanitizer = require('sanitizer');
+              sanitizer = require('sanitize-html');
+              body = sanitizer(req.body.body, {
+                allowedTags: ['h1', 'h2', 'b', 'em', 'strong', 'a', 'img', 'u', 'ul', 'blockquote'],
+                allowedAttributes: {
+                  'a': ['href'],
+                  'img': ['src']
+                },
+                transformTags: {
+                  'div': 'span'
+                },
+                exclusiveFilter: function(frame) {
+                  var _ref;
+                  return ((_ref = frame.tag) === 'a' || _ref === 'span') && !frame.text.trim();
+                }
+              });
               data = {
                 content: {
                   body: sanitizer.sanitize(req.body.body, function(uri) {
