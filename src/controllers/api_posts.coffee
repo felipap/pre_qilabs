@@ -11,7 +11,7 @@ Post = Resource.model 'Post'
 Group  = mongoose.model 'Group'
 
 sanitizerOptions = {
-	allowedTags: ['h1','h2','b','em','strong','a','img'],
+	allowedTags: ['h1','h2','b','em','strong','a','img','u','ul','blockquote'],
 	allowedAttributes: {
 		'a': ['href'],
 		'img': ['src'],
@@ -104,7 +104,6 @@ module.exports = {
 
 	children: {
 		'/:id': {
-			# get: [required.posts.selfCanSee('id'), (req, res) ->
 			get: [(req, res) ->
 					return unless postId = req.paramToObjectId('id')
 					Post.findOne { _id:postId }, req.handleErrResult((post) ->
@@ -226,7 +225,7 @@ module.exports = {
 									req.handleErrResult (doc) =>
 										doc.populate('author',
 											req.handleErrResult (doc) =>
-												res.endJson data
+												res.endJson doc
 										)
 					]
 

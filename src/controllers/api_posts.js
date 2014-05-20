@@ -16,7 +16,7 @@ Post = Resource.model('Post');
 Group = mongoose.model('Group');
 
 sanitizerOptions = {
-  allowedTags: ['h1', 'h2', 'b', 'em', 'strong', 'a', 'img'],
+  allowedTags: ['h1', 'h2', 'b', 'em', 'strong', 'a', 'img', 'u', 'ul', 'blockquote'],
   allowedAttributes: {
     'a': ['href'],
     'img': ['src']
@@ -335,7 +335,7 @@ module.exports = {
                 return function(parentPost) {
                   return req.user.postToParentPost(parentPost, data, req.handleErrResult(function(doc) {
                     return doc.populate('author', req.handleErrResult(function(doc) {
-                      return res.endJson(data);
+                      return res.endJson(doc);
                     }));
                   }));
                 };

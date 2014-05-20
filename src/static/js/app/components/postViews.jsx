@@ -424,6 +424,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 		}),
 		SectionView: React.createClass({
+			mixins: [backboneCollection],
 			getInitialState: function () {
 				return {sortingType:'votes'};
 			},
