@@ -23,13 +23,15 @@ QI Labs.org
 					var icons = ['icon-exclamation', 'icon-trophy', 'icon-question', 'icon-comments-o', 'icon-guide', 'icon-puzzle', 'icon-rocket','icon-compass','icon-bulb','icon-flask','icon-sum','icon-university','icon-cap']
 					var cv = document.querySelector(".cardView"),
 						cc = document.querySelector(".wall");
-					for (var i=0; i<100; i++) {
+					var manyW = Math.floor((window.innerWidth+300)/(234+30)), manyH = Math.floor(window.innerHeight/200);
+					for (var i=0; i<(manyW*5-1)+((manyH+1)*manyW); i++) {
 						var nc = cv.cloneNode(true);
 						if (Math.random() > 0.50) {
 							var icon = icons[Math.floor(Math.random()*icons.length)];
 							nc.querySelector('i').className += ' '+icon;
 						}
 						cc.appendChild(nc);
+						console.log(i)
 					}
 				})();
 			</script>
