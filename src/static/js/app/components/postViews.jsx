@@ -263,9 +263,11 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 
 			componentWillUnmount: function () {
-				this.editor.deactivate();
-				$(this.editor.anchorPreview).remove();
-				$(this.editor.toolbar).remove();
+				if (this.editor) {
+					this.editor.deactivate();
+					$(this.editor.anchorPreview).remove();
+					$(this.editor.toolbar).remove();
+				}
 			},
 
 			componentDidUpdate: function () {

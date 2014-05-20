@@ -254,6 +254,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 				postTitle = this.refs.postTitle.getDOMNode();
 
 			// Medium Editor
+			console.log('opts', mediumEditorPostOpts[this.props.model.get('type').toLowerCase()])
 			this.editor = new MediumEditor(postBody, mediumEditorPostOpts[this.props.model.get('type').toLowerCase()]);
 			$(postBody).mediumInsert({
 				editor: this.editor,
