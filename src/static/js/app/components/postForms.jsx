@@ -44,7 +44,6 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 
 	var TagSelectionBox = React.createClass({
 		getInitialState: function () {
-			console.log(this.props.children)
 			return {selectedTagsIds:this.props.children || []};
 		},
 		addTag: function (id) {

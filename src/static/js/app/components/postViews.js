@@ -256,7 +256,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					},
 				}, {
 					success: function () {
-						console.log(self.props.model.attributes)
 						self.setState({isEditing:false});
 						self.forceUpdate();
 					}
