@@ -256,19 +256,20 @@ define([
 		},
 	});
 
-	var Page = function (component, dataPage, cContainer, callback) {
+	var Page = function (component, dataPage, noNavbar) {
 
 		component.props.page = this;
 		var e = document.createElement('div');
 		this.e = e;
 		this.c = component;
-		$(e).addClass('pContainer invisible').hide().appendTo('body');
+		if (!noNavbar)
+			$(e).addClass('pContainer');
+		$(e).addClass('invisible').hide().appendTo('body');
 		if (dataPage)
 			e.dataset.page = dataPage;
 
 		React.renderComponent(component, e, function () {
-				$(e).show().removeClass('invisible');
-				if (callback) callback();
+			$(e).show().removeClass('invisible');
 		});
 
 		this.destroy = function (navigate) {
@@ -384,7 +385,7 @@ define([
 				document.getElementById('rightContainer')
 			);
 			var p = new Page(<FollowList list={list} isFollowing={opts.isFollowing} profile={user_profile} />,
-				'listView');
+				'listView', true);
 			this.pages.push(p);
 		},
 
