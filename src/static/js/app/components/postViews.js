@@ -686,8 +686,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								TagList( {tags:post.tags} )
 							)
 						),
-						React.DOM.div( {className:"postBody"}, 
-							React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('data').body}} )
+						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('data').body}}
 						),
 						React.DOM.div( {className:"postInfobar"}, 
 							React.DOM.ul( {className:"left"}
@@ -723,8 +722,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							)
 						),
 
-						React.DOM.div( {className:"postBody"}, 
-							React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('data').body}} )
+						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('data').body}}
 						),
 
 						React.DOM.div( {className:"postInfobar"}, 
@@ -760,8 +758,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							)
 						),
 
-						React.DOM.div( {className:"postBody"}, 
-							React.DOM.span( {dangerouslySetInnerHTML:{__html: this.props.model.get('data').body}} )
+						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('data').body}}
 						),
 
 						React.DOM.div( {className:"postInfobar"}, 

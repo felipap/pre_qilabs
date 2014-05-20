@@ -686,8 +686,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								<TagList tags={post.tags} />
 							</div>
 						</div>
-						<div className="postBody">
-							<span dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}} />
+						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}}>
 						</div>
 						<div className="postInfobar">
 							<ul className="left">
@@ -723,8 +722,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							</div>
 						</div>
 
-						<div className="postBody">
-							<span dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}} />
+						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}}>
 						</div>
 
 						<div className="postInfobar">
@@ -760,8 +758,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							</div>
 						</div>
 
-						<div className="postBody">
-							<span dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}} />
+						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}}>
 						</div>
 
 						<div className="postInfobar">
