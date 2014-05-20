@@ -19,7 +19,6 @@ module.exports = {
   permissions: [required.login],
   post: function(req, res) {
     var body, data, sanitizer, tag, tags, title, type, _ref;
-    sanitizer = require('sanitizer');
     data = req.body;
     console.log('Checking type');
     if (_ref = !data.type.toLowerCase(), __indexOf.call(_.keys(req.app.locals.postTypes), _ref) >= 0) {
@@ -86,8 +85,20 @@ module.exports = {
         message: 'Erro! Você escreveu tudo isso?'
       });
     }
-    body = sanitizer.sanitize(data.data.body, function(uri) {
-      return uri;
+    sanitizer = require('sanitize-html');
+    body = sanitizer(data.data.body, {
+      allowedTags: ['h1', 'h2', 'b', 'em', 'strong', 'a', 'img'],
+      allowedAttributes: {
+        'a': ['href'],
+        'img': ['src']
+      },
+      transformTags: {
+        'div': 'span'
+      },
+      exclusiveFilter: function(frame) {
+        var _ref1;
+        return ((_ref1 = frame.tag) === 'a' || _ref1 === 'span') && !frame.text.trim();
+      }
     });
     data = {
       type: type,

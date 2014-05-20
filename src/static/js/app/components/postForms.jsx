@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-editor-insert', 'typeahead-bundle'],
+define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-bundle'],
 	function (common, React, postModels) {
 	
 	var mediumEditorPostOpts = {
@@ -260,10 +260,10 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'medium-edi
 				editor: this.editor,
 				addons: {
 					images: {
-						imagesUploadScript: "http://notrelative.com",
-						formatData: function (data) {
-							console.log(arguments);
-						}
+						// imagesUploadScript: "http://notrelative.com",
+						// formatData: function (data) {
+						// 	console.log(arguments);
+						// }
 					}
 				},
 			});

@@ -25,7 +25,7 @@
 			this.options = $.extend(this.default, options);
 
 			this.setImageEvents();
-			this.setDragAndDropEvents();
+			// this.setDragAndDropEvents();
 			this.preparePreviousImages();
 		},
 
@@ -68,13 +68,16 @@
 		*/
 
 		add: function ($placeholder) {
-			var that = this,
-					$selectFile, files;
+			var that = this, $selectFile, files;
 
-			$selectFile = $('<button>never</button>');
-			$selectFile.click(function () {
-				prompt('oi?')
-			});
+			function strip (string) {
+				return string.replace(/($\s+)|(\s+^)/g, '');
+			}
+			// var imageUrl = 'http://orthes.github.io/medium-editor-insert-plugin/image.jpg';
+			// var imageUrl = 'https://avatars0.githubusercontent.com/u/461771?s=140';
+			var imageUrl = strip(prompt('Insira a url da imagem que você deseja usar.'));
+			$placeholder.append('<progress class="progress" min="0" max="100" value="0">0</progress>');
+			this.selectCompleted(imageUrl, $placeholder);
 
 			// $selectFile = $('<input type="file">').click();
 			// $selectFile.change(function () {
@@ -105,27 +108,20 @@
 		},
 
 		// this is custom
-		/**
-		* Show uploaded image after upload completed
-		* @param {jqXHR} jqxhr jqXHR object
-		* @return {void}
-		*/
-
 		selectCompleted: function (url, $placeholder) {
-			var $progress = $('.progress:first', $placeholder),
-					$img;
+			var $progress = $($placeholder.find('.progress')[0]), $img;
 
 			$progress.attr('value', 100);
 			$progress.html(100);
-
 			$progress.before('<div class="mediumInsert-images"><img src="'+ url +'" draggable="true" alt=""></div>');
 			$img = $progress.siblings('img');
 			$progress.remove();
 
+			$img.parent().mouseleave().mouseenter();
 			$img.load(function () {
-				$img.parent().mouseleave().mouseenter();
+				console.log('did load');
 			});
-
+			
 			$.fn.mediumInsert.insert.$el.keyup();
 		},
 
@@ -192,13 +188,10 @@
 		// 		'image/jpeg': true,
 		// 		'image/gif': true
 		// 	};
-
 		// 	for (var i = 0; i < files.length; i++) {
 		// 		var file = files[i];
-
 		// 		if (acceptedTypes[file.type] === true) {
 		// 			$placeholder.append('<progress class="progress" min="0" max="100" value="0">0</progress>');
-
 		// 			that.uploadFile($placeholder, file, that);
 		// 		}
 		// 	}
@@ -222,11 +215,11 @@
 				if ($img.length > 0) {
 					$(this).append('<a class="mediumInsert-imageRemove"></a>');
 
-					if ($(this).parent().parent().hasClass('small')) {
-						$(this).append('<a class="mediumInsert-imageResizeBigger"></a>');
-					} else {
-						$(this).append('<a class="mediumInsert-imageResizeSmaller"></a>');
-					}
+					// if ($(this).parent().parent().hasClass('small')) {
+					// 	$(this).append('<a class="mediumInsert-imageResizeBigger"></a>');
+					// } else {
+					// 	$(this).append('<a class="mediumInsert-imageResizeSmaller"></a>');
+					// }
 
 					positionTop = $img.position().top + parseInt($img.css('margin-top'), 10);
 					positionLeft = $img.position().left + $img.width() -30;
@@ -235,11 +228,11 @@
 						'top': positionTop,
 						'left': positionLeft
 					});
-					$('.mediumInsert-imageResizeBigger, .mediumInsert-imageResizeSmaller', this).css({
-						'right': 'auto',
-						'top': positionTop,
-						'left': positionLeft-31
-					});
+					// $('.mediumInsert-imageResizeBigger, .mediumInsert-imageResizeSmaller', this).css({
+					// 	'right': 'auto',
+					// 	'top': positionTop,
+					// 	'left': positionLeft-31
+					// });
 				}
 			});
 

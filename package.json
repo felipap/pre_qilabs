@@ -55,6 +55,7 @@
     "assert": "^1.1.1",
     "colors": "^0.6.2",
     "sanitizer": "^0.1.1",
-    "helmet": "^0.2.1"
+    "helmet": "^0.2.1",
+    "sanitize-html": "^1.1.5"
   }
 }

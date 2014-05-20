@@ -15,7 +15,6 @@ module.exports = {
 	permissions: [required.login],
 
 	post: (req, res) ->
-		sanitizer = require 'sanitizer'
 		data = req.body
 
 		console.log('Checking type')
@@ -59,7 +58,20 @@ module.exports = {
 
 		if data.data.body.length > 20*1000
 			return res.status(400).endJson({error:true, message:'Erro! Você escreveu tudo isso?'})
-		body = sanitizer.sanitize(data.data.body, (uri) -> uri)
+
+		sanitizer = require 'sanitize-html'
+		body = sanitizer(data.data.body, {
+			allowedTags: ['h1','h2','b','em','strong','a','img'],
+			allowedAttributes: {
+				'a': ['href'],
+				'img': ['src'],
+			},
+			transformTags: {
+				'div': 'span',
+			},
+			exclusiveFilter: (frame) ->
+				return frame.tag in ['a','span'] and not frame.text.trim()
+		})
 
 		data = {
 			type: type

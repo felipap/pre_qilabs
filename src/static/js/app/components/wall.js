@@ -313,18 +313,15 @@ define([
 				function () {
 					this.closePages();
 					var p = new Page(postForms.create({user: window.user}), 'createPost');
-					console.log('oi',p)
 					this.pages.push(p);
 				},
 			'following':
 				function () {
 					var self = this;
-					console.log('oi')
 					$.getJSON('/api/users/'+user_profile.id+'/following')
 						.done(function (response) {
 							if (response.error)
 								alert('vish fu')
-							console.log('foi!', response)
 							self.renderList(response.data, {isFollowing: true});
 						})
 						.fail(function (response) {
@@ -338,7 +335,6 @@ define([
 						.done(function (response) {
 							if (response.error)
 								alert('vish fu')
-							console.log('foi!', response)
 							self.renderList(response.data, {isFollowing: false});
 						})
 						.fail(function (response) {

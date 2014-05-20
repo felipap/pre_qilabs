@@ -613,7 +613,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var mediaUserStyle = {
 					background: 'url('+post.author.avatarUrl+')',
 				};
-				var rawMarkup = post.data.escapedBody;
 
 				return (
 					<div className="cardView" onClick={gotoPost}>
@@ -670,7 +669,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 			render: function () {
 				var post = this.props.model.attributes;
-				var rawMarkup = post.data.escapedBody;
 
 				return (
 					<div>
@@ -689,7 +687,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							</div>
 						</div>
 						<div className="postBody">
-							<span dangerouslySetInnerHTML={{__html: rawMarkup}} />
+							<span dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}} />
 						</div>
 						<div className="postInfobar">
 							<ul className="left">
