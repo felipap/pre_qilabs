@@ -15,6 +15,15 @@
 
 	background: #EEE;
 
+	.screen {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		overflow: hidden;
+	}
+
 	#wallterfall {
 		z-index: -1;
 		position: absolute;
@@ -44,10 +53,11 @@
 	}
 
 	.jumbo {
-		position: absolute;
+		position: relative;
 
 		width: 600px;
-		left: 50%; margin-left: -300px;
+		max-width: 100%;
+		margin: auto;
 		height: 500px;
 		top: 50%; margin-top: -250px;
 		text-align: center;
@@ -71,6 +81,7 @@
 		.board {
 			background: white;
 			width: 350px;
+			max-width: 100%;
 			margin: 20px auto;
 			display: block;
 			position: relative;
@@ -174,5 +185,11 @@
 			color: #444;
 		}
 	}
-	
+
+
+	@media (max-width: 600px) {
+		.jumbo {
+			width: 100%;
+		}
+	}
 }

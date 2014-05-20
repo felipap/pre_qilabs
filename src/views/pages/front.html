@@ -11,27 +11,29 @@ QI Labs.org
 {% endblock %}
 
 {% block body %}
-	<div id="wallterfall">
-		<div class="wall grid">
-			<div class="cardView">
-				<i></i>
+	<div class="screen">
+		<div id="wallterfall">
+			<div class="wall grid">
+				<div class="cardView">
+					<i></i>
+				</div>
 			</div>
-		</div>
-		<script>
-			(function () {
-				var icons = ['icon-exclamation', 'icon-trophy', 'icon-question', 'icon-comments-o', 'icon-guide', 'icon-puzzle', 'icon-rocket','icon-compass','icon-bulb','icon-flask','icon-sum','icon-university','icon-cap']
-				var cv = document.querySelector(".cardView"),
-					cc = document.querySelector(".wall");
-				for (var i=0; i<100; i++) {
-					var nc = cv.cloneNode(true);
-					if (Math.random() > 0.50) {
-						var icon = icons[Math.floor(Math.random()*icons.length)];
-						nc.querySelector('i').className += ' '+icon;
+			<script>
+				(function () {
+					var icons = ['icon-exclamation', 'icon-trophy', 'icon-question', 'icon-comments-o', 'icon-guide', 'icon-puzzle', 'icon-rocket','icon-compass','icon-bulb','icon-flask','icon-sum','icon-university','icon-cap']
+					var cv = document.querySelector(".cardView"),
+						cc = document.querySelector(".wall");
+					for (var i=0; i<100; i++) {
+						var nc = cv.cloneNode(true);
+						if (Math.random() > 0.50) {
+							var icon = icons[Math.floor(Math.random()*icons.length)];
+							nc.querySelector('i').className += ' '+icon;
+						}
+						cc.appendChild(nc);
 					}
-					cc.appendChild(nc);
-				}
-			})();
-		</script>
+				})();
+			</script>
+		</div>
 	</div>
 
 	<div class="blackout"></div>
