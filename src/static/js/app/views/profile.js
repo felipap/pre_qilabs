@@ -25,6 +25,10 @@ require(['common', 'components.cards'], function (common, wall) {
 			}
 		}).done(function (response) {
 			if (response.error) {
+				if (response.message)
+					app.alert(response.message,'error');
+				else
+					console.warn('????',response);
 			} else {
 				$(".profileWrapper").removeClass('editing');
 				$(".profileOutput.bio").html(profile.bio);

@@ -216,13 +216,8 @@ define([
 				<div className="cContainer">
 					<i className="close-btn" onClick={this.close}></i>
 					<div className="listWrapper">
-						<div className="userAvatar">
-							<div className="avatarWrapper">
-								<a href="#">
-								<div className="avatar" style={ {background: 'url("'+this.props.profile.avatarUrl+'")'} }>
-								</div>
-								</a>
-							</div>
+						<div className="left">
+							<button data-action="close-page" onClick={this.close}>Voltar</button>
 						</div>
 						<label>{label}</label>
 						{items}

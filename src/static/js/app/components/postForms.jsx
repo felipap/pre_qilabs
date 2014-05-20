@@ -269,7 +269,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 			});
 
 			$(postTitle).on('input keyup keypress', function (e) {
-				if (e.keyCode == 13) {
+				if ((e.keyCode || e.charCode) == 13) {
 					e.preventDefault();
 					e.stopPropagation();
 					return;

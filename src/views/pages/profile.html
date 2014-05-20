@@ -54,16 +54,15 @@ set navbarOpts = {
 					</div>
 				{% endif %}
 			</section>
-
 			<section class="bio profileOutput">
 				{{ profile.profile.bio }}
 			</section>
 			{% if profile.id == user.id %}
-				<textarea class="bio profileInput autosize" name="bio">{{ profile.profile.bio }}</textarea>
+				<textarea class="bio profileInput autosize" name="bio" maxlength="300">{{ profile.profile.bio }}</textarea>
 			{% endif %}
 
 			<section class="whereabout">
-				<i class="icon-map-marker"></i><span class="location profileOutput">{{ profile.profile.location }}</span><input type="text" class="profileInput" name="location" value="{{ profile.profile.location }}"  placeholder="Local de estudo/trabalho"/>&nbsp;·&nbsp;<i class="icon-home"></i><span class="home profileOutput">{{ profile.profile.home }}</span><input type="text" class="profileInput" name="home" value="{{ profile.profile.home }}" placeholder="Cidade de origem" /> 
+				<i class="icon-map-marker"></i><span class="location profileOutput">{{ profile.profile.location }}</span><input type="text" class="profileInput" maxlength="35" name="location" value="{{ profile.profile.location }}"  placeholder="Local de estudo/trabalho"/>&nbsp;·&nbsp;<i class="icon-home"></i><span class="home profileOutput">{{ profile.profile.home }}</span><input type="text" class="profileInput" maxlength="35" name="home" value="{{ profile.profile.home }}" placeholder="Cidade de origem" /> 
 			</section>
 
 			<div class="stats">

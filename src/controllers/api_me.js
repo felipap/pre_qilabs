@@ -21,9 +21,9 @@ module.exports = {
       put: function(req, res) {
         var bio, home, location;
         console.log('profile received', req.body.profile);
-        bio = req.body.profile.bio.replace(/^\s+|\s+$/g, '');
-        home = req.body.profile.home.replace(/^\s+|\s+$/g, '');
-        location = req.body.profile.location.replace(/^\s+|\s+$/g, '');
+        bio = req.body.profile.bio.replace(/^\s+|\s+$/g, '').slice(0, 300);
+        home = req.body.profile.home.replace(/^\s+|\s+$/g, '').slice(0, 35);
+        location = req.body.profile.location.replace(/^\s+|\s+$/g, '').slice(0, 35);
         if (bio) {
           req.user.profile.bio = bio;
         }

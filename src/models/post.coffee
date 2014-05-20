@@ -58,9 +58,6 @@ PostSchema.virtual('translatedType').get ->
 	TransTypes[@type] or 'Publicação'
 
 PostSchema.virtual('voteSum').get ->
-	# for m of @ when m isnt 'voteSum'
-	# 	console.log m
-	# console.log 'me', @id, 'votes' in @, @isSelected('votes')
 	@votes.length
 
 PostSchema.virtual('path').get ->
@@ -85,7 +82,10 @@ urlify = (text) ->
 	    return "<a href=\"#{url}\">#{smallify(url)}</a>"
 
 PostSchema.virtual('data.escapedBody').get ->
-	urlify(@data.body)
+	if @type is 'Comment'
+		urlify(@data.body)
+	else
+		@data.body
 
 ################################################################################
 ## Middlewares #################################################################

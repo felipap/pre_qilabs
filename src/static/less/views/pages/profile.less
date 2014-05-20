@@ -196,13 +196,12 @@
 			color: #666;
 		}
 
-		.userAvatar {
+		.left {
 			position: absolute;
 			left: -120px;
 
-			.avatarWrapper {
-				height: 100px;
-				width: 100px;
+			[data-action=close-page] {
+				.xbtn(white, @COLOR4);
 			}
 		}
 
@@ -214,19 +213,23 @@
 			padding-bottom: 10px;
 			border-bottom: 1px solid #DDD;
 			margin-bottom: 10px;
+
+			&:last-child {
+				border-bottom: none;
+			}
 			
 			a {
 				cursor: pointer;
 				.avatarWrapper {
-					height: 30px;
-					width: 30px;
+					height: 40px;
+					width: 40px;
 					margin-right: 10px;
 					vertical-align: middle;
 				}
 			}
 
 			.name {
-				font: normal 16px museo-sans;
+				font: normal 18px museo-sans;
 			}
 
 			button {

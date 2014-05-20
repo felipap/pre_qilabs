@@ -216,13 +216,8 @@ define([
 				React.DOM.div( {className:"cContainer"}, 
 					React.DOM.i( {className:"close-btn", onClick:this.close}),
 					React.DOM.div( {className:"listWrapper"}, 
-						React.DOM.div( {className:"userAvatar"}, 
-							React.DOM.div( {className:"avatarWrapper"}, 
-								React.DOM.a( {href:"#"}, 
-								React.DOM.div( {className:"avatar", style: {background: 'url("'+this.props.profile.avatarUrl+'")'} }
-								)
-								)
-							)
+						React.DOM.div( {className:"left"}, 
+							React.DOM.button( {'data-action':"close-page", onClick:this.close}, "Voltar")
 						),
 						React.DOM.label(null, label),
 						items

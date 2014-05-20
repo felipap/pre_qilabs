@@ -132,7 +132,11 @@ urlify = function(text) {
 };
 
 PostSchema.virtual('data.escapedBody').get(function() {
-  return urlify(this.data.body);
+  if (this.type === 'Comment') {
+    return urlify(this.data.body);
+  } else {
+    return this.data.body;
+  }
 });
 
 PostSchema.pre('remove', function(next) {
