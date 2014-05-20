@@ -379,10 +379,10 @@ UserSchema.methods.genProfile = (cb) ->
 ################################################################################
 ## related to the notification #################################################
 
-UserSchema.methods.getNotifications = (cb) ->
+UserSchema.methods.getNotifications = (limit, cb) ->
 	Notification
 		.find { recipient:@ }
-		.limit(6)
+		.limit limit
 		.sort '-dateSent'
 		.exec cb
 

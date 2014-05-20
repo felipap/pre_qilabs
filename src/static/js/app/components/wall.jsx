@@ -237,7 +237,7 @@ define([
 		componentDidMount: function () {
 			var self = this;
 			$.ajax({
-				url: '/api/me/notifications',
+				url: '/api/me/notifications?limit=30',
 				type: 'get',
 				dataType: 'json',
 			}).done(function (response) {

@@ -583,10 +583,10 @@ UserSchema.methods.genProfile = function(cb) {
   return cb(null, this.toJSON());
 };
 
-UserSchema.methods.getNotifications = function(cb) {
+UserSchema.methods.getNotifications = function(limit, cb) {
   return Notification.find({
     recipient: this
-  }).limit(6).sort('-dateSent').exec(cb);
+  }).limit(limit).sort('-dateSent').exec(cb);
 };
 
 UserSchema.plugin(require('./lib/hookedModelPlugin'));

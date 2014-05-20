@@ -34,7 +34,11 @@ module.exports = {
 
 		'notifications': {
 			get: (req, res) ->
-				req.user.getNotifications req.handleErrResult((notes) ->
+				if req.query.limit
+					limit = Math.max(0,Math.min(10,parseInt(req.query.limit)))
+				else
+					limit = 6
+				req.user.getNotifications limit, req.handleErrResult((notes) ->
 					res.endJson {
 						data: notes
 						error: false
