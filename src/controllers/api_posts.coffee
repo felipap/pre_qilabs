@@ -10,6 +10,70 @@ User = Resource.model 'User'
 Post = Resource.model 'Post'
 Group  = mongoose.model 'Group'
 
+sanitizerOptions = {
+	allowedTags: ['h1','h2','b','em','strong','a','img'],
+	allowedAttributes: {
+		'a': ['href'],
+		'img': ['src'],
+	},
+	transformTags: {
+		'div': 'span',
+	},
+	exclusiveFilter: (frame) ->
+		return frame.tag in ['a','span'] and not frame.text.trim()
+}
+
+
+getValidData = (data, app) ->
+	# Sanitize tags
+	if not data.tags or not data.tags instanceof Array
+		res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
+		return null
+	tags = (tag for tag in data.tags when tag in _.keys(app.locals.getTagMap()))
+	if tags.length == 0
+		res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
+		return null
+
+	# Check title
+	if not data.data.title or not data.data.title.length
+		res.status(400).endJson({
+			error:true,
+			message:'Erro! Cadê o título da sua '+app.locals.postTypes[type].translated+'?',
+		})
+		return null
+	if data.data.title.length < 10
+		res.status(400).endJson({
+			error:true,
+			message:'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
+		})
+		return null
+	if data.data.title.length > 100
+		res.status(400).endJson({
+			error:true,
+			message:'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
+		})
+		return null
+	title = data.data.title
+
+	# Check and sanitize body
+	if not data.data.body
+		res.status(400).endJson({error:true, message:'Escreva um corpo para a sua publicação.'})
+		return null
+
+	if data.data.body.length > 20*1000
+		res.status(400).endJson({error:true, message:'Erro! Você escreveu tudo isso?'})
+		return null
+
+	sanitizer = require 'sanitize-html'
+	body = sanitizer(data.data.body, sanitizerOptions)
+
+	return {
+		tags: tags,
+		title: title,
+		body: body,
+	}
+
+
 module.exports = {
 
 	permissions: [required.login],
@@ -23,66 +87,17 @@ module.exports = {
 			return res.status(400).endJson(error:true, message:'Tipo de publicação inválido.')
 		type = data.type[0].toUpperCase()+data.type.slice(1).toLowerCase()
 
-		console.log('Checking tags')
-		# Sanitize tags
-		if not data.tags or not data.tags instanceof Array
-			return res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
-		tags = (tag for tag in data.tags when tag in _.keys(req.app.locals.getTagMap()))
-		if tags.length == 0
-			return res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
+		return unless sanitized = getValidData(req.body, req.app)
+		console.log('Final:', sanitized)
 
-		console.log('Checking title')
-		# Check title
-		if not data.data.title or not data.data.title.length
-			return res.status(400).endJson({
-				error:true,
-				message:'Erro! Cadê o título da sua '+req.app.locals.postTypes[type].translated+'?',
-			})
-		if data.data.title.length < 10
-			return res.status(400).endJson({
-				error:true,
-				message:'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
-			})
-
-
-		if data.data.title.length < 10
-			return res.status(400).endJson({
-				error:true,
-				message:'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
-			})
-		title = data.data.title
-
-		# Check and sanitize body
-		if not data.data.body
-			return res.status(400).endJson({error:true, message:'Escreva um corpo para a sua publicação.'})
-
-		if data.data.body.length > 20*1000
-			return res.status(400).endJson({error:true, message:'Erro! Você escreveu tudo isso?'})
-
-		sanitizer = require 'sanitize-html'
-		body = sanitizer(data.data.body, {
-			allowedTags: ['h1','h2','b','em','strong','a','img'],
-			allowedAttributes: {
-				'a': ['href'],
-				'img': ['src'],
-			},
-			transformTags: {
-				'div': 'span',
-			},
-			exclusiveFilter: (frame) ->
-				return frame.tag in ['a','span'] and not frame.text.trim()
-		})
-
-		data = {
-			type: type
-			tags: tags
-			content:
-				title: title
-				body: body
-		}
-		console.log('Final:', data)
-
-		req.user.createPost data, req.handleErrResult((doc) ->
+		req.user.createPost {
+			type: type,
+			tags: sanitized.tags,
+			content: {
+				title: sanitized.title,
+				body: sanitized.body,
+			}
+		}, req.handleErrResult((doc) ->
 			doc.populate 'author', (err, doc) ->
 				res.endJson doc
 		)
@@ -107,16 +122,12 @@ module.exports = {
 							# Disallow edition of comments.
 							return res.endJson {error:true, message:''}
 
-						sanitizer = require 'sanitizer'
+						return unless sanitized = getValidData(req.body, req.app)
 
-						data = req.body
+						post.tags = sanitized.tags
+						post.data.title = sanitized.title
+						post.data.body = sanitized.body
 
-						console.log data.data.body
-						console.log 'final:', data.tags, sanitizer.sanitize(data.data.body)
-
-						post.data.body = sanitizer.sanitize(data.data.body)
-
-						post.tags = (tag for tag in data.tags when tag in _.pluck(req.app.locals.getTags(), 'id'))
 						post.save req.handleErrResult((me) ->
 							post.stuff req.handleErrResult (stuffedPost) ->
 								res.endJson stuffedPost

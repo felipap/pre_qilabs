@@ -1,4 +1,4 @@
-var Group, Post, Resource, User, mongoose, required, _,
+var Group, Post, Resource, User, getValidData, mongoose, required, sanitizerOptions, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -15,10 +15,98 @@ Post = Resource.model('Post');
 
 Group = mongoose.model('Group');
 
+sanitizerOptions = {
+  allowedTags: ['h1', 'h2', 'b', 'em', 'strong', 'a', 'img'],
+  allowedAttributes: {
+    'a': ['href'],
+    'img': ['src']
+  },
+  transformTags: {
+    'div': 'span'
+  },
+  exclusiveFilter: function(frame) {
+    var _ref;
+    return ((_ref = frame.tag) === 'a' || _ref === 'span') && !frame.text.trim();
+  }
+};
+
+getValidData = function(data, app) {
+  var body, sanitizer, tag, tags, title;
+  if (!data.tags || !data.tags instanceof Array) {
+    res.status(400).endJson({
+      error: true,
+      message: 'Selecione pelo menos um assunto relacionado a esse post.'
+    });
+    return null;
+  }
+  tags = (function() {
+    var _i, _len, _ref, _results;
+    _ref = data.tags;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      tag = _ref[_i];
+      if (__indexOf.call(_.keys(app.locals.getTagMap()), tag) >= 0) {
+        _results.push(tag);
+      }
+    }
+    return _results;
+  })();
+  if (tags.length === 0) {
+    res.status(400).endJson({
+      error: true,
+      message: 'Selecione pelo menos um assunto relacionado a esse post.'
+    });
+    return null;
+  }
+  if (!data.data.title || !data.data.title.length) {
+    res.status(400).endJson({
+      error: true,
+      message: 'Erro! Cadê o título da sua ' + app.locals.postTypes[type].translated + '?'
+    });
+    return null;
+  }
+  if (data.data.title.length < 10) {
+    res.status(400).endJson({
+      error: true,
+      message: 'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
+    });
+    return null;
+  }
+  if (data.data.title.length > 100) {
+    res.status(400).endJson({
+      error: true,
+      message: 'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
+    });
+    return null;
+  }
+  title = data.data.title;
+  if (!data.data.body) {
+    res.status(400).endJson({
+      error: true,
+      message: 'Escreva um corpo para a sua publicação.'
+    });
+    return null;
+  }
+  if (data.data.body.length > 20 * 1000) {
+    res.status(400).endJson({
+      error: true,
+      message: 'Erro! Você escreveu tudo isso?'
+    });
+    return null;
+  }
+  sanitizer = require('sanitize-html');
+  body = sanitizer(data.data.body, sanitizerOptions);
+  return {
+    tags: tags,
+    title: title,
+    body: body
+  };
+};
+
 module.exports = {
   permissions: [required.login],
   post: function(req, res) {
-    var body, data, sanitizer, tag, tags, title, type, _ref;
+    var data, sanitized, type, _ref;
     data = req.body;
     console.log('Checking type');
     if (_ref = !data.type.toLowerCase(), __indexOf.call(_.keys(req.app.locals.postTypes), _ref) >= 0) {
@@ -28,88 +116,18 @@ module.exports = {
       });
     }
     type = data.type[0].toUpperCase() + data.type.slice(1).toLowerCase();
-    console.log('Checking tags');
-    if (!data.tags || !data.tags instanceof Array) {
-      return res.status(400).endJson({
-        error: true,
-        message: 'Selecione pelo menos um assunto relacionado a esse post.'
-      });
+    if (!(sanitized = getValidData(req.body, req.app))) {
+      return;
     }
-    tags = (function() {
-      var _i, _len, _ref1, _results;
-      _ref1 = data.tags;
-      _results = [];
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        tag = _ref1[_i];
-        if (__indexOf.call(_.keys(req.app.locals.getTagMap()), tag) >= 0) {
-          _results.push(tag);
-        }
-      }
-      return _results;
-    })();
-    if (tags.length === 0) {
-      return res.status(400).endJson({
-        error: true,
-        message: 'Selecione pelo menos um assunto relacionado a esse post.'
-      });
-    }
-    console.log('Checking title');
-    if (!data.data.title || !data.data.title.length) {
-      return res.status(400).endJson({
-        error: true,
-        message: 'Erro! Cadê o título da sua ' + req.app.locals.postTypes[type].translated + '?'
-      });
-    }
-    if (data.data.title.length < 10) {
-      return res.status(400).endJson({
-        error: true,
-        message: 'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
-      });
-    }
-    if (data.data.title.length < 10) {
-      return res.status(400).endJson({
-        error: true,
-        message: 'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
-      });
-    }
-    title = data.data.title;
-    if (!data.data.body) {
-      return res.status(400).endJson({
-        error: true,
-        message: 'Escreva um corpo para a sua publicação.'
-      });
-    }
-    if (data.data.body.length > 20 * 1000) {
-      return res.status(400).endJson({
-        error: true,
-        message: 'Erro! Você escreveu tudo isso?'
-      });
-    }
-    sanitizer = require('sanitize-html');
-    body = sanitizer(data.data.body, {
-      allowedTags: ['h1', 'h2', 'b', 'em', 'strong', 'a', 'img'],
-      allowedAttributes: {
-        'a': ['href'],
-        'img': ['src']
-      },
-      transformTags: {
-        'div': 'span'
-      },
-      exclusiveFilter: function(frame) {
-        var _ref1;
-        return ((_ref1 = frame.tag) === 'a' || _ref1 === 'span') && !frame.text.trim();
-      }
-    });
-    data = {
+    console.log('Final:', sanitized);
+    return req.user.createPost({
       type: type,
-      tags: tags,
+      tags: sanitized.tags,
       content: {
-        title: title,
-        body: body
+        title: sanitized.title,
+        body: sanitized.body
       }
-    };
-    console.log('Final:', data);
-    return req.user.createPost(data, req.handleErrResult(function(doc) {
+    }, req.handleErrResult(function(doc) {
       return doc.populate('author', function(err, doc) {
         return res.endJson(doc);
       });
@@ -142,30 +160,19 @@ module.exports = {
           }
           return Post.findById(postId, req.handleErrResult((function(_this) {
             return function(post) {
-              var data, sanitizer, tag;
+              var sanitized;
               if (post.type === 'Comment') {
                 return res.endJson({
                   error: true,
                   message: ''
                 });
               }
-              sanitizer = require('sanitizer');
-              data = req.body;
-              console.log(data.data.body);
-              console.log('final:', data.tags, sanitizer.sanitize(data.data.body));
-              post.data.body = sanitizer.sanitize(data.data.body);
-              post.tags = (function() {
-                var _i, _len, _ref, _results;
-                _ref = data.tags;
-                _results = [];
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                  tag = _ref[_i];
-                  if (__indexOf.call(_.pluck(req.app.locals.getTags(), 'id'), tag) >= 0) {
-                    _results.push(tag);
-                  }
-                }
-                return _results;
-              })();
+              if (!(sanitized = getValidData(req.body, req.app))) {
+                return;
+              }
+              post.tags = sanitized.tags;
+              post.data.title = sanitized.title;
+              post.data.body = sanitized.body;
               return post.save(req.handleErrResult(function(me) {
                 return post.stuff(req.handleErrResult(function(stuffedPost) {
                   return res.endJson(stuffedPost);

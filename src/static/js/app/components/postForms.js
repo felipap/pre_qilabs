@@ -64,6 +64,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 			var selected = this.state.selectedTagsIds;
 			if (selected.length) {
 				selected.pop();
+				console.log('new', selected)
 				this.setState({ selectedTagsIds: selected });
 			}
 			this.props.onChangeTags();
@@ -126,7 +127,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 					React.DOM.i( {className:"iconThumbnail iconThumbnailSmall icon-tags"}),
 					React.DOM.ul(null, 
 						tags.length?
-							React.addons.CSSTransitionGroup({transitionName:"animateFade"},tags)
+						tags
 						:(
 							React.DOM.div( {className:"placeholder"}, "Tópicos relacionados")
 						)
