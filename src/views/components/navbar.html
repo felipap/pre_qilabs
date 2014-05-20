@@ -8,21 +8,21 @@ detailVisible
 <div class="navcontent">
 	<span class="center">
 		<a class="brand" href="/" tabindex="-1">QI <i class="icon-bulb"></i> Labs</a>
+		{% if pageDetailLabel %}
 		<div style="
 			display: inline-block;
 			top: -1px;
-			position: relative;
+			position: absolute;
 			width: 0;
 			">
 			<span class="pageDetailLabel">
-				{% if pageDetailLabel %}
 				<i class="iconThumbnail iconThumbnailSmall iconShadowed {{ pageDetailIcon }}"></i>
 				<span class="pageLabel">
 					{{ pageDetailLabel }}
 				</span>
-				{% endif %}
 			</span>
 		</div>
+		{% endif %}
 	</span>
 	{% if user %}
 		<ul class="right">
