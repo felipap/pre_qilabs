@@ -31,19 +31,19 @@ defaultSanitizerOptions = {
 };
 
 sanitizerOptions = {
-  'Question': _.extend(defaultSanitizerOptions, {
+  'question': _.extend(defaultSanitizerOptions, {
     allowedTags: ['b', 'em', 'strong', 'a', 'u', 'ul', 'blockquote']
   }),
-  'Tip': defaultSanitizerOptions,
-  'Experience': defaultSanitizerOptions
+  'tip': defaultSanitizerOptions,
+  'experience': defaultSanitizerOptions
 };
 
-getValidPostData = function(data, app) {
+getValidPostData = function(data, req, res) {
   var body, sanitizer, tag, tags, title;
   if (!data.tags || !data.tags instanceof Array) {
     res.status(400).endJson({
       error: true,
-      msg: 'Selecione pelo menos um assunto relacionado a esse post.'
+      message: 'Selecione pelo menos um assunto relacionado a esse post.'
     });
     return null;
   }
@@ -53,7 +53,7 @@ getValidPostData = function(data, app) {
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       tag = _ref[_i];
-      if (__indexOf.call(_.keys(app.locals.getTagMap()), tag) >= 0) {
+      if (__indexOf.call(_.keys(res.app.locals.getTagMap()), tag) >= 0) {
         _results.push(tag);
       }
     }
@@ -62,28 +62,28 @@ getValidPostData = function(data, app) {
   if (tags.length === 0) {
     res.status(400).endJson({
       error: true,
-      msg: 'Selecione pelo menos um assunto relacionado a esse post.'
+      message: 'Selecione pelo menos um assunto relacionado a esse post.'
     });
     return null;
   }
   if (!data.data.title || !data.data.title.length) {
     res.status(400).endJson({
       error: true,
-      msg: 'Erro! Cadê o título da sua ' + app.locals.postTypes[type].translated + '?'
+      message: 'Erro! Cadê o título da sua ' + res.app.locals.postTypes[req.body.type.toLowerCase()].translated + '?'
     });
     return null;
   }
   if (data.data.title.length < 10) {
     res.status(400).endJson({
       error: true,
-      msg: 'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
+      message: 'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
     });
     return null;
   }
   if (data.data.title.length > 100) {
     res.status(400).endJson({
       error: true,
-      msg: 'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
+      message: 'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
     });
     return null;
   }
@@ -91,19 +91,19 @@ getValidPostData = function(data, app) {
   if (!data.data.body) {
     res.status(400).endJson({
       error: true,
-      msg: 'Escreva um corpo para a sua publicação.'
+      message: 'Escreva um corpo para a sua publicação.'
     });
     return null;
   }
   if (data.data.body.length > 20 * 1000) {
     res.status(400).endJson({
       error: true,
-      msg: 'Erro! Você escreveu tudo isso?'
+      message: 'Erro! Você escreveu tudo isso?'
     });
     return null;
   }
   sanitizer = require('sanitize-html');
-  body = sanitizer(data.data.body, sanitizerOptions[type]);
+  body = sanitizer(data.data.body, sanitizerOptions[req.body.type.toLowerCase()]);
   return {
     tags: tags,
     title: title,
@@ -124,7 +124,7 @@ module.exports = {
       });
     }
     type = data.type[0].toUpperCase() + data.type.slice(1).toLowerCase();
-    if (!(sanitized = getValidPostData(req.body, req.app))) {
+    if (!(sanitized = getValidPostData(req.body, req, res))) {
       return;
     }
     console.log('Final:', sanitized);
@@ -175,7 +175,7 @@ module.exports = {
                   msg: ''
                 });
               }
-              if (!(sanitized = getValidData(req.body, req.app))) {
+              if (!(sanitized = getValidPostData(req.body, req, res))) {
                 return;
               }
               post.tags = sanitized.tags;
@@ -301,6 +301,18 @@ module.exports = {
               htmlEntities = function(str) {
                 return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
               };
+              if (req.body.content.body.length > 1000) {
+                return res.status(400).endJson({
+                  error: true,
+                  message: 'Esse comentário é muito grande.'
+                });
+              }
+              if (req.body.content.body.length < 3) {
+                return res.status(400).endJson({
+                  error: true,
+                  message: 'Esse comentário é muito pequeno.'
+                });
+              }
               data = {
                 content: {
                   body: htmlEntities(req.body.content.body)

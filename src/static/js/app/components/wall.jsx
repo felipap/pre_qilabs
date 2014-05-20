@@ -252,10 +252,10 @@ define([
 		render: function () {
 			var notes = _.map(this.state.notes, function (item) {
 				return (
-					<li className="notification" key={item.id}}
+					<li className="notification" key={item.id}
 						data-seen={item.seen} data-accessed={item.accessed}>
 						<img className="thumbnail" src={item.thumbnailUrl} />
-						<p onClick={function(){window.location.href=item.url}>
+						<p onClick={function(){window.location.href=item.url} }>
 							{item.msg}
 						</p>
 						<time data-time-count={1*new Date(item.dateSent)}>

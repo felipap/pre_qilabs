@@ -252,10 +252,10 @@ define([
 		render: function () {
 			var notes = _.map(this.state.notes, function (item) {
 				return (
-					React.DOM.li( {className:"notification", key:item.id, onClick:function(){window.location.href=item.url},
+					React.DOM.li( {className:"notification", key:item.id,
 						'data-seen':item.seen, 'data-accessed':item.accessed}, 
 						React.DOM.img( {className:"thumbnail", src:item.thumbnailUrl} ),
-						React.DOM.p(null, 
+						React.DOM.p( {onClick:function(){window.location.href=item.url} }, 
 							item.msg
 						),
 						React.DOM.time( {'data-time-count':1*new Date(item.dateSent)}, 

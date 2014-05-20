@@ -135,10 +135,16 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					dataType: 'json',
 					url: this.props.model.get('apiPath')+'/comments',
 					data: { content: { body: bodyEl.val() } }
-				}).done(function(response) {
-					self.setState({showInput:false});
-					bodyEl.val('');
-					self.props.model.children.Comment.add(new postModels.commentItem(response.data));
+				}).done(function (response) {
+					if (response.error) {
+						app.alert(response.message || 'Erro!', 'error');
+					} else {
+						self.setState({showInput:false});
+						bodyEl.val('');
+						self.props.model.children.Comment.add(new postModels.commentItem(response.data));
+					}
+				}).fail(function (xhr) {
+					app.alert(xhr.responseJSON.message || 'Erro!', 'error');
 				});
 
 			},
