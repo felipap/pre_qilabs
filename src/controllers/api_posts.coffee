@@ -239,7 +239,7 @@ module.exports = {
 						})
 						data = {
 							content: {
-								body: sanitizer.sanitize(req.body.body, (uri) -> uri)
+								body: body
 							}
 							type: Post.Types.Answer
 						}

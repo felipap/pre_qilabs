@@ -358,9 +358,7 @@ module.exports = {
               });
               data = {
                 content: {
-                  body: sanitizer.sanitize(req.body.body, function(uri) {
-                    return uri;
-                  })
+                  body: body
                 },
                 type: Post.Types.Answer
               };
