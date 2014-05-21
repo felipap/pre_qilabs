@@ -476,7 +476,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				return (
 					React.DOM.div( {className:"answerSection"}, 
 						React.DOM.div( {className:"sectionHeader"}, 
-							React.DOM.label(null,  this.props.collection.length,  " Respostas"),
+							React.DOM.label(null,  this.props.collection.length,  " Resposta", this.props.collection.length==1?"":"s" ),
 							React.DOM.div( {className:"sortingMenu"}, 
 								React.DOM.label(null, "ordenar por"),
 								menu
@@ -489,7 +489,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 		}),
 		InputForm: React.createClass({displayName: 'InputForm',
-
 			componentDidUpdate: function () {
 				if (this.refs && this.refs.input) {
 					this.editor = new MediumEditor(this.refs.input.getDOMNode(), mediumEditorAnswerOpts);

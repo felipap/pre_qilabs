@@ -1,0 +1,93 @@
+
+[data-page="about"] {
+
+	background: #EEE url(/static/images/noisy_grid.png);
+
+	.jumbo {
+		position: relative;
+
+		width: 800;
+		max-width: 95%;
+		margin: auto;
+		height: 500px;
+		top: 50%; margin-top: -250px;
+		text-align: center;
+
+		.top {
+			.brand {
+				font-family: museo;
+				// text-transform: uppercase;
+				i { margin-top: -4px; }
+			}
+			font-size: 30px;
+
+			.icon-bulb {
+				outline: none;
+				.transition(color);
+			}
+		}
+
+		.mailme {
+			.high-xbtn(white, @COLOR3);
+		}
+
+		.board {
+			background: white;
+			width: 800px;
+			max-width: 100%;
+			margin: 20px auto;
+			display: block;
+			position: relative;
+			padding: 30px;
+			.box-shadow(4px, .2);
+
+			section {
+				h1 { font-size: 25px; }
+				h2 { font-size: 20px; }
+				margin: 20px auto;
+				&:first-child {
+					margin-top: 0;
+				}
+				&:last-child {
+					margin-bottom: 0;
+				}
+
+				&.team {
+					text-align: left;
+					label {
+						font: normal 30px museo-sans;
+						margin-bottom: 20px;
+					}
+					li {
+						margin-bottom: 15px;
+						display: table;
+						&:last-child {
+							margin-bottom: 0;
+						}
+						img {
+							margin-right: 20px;
+							display: table-cell;
+						}
+						.desc {
+							display: table-cell;
+							vertical-align: middle;
+						}
+						list-style: none;
+						.name { font: normal 16px museo-sans; }
+						.pos { font: normal 14px museo-sans; }
+					}
+					[class*=icon-] {
+						font-size: 110%;
+						margin-top: -3px;
+					}
+				}
+			}
+		}
+
+		.footer {
+			font: 13px museo-sans;
+			text-transform: uppercase;
+			color: #444;
+		}
+	}
+}

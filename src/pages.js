@@ -196,6 +196,12 @@ module.exports = {
       }
     }
   },
+  '/equipe': {
+    name: 'team',
+    get: function(req, res) {
+      return res.render('about_pages/team');
+    }
+  },
   '/sobre': require('./controllers/about'),
   '/api': require('./controllers/api'),
   '/auth': require('./controllers/auth')

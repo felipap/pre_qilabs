@@ -1,55 +1,54 @@
 {% extends '../stdbody.html' %}
+{% set dataPage="about" %}
+
+{% block pageTitle %}
+Equipe · QI Labs.org
+{% endblock %}
 
 {% block head %}
-	{% parent %}
-	<link rel="stylesheet" href="{{ getMediaUrl('css','about_pages.min.css') }}" />
+	<link rel="stylesheet" href="{{ getMediaUrl('css','snpages.min.css') }}" />
 {% endblock %}
 
 {% block body %}
+<body data-page="about">
 
-<body class="" data-page="team">
+	<div class="jumbo">
+		<div class="top">
+			<span class="brand">QI <i class="icon-bulb"></i> LABS</span> · Equipe
+		</div>
 
-	{% include '../components/navbar.html' %} 
-	{%
-	set team = [
-		{
-			name: 'Felipe Aragão',
-			twitter: 'http://twitter.com/f03lipe',
-			desc: 'Fundador (programador)',
-			avatar: getMediaUrl('images','t','felipe.jpg'),
-		},
-		{
-			name: 'Michelle Malher',
-			twitter: 'http://twitter.com/mimimalher',
-			desc: '',
-			avatar: getMediaUrl('images','t','viviane.jpg'),
-		},
-	]
-	%}
+		<div class="board">
 
-	<section class="team">
-		<section>
-			<h1><strong>Equipe</strong></h1>
+			<section class="team">
+				<li>
+					<img src="/static/images/avatar.png" width="100" />
+					<div class="desc">
+						<div class="name">Felipe Aragão Pires</div>
+						Founder, Desenvolvedor e Designer
+						<p>
+							<a href="http://twitter.com/f03lipe">@f03lipe</a> · <a href="http://github.com/f03lipe"><i class="icon-github"></i></a>
+						</p>
+					</div>
+				</li>
+				<li>
+					<img src="https://graph.facebook.com/100002234680040/picture?width=200&height=200" width="100" />
+					<div class="desc">
+						<div class="name">Michelle Malher</div>
+						Conteúdo
+					</div>
+				</li>
+				<li>
+					<img src="https://graph.facebook.com/100001115788168/picture?width=200&height=200" width="100" />
+					<div class="desc">
+						<div class="name">Mariam Tope</div>
+						Operações
+					</div>
+				</li>
+			</section>
+		</div>
 
-			{% for gorgeous in team %}
-			
-			<li>
-				<div class="avatar">
-					<img width=100 src="<%= person.avatar %>" />
-				</div>
-				<div class="">
-				<h3>{{ gorgeous.name }}</h3>
-				<h3>{{ gorgeous.desc }}</h3>
-				{% if gorgeous.twitter %}
-					<a href="{{ gorgeous.twitter }}"><i class="icon-twitter icon-large"></i></a>
-				{% endif %}
-			</li>
-			{% endfor %}
-		</section>
-	</section>
-
-	{% include '../layouts/footer.html' %}
-
-</body>
-
+		<div class="footer">
+			QI Labs.org, 2014
+		</div>
+ 	</section>
 {% endblock %}

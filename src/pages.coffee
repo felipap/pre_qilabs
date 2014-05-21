@@ -161,6 +161,11 @@ module.exports = {
 					get: (req, res) ->
 		}
 
+	'/equipe':
+		name: 'team',
+		get: (req, res) ->
+			res.render('about_pages/team')
+
 	'/sobre': 	require './controllers/about'
 	'/api': 	require './controllers/api'
 	'/auth': 	require './controllers/auth'

@@ -1,30 +1,28 @@
 {% extends '../stdbody.html' %}
+{% set dataPage="about" %}
+
+{% block pageTitle %}
+Sobre · QI Labs.org
+{% endblock %}
 
 {% block head %}
-	{% parent %}
-	<link rel="stylesheet" href="{{ getMediaUrl('css','about_pages.min.css') }}" />
+	<link rel="stylesheet" href="{{ getMediaUrl('css','snpages.min.css') }}" />
 {% endblock %}
 
 {% block body %}
 <body data-page="about">
 
-	{% include '../components/navbar.html' %}
-
-	<section id="parcerias">
-		<section>
-			<div class="col-md-7">
-				<h1><strong>QI Labs</strong></h1>
-			</div>
-		</section>
-		<p></p>
-		<hr>
-
-<!-- 		<div>
-			<h2><strong>Parcerias</strong></h2>
-			<img height=100 src="{{ getMediaUrl('images/di.jpg') }}"></img>
-			<img width=150 src="{{ getMediaUrl('images/tc.png') }}"></img>
+	<div class="jumbo">
+		<div class="top">
+			<span class="brand">QI <i class="icon-bulb"></i> LABS</span> · Sobre
 		</div>
- -->	</section>
 
-</body>
+		<div class="board">
+			<button class="mailme">Esse botão não faz nada...</button>
+		</div>
+
+		<div class="footer">
+			QI Labs.org, 2014
+		</div>
+ 	</section>
 {% endblock %}

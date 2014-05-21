@@ -476,7 +476,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				return (
 					<div className="answerSection">
 						<div className="sectionHeader">
-							<label>{ this.props.collection.length } Respostas</label>
+							<label>{ this.props.collection.length } Resposta{ this.props.collection.length==1?"":"s" }</label>
 							<div className="sortingMenu">
 								<label>ordenar por</label>
 								{menu}
@@ -489,7 +489,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			},
 		}),
 		InputForm: React.createClass({
-
 			componentDidUpdate: function () {
 				if (this.refs && this.refs.input) {
 					this.editor = new MediumEditor(this.refs.input.getDOMNode(), mediumEditorAnswerOpts);
