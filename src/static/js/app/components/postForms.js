@@ -257,6 +257,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 			// Medium Editor
 			console.log('opts', mediumEditorPostOpts[this.props.model.get('type').toLowerCase()])
 			this.editor = new MediumEditor(postBody, mediumEditorPostOpts[this.props.model.get('type').toLowerCase()]);
+			window.e = this.editor;
 			$(postBody).mediumInsert({
 				editor: this.editor,
 				addons: {
@@ -294,7 +295,6 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 						.split(' ');
 					return ocs[0]===''?(ocs.length-1):ocs.length;
 				}
-				this.props.model.get('data').body = this.editor.serialize().postBody.value;
 				var count = countWords($(this.refs.postBody.getDOMNode()).text());
 				$(this.refs.wordCount.getDOMNode()).html(count?(count==1?count+" palavra":count+" palavras"):'');
 			}.bind(this));
@@ -310,10 +310,13 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 			this.props.model.set('tags', this.refs.tagSelectionBox.getSelectedTagsIds());
 		},
 		onClickSend: function () {
+			this.props.model.attributes.data.body = this.editor.serialize().postBody.value;
+			console.log(this.editor.serialize().postBody.value)
+			console.log(this.props.model.attributes.data.body)
 			this.props.model.save(undefined, {
 				url: this.props.model.url() || '/api/posts',
 				success: function (model) {
-					window.location.href = model.get('path');
+					// window.location.href = model.get('path');
 				},
 				error: function (model, xhr, options) {
 					var data = xhr.responseJSON;

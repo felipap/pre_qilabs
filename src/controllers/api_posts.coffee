@@ -11,21 +11,24 @@ Post = Resource.model 'Post'
 Group  = mongoose.model 'Group'
 
 defaultSanitizerOptions = {
-	allowedTags: ['h1','h2','b','em','strong','a','img','u','ul','blockquote'],
+	# To be added: 'pre', 'caption', 'hr', 'code', 'strike', 
+	allowedTags: ['h1','h2','b','em','strong','a','img','u','ul','li', 'blockquote', 'p', 'br', 'i'], 
 	allowedAttributes: {
 		'a': ['href'],
 		'img': ['src'],
 	},
-	transformTags: {
-		'div': 'span',
-	},
+	# selfClosing: [ 'img', 'br', 'hr', 'area', 'base', 'basefont', 'input', 'link', 'meta' ],
+	selfClosing: ['img', 'br'],
+	# transformTags: {
+	# 	'div': 'span',
+	# },
 	exclusiveFilter: (frame) ->
 		return frame.tag in ['a','span'] and not frame.text.trim()
 }
 
 sanitizerOptions = {
-	'question': _.extend(defaultSanitizerOptions, {
-		allowedTags: ['b','em','strong','a','u','ul','blockquote'],
+	'question': _.extend({}, defaultSanitizerOptions, {
+		allowedTags: ['b','em','strong','a','u','ul','blockquote','p'],
 	}),
 	'tip': defaultSanitizerOptions,
 	'experience': defaultSanitizerOptions,
@@ -73,6 +76,7 @@ getValidPostData = (data, req, res) ->
 		return null
 
 	sanitizer = require 'sanitize-html'
+	console.log(req.body.type.toLowerCase(), sanitizerOptions[req.body.type.toLowerCase()])
 	body = sanitizer(data.data.body, sanitizerOptions[req.body.type.toLowerCase()])
 
 	return {
@@ -134,6 +138,8 @@ module.exports = {
 						post.tags = sanitized.tags
 						post.data.title = sanitized.title
 						post.data.body = sanitized.body
+						console.log "first", req.body.data.body,"\n"
+						console.log "final", sanitized.body
 
 						post.save req.handleErrResult((me) ->
 							post.stuff req.handleErrResult (stuffedPost) ->

@@ -138,35 +138,39 @@ module.exports = {
 		# permissions: [required.posts.selfCanSee('post')]
 		permissions: [required.login]
 		get: (req, res) ->
-			res.redirect('/#posts/'+req.params.postId)
-		# get: [required.posts.selfCanSee('postId'), (req, res) ->
-		# 	return unless postId = req.paramToObjectId('postId')
-		# 	Post.findOne { _id:postId }, req.handleErrResult((post) ->
-		# 		if post.parentPost
-		# 			# Our post is actually a comment/answer, so redirect user to the
-		# 			# comment's actual path (which is its parent's).
-		# 			console.log 'redirecting', post.path
-		# 			return res.redirect(post.path)
-		# 		else
-		# 			post.stuff req.handleErrResult (stuffedPost) ->
-		# 				res.render 'pages/post.html', {
-		# 					post: stuffedPost,
-		# 				}
-		# 		)
-		# 	]
+			# if req.user
+			# 	res.redirect('/#posts/'+req.params.postId)
+			# else
+			return unless postId = req.paramToObjectId('postId')
+			Post.findOne { _id:postId }, req.handleErrResult((post) ->
+				if post.parentPost
+					return res.render404()
+					console.log 'redirecting', post.path
+					return res.redirect(post.path)
+				else
+					post.stuff req.handleErrResult (stuffedPost) ->
+						res.render 'pages/blogPost.html', {
+							post: stuffedPost,
+						}
+				)
 
 		children: {
 			'/edit':
 				methods:
 					get: (req, res) ->
+
 		}
 
 	'/equipe':
 		name: 'team',
 		get: (req, res) ->
-			res.render('about_pages/team')
+			res.render('pages/about_pages/team')
 
-	'/sobre': 	require './controllers/about'
+	'/sobre':
+		name: 'about',
+		get: (req, res) ->
+			res.render('pages/about_pages/about')
+
 	'/api': 	require './controllers/api'
 	'/auth': 	require './controllers/auth'
 }

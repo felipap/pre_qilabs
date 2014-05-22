@@ -186,7 +186,25 @@ module.exports = {
     name: 'profile',
     permissions: [required.login],
     get: function(req, res) {
-      return res.redirect('/#posts/' + req.params.postId);
+      var postId;
+      if (!(postId = req.paramToObjectId('postId'))) {
+        return;
+      }
+      return Post.findOne({
+        _id: postId
+      }, req.handleErrResult(function(post) {
+        if (post.parentPost) {
+          return res.render404();
+          console.log('redirecting', post.path);
+          return res.redirect(post.path);
+        } else {
+          return post.stuff(req.handleErrResult(function(stuffedPost) {
+            return res.render('pages/blogPost.html', {
+              post: stuffedPost
+            });
+          }));
+        }
+      }));
     },
     children: {
       '/edit': {
@@ -199,10 +217,15 @@ module.exports = {
   '/equipe': {
     name: 'team',
     get: function(req, res) {
-      return res.render('about_pages/team');
+      return res.render('pages/about_pages/team');
     }
   },
-  '/sobre': require('./controllers/about'),
+  '/sobre': {
+    name: 'about',
+    get: function(req, res) {
+      return res.render('pages/about_pages/about');
+    }
+  },
   '/api': require('./controllers/api'),
   '/auth': require('./controllers/auth')
 };

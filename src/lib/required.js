@@ -23,9 +23,7 @@ var permissions = {
 				callback();
 			} else {
 				Group.findById(labId, req.handleErrResult(function (group) {
-					
 					res.locals.lab = group;
-					
 					if ( 1|| group.visibility === Group.Permissions.Public) {
 						callback();
 					} else {
@@ -81,7 +79,6 @@ var permissions = {
 
 		selfOwns: function (postId, req, res, callback) {
 			if (''+req.user.facebookId === process.env.facebook_me) {
-				console.log('oi')
 				callback();
 				return;
 			}

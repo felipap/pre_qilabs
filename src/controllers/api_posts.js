@@ -16,14 +16,12 @@ Post = Resource.model('Post');
 Group = mongoose.model('Group');
 
 defaultSanitizerOptions = {
-  allowedTags: ['h1', 'h2', 'b', 'em', 'strong', 'a', 'img', 'u', 'ul', 'blockquote'],
+  allowedTags: ['h1', 'h2', 'b', 'em', 'strong', 'a', 'img', 'u', 'ul', 'li', 'blockquote', 'p', 'br', 'i'],
   allowedAttributes: {
     'a': ['href'],
     'img': ['src']
   },
-  transformTags: {
-    'div': 'span'
-  },
+  selfClosing: ['img', 'br'],
   exclusiveFilter: function(frame) {
     var _ref;
     return ((_ref = frame.tag) === 'a' || _ref === 'span') && !frame.text.trim();
@@ -31,8 +29,8 @@ defaultSanitizerOptions = {
 };
 
 sanitizerOptions = {
-  'question': _.extend(defaultSanitizerOptions, {
-    allowedTags: ['b', 'em', 'strong', 'a', 'u', 'ul', 'blockquote']
+  'question': _.extend({}, defaultSanitizerOptions, {
+    allowedTags: ['b', 'em', 'strong', 'a', 'u', 'ul', 'blockquote', 'p']
   }),
   'tip': defaultSanitizerOptions,
   'experience': defaultSanitizerOptions
@@ -103,6 +101,7 @@ getValidPostData = function(data, req, res) {
     return null;
   }
   sanitizer = require('sanitize-html');
+  console.log(req.body.type.toLowerCase(), sanitizerOptions[req.body.type.toLowerCase()]);
   body = sanitizer(data.data.body, sanitizerOptions[req.body.type.toLowerCase()]);
   return {
     tags: tags,
@@ -181,6 +180,8 @@ module.exports = {
               post.tags = sanitized.tags;
               post.data.title = sanitized.title;
               post.data.body = sanitized.body;
+              console.log("first", req.body.data.body, "\n");
+              console.log("final", sanitized.body);
               return post.save(req.handleErrResult(function(me) {
                 return post.stuff(req.handleErrResult(function(stuffedPost) {
                   return res.endJson(stuffedPost);
