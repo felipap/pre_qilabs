@@ -316,7 +316,8 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 			this.props.model.save(undefined, {
 				url: this.props.model.url() || '/api/posts',
 				success: function (model) {
-					// window.location.href = model.get('path');
+					window.location.href = model.get('path');
+					app.alert("Publicação salva! :)");
 				},
 				error: function (model, xhr, options) {
 					var data = xhr.responseJSON;
