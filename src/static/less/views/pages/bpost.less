@@ -20,9 +20,9 @@
 		}
 
 		&::-webkit-scrollbar-thumb {
-			.transition(all, .5s, linear);
-			background-color: #EEE;
+			background-color: #CCC;
 			border-width: 0 0 0 1px;
+			.transition(all, .5s, linear);
 			&:hover {
 				background: #AAA;
 			}
@@ -30,40 +30,6 @@
 				background: #999;
 			}
 		}
-	}
-
-	.ibrand {
-		display: none;
-		position: absolute;
-		left: 10px;
-		top: 10px;
-		width: 50px;
-		height: 50px;
-		background: #404040;
-		text-align: center;
-		.transition;
-
-		&:hover {
-			background: #666;
-		}
-
-		i {
-			font-weight: 600;
-			color: #fff;
-			text-align: center;
-			line-height: 50px;
-			margin: 2px 1px 0 0;
-			font-size: 34px;
-		}
-	}
-
-	.brand {
-		display: none;
-		font: 26px museo;
-		text-transform: uppercase;
-		text-align: center;
-		margin: 50px 0;
-		i { margin-top: -4px; }
 	}
 
 	header {
@@ -86,10 +52,11 @@
 
 		.postHeader {
 			.postTitle {
-				font: 60px museo-sans;
+				font: 60px/1 museo-sans;
 			}
 
 			.info {
+				margin: 10px 0;
 				font: 15px museo-sans;
 			}
 			margin: 30px 0;
@@ -100,13 +67,18 @@
 			font-size: 18px;
 
 			p {
-				line-height: 1.5;
+				// line-height: 1.5;
 			}
 
 			/* font: 21px/28px Lora; */
 			font: 21px/31px 'Gentium Book Basic';
+			font: 19px/28px "PT Serif"; 
 			/* font: 19px/30px Merriweather; */
 			color: #333;
+
+			blockquote {
+				margin-left: -10px;
+			}
 
 			img {
 				max-width: 100%;
@@ -129,7 +101,6 @@
 
 		.showCommentInput {
 			margin: auto;
-
 			.inner-shadow(0, 0, 2px, .1);
 			padding: 10px;
 			font: 14px museo-sans;
@@ -138,7 +109,22 @@
 			color: #666;
 			cursor: pointer;
 			background: #F8F8F8;
+			.transition;
+			&:hover {
+				background: #FAFAFA;
+				color: #555;
+				.inner-shadow(0, 0, 2px, .2);			// .no-box-shadow();
+			}
 		}
+	
+		.brand {
+			margin-top: 40px;
+			font: 19px museo;
+			text-transform: uppercase;
+			text-align: center;
+			i { margin-top: -2px; }
+		}
+
 	}
 
 }

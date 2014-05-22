@@ -10,25 +10,17 @@
 {% block head %}
 	{{ tagMacros.stylesheet(getMediaUrl('css/snpages.min.css')) }}
 	<link rel="stylesheet" href="//brick.a.ssl.fastly.net/EB+Garamond:400,400i/Crimson:400,600i,700i/Domine:400,700/Clear+Sans:400,500,700/Bitter:400,700/Libre+Baskerville:400,700/Merriweather:400,400i,700",>
-	<link href='http://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400italic,700,700italic|Lora:400,400italic,700' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400italic,700,700italic|Lora:400,400italic,700|PT+Serif:400,400i,700,700i' rel='stylesheet' type='text/css'>
 {% endblock %}
 
 {% block body %}
 
 	<div class="cContainer" id="globalContainer">
-		<div class="ibrand">
-			<i class="icon-bulb"></i>
-		</div>
-
-		<div class="brand">
-			QI <i class="icon-bulb"></i> Labs
-		</div>
 
 		<header>
 			<div class="avatarWrapper">
 				<div class="avatar" style="background-image: url({{ post.author.avatarUrl }})"></div>
 			</div>
-			
 		</header>
 
 		<article>
@@ -52,9 +44,12 @@
 
 		<footer>
 			<div class="commentSection">
-				<div class="showCommentInput">
-					Comente essa publicação.
+				<div class="showCommentInput" onClick="location.href='/'">
+					Logue-se para comentar essa publicação.
 				</div>
+			</div>
+			<div class="brand">
+				QI <i class="icon-bulb"></i> Labs · 2014
 			</div>
 		</footer>
 
