@@ -30,7 +30,10 @@
 				</div>
 				<div class="info">
 					<div class="author">
-					por <span>{{ post.author.name }}</span>
+					em <div class="tagList">
+					{% for tag in post.tags %}
+						<span class="itag"><a href="{{ getTagMap()[tag].path }}">{{ getTagMap()[tag].label }}</a></span>
+					{% endfor %}</div>
 					</div>
 				</div>
 			</div>
@@ -39,6 +42,21 @@
 			</div>
 
 			<div class="postFooter">
+				<div class="tagList">
+					{% for tag in post.tags %}
+						<span class="itag"><a href="{{ getTagMap()[tag].path }}">#{{ getTagMap()[tag].label }}</a></span>
+					{% endfor %}</div>
+				<div class="authorBox">
+					<div class="left">
+						<div class="avatarWrapper">
+							<div class="avatar" style="background-image: url({{ post.author.avatarUrl }})"></div>
+						</div>
+					</div>
+					<div class="userBio">
+						<span class="name">{{ post.author.name }}</span>
+						<p>{{ post.author.profile.bio }}</p>
+					</div>
+				</div>
 			</div>
 		</article>
 

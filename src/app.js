@@ -220,21 +220,27 @@ app.locals({
 		return {
 			'application': {
 				label: 'Application',
+				path: '/tags/application'
 			}, 
 			'vestibular': {
 				label: 'Vestibular',
+				path: '/tags/vestibular'
 			}, 
 			'olimpiadas-de-matematica': {
 				label: 'Olimpíadas de Matemática',
+				path: '/tags/olimpiadas-de-matematica'
 			}, 
 			'olimpiadas-de-informatica': {
 				label: 'Olimpíadas de Informática',
+				path: '/tags/olimpiadas-de-informatica'
 			}, 
 			'olimpiadas-cientificas': {
 				label: 'Olimpíadas Científicas',
+				path: '/tags/olimpiadas-cientificas'
 			}, 
 			'obi': {
 				label: 'Olimpíada Brasileira de Informática',
+				path: '/tags/obi'
 			}, 
 		};
 	},

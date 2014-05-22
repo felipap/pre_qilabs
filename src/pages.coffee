@@ -99,6 +99,19 @@ module.exports = {
 						profile: profile
 						follows: bool
 
+	'/tags/:tagId':
+		permissions: [required.login]
+		get: (req, res) ->
+			# unless req.params.username
+			# 	return res.render404()
+			# User.findOne {username:req.params.username},
+			# 	req.handleErrResult (pUser) ->
+			req.user.genProfile (err, profile) ->
+				req.user.doesFollowUser req.user, (err, bool) ->
+					res.render 'pages/tag',
+						profile: profile
+						follows: bool
+
 	'/u/:username':
 		name: 'profile'
 		get: [required.login,

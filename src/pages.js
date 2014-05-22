@@ -139,6 +139,19 @@ module.exports = {
       });
     }
   },
+  '/tags/:tagId': {
+    permissions: [required.login],
+    get: function(req, res) {
+      return req.user.genProfile(function(err, profile) {
+        return req.user.doesFollowUser(req.user, function(err, bool) {
+          return res.render('pages/tag', {
+            profile: profile,
+            follows: bool
+          });
+        });
+      });
+    }
+  },
   '/u/:username': {
     name: 'profile',
     get: [
