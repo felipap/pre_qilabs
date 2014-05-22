@@ -589,7 +589,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			var tags = _.map(this.props.tags, function (tagId) {
 				return (
 					React.DOM.div( {className:"tag", key:tagId}, 
-						tagMap[tagId]
+						tagMap[tagId].label
 					)
 				);
 			});
