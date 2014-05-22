@@ -1,58 +1,62 @@
-{% extends 'stdbody.html' %}
-{% set requirejsView="profile" %}
+{% extends '../stdbody.html' %}
 {% set dataPage="bpost" %}
 
 {% import '../macros/tags.html' as tagMacros %}
 
-{%
-set navbarOpts = {
-	pageDetailLabel: profile.name,
-	pageDetailIcon: 'icon-user',
-	detailOnScroll: true,
-}
-%}
-
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
 {% block title %}
-	{{ post }} · QI Labs.org
+	{{ post.data.title }} · QI Labs.org
 {% endblock %}
 
 {% block head %}
-	<script>window.user={}</script>
 	{{ tagMacros.stylesheet(getMediaUrl('css/snpages.min.css')) }}
+	<link rel="stylesheet" href="//brick.a.ssl.fastly.net/EB+Garamond:400,400i/Crimson:400,600i,700i/Domine:400,700/Clear+Sans:400,500,700/Bitter:400,700/Libre+Baskerville:400,700/Merriweather:400,400i,700",>
+	<link href='http://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400italic,700,700italic|Lora:400,400italic,700' rel='stylesheet' type='text/css'>
 {% endblock %}
 
 {% block body %}
 
-	{% include '../components/navbar.html' with navbarOpts %}
-
 	<div class="cContainer" id="globalContainer">
+		<div class="ibrand">
+			<i class="icon-bulb"></i>
+		</div>
 
-		<div class="postHeader">
-			<div class="postTitle">
-				{{ post.data.title }}
+		<div class="brand">
+			QI <i class="icon-bulb"></i> Labs
+		</div>
+
+		<header>
+			<div class="avatarWrapper">
+				<div class="avatar" style="background-image: url({{ post.author.avatarUrl }})"></div>
 			</div>
-			<div class="info">
-				<div class="author">
-				por <span>{{ post.author.name }}
+			
+		</header>
+
+		<article>
+			<div class="postHeader">
+				<div class="postTitle">
+					{{ post.data.title }}
+				</div>
+				<div class="info">
+					<div class="author">
+					por <span>{{ post.author.name }}</span>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="postBody">
-			{{ post.data.body|safe }}
-		</div>
-		<div class="postFooter">
-		</div>
-		<div class="commentSection">
-			<div class="showCommentInput">
+			<div class="postBody">
+				{{ post.data.body|safe }}
 			</div>
-		</div>
+
+			<div class="postFooter">
+			</div>
+		</article>
+
+		<footer>
+			<div class="commentSection">
+				<div class="showCommentInput">
+					Comente essa publicação.
+				</div>
+			</div>
+		</footer>
 
 	</div>
 
