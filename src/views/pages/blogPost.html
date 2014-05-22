@@ -25,6 +25,9 @@
 
 		<article>
 			<div class="postHeader">
+				<div class="postType">
+					{{ postTypes[post.type.toLowerCase()].translated }}
+				</div>
 				<div class="postTitle">
 					{{ post.data.title }}
 				</div>
