@@ -1,1 +1,1 @@
-web: pm2 start src/app.js -i max --name QILabs
+web: node src/app.js
