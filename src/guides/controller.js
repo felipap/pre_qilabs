@@ -15,7 +15,7 @@ map = require('./map.js');
 tagData = {};
 
 renderGuide = function(req, res, tagPath) {
-  console.log(tagPath, tagData[tagPath]);
+  console.log(tagData[tagPath]);
   return res.render('pages/guide_pages/page', {
     tagData: tagData[tagPath]
   });
@@ -61,20 +61,21 @@ q = async.queue((function(item, cb) {
   for (citem in _ref) {
     cval = _ref[citem];
     q.push(_.extend({
-      id: citem
-    }, cval, {
-      parent: (item.parent || '/') + item.id + '/'
-    }));
+      id: citem,
+      parent: (item.parent || '/') + item.id + '/',
+      root: item.root || item
+    }, cval));
   }
   absPath = path.resolve(__dirname, item.file);
   return fs.readFile(absPath, 'utf8', function(err, text) {
     if (!text) {
       throw "WTF, file " + absPath + " wasn't found";
     }
-    tagData[(item.parent || '/') + item.id] = _.extend({}, item, {
+    tagData[(item.parent || '/') + item.id] = _.extend({
       md: text,
-      html: converter.makeHtml(text)
-    });
+      html: converter.makeHtml(text),
+      path: '/guias' + (item.parent || '/') + item.id
+    }, item);
     return cb();
   });
 }), 3);
@@ -87,7 +88,8 @@ for (id in map) {
   val = map[id];
   q.push(_.extend({
     id: id,
-    parent: '/'
+    parent: '/',
+    root: null
   }, val));
 }
 

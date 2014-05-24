@@ -48,15 +48,7 @@ module.exports = {
 					if err
 						return res.endJson({error:true, message:'Estamos com problemas para processar o seu pedido.'})
 					res.endJson({error:false})
-	'/feed':
-		name: 'feed'
-		permissions: [required.login]
-		get: (req, res) ->
-			req.user.lastUpdate = new Date()
-			req.user.save()
-			Tag.getAll (err, tags) ->
-				res.render 'pages/feed',
-					tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
+
 	'/entrar':
 		get: (req, res) ->
 			res.redirect('/auth/facebook')
@@ -67,38 +59,14 @@ module.exports = {
 		get: (req, res) ->
 			res.render 'pages/config', {}
 
-	'/painel':
-		name: 'panel'
-		permissions: [required.login]
-		get: (req, res) ->
-			res.render 'pages/panel', {}
-
-	'/tags/vestibular':
-		name: 'tag'
-		permissions: [required.login]
-		get: (req, res) ->
-			# unless req.params.username
-			# 	return res.render404()
-			# User.findOne {username:req.params.username},
-			# 	req.handleErrResult (pUser) ->
-			req.user.genProfile (err, profile) ->
-				req.user.doesFollowUser req.user, (err, bool) ->
-					res.render 'pages/tag',
-						profile: profile
-						follows: bool
-
 	'/tags/:tagId':
 		permissions: [required.login]
 		get: (req, res) ->
-			# unless req.params.username
-			# 	return res.render404()
-			# User.findOne {username:req.params.username},
-			# 	req.handleErrResult (pUser) ->
-			req.user.genProfile (err, profile) ->
-				req.user.doesFollowUser req.user, (err, bool) ->
-					res.render 'pages/tag',
-						profile: profile
-						follows: bool
+			# req.user.genProfile (err, profile) ->
+			# 	req.user.doesFollowUser req.user, (err, bool) ->
+			res.render 'pages/tag',
+				profile: profile
+				follows: bool
 
 	'/u/:username':
 		name: 'profile'
@@ -140,15 +108,6 @@ module.exports = {
 						}
 				)
 
-		children: {
-			'/edit':
-				methods:
-					get: (req, res) ->
-
-		}
-
-	'/guias': 	require './guides/controller'
-
 	'/equipe':
 		name: 'team',
 		get: (req, res) ->
@@ -159,6 +118,7 @@ module.exports = {
 		get: (req, res) ->
 			res.render('pages/about_pages/about')
 
+	'/guias': 	require './guides/controller'
 	'/api': 	require './controllers/api'
 	'/auth': 	require './controllers/auth'
 }

@@ -25,16 +25,19 @@ newQuestion
 				<div class="guideLabel">VESTIBULAR</div>
 			</div>
 			<div class="subtopicsList">
-				<div>Introdução</div>
-				<div>Exames Unificados</div>
-				<div>Preparação para Provas</div>
-				<div class="active">Cronograma</div>
-				<div>Resultados</div>
-				<div>Matrícula</div>
-				<div>Links Úteis</div>
-				<div>Glossário</div>
+				{% for c in tagData.root.children %}
+					<li><a href="{{ c.path }}">{{ c.name }}</a></li>
+				{% endfor %}
 			</div>
-		</div>
+<!-- 			<div>Introdução</div>
+			<div>Exames Unificados</div>
+			<div>Preparação para Provas</div>
+			<div class="active">Cronograma</div>
+			<div>Resultados</div>
+			<div>Matrícula</div>
+			<div>Links Úteis</div>
+			<div>Glossário</div>
+ -->		</div>
 		<div class="contentCol">
 			<section class="content">
 			{{ tagData.html|safe }}

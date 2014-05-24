@@ -1,4 +1,3 @@
-
 // app.js
 // Copyright QILabs.org
 // by @f03lipe
@@ -197,7 +196,11 @@ app.locals({
 
 		} else {
 			if (app.get('env') !== 'production') {
+				console.trace();
 				throw "Page named '"+name+"' was referenced but doesn't exist.";
+			} else {
+				console.error("Page named '"+name+"' was referenced but doesn't exist.");
+				console.trace();
 			}
 			return "#";
 		}

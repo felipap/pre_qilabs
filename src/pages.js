@@ -79,19 +79,6 @@ module.exports = {
       });
     }
   },
-  '/feed': {
-    name: 'feed',
-    permissions: [required.login],
-    get: function(req, res) {
-      req.user.lastUpdate = new Date();
-      req.user.save();
-      return Tag.getAll(function(err, tags) {
-        return res.render('pages/feed', {
-          tags: JSON.stringify(Tag.checkFollowed(tags, req.user.tags))
-        });
-      });
-    }
-  },
   '/entrar': {
     get: function(req, res) {
       return res.redirect('/auth/facebook');
@@ -104,37 +91,12 @@ module.exports = {
       return res.render('pages/config', {});
     }
   },
-  '/painel': {
-    name: 'panel',
-    permissions: [required.login],
-    get: function(req, res) {
-      return res.render('pages/panel', {});
-    }
-  },
-  '/tags/vestibular': {
-    name: 'tag',
-    permissions: [required.login],
-    get: function(req, res) {
-      return req.user.genProfile(function(err, profile) {
-        return req.user.doesFollowUser(req.user, function(err, bool) {
-          return res.render('pages/tag', {
-            profile: profile,
-            follows: bool
-          });
-        });
-      });
-    }
-  },
   '/tags/:tagId': {
     permissions: [required.login],
     get: function(req, res) {
-      return req.user.genProfile(function(err, profile) {
-        return req.user.doesFollowUser(req.user, function(err, bool) {
-          return res.render('pages/tag', {
-            profile: profile,
-            follows: bool
-          });
-        });
+      return res.render('pages/tag', {
+        profile: profile,
+        follows: bool
       });
     }
   },
@@ -186,16 +148,8 @@ module.exports = {
           }));
         }
       }));
-    },
-    children: {
-      '/edit': {
-        methods: {
-          get: function(req, res) {}
-        }
-      }
     }
   },
-  '/guias': require('./guides/controller'),
   '/equipe': {
     name: 'team',
     get: function(req, res) {
@@ -208,6 +162,7 @@ module.exports = {
       return res.render('pages/about_pages/about');
     }
   },
+  '/guias': require('./guides/controller'),
   '/api': require('./controllers/api'),
   '/auth': require('./controllers/auth')
 };

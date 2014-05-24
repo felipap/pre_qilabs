@@ -10,7 +10,7 @@ requirejs.config({
 		'views.common':		'app/views/common',
 		'views.wall':		'app/views/wall',
 		'views.profile':	'app/views/profile',
-		'views.panel':		'app/views/panel',
+		'views.config':		'app/views/config',
 		'views.front':		'app/views/front',
 		// 'app.guide':		'app/app/guide',
 		// 'app.mural':		'app/app/mural',
