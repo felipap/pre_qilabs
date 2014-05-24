@@ -25,9 +25,15 @@ newQuestion
 				<div class="guideLabel">VESTIBULAR</div>
 			</div>
 			<div class="subtopicsList">
+			{% if tagData.root %}
 				{% for c in tagData.root.children %}
 					<li><a href="{{ c.path }}">{{ c.name }}</a></li>
 				{% endfor %}
+			{% else %}
+				{% for c in tagData.children %}
+					<li><a href="{{ c.path }}">{{ c.name }}</a></li>
+				{% endfor %}
+			{% endif %}
 			</div>
 <!-- 			<div>Introdução</div>
 			<div>Exames Unificados</div>
