@@ -80,7 +80,8 @@
 		width: (@WidthContent - @WidthSidebar);
 		border: 1px solid #DDD;
 		background: white;
-		font-size: 13px;
+		font-size: 15px;
+		padding: 30px;
 
 		& > .header,
 		.backgrounded {
@@ -94,6 +95,45 @@
 			font-size: 15px;
 		}
 
+		.backgrounded {
+			background: @COLOR1;
+			color: white;
+		}
+
+		section.content {
+			font: 16px/1.2 "museo-sans";
+			font: 18px/1.7 "PT Serif";
+
+			h1 {
+				margin: 1em 0 .6em;
+				font-size: 2.4em;
+				&:first-child {
+					margin-top: .4em;
+				}
+			}
+
+			h2 {
+				margin: 1em 0 .6em;
+				font-size: 1.5em;
+				&:first-child {
+					margin-top: .4em;
+				}
+			}
+
+			p {
+				margin: 0 0 25px;
+			}
+
+			a {
+				color: @ColorLink;
+				text-decoration: none;
+				&:hover {
+					color: darken(@ColorLink, 10%);
+				}
+			}
+
+		}
+
 		& > .header {
 			padding: 35px;
 			margin: -1px;
@@ -103,23 +143,6 @@
 			h1 { font-size: 54px; }
 			p { font-size: 19px; }
 		}
-
-		& > section {
-			padding: 30px;
-			a {
-				color: @ColorLink;
-				text-decoration: none;
-				&:hover {
-					color: darken(@ColorLink, 10%);
-				}
-			}
-		}
-
-		.backgrounded {
-			background: @COLOR1;
-			color: white;			
-		}
-
 		& > img {
 			width: 100%;
 			max-height: 300px;

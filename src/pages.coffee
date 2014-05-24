@@ -73,18 +73,6 @@ module.exports = {
 		get: (req, res) ->
 			res.render 'pages/panel', {}
 
-	'/guias/vestibular':
-		name: 'guia'
-		permissions: [required.login]
-		get: (req, res) ->
-			res.render 'guide', {}
-
-	'/guias':
-		name: 'guides'
-		permissions: [required.login]
-		get: (req, res) ->
-			res.render 'guide', {}
-
 	'/tags/vestibular':
 		name: 'tag'
 		permissions: [required.login]
@@ -130,21 +118,6 @@ module.exports = {
 									follows: bool
 			]
 
-	'/new/experience':
-		name: 'newExperience'
-		get: (req, res) ->
-			res.render 'pages/post_forms/experience'
-
-	'/new/pergunta':
-		name: 'newQuestion'
-		get: (req, res) ->
-			res.render 'pages/post_forms/question'
-
-	'/new/dica':
-		name: 'newTip'
-		get: (req, res) ->
-			res.render 'pages/post_forms/tip'
-
 	'/posts/:postId':
 		name: 'profile'
 		# slugs: {post:'postId'}
@@ -173,6 +146,8 @@ module.exports = {
 					get: (req, res) ->
 
 		}
+
+	'/guias': 	require './guides/controller'
 
 	'/equipe':
 		name: 'team',

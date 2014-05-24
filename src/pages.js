@@ -111,20 +111,6 @@ module.exports = {
       return res.render('pages/panel', {});
     }
   },
-  '/guias/vestibular': {
-    name: 'guia',
-    permissions: [required.login],
-    get: function(req, res) {
-      return res.render('guide', {});
-    }
-  },
-  '/guias': {
-    name: 'guides',
-    permissions: [required.login],
-    get: function(req, res) {
-      return res.render('guide', {});
-    }
-  },
   '/tags/vestibular': {
     name: 'tag',
     permissions: [required.login],
@@ -177,24 +163,6 @@ module.exports = {
       }
     ]
   },
-  '/new/experience': {
-    name: 'newExperience',
-    get: function(req, res) {
-      return res.render('pages/post_forms/experience');
-    }
-  },
-  '/new/pergunta': {
-    name: 'newQuestion',
-    get: function(req, res) {
-      return res.render('pages/post_forms/question');
-    }
-  },
-  '/new/dica': {
-    name: 'newTip',
-    get: function(req, res) {
-      return res.render('pages/post_forms/tip');
-    }
-  },
   '/posts/:postId': {
     name: 'profile',
     permissions: [required.login],
@@ -227,6 +195,7 @@ module.exports = {
       }
     }
   },
+  '/guias': require('./guides/controller'),
   '/equipe': {
     name: 'team',
     get: function(req, res) {

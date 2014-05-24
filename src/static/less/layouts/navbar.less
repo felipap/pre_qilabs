@@ -334,6 +334,14 @@ nav.bar {
 						height: @navbar-height+1;
 						vertical-align: top;
 						.background-size(cover);
+						position: relative;
+						&:after {
+							border: 1px solid rgba(0,0,0,.1);
+							border-width: 0 0 1px 1px;
+							content: '';
+							position: absolute;
+							top: 0; right: 0; bottom: 0; left: 0;
+						}
 					}
 				}
 
