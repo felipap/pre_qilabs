@@ -26,7 +26,7 @@ newQuestion
 			</div>
 			<div class="subtopicsList">
 			{% if tagData.root %}
-				{% for c in tagData.root.children %}
+				{% for c in tags[tagData.rootId].children %}
 					<li><a href="{{ c.path }}">{{ c.name }}</a></li>
 				{% endfor %}
 			{% else %}
@@ -35,7 +35,9 @@ newQuestion
 				{% endfor %}
 			{% endif %}
 			</div>
-<!-- 			<div>Introdução</div>
+		</div>
+
+<!-- 		<div>Introdução</div>
 			<div>Exames Unificados</div>
 			<div>Preparação para Provas</div>
 			<div class="active">Cronograma</div>
@@ -43,7 +45,7 @@ newQuestion
 			<div>Matrícula</div>
 			<div>Links Úteis</div>
 			<div>Glossário</div>
- -->		</div>
+-->
 		<div class="contentCol">
 			<section class="content">
 			{{ tagData.html|safe }}

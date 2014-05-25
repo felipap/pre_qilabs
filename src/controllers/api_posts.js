@@ -30,7 +30,7 @@ defaultSanitizerOptions = {
 
 sanitizerOptions = {
   'question': _.extend({}, defaultSanitizerOptions, {
-    allowedTags: ['b', 'em', 'strong', 'a', 'u', 'ul', 'blockquote', 'p']
+    allowedTags: ['b', 'em', 'strong', 'a', 'u', 'ul', 'blockquote', 'p', 'img', 'br', 'i', 'li']
   }),
   'tip': defaultSanitizerOptions,
   'experience': defaultSanitizerOptions

@@ -1,4 +1,4 @@
-var async, converter, fs, id, map, pages, path, q, renderGuide, routeChildren, showdown, tagData, val, _;
+var MD_LOCATION, async, converter, fs, guideData, guideMap, id, pages, path, q, routeChildren, showdown, val, _;
 
 _ = require('underscore');
 
@@ -10,25 +10,24 @@ fs = require('fs');
 
 path = require('path');
 
-map = require('./map.js');
+MD_LOCATION = 'text';
 
-tagData = {};
+guideMap = require('./text/map.js');
 
-renderGuide = function(req, res, tagPath) {
-  console.log(tagData[tagPath]);
-  return res.render('pages/guide_pages/page', {
-    tagData: tagData[tagPath]
-  });
-};
+guideData = {};
 
 routeChildren = function(children, parentPath) {
   var routes, tagId, value, _fn;
   routes = {};
   _fn = function(tagId, value) {
     return routes['/' + tagId] = {
-      name: 'guide_' + tagId,
+      name: 'guide_' + (parentPath + tagId).replace('/', '_'),
       get: function(req, res) {
-        return renderGuide(req, res, parentPath + tagId);
+        console.log(guideData[parentPath + tagId]);
+        return res.render('pages/guide_pages/page', {
+          guideData: guideData,
+          tagData: guideData[parentPath + tagId]
+        });
       },
       children: (value.children && routeChildren(value.children, parentPath + tagId + '/')) || {}
     };
@@ -47,49 +46,49 @@ pages = {
       return res.render('guide', {});
     }
   },
-  children: routeChildren(map, '/')
+  children: routeChildren(guideMap, '/')
 };
 
-console.log('there!', pages);
+console.log('pages:', pages);
 
 converter = new showdown.converter();
 
 q = async.queue((function(item, cb) {
   var absPath, citem, cval, _ref;
-  console.log("Queue: processing item:", item);
+  console.log("<queue> processing item: " + item);
   _ref = item.children;
   for (citem in _ref) {
     cval = _ref[citem];
     q.push(_.extend({
       id: citem,
-      parent: (item.parent || '/') + item.id + '/',
-      root: item.root || item
+      parent: (item.parent || '/') + item.id + '/'
     }, cval));
   }
-  absPath = path.resolve(__dirname, item.file);
+  absPath = path.resolve(__dirname, MD_LOCATION, item.file);
   return fs.readFile(absPath, 'utf8', function(err, text) {
     if (!text) {
-      throw "WTF, file " + absPath + " wasn't found";
+      throw "WTF, file " + item.id + " of path " + absPath + " wasn't found";
     }
-    tagData[(item.parent || '/') + item.id] = _.extend({
+    guideData[(item.parent || '/') + item.id] = _.extend({
       md: text,
       html: converter.makeHtml(text),
-      path: '/guias' + (item.parent || '/') + item.id
+      path: '/guias' + (item.parent || '/') + item.id,
+      rootId: item.rootId || item.id
     }, item);
     return cb();
   });
 }), 3);
 
 q.drain = function() {
-  return console.log('tagData', tagData);
+  return console.log('guideData', guideData);
 };
 
-for (id in map) {
-  val = map[id];
+for (id in guideMap) {
+  val = guideMap[id];
   q.push(_.extend({
     id: id,
     parent: '/',
-    root: null
+    rootId: null
   }, val));
 }
 

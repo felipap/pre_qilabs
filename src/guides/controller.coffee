@@ -1,77 +1,81 @@
 
+# TODO:
+# - detect duplicate ids
+# - test valid guides ids: /[a-z\-]{3,}/
 
 _  = require 'underscore'
 async = require 'async'
 showdown = require 'showdown'
-
 fs = require 'fs'
 path = require 'path'
 
-map = require './map.js'
+# Folder with markdown files
+MD_LOCATION = 'text'
 
-# detect duplicate
-# test valid guides ids /[a-z\-]{3,}/
-tagData = {}
+guideMap = require './text/map.js'
+guideData = {}
 
-renderGuide = (req, res, tagPath) ->
-	console.log tagData[tagPath]
-	res.render 'pages/guide_pages/page', {tagData: tagData[tagPath] }
+####
+## Process map.js to create routes
 
 routeChildren = (children, parentPath) ->
 	routes = {}
 	for tagId, value of children
 		do (tagId, value) ->
 			routes['/'+tagId] = {
-				name: 'guide_'+tagId,
+				name: 'guide_'+(parentPath+tagId).replace('/','_'),
 				get: (req, res) ->
-					renderGuide(req, res, parentPath+tagId)
+					console.log guideData[parentPath+tagId]
+					res.render 'pages/guide_pages/page', {
+						guideData: guideData,
+						tagData: guideData[parentPath+tagId]
+					}
 				children: (value.children and routeChildren(value.children, parentPath+tagId+'/')) or {}
 			}
 	return routes
 
-# Process map.js to create routes
 pages = {
 	'/':
 		name: 'guide_home'
 		get: (req, res) ->
 			res.render 'guide', {}
-	children: routeChildren(map, '/')
+	children: routeChildren(guideMap, '/')
 }
 
+console.log 'pages:', pages
 
-console.log 'there!', pages
+#### 
+## Process map.js to open markdown files and save their html ing uideData
 
-# Process map.js to open files
 converter = new showdown.converter()
 
 q = async.queue ((item, cb) ->
-	console.log "Queue: processing item:", item
+	console.log "<queue> processing item: #{item}"
 
 	for citem, cval of item.children
 		q.push _.extend({
 			id: citem,
 			parent: (item.parent or '/')+item.id+'/',
-			root: item.root or item
 		}, cval)
 
-	absPath = path.resolve(__dirname, item.file)
+	absPath = path.resolve(__dirname, MD_LOCATION, item.file)
 	fs.readFile absPath, 'utf8', (err, text) ->
 		if not text
-			throw "WTF, file #{absPath} wasn't found"
-		tagData[(item.parent or '/')+item.id] = _.extend({
+			throw "WTF, file #{item.id} of path #{absPath} wasn't found"
+		guideData[(item.parent or '/')+item.id] = _.extend({
 			md: text,
 			html: converter.makeHtml(text)
 			path: '/guias'+(item.parent or '/')+item.id
+			rootId: item.rootId or item.id
 		}, item)
 		cb()
-	
 ), 3
 
 q.drain = () ->
-	console.log 'tagData', tagData
+	console.log 'guideData', guideData
 
-for id, val of map
-	q.push(_.extend({id: id, parent:'/', root:null}, val))
+for id, val of guideMap
+	q.push(_.extend({id:id, parent:'/', rootId:null}, val))
 
 # console.log pages
 module.exports = pages
