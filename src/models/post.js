@@ -105,9 +105,9 @@ PostSchema.virtual('voteSum').get(function() {
 
 PostSchema.virtual('path').get(function() {
   if (this.parentPost) {
-    return "/#posts/" + this.parentPost + "#" + this.id;
+    return "/posts/" + this.parentPost + "#" + this.id;
   } else {
-    return "/#posts/{id}".replace(/{id}/, this.id);
+    return "/posts/{id}".replace(/{id}/, this.id);
   }
 });
 
@@ -137,6 +137,10 @@ PostSchema.virtual('data.escapedBody').get(function() {
   } else {
     return this.data.body;
   }
+});
+
+PostSchema.virtual('data.plainBody').get(function() {
+  return this.data.body.replace(/(<([^>]+)>)/ig, "");
 });
 
 PostSchema.pre('remove', function(next) {

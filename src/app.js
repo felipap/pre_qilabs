@@ -205,6 +205,9 @@ app.locals({
 			return "#";
 		}
 	},
+	getQILogo: function () {
+		return "/static/images/logo.png";
+	},
 	postTypes: {
 		question: {
 			translated: 'Pergunta',

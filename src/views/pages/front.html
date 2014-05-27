@@ -6,7 +6,17 @@
 QI Labs.org
 {% endblock %}
 
+{% import '../macros/metaTags.html' as metaTagMacros %}
+
 {% block head %}
+	{% block meta %}
+	{{ metaTagMacros.facebook({
+		title: post.data.title+" · QI Labs.org",
+		image: post.author.avatarUrl,
+		url: post.path,
+		description: post.data.plainBody.slice(0,400)+'...'
+	}) }}
+	{% endblock %}
 	<link rel="stylesheet" href="{{ getMediaUrl('css/snpages.min.css') }}" />
 {% endblock %}
 

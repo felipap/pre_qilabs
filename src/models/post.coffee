@@ -62,9 +62,9 @@ PostSchema.virtual('voteSum').get ->
 
 PostSchema.virtual('path').get ->
 	if @parentPost
-		"/#posts/"+@parentPost+"#"+@id
+		"/posts/"+@parentPost+"#"+@id
 	else
-		"/#posts/{id}".replace(/{id}/, @id)
+		"/posts/{id}".replace(/{id}/, @id)
 
 PostSchema.virtual('apiPath').get ->
 	"/api/posts/{id}".replace(/{id}/, @id)
@@ -86,6 +86,9 @@ PostSchema.virtual('data.escapedBody').get ->
 		urlify(@data.body)
 	else
 		@data.body
+
+PostSchema.virtual('data.plainBody').get ->
+	@data.body.replace(/(<([^>]+)>)/ig,"")
 
 ################################################################################
 ## Middlewares #################################################################
