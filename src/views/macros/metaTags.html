@@ -17,9 +17,9 @@
 	{{ _makeMeta("og:description", obj.description, "Impr") }}
 {% endmacro %}
 
-{% macro twitter() %}
+{% macro twitter(obj) %}
 	{{ _makeMeta("twitter:card", obj.card, "summary") }}
-	{{ _makeMeta("twitter:title", obj.title, "") }}
-	{{ _makeMeta("twitter:description", obj.description, "") }}
-	{{ _makeMeta("twitter:image", obj.image, "") }}
+	{{ _makeMeta("twitter:title", obj.title, "QILabs") }}
+	{{ _makeMeta("twitter:description", obj.description) }}
+	{{ _makeMeta("twitter:image", obj.image, getQILogo()) }}
 {% endmacro %}

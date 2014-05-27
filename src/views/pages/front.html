@@ -11,10 +11,12 @@ QI Labs.org
 {% block head %}
 	{% block meta %}
 	{{ metaTagMacros.facebook({
-		title: post.data.title+" · QI Labs.org",
-		image: post.author.avatarUrl,
-		url: post.path,
-		description: post.data.plainBody.slice(0,400)+'...'
+		title: "QILabs",
+		description: 'Junte-se à lista de espera!'
+	}) }}
+	{{ metaTagMacros.twitter({
+		title: "QILabs",
+		description: "Junte-se à lista de espera!",
 	}) }}
 	{% endblock %}
 	<link rel="stylesheet" href="{{ getMediaUrl('css/snpages.min.css') }}" />
