@@ -27,26 +27,30 @@ QI Labs ® 2014
 	{% block body %}{% endblock %}
 	{% block bodyEnd %}{% endblock %}
 
-	{% if !requirejsView %}
-		{% set requirejsView = 'common' %}
+	{% if requirejsView !== false %}
+		{% if !requirejsView %}
+			{% set requirejsView = 'common' %}
+		{% endif %}
+		{% set jsViewFile = getMediaUrl('buildjs/app/views/'+requirejsView) %}
+		{% if true || app.env === 'development' %}
+			<script src="/static/js/vendor/require.js"></script>
+			<script>
+				require(["{{ getMediaUrl('js/config.js') }}"], function () {
+					require(['views.{{requirejsView}}'], function (App) {});
+				});
+			</script>
+		{% else %}
+			<script data-main="{{ jsViewFile }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
+		{% endif %}
 	{% endif %}
-	{% set jsViewFile = getMediaUrl('buildjs/app/views/'+requirejsView) %}
 	
-	{% if true || app.env === 'development' %}
-		<script src="/static/js/vendor/require.js"></script>
-		<script>
-			require(["{{ getMediaUrl('js/config.js') }}"], function () {
-				require(['views.{{requirejsView}}'], function (App) {});
-			});
-		</script>
-	{% else %}
-		<script data-main="{{ jsViewFile }}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.8/require.min.js"></script>
-	{% endif %}<script>
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-51277191-1', 'qilabs.org');ga('send', 'pageview');
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-51277191-1', 'qilabs.org');ga('send', 'pageview');
 </script>
 <body>
 <html>
