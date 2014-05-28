@@ -23,8 +23,7 @@
 		border-left: 1px solid #DDD;
 		background: white;
 
-		.sidebarHeader .guideLabel,
-		.subtopicsList {
+		.sidebarHeader .guideLabel {
 			list-style: none;
 
 			a {
@@ -76,6 +75,23 @@
 				background: #EFEFEF;
 				font-weight: bold;
 				color: darken(@COLOR1, 10%);
+			}
+		}
+
+		.topicsList {
+			li {
+				list-style: none;
+				a {
+					display: block;
+					padding: 10px 15px;
+					font-size: 13px;
+					cursor: pointer;
+				}
+			}
+			& > li {
+			}
+			& > ul {
+				padding-left: 20px;
 			}
 		}
 	}

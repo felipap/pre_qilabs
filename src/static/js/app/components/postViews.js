@@ -7,7 +7,7 @@
 ** by @f03lipe
 */
 
-define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'medium-editor',],
+define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'medium-editor'],
 	function ($, Backbone, _, postModels, React) {
 
 	var mediumEditorAnswerOpts = {
@@ -28,7 +28,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			if (confirm('Tem certeza que quer excluir essa postagem?')) {
 				this.props.model.destroy();
 			}
-		},
+		}
 	};
 
 	var backboneCollection = {
@@ -37,7 +37,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				this.forceUpdate(function(){});
 			}
 			this.props.collection.on('add reset change remove', update.bind(this));
-		},
+		}
 	};
 
 	var backboneModel = {
@@ -46,7 +46,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				this.forceUpdate(function(){});
 			}
 			this.props.model.on('add reset remove change', update.bind(this));
-		},
+		}
 	};
 
 	//
@@ -59,7 +59,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var self = this;
 
 				var mediaUserAvatarStyle = {
-					background: 'url('+comment.author.avatarUrl+')',
+					background: 'url('+comment.author.avatarUrl+')'
 				};
 
 				return (
@@ -93,7 +93,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						)
 					)
 				);
-			},
+			}
 		}),
 		InputForm: React.createClass({displayName: 'InputForm',
 
@@ -153,7 +153,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				if (!window.user)
 					return (React.DOM.div(null));
 				var mediaUserAvatarStyle = {
-					background: 'url('+window.user.avatarUrl+')',
+					background: 'url('+window.user.avatarUrl+')'
 				};
 
 				return (
@@ -181,7 +181,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						
 					)
 				);
-			},
+			}
 		}),
 		ListView: React.createClass({displayName: 'ListView',
 			mixins: [backboneCollection],
@@ -204,7 +204,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						commentNodes
 					)
 				);
-			},
+			}
 		}),
 		SectionView: React.createClass({displayName: 'SectionView',
 			mixins: [backboneCollection],
@@ -218,8 +218,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						CommentInputForm( {small:this.props.small, model:this.props.postModel} )
 					)
 				);
-			},
-		}),
+			}
+		})
 	};
 
 	//
@@ -243,7 +243,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				if (window.user && this.props.model.get('author').id === window.user.id) {
 					this.editor = new MediumEditor(this.refs.answerBody.getDOMNode(), mediumEditorAnswerOpts); 
 					$(this.refs.answerBody.getDOMNode()).mediumInsert({
-						editor: this.editor,
+						editor: this.editor
 					});
 					this.editor.deactivate();
 				} else {
@@ -258,8 +258,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 				this.props.model.save({
 					data: {
-						body: this.editor.serialize()['element-0'].value,
-					},
+						body: this.editor.serialize()['element-0'].value
+					}
 				}, {
 					success: function () {
 						self.setState({isEditing:false});
@@ -405,7 +405,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						)
 					)
 				);
-			},
+			}
 		}),
 		ListView: React.createClass({displayName: 'ListView',
 			componentWillMount: function () {
@@ -427,7 +427,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						answerNodes
 					)
 				);
-			},
+			}
 		}),
 		SectionView: React.createClass({displayName: 'SectionView',
 			mixins: [backboneCollection],
@@ -450,7 +450,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					'votes': 'Votos',
 					'older': '+ Antigo',
 					'younger': '+ Novo',
-					'updated': 'Atividade',
+					'updated': 'Atividade'
 				};
 
 				var otherOpts = _.map(_.filter(_.keys(sortTypes), function (i) {
@@ -486,7 +486,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						AnswerInputForm( {model:this.props.postModel, placeholder:"Adicionar comentário."})
 					)
 				);
-			},
+			}
 		}),
 		InputForm: React.createClass({displayName: 'InputForm',
 			componentDidUpdate: function () {
@@ -539,7 +539,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					return (React.DOM.div(null));
 
 				var mediaUserAvatarStyle = {
-					background: 'url('+window.user.avatarUrl+')',
+					background: 'url('+window.user.avatarUrl+')'
 				};
 
 				return (
@@ -567,8 +567,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					
 					)
 				);
-			},
-		}),
+			}
+		})
 	};
 
 	//
@@ -618,7 +618,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				}
 				var post = this.props.model.attributes;
 				var mediaUserStyle = {
-					background: 'url('+post.author.avatarUrl+')',
+					background: 'url('+post.author.avatarUrl+')'
 				};
 
 				return (
@@ -705,7 +705,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						)
 					)
 				);
-			},
+			}
 		}),
 		'Experience': React.createClass({
 			mixins: [EditablePost, backboneModel],
@@ -741,7 +741,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						)
 					)
 				);
-			},
+			}
 		}),
 		'Tip': React.createClass({
 			mixins: [EditablePost, backboneModel],
@@ -777,8 +777,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						)
 					)
 				);
-			},
-		}),
+			}
+		})
 
 	};
 });

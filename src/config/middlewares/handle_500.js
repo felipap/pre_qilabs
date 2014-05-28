@@ -18,7 +18,7 @@ module.exports = function(err, req, res, next) {
 	var accept = req.headers.accept || '';
 
 	if (~accept.indexOf('html')) {
-		if (err.permission = 'login') {
+		if (err.permission === 'login') {
 			return res.redirect('/');
 		}
 		

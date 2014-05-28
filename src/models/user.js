@@ -1,7 +1,7 @@
 
 /*
 GUIDELINES for development:
-- Never utilize directly request parameters or data.
+- Never directly use request parameters or data.
  */
 var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, PopulateFields, Post, Resource, User, UserSchema, assert, assertArgs, async, fetchTimelinePostAndActivities, mongoose, _;
 

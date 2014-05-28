@@ -93,8 +93,6 @@ module.exports = function(grunt) {
 						{name: 'views.common'},
 						{name: 'views.wall'},
 						{name: 'views.profile'},
-						{name: 'views.panel'},
-						{name: 'views.createPost'},
 						{name: 'views.front'},
 					]
 				}

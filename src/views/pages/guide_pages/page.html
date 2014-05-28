@@ -23,19 +23,17 @@ set navbarOpts = {
 				<div class="arrow"></div>
 				<div class="guideLabel">VESTIBULAR</div>
 			</div>
-			<div class="subtopicsList">
-			{% if tagData.root %}
-				{% for c in tags[tagData.rootId].children %}
-				{% if tags %}
-					<li><a href="{{ c.path }}">{{ c.name }}</a></li>
-				{% else %}
-}				{% endif %}
-				{% endfor %}
-			{% else %}
-				{% for c in tagData.children %}
-					<li><a href="{{ c.path }}">{{ c.name }}</a></li>
-				{% endfor %}
-			{% endif %}
+			<div class="topicsList">
+			{% for g in tree %}
+				<li><a href="{{ g.path }}">{{ g.name }}</a></li>
+				{% if g.children %}
+					<ul>
+					{% for g2 in g.children %}
+						<li><a href="{{ g2.path }}">{{ g2.name }}</a></li>
+					{% endfor %}
+					</ul>
+				{% endif %}
+			{% endfor %}
 			</div>
 		</div>
 
@@ -50,6 +48,7 @@ set navbarOpts = {
 -->
 		<div class="contentCol">
 			<section class="content">
+			{{ guide|json }}
 			{{ tagData.html|safe }}
 			</section>
 		</div>

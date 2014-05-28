@@ -5,7 +5,7 @@
 
 ###
 GUIDELINES for development:
-- Never utilize directly request parameters or data.
+- Never directly use request parameters or data.
 ###
 
 mongoose = require 'mongoose'
@@ -37,6 +37,7 @@ UserSchema = new mongoose.Schema {
 	name:			{ type: String }
 	username:		{ type: String }
 
+	# createdAt:		{ type: Date, select: false }
 	lastAccess:		{ type: Date, select: false }
 	firstAccess:	{ type: Date, select: false }
 	facebookId:		{ type: String }

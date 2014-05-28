@@ -6,67 +6,145 @@
 _  = require 'underscore'
 async = require 'async'
 showdown = require 'showdown'
+assert = require 'assert'
 fs = require 'fs'
 path = require 'path'
 
 # Folder with markdown files
 MD_LOCATION = 'text'
 
-guideMap = require './text/map.js'
+processMap = (_map) ->
+	# This routine does two very important things:
+	# - makes the map keys their absolute path
+	# - adds the old maps keys as the 'id' attribute 
+
+	checkValidPath = (path) ->
+		true
+
+	checkValidNode = (node) ->
+		assert node.name, "A name attribute must be provided. "+JSON.stringify(node)
+		true
+
+	map = {}
+	joinIds = path.join
+	updateChildren = (pre, children) ->
+		return {} unless children
+		cs = {} 
+		for k, v of children
+			checkValidPath(joinIds(pre, k))
+			console.log v
+			checkValidNode(v)
+			cs[joinIds(pre, k)] = _.extend(v, {
+				id: k
+				children: updateChildren(joinIds(pre, k), v.children)
+			})
+		return cs
+
+	for k, v of _map
+		if k[0] isnt '/' then k = '/'+k
+
+		checkValidPath(k)
+		checkValidNode(v)
+
+		map[k] = _.extend(v, {
+			id: k
+			children: updateChildren(k, v.children)
+		})
+	return map
+
+guideMap = processMap(require './text/map.js')
 guideData = {}
+
+console.log 'map', JSON.stringify(guideMap, null, 4), '\n\n'
+
+join = path.join
 
 ####
 ## Process map.js to create routes
 
-routeChildren = (children, parentPath) ->
+isParentPath = (gpath, testParent) ->
+	console.log 'gpath', gpath
+	console.log 'parent', testParent
+	(testParent+'/').lastIndexOf(gpath+'/', 0) is 0
+
+getRootPath = (gpath) ->
+	gpath.match(/^\/?[\w-]+/)[0]
+
+getParentPath = (gpath) ->
+	path.normalize(gpath+'/..')
+
+getChildrenRoutes = (children) ->
 	routes = {}
-	for tagId, value of children
-		do (tagId, value) ->
-			routes['/'+tagId] = {
-				name: 'guide_'+(parentPath+tagId).replace('/','_'),
-				get: (req, res) ->
-					console.log guideData[parentPath+tagId]
-					res.render 'pages/guide_pages/page', {
-						guideData: guideData,
-						tagData: guideData[parentPath+tagId]
-					}
-				children: (value.children and routeChildren(value.children, parentPath+tagId+'/')) or {}
+
+	for gpath, value of children
+		console.log 'gpath', gpath
+		routes[gpath] = {
+			name: 'guide_'+gpath.replace('/','_')
+			get: do (gpath, value) ->
+					(req, res) ->
+						console.log JSON.stringify(guideData[gpath], null, 4)
+
+						console.log 'gpath', gpath, getParentPath(gpath), getRootPath(gpath)
+
+						# Not root node ('/vestibular', '/olimpiadas', ...)
+						if getParentPath(gpath) not in ['', '/']
+							console.log 'here', guideData[gpath].rootPath
+							pathTree = _.clone(guideData[getParentPath(gpath)].children)
+							_.each pathTree, (e, k, l) ->
+								delete e.children unless isParentPath(gpath, k)
+						else
+							pathTree = _.clone(guideData[gpath].children)
+							_.each pathTree, (e, k, l) -> delete e.children
+
+						console.log 'tree', JSON.stringify(pathTree, null, 4)
+
+						res.render 'pages/guide_pages/page', {
+							guideData: guideData,
+							guide: guideData[gpath],
+							tree: pathTree
+						}
 			}
+		if value.children
+			_.extend(routes, getChildrenRoutes(value.children))
+
 	return routes
 
 pages = {
-	'/':
-		name: 'guide_home'
-		get: (req, res) ->
-			res.render 'guide', {}
-	children: routeChildren(guideMap, '/')
+	name: 'guide_home'
+	get: (req, res) ->
+		res.endJson req.app.routes
+		# res.render 'guide', {}
+	children: getChildrenRoutes(guideMap)
 }
 
-console.log 'pages:', pages
+console.log 'daaaaaaaaaaaaaaaaaaa', JSON.stringify(pages.children, null, 4), '\n\n'
+
+# console.log 'pages:', pages
 
 #### 
-## Process map.js to open markdown files and save their html ing uideData
+## Process map.js to open markdown files and save their html in guideData
 
 converter = new showdown.converter()
 
 q = async.queue ((item, cb) ->
-	console.log "<queue> processing item: #{item}"
+	console.log "<queue> processing item:", JSON.stringify(item, null, 4), "\n"
 
-	for citem, cval of item.children
-		q.push _.extend({
-			id: citem,
-			parent: (item.parent or '/')+item.id+'/',
-		}, cval)
+	item.childrenIds = if typeof item.children is "object" then _.keys(item.children) else []
+
+	for gpath, childVal of item.children
+		q.push _.extend(childVal, {
+			parentPath: join(item.parentPath, item.id)
+			rootPath: item.rootPath or '/'+item.id
+			path: join('/guias', gpath)
+		})
 
 	absPath = path.resolve(__dirname, MD_LOCATION, item.file)
 	fs.readFile absPath, 'utf8', (err, text) ->
 		if not text
 			throw "WTF, file #{item.id} of path #{absPath} wasn't found"
-		guideData[(item.parent or '/')+item.id] = _.extend({
-			md: text,
-			html: converter.makeHtml(text)
-			path: '/guias'+(item.parent or '/')+item.id
-			rootId: item.rootId or item.id
+		guideData[join(item.parentPath, item.id)] = _.extend({
+			# md: text,
+			html: 'blac'  # converter.makeHtml(text)
 		}, item)
 		cb()
 ), 3
@@ -75,7 +153,7 @@ q.drain = () ->
 	console.log 'guideData', guideData
 
 for id, val of guideMap
-	q.push(_.extend({id:id, parent:'/', rootId:null}, val))
+	q.push(_.extend({id:id, parentPath:'/', rootPath: null}, val))
 
 # console.log pages
 module.exports = pages

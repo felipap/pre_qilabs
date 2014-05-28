@@ -1,5 +1,21 @@
+define([
+	'jquery',
+	'modernizr',
+	'plugins',
+	'bootstrap.tooltip',
+	], function ($) {
 
-require(['common'], function (common) {
+	$("body").tooltip({selector:'[data-toggle=tooltip]'});
+	$("[data-toggle=dialog]").xdialog();
+
+	(function setCSRFToken () {
+		$.ajaxPrefilter(function(options, _, xhr) {
+			if (!options.crossDomain) {
+				xhr.setRequestHeader('X-CSRF-Token',
+					$("meta[name='csrf-token']").attr('content'));
+			}
+		});
+	})();
 
 	$("[name=email], [name=name]").on('keypress keyup focusout change', function () {
 		var email = document.querySelector('form [name=email]').value.replace(/^\s+|\s+$/g, ''),
