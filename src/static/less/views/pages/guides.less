@@ -4,6 +4,8 @@
 ** Copyright QIlabs.org
 */
 
+@import "../components/formatting.less";
+
 @WidthSidebar: 280px;
 @WidthContent: 1150px;
 @ColorLink: #08C;
@@ -83,18 +85,22 @@
 					// color: white;
 				}
 				&.active {
+					// background: #EEE;
+					// border: 5px solid desaturate(@COLOR1,20%);
 					a {
-						color: darken(@COLOR1, 10%);
+						color: desaturate(@COLOR1,20%);
+						font-weight: bold;
+						// color: #444;
+						background: #EEE;
 					}
 				}
 			}
 			& > li {
 				&.active {
-					background: #DDD;
 				}
 			}
 			& > ul {
-				background: #EFEFEF;
+				background: #F8F8F8;
 				padding-left: 20px;
 			}
 
@@ -131,9 +137,11 @@
 		}
 
 		section.content {
+
+			.guideFormatting;
+
 			font: 16px/1.2 "museo-sans";
 			font: 18px/1.7 "PT Serif";
-
 			h1 {
 				margin: 1em 0 .6em;
 				font-size: 2.4em;
@@ -160,6 +168,11 @@
 				&:hover {
 					color: darken(@ColorLink, 10%);
 				}
+			}
+
+			blockquote {
+				background: #EEE;
+				p { margin: 0; }	
 			}
 
 		}
