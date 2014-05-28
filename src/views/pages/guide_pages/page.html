@@ -25,11 +25,15 @@ set navbarOpts = {
 			</div>
 			<div class="topicsList">
 			{% for g in tree %}
-				<li><a href="{{ g.path }}">{{ g.name }}</a></li>
+				<li {% if guide.id === g.id %} class="active" {% endif %}>
+					<a href="{{ g.path }}">{{ g.name }}</a>
+				</li>
 				{% if g.children %}
 					<ul>
 					{% for g2 in g.children %}
-						<li><a href="{{ g2.path }}">{{ g2.name }}</a></li>
+						<li {% if guide.id === g.id %} class="active" {% endif %}>
+							<a href="{{ g2.path }}">{{ g2.name }}</a>
+						</li>
 					{% endfor %}
 					</ul>
 				{% endif %}
@@ -48,8 +52,7 @@ set navbarOpts = {
 -->
 		<div class="contentCol">
 			<section class="content">
-			{{ guide|json }}
-			{{ tagData.html|safe }}
+			{{ guide.html|safe }}
 			</section>
 		</div>
 	</div>

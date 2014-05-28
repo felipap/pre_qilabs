@@ -62,37 +62,46 @@
 		}
 
 		.subtopicsList > div {
-			color: #666;
-			border-bottom: 1px solid #DDD;
-
-			&:not(.active):hover {
-				background: desaturate(darken(@COLOR1, 20%),20%);
-				font-weight: bold;
-				color: white;
-			}
-
-			&.active {
-				background: #EFEFEF;
-				font-weight: bold;
-				color: darken(@COLOR1, 10%);
-			}
 		}
 
 		.topicsList {
+			border-bottom: 1px solid #DDD;
 			li {
 				list-style: none;
 				a {
+					color: #666;
 					display: block;
 					padding: 10px 15px;
 					font-size: 13px;
 					cursor: pointer;
 				}
+
+				&:not(.active):hover a {
+					// background: desaturate(darken(@COLOR1, 20%),20%);
+					background: #EFEFEF;
+					// font-weight: bold;
+					// color: white;
+				}
+				&.active {
+					a {
+						color: darken(@COLOR1, 10%);
+					}
+				}
 			}
 			& > li {
+				&.active {
+					background: #DDD;
+				}
 			}
 			& > ul {
+				background: #EFEFEF;
 				padding-left: 20px;
 			}
+
+			// .active {
+			// 	background: #EFEFEF;
+			// 	font-weight: bold;
+			// }
 		}
 	}
 

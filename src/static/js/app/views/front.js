@@ -1,7 +1,6 @@
 define([
 	'jquery',
 	'modernizr',
-	'plugins',
 	'bootstrap.tooltip',
 	], function ($) {
 
