@@ -31,7 +31,7 @@ set navbarOpts = {
 				{% if g.children %}
 					<ul>
 					{% for g2 in g.children %}
-						<li {% if guide.id === g.id %} class="active" {% endif %}>
+						<li {% if guide.id === g2.id %} class="active" {% endif %}>
 							<a href="{{ g2.path }}">{{ g2.name }}</a>
 						</li>
 					{% endfor %}
