@@ -10,7 +10,7 @@
 		{% set smallHtml = guide.html.replace(RegExp('(<([^>]+)>)','ig'),"") %}
 		{{ metaTagMacros.facebook({
 			title: "Guia "+guide.name+" · QI Labs.org",
-			url: guide.path,
+			url: 'http://qilabs.org'+guide.path,
 			description: smallHtml.slice(0,200)+"...",
 		}) }}
 		{{ metaTagMacros.twitter({
