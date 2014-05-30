@@ -1,10 +1,4 @@
-
-/*
-** guides.less
-** Copyright QIlabs.org
-*/
-
-@import "../components/formatting.less";
+4@import "../components/formatting.less";
 
 @WidthSidebar: 280px;
 @WidthContent: 1150px;
@@ -17,6 +11,7 @@
 	margin: 0 auto;
 	padding: 20px 0;
 	display: table;
+
 	font-family: museo-sans;
 
 	.sidebar {
@@ -27,7 +22,6 @@
 
 		.sidebarHeader .guideLabel {
 			list-style: none;
-
 			a {
 				display: block;
 				padding: 10px 15px;
@@ -47,6 +41,7 @@
 				background: @BgSidebarLabel;
 				color: white;
 				margin-left: -7px;
+				margin-right: -1px;
 				font-weight: bolder;
 				position: relative;
 
@@ -69,7 +64,9 @@
 		.topicsList {
 			border-bottom: 1px solid #DDD;
 			li {
+				position: relative;
 				list-style: none;
+				
 				a {
 					color: #666;
 					display: block;
@@ -79,35 +76,42 @@
 				}
 
 				&:not(.active):hover a {
-					// background: desaturate(darken(@COLOR1, 20%),20%);
 					background: #EFEFEF;
-					// font-weight: bold;
-					// color: white;
 				}
-				&.active {
-					// background: #EEE;
-					// border: 5px solid desaturate(@COLOR1,20%);
-					a {
-						color: desaturate(@COLOR1,20%);
-						font-weight: bold;
-						// color: #444;
-						background: #EEE;
+
+				&.active a {
+					color: desaturate(@COLOR1,20%);
+					font-weight: bold;
+					background: #EEE;
+				}
+				
+				&.hasChildren {
+					&:after {
+						.fa-mixin;
+						position: absolute;
+						right: 5px;
+						width: 15px;
+						color: #444;
+						font-size: 14px;
+						line-height: 38px;
+						top: 0;
+						content: "\f0d7";
+						float: right;
 					}
 				}
 			}
+
 			& > li {
 				&.active {
 				}
 			}
-			& > ul {
-				background: #F8F8F8;
-				padding-left: 20px;
-			}
 
-			// .active {
-			// 	background: #EFEFEF;
-			// 	font-weight: bold;
-			// }
+			& > ul {
+				padding-left: 20px;
+				background: #EEE;
+				border-top: 1px solid #DDD;
+				border-bottom: 1px solid #CCC;
+			}
 		}
 	}
 
@@ -119,8 +123,7 @@
 		font-size: 15px;
 		padding: 30px;
 
-		& > .header,
-		.backgrounded {
+		& > .header, .backgrounded {
 			color: white;
 			a { 
 				color: lighten(@COLOR1, 50%);
@@ -137,7 +140,6 @@
 		}
 
 		section.content {
-
 			.guideFormatting;
 
 			font: 16px/1.2 "museo-sans";

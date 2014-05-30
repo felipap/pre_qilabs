@@ -7,19 +7,19 @@
 {% block head %}
 	{% parent %}
 	{% block meta %}
-		{% set smallHtml = guide.html.replace(RegExp('(<([^>]+)>)','ig'),"") %}
+		{% set smallHtml = guide.html.slice(0,200) %}
 		{{ metaTagMacros.facebook({
 			title: "Guia "+guide.name+" · QI Labs.org",
 			url: 'http://qilabs.org'+guide.path,
-			description: smallHtml.slice(0,200)+"...",
+			description: smallHtml.replace(RegExp('(<([^>]+)>)','ig'),"")+"...",
 		}) }}
 		{{ metaTagMacros.twitter({
 			title: "Guia "+guide.name+" · QI Labs.org",
 		}) }}
 	{% endblock %}
-	<link rel="stylesheet" href="//brick.a.ssl.fastly.net/EB+Garamond:400,400i/Crimson:400,600i,700i/Domine:400,700/Clear+Sans:400,500,700/Bitter:400,700/Libre+Baskerville:400,700/Merriweather:400,400i,700",>
+<!-- 	<link rel="stylesheet" href="//brick.a.ssl.fastly.net/EB+Garamond:400,400i/Crimson:400,600i,700i/Domine:400,700/Clear+Sans:400,500,700/Bitter:400,700/Libre+Baskerville:400,700/Merriweather:400,400i,700",>
 	<link href='http://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400italic,700,700italic|Lora:400,400italic,700|PT+Serif:400,400i,700,700i' rel='stylesheet' type='text/css'>
-{% endblock %}
+ -->{% endblock %}
 
 {%
 set navbarOpts = {
@@ -39,7 +39,14 @@ set navbarOpts = {
 			</div>
 			<div class="topicsList">
 			{% for g in tree %}
-				<li {% if guide.id === g.id %} class="active" {% endif %}>
+				<li class="
+				{% if g.children %}
+					hasChildren 
+				{% endif %}
+				{% if guide.id === g.id %}
+					active 
+				{% endif %}
+				">
 					<a href="{{ g.path }}">{{ g.name }}</a>
 				</li>
 				{% if g.children %}
