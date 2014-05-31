@@ -35,36 +35,38 @@ sanitizerOptions = {
 }
 
 
-getValidPostData = (data, req, res) ->
-	# Sanitize tags
-	if not data.tags or not data.tags instanceof Array
-		res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
-		return null
-	tags = (tag for tag in data.tags when tag in _.keys(res.app.locals.getTagMap()))
-	if tags.length == 0
-		res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
-		return null
+getValidPostData = (post, data, req, res) ->
 
-	# Check title
-	if not data.data.title or not data.data.title.length
-		res.status(400).endJson({
-			error:true,
-			message:'Erro! Cadê o título da sua '+res.app.locals.postTypes[req.body.type.toLowerCase()].translated+'?',
-		})
-		return null
-	if data.data.title.length < 10
-		res.status(400).endJson({
-			error:true,
-			message:'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
-		})
-		return null
-	if data.data.title.length > 100
-		res.status(400).endJson({
-			error:true,
-			message:'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
-		})
-		return null
-	title = data.data.title
+	if post.type not in ['Comment','Answer']
+		# Sanitize tags
+		if not data.tags or not data.tags instanceof Array
+			res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
+			return null
+		tags = (tag for tag in data.tags when tag in _.keys(res.app.locals.getTagMap()))
+		if tags.length == 0
+			res.status(400).endJson(error:true, message:'Selecione pelo menos um assunto relacionado a esse post.')
+			return null
+
+		# Check title
+		if not data.data.title or not data.data.title.length
+			res.status(400).endJson({
+				error:true,
+				message:'Erro! Cadê o título da sua '+res.app.locals.postTypes[req.body.type.toLowerCase()].translated+'?',
+			})
+			return null
+		if data.data.title.length < 10
+			res.status(400).endJson({
+				error:true,
+				message:'Hm... Esse título é muito pequeno. Escreva um com no mínimo 10 caracteres, ok?'
+			})
+			return null
+		if data.data.title.length > 100
+			res.status(400).endJson({
+				error:true,
+				message:'Hmm... esse título é muito grande. Escreva um com até 100 caracteres.'
+			})
+			return null
+		title = data.data.title
 
 	# Check and sanitize body
 	if not data.data.body
@@ -99,7 +101,7 @@ module.exports = {
 			return res.status(400).endJson(error:true, msg:'Tipo de publicação inválido.')
 		type = data.type[0].toUpperCase()+data.type.slice(1).toLowerCase()
 
-		return unless sanitized = getValidPostData(req.body, req, res)
+		return unless sanitized = getValidPostData(null, req.body, req, res)
 		console.log('Final:', sanitized)
 
 		req.user.createPost {
@@ -133,7 +135,7 @@ module.exports = {
 							# Disallow edition of comments.
 							return res.endJson {error:true, msg:''}
 
-						return unless sanitized = getValidPostData(req.body, req, res)
+						return unless sanitized = getValidPostData(post, req.body, req, res)
 
 						post.tags = sanitized.tags
 						post.data.title = sanitized.title
