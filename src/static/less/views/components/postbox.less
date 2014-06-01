@@ -4,9 +4,10 @@
 
 @postSidebarWidth: 340px;
 @postColWidth: 760px;
+@postColPadding: 50px;
 
 [data-page=post] {
-	background: fadeout(black, 10%);
+	background: fadeout(black, 20%);
 	z-index: 60 !important;
 
 	.postBox {
@@ -31,11 +32,12 @@
 			font-family: museo-sans;
 
 			.postHeader {
-				padding: 40px 40px 10px;
+				padding: @postColPadding @postColPadding 10px;
 
 				.type, time {
 					color: #888;
 					text-transform: uppercase;
+					font-size: 13px;
 				}
 				time {
 					float: right;
@@ -44,7 +46,8 @@
 				.postTitle {
 					color: #444;
 					font-weight: 800;
-					font-size: 45px;
+					font-size: 40px;
+					line-height: 1.1;
 					margin: 20px 0 20px;
 				}
 				
@@ -61,14 +64,14 @@
 
 			.postBody {
 				overflow: hidden;
-				padding: 10px 40px 20px;
+				padding: 10px @postColPadding 20px;
 				font-size: 16px;
 				color: #333;
 
 				.postBodyFormatting;
 
 				& > img, & > iframe {
-					margin: 30px -30px;
+					margin: 30px (-@postColPadding+10);
 				}
 
 				p:empty { display: none; }
@@ -839,7 +842,7 @@
 			position: relative;
 			z-index: 1001;
 			width: @postSidebarWidth;
-			background: #313033;
+			background: #414043;
 			text-align: left;
 			font-family: museo-sans;
 			color: white;
@@ -934,7 +937,7 @@
 
 					i {
 						color: white;
-						font-size: 23px;
+						font-size: 21px;
 						font-weight: normal;
 						vertical-align: middle;
 					} 
@@ -942,6 +945,7 @@
 		
 				.flatBtn (@color) {
 					background: @color;
+					// background: #222;
 					&:hover {
 						background: lighten(@color, 2%);
 					}
@@ -951,7 +955,7 @@
 				}
 
 				.link 	{ .flatBtn(#555); }
-				.flag 	{ .flatBtn(#444); }
+				.flag 	{ .flatBtn(mix(yellow, @COLOR3)); }
 				.edit 	{ .flatBtn(desaturate(@COLOR1, 25%)); }
 				.remove { .flatBtn(desaturate(@COLOR4, 15%)); }
 

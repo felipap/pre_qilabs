@@ -99,12 +99,12 @@ checks = {
 			return null
 		return title
 
-	body: (body, res) ->
+	body: (body, res, max_length=20*1000) ->
 		if not body
 			res.status(400).endJson({error:true, message:'Escreva um corpo para a sua publicação.'})
 			return null
 
-		if body.length > 20*1000
+		if body.length > max_length
 			res.status(400).endJson({error:true, message:'Erro! Texto muito grande.'})
 			return null
 

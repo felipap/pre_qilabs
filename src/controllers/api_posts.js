@@ -126,7 +126,10 @@ checks = {
     }
     return title;
   },
-  body: function(body, res) {
+  body: function(body, res, max_length) {
+    if (max_length == null) {
+      max_length = 20 * 1000;
+    }
     if (!body) {
       res.status(400).endJson({
         error: true,
@@ -134,7 +137,7 @@ checks = {
       });
       return null;
     }
-    if (body.length > 20 * 1000) {
+    if (body.length > max_length) {
       res.status(400).endJson({
         error: true,
         message: 'Erro! Texto muito grande.'
