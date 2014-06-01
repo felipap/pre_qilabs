@@ -396,6 +396,7 @@ module.exports = {
                   if (!(content = checks.contentExists(req.body.content, res))) {
                     return;
                   }
+                  console.log('oi');
                   if (!(_body = checks.body(content.body, res))) {
                     return;
                   }

@@ -263,6 +263,7 @@ module.exports = {
 							req.handleErrResult (parentPost) =>
 
 								return unless content = checks.contentExists(req.body.content, res)
+								console.log('oi')
 								return unless _body = checks.body(content.body, res)
 								postBody = sanitizeBody(_body, Post.Types.Answer)
 								data = {

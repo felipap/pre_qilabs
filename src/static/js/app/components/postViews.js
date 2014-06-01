@@ -259,7 +259,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var self = this;
 
 				this.props.model.save({
-					data: {
+					content: {
 						body: this.editor.serialize()['element-0'].value,
 					},
 				}, {
@@ -512,7 +512,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					type: 'post',
 					dataType: 'json',
 					url: this.props.model.get('apiPath')+'/answers',
-					data: { data: { body: body } }
+					data: { content: { body: body } }
 				}).done(function(response) {
 					self.editor.innerHTML = "";
 					self.setState({showInput:false});
