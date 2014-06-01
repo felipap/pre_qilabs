@@ -166,7 +166,7 @@ module.exports = {
 						if post.parentPost
 							if post.type is 'Answer'
 								return unless _body = checks.body(content.body, res)
-								post.data.body = sanitizeBody(_body, post.type)
+								post.content.body = sanitizeBody(_body, post.type)
 							else
 								# Prevent edition of comments.
 								return res.endJson {error:true, msg:''}
@@ -177,7 +177,7 @@ module.exports = {
 							content.body = sanitizeBody(_body, post.type)
 
 						console.log "final", content
-						_.extend(post.data, content)
+						_.extend(post.content, content)
 
 						post.save req.handleErrResult((me) ->
 							console.log('oi', me)

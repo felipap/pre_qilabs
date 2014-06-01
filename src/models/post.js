@@ -66,15 +66,6 @@ PostSchema = new Resource.Schema({
       type: String
     }
   ],
-  data: {
-    title: {
-      type: String
-    },
-    body: {
-      type: String,
-      required: true
-    }
-  },
   content: {
     title: {
       type: String

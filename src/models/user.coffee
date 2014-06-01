@@ -302,7 +302,7 @@ UserSchema.methods.postToParentPost = (parentPost, data, cb) ->
 	comment = new Post {
 		author: @
 		group: parentPost.group
-		data: {
+		content: {
 			body: data.content.body
 		}
 		parentPost: parentPost
@@ -319,7 +319,7 @@ UserSchema.methods.createPost = (data, cb) ->
 	assertArgs({$contains:['content','type','tags']}, '$isCb')
 	post = new Post {
 		author: self.id
-		data: {
+		content: {
 			title: data.content.title
 			body: data.content.body
 		},

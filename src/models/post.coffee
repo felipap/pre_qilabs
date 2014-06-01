@@ -40,10 +40,6 @@ PostSchema = new Resource.Schema {
 	
 	type: 		{ type: String, required: true, enum:_.values(Types) }
 	tags:		[{ type: String }]
-	data: {
-		title:	{ type: String }
-		body:	{ type: String, required: true }
-	}
 	content: {
 		title:	{ type: String }
 		body:	{ type: String, required: true }

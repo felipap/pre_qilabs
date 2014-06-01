@@ -66,7 +66,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					React.DOM.div( {className:"commentWrapper"}, 
 						React.DOM.div( {className:"msgBody"}, 
 							React.DOM.div( {className:"arrow"}),
-							React.DOM.span( {dangerouslySetInnerHTML:{__html: comment.data.escapedBody }})
+							React.DOM.span( {dangerouslySetInnerHTML:{__html: comment.content.escapedBody }})
 						),
 						React.DOM.div( {className:"infoBar"}, 
 							React.DOM.a( {className:"userLink author", href:comment.author.profileUrl}, 
@@ -282,7 +282,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				if (this.editor) {
 					if (!this.state.isEditing) {
 						this.editor.deactivate(); // just to make sure
-						$(this.refs.answerBody.getDOMNode()).html($(this.props.model.get('data').body));
+						$(this.refs.answerBody.getDOMNode()).html($(this.props.model.get('content').body));
 					} else {
 						this.editor.activate();
 					}
@@ -328,7 +328,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							),
 							React.DOM.div( {className:"right"}, 
 								React.DOM.div( {className:"answerBodyWrapper", ref:"answerBodyWrapper"}, 
-									React.DOM.div( {className:"answerBody", ref:"answerBody", dangerouslySetInnerHTML:{__html: answer.data.body }}
+									React.DOM.div( {className:"answerBody", ref:"answerBody", dangerouslySetInnerHTML:{__html: answer.content.body }}
 									)
 								),
 								React.DOM.div( {className:"infobar"}, 
@@ -553,7 +553,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								
 									this.props.small?
 									null
-									:React.DOM.label(null, "Responder à pergunta \"",this.props.model.get('data').title,"\""),
+									:React.DOM.label(null, "Responder à pergunta \"",this.props.model.get('content').title,"\""),
 								
 									React.DOM.div( {className:"editorWrapper"}, 
 										React.DOM.div( {className:"editor answerBody", ref:"input", name:"teste", 'data-placeholder':"Resposta da pergunta aqui..."})
@@ -650,7 +650,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						),
 
 						React.DOM.div( {className:"cardBody"}, 
-							React.DOM.span( {ref:"cardBodySpan"}, post.data.title)
+							React.DOM.span( {ref:"cardBodySpan"}, post.content.title)
 						),
 
 						React.DOM.div( {className:"cardFoot"}, 
@@ -689,13 +689,13 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								post.translatedType
 							),
 							React.DOM.div( {className:"postTitle"}, 
-								post.data.title
+								post.content.title
 							),
 							React.DOM.div( {className:"tags"}, 
 								TagList( {tags:post.tags} )
 							)
 						),
-						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('data').body}}
+						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('content').body}}
 						),
 						React.DOM.div( {className:"postInfobar"}, 
 							React.DOM.ul( {className:"left"}
@@ -724,14 +724,14 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								post.translatedType
 							),
 							React.DOM.div( {className:"postTitle"}, 
-								this.props.model.get('data').title
+								this.props.model.get('content').title
 							),
 							React.DOM.div( {className:"tags"}, 
 								TagList( {tags:post.tags} )
 							)
 						),
 
-						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('data').body}}
+						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('content').body}}
 						),
 
 						React.DOM.div( {className:"postInfobar"}, 
@@ -760,14 +760,14 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								post.translatedType
 							),
 							React.DOM.div( {className:"postTitle"}, 
-								this.props.model.get('data').title
+								this.props.model.get('content').title
 							),
 							React.DOM.div( {className:"tags"}, 
 								TagList( {tags:post.tags} )
 							)
 						),
 
-						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('data').body}}
+						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('content').body}}
 						),
 
 						React.DOM.div( {className:"postInfobar"}, 

@@ -66,7 +66,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					<div className="commentWrapper">
 						<div className='msgBody'>
 							<div className="arrow"></div>
-							<span dangerouslySetInnerHTML={{__html: comment.data.escapedBody }}></span>
+							<span dangerouslySetInnerHTML={{__html: comment.content.escapedBody }}></span>
 						</div>
 						<div className="infoBar">
 							<a className="userLink author" href={comment.author.profileUrl}>
@@ -282,7 +282,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				if (this.editor) {
 					if (!this.state.isEditing) {
 						this.editor.deactivate(); // just to make sure
-						$(this.refs.answerBody.getDOMNode()).html($(this.props.model.get('data').body));
+						$(this.refs.answerBody.getDOMNode()).html($(this.props.model.get('content').body));
 					} else {
 						this.editor.activate();
 					}
@@ -328,7 +328,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							</div>
 							<div className="right">
 								<div className="answerBodyWrapper" ref="answerBodyWrapper">
-									<div className='answerBody' ref="answerBody" dangerouslySetInnerHTML={{__html: answer.data.body }}>
+									<div className='answerBody' ref="answerBody" dangerouslySetInnerHTML={{__html: answer.content.body }}>
 									</div>
 								</div>
 								<div className="infobar">
@@ -553,7 +553,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								{
 									this.props.small?
 									null
-									:<label>Responder à pergunta "{this.props.model.get('data').title}"</label>
+									:<label>Responder à pergunta "{this.props.model.get('content').title}"</label>
 								}
 									<div className="editorWrapper">
 										<div className="editor answerBody" ref="input" name="teste" data-placeholder="Resposta da pergunta aqui..."></div>
@@ -650,7 +650,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 						</div>
 
 						<div className="cardBody">
-							<span ref="cardBodySpan">{post.data.title}</span>
+							<span ref="cardBodySpan">{post.content.title}</span>
 						</div>
 
 						<div className="cardFoot">
@@ -689,13 +689,13 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								{post.translatedType}
 							</div>
 							<div className="postTitle">
-								{post.data.title}
+								{post.content.title}
 							</div>
 							<div className="tags">
 								<TagList tags={post.tags} />
 							</div>
 						</div>
-						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}}>
+						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>
 						<div className="postInfobar">
 							<ul className="left">
@@ -724,14 +724,14 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								{post.translatedType}
 							</div>
 							<div className="postTitle">
-								{this.props.model.get('data').title}
+								{this.props.model.get('content').title}
 							</div>
 							<div className="tags">
 								<TagList tags={post.tags} />
 							</div>
 						</div>
 
-						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}}>
+						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>
 
 						<div className="postInfobar">
@@ -760,14 +760,14 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								{post.translatedType}
 							</div>
 							<div className="postTitle">
-								{this.props.model.get('data').title}
+								{this.props.model.get('content').title}
 							</div>
 							<div className="tags">
 								<TagList tags={post.tags} />
 							</div>
 						</div>
 
-						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('data').body}}>
+						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>
 
 						<div className="postInfobar">

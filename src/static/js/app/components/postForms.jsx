@@ -280,7 +280,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 				this.refs.cardDemo.setData({
 					title: title,
 				});
-				this.props.model.get('data').title = title;
+				this.props.model.get('content').title = title;
 			}.bind(this));
 			
 			setTimeout(function () {
@@ -310,9 +310,9 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 			this.props.model.set('tags', this.refs.tagSelectionBox.getSelectedTagsIds());
 		},
 		onClickSend: function () {
-			this.props.model.attributes.data.body = this.editor.serialize().postBody.value;
+			this.props.model.attributes.content.body = this.editor.serialize().postBody.value;
 			console.log(this.editor.serialize().postBody.value)
-			console.log(this.props.model.attributes.data.body)
+			console.log(this.props.model.attributes.content.body)
 			this.props.model.save(undefined, {
 				url: this.props.model.url() || '/api/posts',
 				success: function (model) {
@@ -321,7 +321,11 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 				},
 				error: function (model, xhr, options) {
 					var data = xhr.responseJSON;
-					app.alert(data.message, 'danger');
+					if (data && data.message) {
+						app.alert(data.message, 'danger');
+					} else {
+						app.alert('Erro', 'danger');
+					}
 				}
 			});
 		},
@@ -346,10 +350,10 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 							<div id="formCreatePost">
 								<div className="cardDemo wall grid">
 									<FakeCard ref="cardDemo" type={this.props.model.get('type')} author={this.props.model.get('author')}>
-										{this.props.model.get('data').title}
+										{this.props.model.get('content').title}
 									</FakeCard>
 								</div>
-								<textarea ref="postTitle" className="title" name="post_title" placeholder={defaultTitle} defaultValue={this.props.model.get('data').title}>
+								<textarea ref="postTitle" className="title" name="post_title" placeholder={defaultTitle} defaultValue={this.props.model.get('content').title}>
 								</textarea>
 								<TagSelectionBox ref="tagSelectionBox" onChangeTags={this.onChangeTags} data={_.indexBy(tagData,'id')}>
 									{this.props.model.get('tags')}
@@ -357,7 +361,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 								<div className="bodyWrapper">
 									<div id="postBody" ref="postBody"
 										data-placeholder="Conte a sua experiência aqui. Mínimo de 100 palavras."
-										dangerouslySetInnerHTML={{__html: (this.props.model.get('data')||{body:''}).body }}></div>
+										dangerouslySetInnerHTML={{__html: (this.props.model.get('content')||{body:''}).body }}></div>
 								</div>
 							</div>
 						</div>
@@ -381,7 +385,7 @@ define(['common', 'react', 'components.postModels', 'medium-editor', 'typeahead-
 				this.postModel = new postModels.postItem({
 					type: this.state.chosenForm,
 					author: window.user,
-					data: {
+					content: {
 						title: '',
 						body: '',
 					},

@@ -482,7 +482,7 @@ UserSchema.methods.postToParentPost = function(parentPost, data, cb) {
   comment = new Post({
     author: this,
     group: parentPost.group,
-    data: {
+    content: {
       body: data.content.body
     },
     parentPost: parentPost,
@@ -505,7 +505,7 @@ UserSchema.methods.createPost = function(data, cb) {
   }, '$isCb');
   post = new Post({
     author: self.id,
-    data: {
+    content: {
       title: data.content.title,
       body: data.content.body
     },

@@ -6,7 +6,7 @@
 {% import '../macros/metaTags.html' as metaTagMacros %}
 
 {% block title %}
-	{{ post.data.title }} · QI Labs.org
+	{{ post.content.title }} · QI Labs.org
 {% endblock %}
 
 {% block head %}
@@ -16,15 +16,15 @@
 
 	{% block meta %}
 	{{ metaTagMacros.facebook({
-		title: post.data.title+" · QI Labs.org",
+		title: post.content.title+" · QI Labs.org",
 		image: post.author.avatarUrl,
 		url: post.path,
-		description: post.data.plainBody.slice(0,400)+'...'
+		description: post.content.plainBody.slice(0,400)+'...'
 	}) }}
 	{{ metaTagMacros.twitter({
-		title: post.data.title+" · QI Labs.org",
+		title: post.content.title+" · QI Labs.org",
 		image: post.author.avatarUrl,
-		description: post.data.plainBody.slice(0,400)+'...'
+		description: post.content.plainBody.slice(0,400)+'...'
 	}) }}
 	{% endblock %}
 {% endblock %}
@@ -45,7 +45,7 @@
 					{{ postTypes[post.type.toLowerCase()].translated }}
 				</div>
 				<div class="postTitle">
-					{{ post.data.title }}
+					{{ post.content.title }}
 				</div>
 				<div class="info">
 					<div class="author">
@@ -57,7 +57,7 @@
 				</div>
 			</div>
 			<div class="postBody">
-				{{ post.data.body|safe }}
+				{{ post.content.body|safe }}
 			</div>
 
 			<div class="postFooter">

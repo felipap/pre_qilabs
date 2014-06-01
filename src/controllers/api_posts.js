@@ -224,7 +224,7 @@ module.exports = {
                   if (!(_body = checks.body(content.body, res))) {
                     return;
                   }
-                  post.data.body = sanitizeBody(_body, post.type);
+                  post.content.body = sanitizeBody(_body, post.type);
                 } else {
                   return res.endJson({
                     error: true,
@@ -244,7 +244,7 @@ module.exports = {
                 content.body = sanitizeBody(_body, post.type);
               }
               console.log("final", content);
-              _.extend(post.data, content);
+              _.extend(post.content, content);
               return post.save(req.handleErrResult(function(me) {
                 console.log('oi', me);
                 return post.stuff(req.handleErrResult(function(stuffedPost) {
