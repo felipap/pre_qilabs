@@ -242,8 +242,10 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			componentDidMount: function () {
 				if (window.user && this.props.model.get('author').id === window.user.id) {
 					this.editor = new MediumEditor(this.refs.answerBody.getDOMNode(), mediumEditorAnswerOpts); 
+					// No addons.
 					$(this.refs.answerBody.getDOMNode()).mediumInsert({
 						editor: this.editor,
+						addons: {}
 					});
 					this.editor.deactivate();
 				} else {
@@ -510,7 +512,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 					type: 'post',
 					dataType: 'json',
 					url: this.props.model.get('apiPath')+'/answers',
-					data: { body: body }
+					data: { data: { body: body } }
 				}).done(function(response) {
 					self.editor.innerHTML = "";
 					self.setState({showInput:false});
@@ -530,7 +532,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				})) {
 					this.setState({showInput:true});
 				} else {
-					app.alert('Você não pode responder a mesma pergunta mais de uma vez. Edite a sua resposta antiga se quiser adicionar mais informações.', 'danger');
+					app.alert('Você não pode responder à mesma pergunta mais de uma vez. Edite a sua resposta antiga se quiser adicionar mais informações.', 'danger');
 				}
 			},
 

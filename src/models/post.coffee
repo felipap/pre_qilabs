@@ -44,6 +44,10 @@ PostSchema = new Resource.Schema {
 		title:	{ type: String }
 		body:	{ type: String, required: true }
 	}
+	content: {
+		title:	{ type: String }
+		body:	{ type: String, required: true }
+	}
 	
 	votes: 		{ type: [{ type: String, ref: 'User', required: true }], select: true, default: [] }
 }, {
@@ -81,14 +85,14 @@ urlify = (text) ->
 	return text.replace urlRegex, (url) ->
 	    return "<a href=\"#{url}\">#{smallify(url)}</a>"
 
-PostSchema.virtual('data.escapedBody').get ->
+PostSchema.virtual('content.escapedBody').get ->
 	if @type is 'Comment'
-		urlify(@data.body)
+		urlify(@content.body)
 	else
-		@data.body
+		@content.body
 
-PostSchema.virtual('data.plainBody').get ->
-	@data.body.replace(/(<([^>]+)>)/ig,"")
+PostSchema.virtual('content.plainBody').get ->
+	@content.body.replace(/(<([^>]+)>)/ig,"")
 
 ################################################################################
 ## Middlewares #################################################################

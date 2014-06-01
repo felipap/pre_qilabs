@@ -75,6 +75,15 @@ PostSchema = new Resource.Schema({
       required: true
     }
   },
+  content: {
+    title: {
+      type: String
+    },
+    body: {
+      type: String,
+      required: true
+    }
+  },
   votes: {
     type: [
       {
@@ -131,16 +140,16 @@ urlify = function(text) {
   });
 };
 
-PostSchema.virtual('data.escapedBody').get(function() {
+PostSchema.virtual('content.escapedBody').get(function() {
   if (this.type === 'Comment') {
-    return urlify(this.data.body);
+    return urlify(this.content.body);
   } else {
-    return this.data.body;
+    return this.content.body;
   }
 });
 
-PostSchema.virtual('data.plainBody').get(function() {
-  return this.data.body.replace(/(<([^>]+)>)/ig, "");
+PostSchema.virtual('content.plainBody').get(function() {
+  return this.content.body.replace(/(<([^>]+)>)/ig, "");
 });
 
 PostSchema.pre('remove', function(next) {

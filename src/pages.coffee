@@ -108,6 +108,11 @@ module.exports = {
 						}
 				)
 
+	'/posts/:postId/edit':
+		permissions: [required.login]
+		get: (req, res) ->
+			res.redirect('/#posts/'+req.params.postId+'/edit')
+
 	'/equipe':
 		name: 'team',
 		get: (req, res) ->

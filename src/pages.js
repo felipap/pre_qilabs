@@ -150,6 +150,12 @@ module.exports = {
       }));
     }
   },
+  '/posts/:postId/edit': {
+    permissions: [required.login],
+    get: function(req, res) {
+      return res.redirect('/#posts/' + req.params.postId + '/edit');
+    }
+  },
   '/equipe': {
     name: 'team',
     get: function(req, res) {
