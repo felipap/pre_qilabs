@@ -31,7 +31,7 @@
 				// .rounded(3px);
 				.box-shadow(0,0,10px,.5);
 				.postBody {
-					padding: 10px 30px 20px;
+					padding: 30px 30px 30px;
 					// & > img {
 					// 	margin: 30px -25px !important;
 					// }
@@ -50,7 +50,7 @@
 						float: right !important;
 					}
 					padding: 30px 30px 40px;
-					// border-bottom: 1px solid #EAEAEA;
+					border-bottom: 1px solid #EAEAEA;
 				}
 			}
 		}
@@ -194,7 +194,6 @@
 						}
 					}
 				}
-
 			}
 
 			.postBody {
@@ -214,6 +213,9 @@
 					margin-left: -40px;
 					margin-right: -40px;
 					margin-top: -10px;
+				}
+				& > *:last-child {
+					margin-bottom: 0;
 				}
 
 				p:empty { display: none; }
@@ -380,9 +382,7 @@
 					}
 
 					&:not(.small) {
-						
 						border-top: 1px solid #DDD;
-						margin-top: 30px;
 
 						.commentList {
 							padding: 20px 0 0;
