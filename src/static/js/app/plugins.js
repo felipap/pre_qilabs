@@ -4,6 +4,18 @@ define(['jquery'], function ($) {
 
 	'strict use';
 
+	// // Custom popup
+	// $.fn.xpopup = function (options) {
+	// 	var $el = this;
+	// 	var options = _.extend({
+
+	// 	}, options);
+
+	// 	$el.hover(function (e) {
+			
+	// 	});
+	// }
+
 	/*!
 	Autosize v1.18.7 - 2014-04-13
 	Automatically adjust textarea height based on user input.

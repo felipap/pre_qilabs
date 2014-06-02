@@ -106,6 +106,17 @@ define([
 
 			var userIsAuthor = window.user && author.id===window.user.id;
 
+			if (this.props.new) {
+				return (
+					<div className="postBox centered" data-post-type={this.props.model.get('type')} data-post-id={this.props.model.get('id')}>
+						<i className="close-btn" data-action="close-page" onClick={this.close}></i>
+						<div className="postCol">
+							<postView model={this.props.model} new={true}/>
+						</div>
+					</div>
+				)
+			}
+
 			return (
 				<div className="postBox" data-post-type={this.props.model.get('type')} data-post-id={this.props.model.get('id')}>
 					<i className="close-btn" data-action="close-page" onClick={this.close}></i>
@@ -113,11 +124,30 @@ define([
 					<div className="postCol">
 						<postView model={this.props.model} />
 					</div>
+
 					<div className="postSidebar" ref="sidebar">
 						<div className="box authorInfo">
 							<div className="identification">
 								<div className="avatarWrapper">
 									<div className="avatar" style={ { background: 'url('+author.avatarUrl+')' } }></div>
+									<div className="avatarPopup">
+										<div className="popupUserInfo">
+											<div className="popupAvatarWrapper">
+												<div className="avatar" style={ { background: 'url('+author.avatarUrl+')' } }></div>
+											</div>
+											<a href={author.path} className="popupUsername">
+												{author.name}
+											</a>
+											{
+												userIsAuthor?
+												null
+												:<button className="btn-follow btn-follow" data-action="unfollow" data-user={author.id}></button>
+											}
+										</div>
+										<div className="popupBio">
+											{author.profile.bio}
+										</div>
+									</div>
 								</div>
 								<a href={author.path} className="username">
 									{author.name}
@@ -160,7 +190,6 @@ define([
 								<i className="icon-flag"></i>
 							</div>
 						</div>
-
 					</div>
 				</div>
 			);
@@ -395,7 +424,6 @@ define([
 			'posts/:postId':
 				function (postId) {
 					this.closePages();
-
 					$.getJSON('/api/posts/'+postId)
 						.done(function (response) {
 							if (response.data.parentPost) {
@@ -403,7 +431,10 @@ define([
 							}
 							console.log('response, data', response)
 							var postItem = new postModels.postItem(response.data);
-							var p = new Page(<FullPostView model={postItem} />, 'post');
+							if (location.search === '?new')
+								var p = new Page(<FullPostView model={postItem} new={true} />, 'post');
+							else 
+								var p = new Page(<FullPostView model={postItem} />, 'post');
 							this.pages.push(p);
 						}.bind(this))
 						.fail(function (response) {

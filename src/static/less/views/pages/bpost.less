@@ -52,30 +52,22 @@
 		.postHeader {
 			.postTitle {
 				font: 60px/1 museo-sans;
+				clear: both;
 			}
-			.postType {
-				text-transform: uppercase;
-			}
-
-			.tagList {
-				display: inline-block;
-				vertical-align: middle;
-
-				.itag {
-					background: #DDD;
-					vertical-align: middle;
-					font-size: 12px;
-					text-transform: uppercase;
-					padding: 5px;
-					color: #444;
-				}
-			}
-
+	
 			.info {
-				margin: 10px 0;
+				.postType {
+					text-transform: uppercase;
+					display: inline-block;
+				}
+				.author {
+				}
+
+				margin-left: 5px;
 				font: 15px museo-sans;
-				display: none;
+				color: #222;
 			}
+	
 
 			margin: 30px 0 15px;
 			border-bottom: 1px dashed #DDD;
@@ -178,10 +170,15 @@
 	
 		.brand {
 			margin-top: 40px;
+			display: block;
 			font: 19px museo;
 			text-transform: uppercase;
+			color: #444;
 			text-align: center;
 			i { margin-top: -2px; }
+			a {
+				color: #444;
+			}
 		}
 
 	}

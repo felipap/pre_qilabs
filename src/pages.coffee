@@ -94,7 +94,6 @@ module.exports = {
 		get: (req, res) ->
 			# if req.user
 			# 	res.redirect('/#posts/'+req.params.postId)
-			# else
 			return unless postId = req.paramToObjectId('postId')
 			Post.findOne { _id:postId }, req.handleErrResult((post) ->
 				if post.parentPost

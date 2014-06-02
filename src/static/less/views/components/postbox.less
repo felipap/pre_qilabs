@@ -7,7 +7,7 @@
 @postColPadding: 50px;
 
 [data-page=post] {
-	background: fadeout(black, 20%);
+	background: fadeout(black, 30%);
 	z-index: 60 !important;
 
 	.postBox {
@@ -21,6 +21,38 @@
 			position: absolute;
 			top: 10px;
 			right: 20px;
+		}
+
+		&.centered {
+			.postCol {
+				margin: auto;
+				float: none;
+				width: (@postColWidth+50);
+				.rounded(3px);
+				.box-shadow(0,0,10px,.5);
+				.postBody {
+					padding: 10px 30px 20px;
+					& > img {
+						margin: 30px -25px !important;
+					}
+				}
+				.postHeader {
+					.postTitle {
+						margin-bottom: 30px;
+					}
+					time {
+						text-transform: none;
+					}
+					.type {
+						padding: 5px;
+					}
+					.tags {
+						float: right !important;
+					}
+					padding: 30px 30px 40px;
+					border-bottom: 1px solid #EAEAEA;
+				}
+			}
 		}
 		
 		.postCol {
@@ -38,13 +70,14 @@
 					color: #888;
 					text-transform: uppercase;
 					font-size: 13px;
+					display: inline-block;
 				}
 				time {
 					float: right;
 				}
 
 				.postTitle {
-					color: #444;
+					color: #555;
 					font-weight: 800;
 					font-size: 40px;
 					line-height: 1.1;
@@ -52,6 +85,7 @@
 				}
 				
 				.tags {
+					float: left;
 					.tag {
 						background: #AAA;
 						.transition(all, .2s, linear);
@@ -60,9 +94,104 @@
 						}
 					}
 				}
+
+				.authorInfo {
+					float: left;
+					// margin-left: -10px;
+					& > .avatarWrapper {
+						height: 25px;
+						width: 25px;
+						.rounded(40px);
+						margin-right: 5px;
+					}
+					& > .username {
+						font: 13px museo-sans;
+						color: #444;
+					}
+				}
+
+				.flatBtnBox {
+					padding: 0;
+					position: absolute;
+					top: 10px;
+					left: 100%;
+
+					& > .item {
+						display: block;
+						text-align: center;
+						height: 50px;
+						color: white;
+						width: 50px;
+						line-height: 50px;
+						cursor: pointer;
+						font-size: 20px;
+						font-weight: bold;
+						position: relative;
+
+						&:active {
+							.inner-shadow(0, 2px, 4px, .3);
+						}
+
+						span {
+							vertical-align: middle;
+						}
+
+						i {
+							color: white;
+							font-size: 21px;
+							font-weight: normal;
+							vertical-align: middle;
+						}
+
+						.count {
+							position: absolute;
+							left: 100%;
+							margin-left: 10px;
+						}
+					}
+			
+					.flatBtn (@color) {
+						background: @color;
+						// background: #222;
+						&:hover {
+							background: lighten(@color, 2%);
+						}
+						&:focus {
+							.inner-shadow(0, 0, 0, 4px, .2);
+						}
+					}
+
+					.link 	{ .flatBtn(@COLOR2); }
+					.flag 	{ .flatBtn(mix(yellow, @COLOR3)); }
+					.edit 	{ .flatBtn(desaturate(@COLOR1, 25%)); }
+					.remove { .flatBtn(desaturate(@COLOR4, 15%)); }
+
+					.like {
+						.flatBtn(#444);
+						.transition(all, .2s, ease);
+						&.liked {
+							.flatBtn(@COLOR4);				
+							i::before {
+								content: "\f004"; //"\f164"; // "\f087"; // thumbs-o
+								color: white; // darken(@COLOR4,10%);
+							}
+						}
+						&:hover {
+							// .flatBtn(@COLOR4);
+							i {
+								color: @COLOR4;
+							}
+						}
+						i {
+							margin-left: 5px;
+						}
+					}
+				}
+
 			}
 
 			.postBody {
+				clear: both;
 				overflow: hidden;
 				padding: 10px @postColPadding 20px;
 				font-size: 16px;
@@ -79,6 +208,7 @@
 
 			.postFooter
 			{
+				padding: .1px;
 				.commentSection {
 					font-size: 13px;
 					background: #EEE;
@@ -130,7 +260,7 @@
 										color: #333;
 									}
 
-									.avatarWrapper {
+									& > .avatarWrapper {
 										height: 20px;
 										width: 20px;
 										vertical-align: middle;
@@ -138,7 +268,7 @@
 										.rounded(15px);
 									}
 
-									.name {
+									& > .name {
 										vertical-align: middle;
 									}
 								}

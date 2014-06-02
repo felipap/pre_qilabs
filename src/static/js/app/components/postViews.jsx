@@ -573,6 +573,95 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 		}),
 	};
 
+	var PostHeader = React.createClass({
+		render: function () {
+			var post = this.props.model.attributes;
+			var userIsAuthor = window.user && post.author.id===window.user.id;
+
+			if (this.props.new)
+				return (
+					<div className="postHeader">
+						<div className="type">
+							{post.translatedType}
+						</div>
+						<div className="tags">
+							<TagList tags={post.tags} />
+						</div>
+						<div className="postTitle">
+							{post.content.title}
+						</div>
+						<time data-time-count={1*new Date(post.published)}>
+							{window.calcTimeFrom(post.published)}
+						</time>
+
+						<div className="authorInfo">
+							por&nbsp;&nbsp;
+							<div className="avatarWrapper">
+								<div className="avatar" style={ { background: 'url('+post.author.avatarUrl+')' } }></div>
+								<div className="avatarPopup">
+									<div className="popupUserInfo">
+										<div className="popupAvatarWrapper">
+											<div className="avatar" style={ { background: 'url('+post.author.avatarUrl+')' } }></div>
+										</div>
+										<a href={post.author.path} className="popupUsername">
+											{post.author.name}
+										</a>
+										<button className="btn-follow btn-follow" data-action="unfollow" data-user={post.author.id}></button>
+									</div>
+									<div className="popupBio">
+										{post.author.profile.bio}
+									</div>
+								</div>
+							</div>
+							<a href={post.author.path} className="username">
+								{post.author.name}
+							</a>
+							{
+								userIsAuthor?
+								<button className="btn-follow btn-follow" data-action="unfollow" data-user={post.author.id}></button>
+								:<button className="btn-follow btn-follow" data-action="unfollow" data-user={post.author.id}>Você</button>
+							}
+						</div>
+
+						<div className="flatBtnBox">
+							<div className="item edit" onClick={this.onClickEdit}>
+								<i className="icon-edit"></i>
+							</div>
+							<div className="item like">
+								<i className="icon-heart-o"></i><span className="count">{post.voteSum}</span>
+							</div>
+							<div className="item remove">
+								<i className="icon-trash"></i>
+							</div>
+
+							<div className="item link">
+								<i className="icon-link"></i>
+							</div>
+							<div className="item flag">
+								<i className="icon-flag"></i>
+							</div>
+						</div>
+					</div>
+				);
+			return (
+				<div className="postHeader">
+					<time data-time-count={1*new Date(post.published)}>
+						{window.calcTimeFrom(post.published)}
+					</time>
+					<div className="type">
+						{post.translatedType}
+					</div>
+					<div className="postTitle">
+						{post.content.title}
+					</div>
+					<div className="tags">
+						<TagList tags={post.tags} />
+					</div>
+				</div>
+			);
+		}
+	})
+
 	//
 
 	var CommentSectionView = Comment.SectionView;
@@ -613,7 +702,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				// }
 			},
 			render: function () {
-
 				function gotoPost () {
 					app.navigate('/posts/'+post.id, {trigger:true});
 					// app.navigate('')
@@ -625,7 +713,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 				return (
 					<div className="cardView" onClick={gotoPost}>
-						
 						<div className="cardHeader">
 							<span className="cardType">
 								{post.translatedType}
@@ -678,23 +765,12 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 			render: function () {
 				var post = this.props.model.attributes;
+				var userIsAuthor = window.user && post.author.id===window.user.id;
 
 				return (
 					<div>
-						<div className="postHeader">
-							<time data-time-count={1*new Date(post.published)}>
-								{window.calcTimeFrom(post.published)}
-							</time>
-							<div className="type">
-								{post.translatedType}
-							</div>
-							<div className="postTitle">
-								{post.content.title}
-							</div>
-							<div className="tags">
-								<TagList tags={post.tags} />
-							</div>
-						</div>
+						<PostHeader model={this.props.model} new={this.props.new} />
+
 						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>
 						<div className="postInfobar">
@@ -716,20 +792,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var post = this.props.model.attributes;
 				return (
 					<div>
-						<div className="postHeader">
-							<time data-time-count={1*new Date(post.published)}>
-								{window.calcTimeFrom(post.published)}
-							</time>
-							<div className="type">
-								{post.translatedType}
-							</div>
-							<div className="postTitle">
-								{this.props.model.get('content').title}
-							</div>
-							<div className="tags">
-								<TagList tags={post.tags} />
-							</div>
-						</div>
+						<PostHeader model={this.props.model} new={this.props.new} />
 
 						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>

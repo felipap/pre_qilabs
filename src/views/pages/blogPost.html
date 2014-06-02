@@ -41,19 +41,14 @@
 
 		<article>
 			<div class="postHeader">
-				<div class="postType">
-					{{ postTypes[post.type.toLowerCase()].translated }}
+				<div class="info">
+					<span class="postType">{{ postTypes[post.type.toLowerCase()].translated }}</span>
+					<span class="author">
+					 por <span class="name">{{ post.author.name }}</span>
+					</span>
 				</div>
 				<div class="postTitle">
 					{{ post.content.title }}
-				</div>
-				<div class="info">
-					<div class="author">
-					em <div class="tagList">
-					{% for tag in post.tags %}
-						<span class="itag"><a href="{{ getTagMap()[tag].path }}">{{ getTagMap()[tag].label }}</a></span>
-					{% endfor %}</div>
-					</div>
 				</div>
 			</div>
 			<div class="postBody">
@@ -85,82 +80,11 @@
 					Logue-se para comentar essa publicação.
 				</div>
 			</div>
-			<div class="brand">
+			<a href="/" class="brand">
 				QI <i class="icon-bulb"></i> Labs · 2014
-			</div>
+			</a>
 		</footer>
 
 	</div>
 
-{% endblock %}
-{% block globalHeader %}
-	<div id="globalHead">
-		<div class="elBackground" style="background-image: url({{ profile.profile.bgUrl }}); background-position: top"></div>
-		<div class="elBlackout"></div>
-
-		<div class="profileWrapper">
-			{% if profile.id == user.id %}
-				<button data-action="edit-profile" data-toggle="tooltip" data-placement="left" title="Editar perfil">
-					<i class="icon-lock"></i>
-				</button>
-				<button data-action="save-profile" data-toggle="tooltip" data-placement="left" title="Salvar mudanças">
-					<i class="icon-unlock"></i>
-				</button>
-			{% endif %}
-			
-			<div class="avatarWrapper">
-				<div class="avatar" style="background: url({{ profile.avatarUrl }})"></div>
-			</div>
-
-			<section class="usernameWrapper">
-				<div class="name profileOutput">{{ profile.name }}</div>
-				{% if profile.id == user.id %}
-					<input class="profileInput" type="text" name="name" value="{{ profile.name }}" /> 
-				{% endif %}
-				{% if profile.id != user.id %}
-					<div style="display: inline-block; width: 0">
-						{% if follows %}
-							<button class="btn-follow" data-action="unfollow" data-user="{{ profile.id }}"></button>
-						{% else %}
-							<button class="btn-follow" data-action="follow" data-user="{{ profile.id }}"></button>
-						{% endif %}
-					</div>
-				{% endif %}
-			</section>
-			<section class="bio profileOutput">
-				{{ profile.profile.bio }}
-			</section>
-			{% if profile.id == user.id %}
-				<textarea class="bio profileInput autosize" name="bio" maxlength="300">{{ profile.profile.bio }}</textarea>
-			{% endif %}
-
-			<section class="whereabout">
-				<i class="icon-map-marker"></i><span class="location profileOutput">{{ profile.profile.location }}</span><input type="text" class="profileInput" maxlength="35" name="location" value="{{ profile.profile.location }}"  placeholder="Local de estudo/trabalho"/>&nbsp;·&nbsp;<i class="icon-home"></i><span class="home profileOutput">{{ profile.profile.home }}</span><input type="text" class="profileInput" maxlength="35" name="home" value="{{ profile.profile.home }}" placeholder="Cidade de origem" /> 
-			</section>
-
-			<div class="stats">
-				<div>
-					<a href="#followers">
-					<h3>{{ profile.stats.followers }}</h3>
-					seguidores
-					</a>
-				</div>
-				<div>
-					<a href="#following">
-					<h3>{{ profile.stats.following }}</h3>
-					seguindo
-					</a>
-				</div>
-				<div>
-					<h3>{{ profile.stats.posts }}</h3>
-					posts
-				</div>
-				<div>
-					<h3>{{ profile.stats.votes }}</h3>
-					votos
-				</div>
-			</div>
-		</div>
-	</div>
-	</nav>
 {% endblock %}

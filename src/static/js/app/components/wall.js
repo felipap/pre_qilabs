@@ -106,6 +106,17 @@ define([
 
 			var userIsAuthor = window.user && author.id===window.user.id;
 
+			if (this.props.new) {
+				return (
+					React.DOM.div( {className:"postBox centered", 'data-post-type':this.props.model.get('type'), 'data-post-id':this.props.model.get('id')}, 
+						React.DOM.i( {className:"close-btn", 'data-action':"close-page", onClick:this.close}),
+						React.DOM.div( {className:"postCol"}, 
+							postView( {model:this.props.model, new:true})
+						)
+					)
+				)
+			}
+
 			return (
 				React.DOM.div( {className:"postBox", 'data-post-type':this.props.model.get('type'), 'data-post-id':this.props.model.get('id')}, 
 					React.DOM.i( {className:"close-btn", 'data-action':"close-page", onClick:this.close}),
@@ -113,11 +124,30 @@ define([
 					React.DOM.div( {className:"postCol"}, 
 						postView( {model:this.props.model} )
 					),
+
 					React.DOM.div( {className:"postSidebar", ref:"sidebar"}, 
 						React.DOM.div( {className:"box authorInfo"}, 
 							React.DOM.div( {className:"identification"}, 
 								React.DOM.div( {className:"avatarWrapper"}, 
-									React.DOM.div( {className:"avatar", style: { background: 'url('+author.avatarUrl+')' } })
+									React.DOM.div( {className:"avatar", style: { background: 'url('+author.avatarUrl+')' } }),
+									React.DOM.div( {className:"avatarPopup"}, 
+										React.DOM.div( {className:"popupUserInfo"}, 
+											React.DOM.div( {className:"popupAvatarWrapper"}, 
+												React.DOM.div( {className:"avatar", style: { background: 'url('+author.avatarUrl+')' } })
+											),
+											React.DOM.a( {href:author.path, className:"popupUsername"}, 
+												author.name
+											),
+											
+												userIsAuthor?
+												null
+												:React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':author.id})
+											
+										),
+										React.DOM.div( {className:"popupBio"}, 
+											author.profile.bio
+										)
+									)
 								),
 								React.DOM.a( {href:author.path, className:"username"}, 
 									author.name
@@ -160,7 +190,6 @@ define([
 								React.DOM.i( {className:"icon-flag"})
 							)
 						)
-
 					)
 				)
 			);
@@ -395,7 +424,6 @@ define([
 			'posts/:postId':
 				function (postId) {
 					this.closePages();
-
 					$.getJSON('/api/posts/'+postId)
 						.done(function (response) {
 							if (response.data.parentPost) {
@@ -403,7 +431,10 @@ define([
 							}
 							console.log('response, data', response)
 							var postItem = new postModels.postItem(response.data);
-							var p = new Page(FullPostView( {model:postItem} ), 'post');
+							if (location.search === '?new')
+								var p = new Page(FullPostView( {model:postItem, new:true} ), 'post');
+							else 
+								var p = new Page(FullPostView( {model:postItem} ), 'post');
 							this.pages.push(p);
 						}.bind(this))
 						.fail(function (response) {
