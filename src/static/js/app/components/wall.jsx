@@ -432,10 +432,10 @@ define([
 							}
 							console.log('response, data', response)
 							var postItem = new postModels.postItem(response.data);
-							if (location.search === '?new')
-								var p = new Page(<FullPostView model={postItem} new={true} />, 'post');
-							else 
+							if (location.search === '?old')
 								var p = new Page(<FullPostView model={postItem} />, 'post');
+							else 
+								var p = new Page(<FullPostView model={postItem} new={true} />, 'post');
 							this.pages.push(p);
 						}.bind(this))
 						.fail(function (response) {
