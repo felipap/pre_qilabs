@@ -579,93 +579,76 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			var post = this.props.model.attributes;
 			var userIsAuthor = window.user && post.author.id===window.user.id;
 
-			if (this.props.new)
-				return (
-					React.DOM.div( {className:"postHeader"}, 
-						React.DOM.div( {className:"type"}, 
-							post.translatedType
-						),
-						React.DOM.div( {className:"tags"}, 
-							TagList( {tags:post.tags} )
-						),
-						React.DOM.div( {className:"postTitle"}, 
-							post.content.title
-						),
-						React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
-							window.calcTimeFrom(post.published)
-						),
-
-						React.DOM.div( {className:"authorInfo"}, 
-							"por  ",
-							React.DOM.div( {className:"avatarWrapper"}, 
-								React.DOM.div( {className:"avatar", style: { background: 'url('+post.author.avatarUrl+')' } }),
-								React.DOM.div( {className:"avatarPopup"}, 
-									React.DOM.div( {className:"popupUserInfo"}, 
-										React.DOM.div( {className:"popupAvatarWrapper"}, 
-											React.DOM.div( {className:"avatar", style: { background: 'url('+post.author.avatarUrl+')' } })
-										),
-										React.DOM.a( {href:post.author.path, className:"popupUsername"}, 
-											post.author.name
-										),
-										React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':post.author.id})
-									),
-									React.DOM.div( {className:"popupBio"}, 
-										post.author.profile.bio
-									)
-								)
-							),
-							React.DOM.a( {href:post.author.path, className:"username"}, 
-								post.author.name
-							),
-							
-								userIsAuthor?
-								null
-								:React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':post.author.id})
-							
-						),
-
-						
-							(userIsAuthor)?
-							React.DOM.div( {className:"flatBtnBox"}, 
-								React.DOM.div( {className:"item edit", onClick:this.props.parent.onClickEdit}, 
-									React.DOM.i( {className:"icon-edit"})
-								),
-								React.DOM.div( {className:"item remove", onClick:this.props.parent.onClickTrash}, 
-									React.DOM.i( {className:"icon-trash"})
-								),
-								React.DOM.div( {className:"item link", onClick:this.props.parent.onClickLink}, 
-									React.DOM.i( {className:"icon-link"})
-								)
-							)
-							:React.DOM.div( {className:"flatBtnBox"}, 
-								React.DOM.div( {className:"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":""),
-									onClick:this.props.parent.toggleVote}, 
-									React.DOM.i( {className:"icon-heart-o"}),React.DOM.span( {className:"count"}, post.voteSum)
-								),
-								React.DOM.div( {className:"item link", onClick:this.props.parent.onClickLink}, 
-									React.DOM.i( {className:"icon-link"})
-								),
-								React.DOM.div( {className:"item flag", onClick:this.props.parent.onClickFlag}, 
-									React.DOM.i( {className:"icon-flag"})
-								)
-							)
-						
-					)
-				);
 			return (
 				React.DOM.div( {className:"postHeader"}, 
-					React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
-						window.calcTimeFrom(post.published)
-					),
 					React.DOM.div( {className:"type"}, 
 						post.translatedType
+					),
+					React.DOM.div( {className:"tags"}, 
+						TagList( {tags:post.tags} )
 					),
 					React.DOM.div( {className:"postTitle"}, 
 						post.content.title
 					),
-					React.DOM.div( {className:"tags"}, 
-						TagList( {tags:post.tags} )
-					)
+					React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
+						window.calcTimeFrom(post.published)
+					),
+
+					React.DOM.div( {className:"authorInfo"}, 
+						"por  ",
+						React.DOM.div( {className:"avatarWrapper"}, 
+							React.DOM.div( {className:"avatar", style: { background: 'url('+post.author.avatarUrl+')' } }),
+							React.DOM.div( {className:"avatarPopup"}, 
+								React.DOM.div( {className:"popupUserInfo"}, 
+									React.DOM.div( {className:"popupAvatarWrapper"}, 
+										React.DOM.div( {className:"avatar", style: { background: 'url('+post.author.avatarUrl+')' } })
+									),
+									React.DOM.a( {href:post.author.path, className:"popupUsername"}, 
+										post.author.name
+									),
+									React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':post.author.id})
+								),
+								React.DOM.div( {className:"popupBio"}, 
+									post.author.profile.bio
+								)
+							)
+						),
+						React.DOM.a( {href:post.author.path, className:"username"}, 
+							post.author.name
+						),
+						
+							userIsAuthor?
+							null
+							:React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':post.author.id})
+						
+					),
+
+					
+						(userIsAuthor)?
+						React.DOM.div( {className:"flatBtnBox"}, 
+							React.DOM.div( {className:"item edit", onClick:this.props.parent.onClickEdit}, 
+								React.DOM.i( {className:"icon-edit"})
+							),
+							React.DOM.div( {className:"item remove", onClick:this.props.parent.onClickTrash}, 
+								React.DOM.i( {className:"icon-trash"})
+							),
+							React.DOM.div( {className:"item link", onClick:this.props.parent.onClickLink}, 
+								React.DOM.i( {className:"icon-link"})
+							)
+						)
+						:React.DOM.div( {className:"flatBtnBox"}, 
+							React.DOM.div( {className:"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":""),
+								onClick:this.props.parent.toggleVote}, 
+								React.DOM.i( {className:"icon-heart-o"}),React.DOM.span( {className:"count"}, post.voteSum)
+							),
+							React.DOM.div( {className:"item link", onClick:this.props.parent.onClickLink}, 
+								React.DOM.i( {className:"icon-link"})
+							),
+							React.DOM.div( {className:"item flag", onClick:this.props.parent.onClickFlag}, 
+								React.DOM.i( {className:"icon-flag"})
+							)
+						)
+					
 				)
 			);
 		}
@@ -772,7 +755,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 				return (
 					React.DOM.div(null, 
-						PostHeader( {model:this.props.model, parent:this.props.parent, new:this.props.new} ),
+						PostHeader( {model:this.props.model, parent:this.props.parent} ),
 
 						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('content').body}}
 						),
@@ -795,7 +778,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var post = this.props.model.attributes;
 				return (
 					React.DOM.div(null, 
-						PostHeader( {model:this.props.model, parent:this.props.parent, new:this.props.new} ),
+						PostHeader( {model:this.props.model, parent:this.props.parent} ),
 
 						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('content').body}}
 						),
@@ -818,7 +801,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var post = this.props.model.attributes;
 				return (
 					React.DOM.div(null, 
-						PostHeader( {model:this.props.model, parent:this.props.parent, new:this.props.new} ),
+						PostHeader( {model:this.props.model, parent:this.props.parent} ),
 
 						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('content').body}}
 						),

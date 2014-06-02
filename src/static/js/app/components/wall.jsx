@@ -94,7 +94,6 @@ define([
 		render: function () {
 			var post = this.props.model.attributes;
 			var author = this.props.model.get('author');
-
 			var postType = this.props.model.get('type');
 			if (postType in postViews) {
 				var postView = postViews[postType];
@@ -103,119 +102,14 @@ define([
 				return <div></div>;
 			}
 
-			var self = this;
-
-			var userIsAuthor = window.user && author.id===window.user.id;
-
-			if (this.props.new) {
-				return (
-					<div className="postBox centered" data-post-type={this.props.model.get('type')} data-post-id={this.props.model.get('id')}>
-						<i className="close-btn" data-action="close-page" onClick={this.close}></i>
-						<div className="postCol">
-							<postView model={this.props.model} parent={this} new={true}/>
-						</div>
-					</div>
-				)
-			}
-
 			return (
 				<div className="postBox" data-post-type={this.props.model.get('type')} data-post-id={this.props.model.get('id')}>
 					<i className="close-btn" data-action="close-page" onClick={this.close}></i>
-
 					<div className="postCol">
-						<postView model={this.props.model} />
-					</div>
-
-					<div className="postSidebar" ref="sidebar">
-						<div className="box authorInfo">
-							<div className="identification">
-								<div className="avatarWrapper">
-									<div className="avatar" style={ { background: 'url('+author.avatarUrl+')' } }></div>
-									<div className="avatarPopup">
-										<div className="popupUserInfo">
-											<div className="popupAvatarWrapper">
-												<div className="avatar" style={ { background: 'url('+author.avatarUrl+')' } }></div>
-											</div>
-											<a href={author.path} className="popupUsername">
-												{author.name}
-											</a>
-											{
-												userIsAuthor?
-												null
-												:<button className="btn-follow btn-follow" data-action="unfollow" data-user={author.id}></button>
-											}
-										</div>
-										<div className="popupBio">
-											{author.profile.bio}
-										</div>
-									</div>
-								</div>
-								<a href={author.path} className="username">
-									{author.name}
-								</a>
-								{
-									userIsAuthor?
-									null
-									:<button className="btn-follow btn-follow" data-action="unfollow" data-user={author.id}></button>
-								}
-							</div>
-							<div className="bio">
-								{author.profile.bio}
-							</div>
-						</div>
-
-						<div className="flatBtnBox">
-							{
-								(window.user.id === author.id)?
-								<div className="item edit" onClick={this.onClickEdit}>
-									<i className="icon-edit"></i>
-								</div>
-								:
-								<div className={"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":"")}
-									onClick={this.toggleVote}>
-									{post.voteSum} <i className="icon-heart-o"></i>
-								</div>
-							}
-							{
-								(window.user.id === author.id)?
-								<div className="item remove" onClick={this.onClickTrash}>
-									<i className="icon-trash"></i>
-								</div>
-								:null
-							}
-
-							<div className="item link">
-								<i className="icon-link"></i>
-							</div>
-							<div className="item flag">
-								<i className="icon-flag"></i>
-							</div>
-						</div>
+						<postView model={this.props.model} parent={this} />
 					</div>
 				</div>
 			);
-
-			// <div className="box relatedContentBox">
-			// 	<label>Perguntas relacionadas</label>
-			// 	<li>
-			// 		<span className="question">Lorem Ipsum Dolor Sit Amet?</span> – <span className="asker">Léo Creo</span>
-			// 	</li>
-			// 	<li>
-			// 		<span className="question">Felipe não sabe fazer site ou eu tô enganado?</span> – <span className="asker">Recalcada Qualquer</span>
-			// 	</li>
-			// 	<li>
-			// 		<span className="question">O Site que Nunca Saiu</span> – <span className="asker">Felipe Aragão</span>
-			// 	</li>
-			// </div>
-
-			// <div className="box editedByBox">
-			// 	<div className="avatarWrapper">
-			// 		<div className="avatar" style={ { background: 'url('+'/static/images/avatar2.png'+')'} }></div>
-			// 	</div>
-			// 	<div className="info">
-			// 		Editado por <span className="name">Felipe Aragão Pires</span> <time>há 5 horas</time> 
-			// 	</div>
-			// </div>
 		},
 	});
 
@@ -432,10 +326,7 @@ define([
 							}
 							console.log('response, data', response)
 							var postItem = new postModels.postItem(response.data);
-							if (location.search === '?old')
-								var p = new Page(<FullPostView model={postItem} />, 'post');
-							else 
-								var p = new Page(<FullPostView model={postItem} new={true} />, 'post');
+							var p = new Page(<FullPostView model={postItem} />, 'post');
 							this.pages.push(p);
 						}.bind(this))
 						.fail(function (response) {

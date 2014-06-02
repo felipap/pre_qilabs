@@ -94,7 +94,6 @@ define([
 		render: function () {
 			var post = this.props.model.attributes;
 			var author = this.props.model.get('author');
-
 			var postType = this.props.model.get('type');
 			if (postType in postViews) {
 				var postView = postViews[postType];
@@ -103,119 +102,14 @@ define([
 				return React.DOM.div(null);
 			}
 
-			var self = this;
-
-			var userIsAuthor = window.user && author.id===window.user.id;
-
-			if (this.props.new) {
-				return (
-					React.DOM.div( {className:"postBox centered", 'data-post-type':this.props.model.get('type'), 'data-post-id':this.props.model.get('id')}, 
-						React.DOM.i( {className:"close-btn", 'data-action':"close-page", onClick:this.close}),
-						React.DOM.div( {className:"postCol"}, 
-							postView( {model:this.props.model, parent:this, new:true})
-						)
-					)
-				)
-			}
-
 			return (
 				React.DOM.div( {className:"postBox", 'data-post-type':this.props.model.get('type'), 'data-post-id':this.props.model.get('id')}, 
 					React.DOM.i( {className:"close-btn", 'data-action':"close-page", onClick:this.close}),
-
 					React.DOM.div( {className:"postCol"}, 
-						postView( {model:this.props.model} )
-					),
-
-					React.DOM.div( {className:"postSidebar", ref:"sidebar"}, 
-						React.DOM.div( {className:"box authorInfo"}, 
-							React.DOM.div( {className:"identification"}, 
-								React.DOM.div( {className:"avatarWrapper"}, 
-									React.DOM.div( {className:"avatar", style: { background: 'url('+author.avatarUrl+')' } }),
-									React.DOM.div( {className:"avatarPopup"}, 
-										React.DOM.div( {className:"popupUserInfo"}, 
-											React.DOM.div( {className:"popupAvatarWrapper"}, 
-												React.DOM.div( {className:"avatar", style: { background: 'url('+author.avatarUrl+')' } })
-											),
-											React.DOM.a( {href:author.path, className:"popupUsername"}, 
-												author.name
-											),
-											
-												userIsAuthor?
-												null
-												:React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':author.id})
-											
-										),
-										React.DOM.div( {className:"popupBio"}, 
-											author.profile.bio
-										)
-									)
-								),
-								React.DOM.a( {href:author.path, className:"username"}, 
-									author.name
-								),
-								
-									userIsAuthor?
-									null
-									:React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':author.id})
-								
-							),
-							React.DOM.div( {className:"bio"}, 
-								author.profile.bio
-							)
-						),
-
-						React.DOM.div( {className:"flatBtnBox"}, 
-							
-								(window.user.id === author.id)?
-								React.DOM.div( {className:"item edit", onClick:this.onClickEdit}, 
-									React.DOM.i( {className:"icon-edit"})
-								)
-								:
-								React.DOM.div( {className:"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":""),
-									onClick:this.toggleVote}, 
-									post.voteSum, " ", React.DOM.i( {className:"icon-heart-o"})
-								),
-							
-							
-								(window.user.id === author.id)?
-								React.DOM.div( {className:"item remove", onClick:this.onClickTrash}, 
-									React.DOM.i( {className:"icon-trash"})
-								)
-								:null,
-							
-
-							React.DOM.div( {className:"item link"}, 
-								React.DOM.i( {className:"icon-link"})
-							),
-							React.DOM.div( {className:"item flag"}, 
-								React.DOM.i( {className:"icon-flag"})
-							)
-						)
+						postView( {model:this.props.model, parent:this} )
 					)
 				)
 			);
-
-			// <div className="box relatedContentBox">
-			// 	<label>Perguntas relacionadas</label>
-			// 	<li>
-			// 		<span className="question">Lorem Ipsum Dolor Sit Amet?</span> – <span className="asker">Léo Creo</span>
-			// 	</li>
-			// 	<li>
-			// 		<span className="question">Felipe não sabe fazer site ou eu tô enganado?</span> – <span className="asker">Recalcada Qualquer</span>
-			// 	</li>
-			// 	<li>
-			// 		<span className="question">O Site que Nunca Saiu</span> – <span className="asker">Felipe Aragão</span>
-			// 	</li>
-			// </div>
-
-			// <div className="box editedByBox">
-			// 	<div className="avatarWrapper">
-			// 		<div className="avatar" style={ { background: 'url('+'/static/images/avatar2.png'+')'} }></div>
-			// 	</div>
-			// 	<div className="info">
-			// 		Editado por <span className="name">Felipe Aragão Pires</span> <time>há 5 horas</time> 
-			// 	</div>
-			// </div>
 		},
 	});
 
@@ -432,10 +326,7 @@ define([
 							}
 							console.log('response, data', response)
 							var postItem = new postModels.postItem(response.data);
-							if (location.search === '?old')
-								var p = new Page(FullPostView( {model:postItem} ), 'post');
-							else 
-								var p = new Page(FullPostView( {model:postItem, new:true} ), 'post');
+							var p = new Page(FullPostView( {model:postItem} ), 'post');
 							this.pages.push(p);
 						}.bind(this))
 						.fail(function (response) {

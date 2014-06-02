@@ -579,93 +579,76 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 			var post = this.props.model.attributes;
 			var userIsAuthor = window.user && post.author.id===window.user.id;
 
-			if (this.props.new)
-				return (
-					<div className="postHeader">
-						<div className="type">
-							{post.translatedType}
-						</div>
-						<div className="tags">
-							<TagList tags={post.tags} />
-						</div>
-						<div className="postTitle">
-							{post.content.title}
-						</div>
-						<time data-time-count={1*new Date(post.published)}>
-							{window.calcTimeFrom(post.published)}
-						</time>
-
-						<div className="authorInfo">
-							por&nbsp;&nbsp;
-							<div className="avatarWrapper">
-								<div className="avatar" style={ { background: 'url('+post.author.avatarUrl+')' } }></div>
-								<div className="avatarPopup">
-									<div className="popupUserInfo">
-										<div className="popupAvatarWrapper">
-											<div className="avatar" style={ { background: 'url('+post.author.avatarUrl+')' } }></div>
-										</div>
-										<a href={post.author.path} className="popupUsername">
-											{post.author.name}
-										</a>
-										<button className="btn-follow btn-follow" data-action="unfollow" data-user={post.author.id}></button>
-									</div>
-									<div className="popupBio">
-										{post.author.profile.bio}
-									</div>
-								</div>
-							</div>
-							<a href={post.author.path} className="username">
-								{post.author.name}
-							</a>
-							{
-								userIsAuthor?
-								null
-								:<button className="btn-follow btn-follow" data-action="unfollow" data-user={post.author.id}></button>
-							}
-						</div>
-
-						{
-							(userIsAuthor)?
-							<div className="flatBtnBox">
-								<div className="item edit" onClick={this.props.parent.onClickEdit}>
-									<i className="icon-edit"></i>
-								</div>
-								<div className="item remove" onClick={this.props.parent.onClickTrash}>
-									<i className="icon-trash"></i>
-								</div>
-								<div className="item link" onClick={this.props.parent.onClickLink}>
-									<i className="icon-link"></i>
-								</div>
-							</div>
-							:<div className="flatBtnBox">
-								<div className={"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":"")}
-									onClick={this.props.parent.toggleVote}>
-									<i className="icon-heart-o"></i><span className="count">{post.voteSum}</span>
-								</div>
-								<div className="item link" onClick={this.props.parent.onClickLink}>
-									<i className="icon-link"></i>
-								</div>
-								<div className="item flag" onClick={this.props.parent.onClickFlag}>
-									<i className="icon-flag"></i>
-								</div>
-							</div>
-						}
-					</div>
-				);
 			return (
 				<div className="postHeader">
-					<time data-time-count={1*new Date(post.published)}>
-						{window.calcTimeFrom(post.published)}
-					</time>
 					<div className="type">
 						{post.translatedType}
-					</div>
-					<div className="postTitle">
-						{post.content.title}
 					</div>
 					<div className="tags">
 						<TagList tags={post.tags} />
 					</div>
+					<div className="postTitle">
+						{post.content.title}
+					</div>
+					<time data-time-count={1*new Date(post.published)}>
+						{window.calcTimeFrom(post.published)}
+					</time>
+
+					<div className="authorInfo">
+						por&nbsp;&nbsp;
+						<div className="avatarWrapper">
+							<div className="avatar" style={ { background: 'url('+post.author.avatarUrl+')' } }></div>
+							<div className="avatarPopup">
+								<div className="popupUserInfo">
+									<div className="popupAvatarWrapper">
+										<div className="avatar" style={ { background: 'url('+post.author.avatarUrl+')' } }></div>
+									</div>
+									<a href={post.author.path} className="popupUsername">
+										{post.author.name}
+									</a>
+									<button className="btn-follow btn-follow" data-action="unfollow" data-user={post.author.id}></button>
+								</div>
+								<div className="popupBio">
+									{post.author.profile.bio}
+								</div>
+							</div>
+						</div>
+						<a href={post.author.path} className="username">
+							{post.author.name}
+						</a>
+						{
+							userIsAuthor?
+							null
+							:<button className="btn-follow btn-follow" data-action="unfollow" data-user={post.author.id}></button>
+						}
+					</div>
+
+					{
+						(userIsAuthor)?
+						<div className="flatBtnBox">
+							<div className="item edit" onClick={this.props.parent.onClickEdit}>
+								<i className="icon-edit"></i>
+							</div>
+							<div className="item remove" onClick={this.props.parent.onClickTrash}>
+								<i className="icon-trash"></i>
+							</div>
+							<div className="item link" onClick={this.props.parent.onClickLink}>
+								<i className="icon-link"></i>
+							</div>
+						</div>
+						:<div className="flatBtnBox">
+							<div className={"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":"")}
+								onClick={this.props.parent.toggleVote}>
+								<i className="icon-heart-o"></i><span className="count">{post.voteSum}</span>
+							</div>
+							<div className="item link" onClick={this.props.parent.onClickLink}>
+								<i className="icon-link"></i>
+							</div>
+							<div className="item flag" onClick={this.props.parent.onClickFlag}>
+								<i className="icon-flag"></i>
+							</div>
+						</div>
+					}
 				</div>
 			);
 		}
@@ -772,7 +755,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 				return (
 					<div>
-						<PostHeader model={this.props.model} parent={this.props.parent} new={this.props.new} />
+						<PostHeader model={this.props.model} parent={this.props.parent} />
 
 						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>
@@ -795,7 +778,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var post = this.props.model.attributes;
 				return (
 					<div>
-						<PostHeader model={this.props.model} parent={this.props.parent} new={this.props.new} />
+						<PostHeader model={this.props.model} parent={this.props.parent} />
 
 						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>
@@ -818,7 +801,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var post = this.props.model.attributes;
 				return (
 					<div>
-						<PostHeader model={this.props.model} parent={this.props.parent} new={this.props.new} />
+						<PostHeader model={this.props.model} parent={this.props.parent} />
 
 						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>
