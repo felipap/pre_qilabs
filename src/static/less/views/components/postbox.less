@@ -32,9 +32,9 @@
 				.box-shadow(0,0,10px,.5);
 				.postBody {
 					padding: 10px 30px 20px;
-					& > img {
-						margin: 30px -25px !important;
-					}
+					// & > img {
+					// 	margin: 30px -25px !important;
+					// }
 				}
 				.postHeader {
 					.postTitle {
@@ -200,7 +200,13 @@
 				.postBodyFormatting;
 
 				& > img, & > iframe {
-					margin: 30px (-@postColPadding+10);
+					margin: 30px 0; // (-@postColPadding+10);
+				}
+				.postBody p:first-child img:first-child {
+					max-width: 820px;
+					margin-left: -40px;
+					margin-right: -40px;
+					margin-top: -10px;
 				}
 
 				p:empty { display: none; }

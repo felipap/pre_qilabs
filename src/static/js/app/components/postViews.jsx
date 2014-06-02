@@ -618,8 +618,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							</a>
 							{
 								userIsAuthor?
-								<button className="btn-follow btn-follow" data-action="unfollow" data-user={post.author.id}></button>
-								:<button className="btn-follow btn-follow" data-action="unfollow" data-user={post.author.id}>Você</button>
+								null
+								:<button className="btn-follow btn-follow" data-action="unfollow" data-user={post.author.id}></button>
 							}
 						</div>
 

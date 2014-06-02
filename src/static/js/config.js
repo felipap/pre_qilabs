@@ -47,6 +47,7 @@ requirejs.config({
 		'medium-editor': { deps: ['vendor/addons/medium-editor-insert-images-modified'] },
 		'vendor/addons/medium-editor-insert-plugin.min': { deps: ['jquery', 'vendor/addons/medium-editor.min'] },
 		'vendor/addons/medium-editor-insert-images-modified': { deps: ['vendor/addons/medium-editor-insert-plugin.min'] },
+		'vendor/addons/medium-editor.min': { deps: ['jquery'] },
 		'typeahead-bundle': { deps: ['jquery'] },
 		'underscore': { exports: '_' },
 		'bootstrap' : { deps: ['jquery'] },

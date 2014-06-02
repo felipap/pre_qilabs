@@ -618,8 +618,8 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							),
 							
 								userIsAuthor?
-								React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':post.author.id})
-								:React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':post.author.id}, "Você")
+								null
+								:React.DOM.button( {className:"btn-follow btn-follow", 'data-action':"unfollow", 'data-user':post.author.id})
 							
 						),
 
