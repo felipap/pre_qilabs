@@ -28,7 +28,7 @@
 				margin: auto;
 				float: none;
 				width: (@postColWidth+50);
-				.rounded(3px);
+				// .rounded(3px);
 				.box-shadow(0,0,10px,.5);
 				.postBody {
 					padding: 10px 30px 20px;
@@ -153,6 +153,7 @@
 					.flatBtn (@color) {
 						background: @color;
 						// background: #222;
+						.transition;
 						&:hover {
 							background: lighten(@color, 2%);
 						}
@@ -162,13 +163,22 @@
 					}
 
 					.link 	{ .flatBtn(@COLOR2); }
-					.flag 	{ .flatBtn(mix(yellow, @COLOR3)); }
+					.flag 	{
+						// .flatBtn(transparent);
+						.flatBtn(mix(yellow, @COLOR3));
+						// color: white;
+						// &:hover {
+						// }
+					}
 					.edit 	{ .flatBtn(desaturate(@COLOR1, 25%)); }
 					.remove { .flatBtn(desaturate(@COLOR4, 15%)); }
 
 					.like {
 						.flatBtn(#444);
 						.transition(all, .2s, ease);
+						i {
+							color: @COLOR4;
+						}
 						&.liked {
 							.flatBtn(@COLOR4);				
 							i::before {
@@ -181,9 +191,6 @@
 							i {
 								color: @COLOR4;
 							}
-						}
-						i {
-							margin-left: 5px;
 						}
 					}
 				}

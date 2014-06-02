@@ -574,6 +574,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 	};
 
 	var PostHeader = React.createClass({displayName: 'PostHeader',
+		mixins: [EditablePost],
 		render: function () {
 			var post = this.props.model.attributes;
 			var userIsAuthor = window.user && post.author.id===window.user.id;
@@ -623,24 +624,32 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							
 						),
 
-						React.DOM.div( {className:"flatBtnBox"}, 
-							React.DOM.div( {className:"item edit", onClick:this.onClickEdit}, 
-								React.DOM.i( {className:"icon-edit"})
-							),
-							React.DOM.div( {className:"item like"}, 
-								React.DOM.i( {className:"icon-heart-o"}),React.DOM.span( {className:"count"}, post.voteSum)
-							),
-							React.DOM.div( {className:"item remove"}, 
-								React.DOM.i( {className:"icon-trash"})
-							),
-
-							React.DOM.div( {className:"item link"}, 
-								React.DOM.i( {className:"icon-link"})
-							),
-							React.DOM.div( {className:"item flag"}, 
-								React.DOM.i( {className:"icon-flag"})
+						
+							(userIsAuthor)?
+							React.DOM.div( {className:"flatBtnBox"}, 
+								React.DOM.div( {className:"item edit", onClick:this.props.parent.onClickEdit}, 
+									React.DOM.i( {className:"icon-edit"})
+								),
+								React.DOM.div( {className:"item remove", onClick:this.props.parent.onClickTrash}, 
+									React.DOM.i( {className:"icon-trash"})
+								),
+								React.DOM.div( {className:"item link"}, 
+									React.DOM.i( {className:"icon-link"})
+								)
 							)
-						)
+							:React.DOM.div( {className:"flatBtnBox"}, 
+								React.DOM.div( {className:"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":""),
+									onClick:this.props.parent.toggleVote}, 
+									React.DOM.i( {className:"icon-heart-o"}),React.DOM.span( {className:"count"}, post.voteSum)
+								),
+								React.DOM.div( {className:"item link"}, 
+									React.DOM.i( {className:"icon-link"})
+								),
+								React.DOM.div( {className:"item flag"}, 
+									React.DOM.i( {className:"icon-flag"})
+								)
+							)
+						
 					)
 				);
 			return (
@@ -695,16 +704,10 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 	return {
 		'CardView': React.createClass({
 			mixins: [backboneModel],
-			componentDidMount: function () {
-				// var cardBodySpan = this.refs.cardBodySpan.getDOMNode();
-				// if ($(cardBodySpan).height() < 70) {
-				// 	$(cardBodySpan).css('font-size', '21px');
-				// }
-			},
+			componentDidMount: function () {},
 			render: function () {
 				function gotoPost () {
 					app.navigate('/posts/'+post.id, {trigger:true});
-					// app.navigate('')
 				}
 				var post = this.props.model.attributes;
 				var mediaUserStyle = {
@@ -769,7 +772,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 				return (
 					React.DOM.div(null, 
-						PostHeader( {model:this.props.model, new:this.props.new} ),
+						PostHeader( {model:this.props.model, parent:this.props.parent, new:this.props.new} ),
 
 						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('content').body}}
 						),
@@ -792,7 +795,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var post = this.props.model.attributes;
 				return (
 					React.DOM.div(null, 
-						PostHeader( {model:this.props.model, new:this.props.new} ),
+						PostHeader( {model:this.props.model, parent:this.props.parent, new:this.props.new} ),
 
 						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('content').body}}
 						),
@@ -815,20 +818,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var post = this.props.model.attributes;
 				return (
 					React.DOM.div(null, 
-						React.DOM.div( {className:"postHeader"}, 
-							React.DOM.time( {'data-time-count':1*new Date(post.published)}, 
-								window.calcTimeFrom(post.published)
-							),
-							React.DOM.div( {className:"type"}, 
-								post.translatedType
-							),
-							React.DOM.div( {className:"postTitle"}, 
-								this.props.model.get('content').title
-							),
-							React.DOM.div( {className:"tags"}, 
-								TagList( {tags:post.tags} )
-							)
-						),
+						PostHeader( {model:this.props.model, parent:this.props.parent, new:this.props.new} ),
 
 						React.DOM.div( {className:"postBody", dangerouslySetInnerHTML:{__html: this.props.model.get('content').body}}
 						),

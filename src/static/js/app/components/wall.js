@@ -77,6 +77,7 @@ define([
 		},
 
 		toggleVote: function () {
+			console.log('oi')
 			this.props.model.handleToggleVote();
 		},
 
@@ -111,7 +112,7 @@ define([
 					React.DOM.div( {className:"postBox centered", 'data-post-type':this.props.model.get('type'), 'data-post-id':this.props.model.get('id')}, 
 						React.DOM.i( {className:"close-btn", 'data-action':"close-page", onClick:this.close}),
 						React.DOM.div( {className:"postCol"}, 
-							postView( {model:this.props.model, new:true})
+							postView( {model:this.props.model, parent:this, new:true})
 						)
 					)
 				)

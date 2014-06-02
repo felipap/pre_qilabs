@@ -574,6 +574,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 	};
 
 	var PostHeader = React.createClass({
+		mixins: [EditablePost],
 		render: function () {
 			var post = this.props.model.attributes;
 			var userIsAuthor = window.user && post.author.id===window.user.id;
@@ -623,24 +624,32 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							}
 						</div>
 
-						<div className="flatBtnBox">
-							<div className="item edit" onClick={this.onClickEdit}>
-								<i className="icon-edit"></i>
+						{
+							(userIsAuthor)?
+							<div className="flatBtnBox">
+								<div className="item edit" onClick={this.props.parent.onClickEdit}>
+									<i className="icon-edit"></i>
+								</div>
+								<div className="item remove" onClick={this.props.parent.onClickTrash}>
+									<i className="icon-trash"></i>
+								</div>
+								<div className="item link">
+									<i className="icon-link"></i>
+								</div>
 							</div>
-							<div className="item like">
-								<i className="icon-heart-o"></i><span className="count">{post.voteSum}</span>
+							:<div className="flatBtnBox">
+								<div className={"item like "+((window.user && post.votes.indexOf(window.user.id) != -1)?"liked":"")}
+									onClick={this.props.parent.toggleVote}>
+									<i className="icon-heart-o"></i><span className="count">{post.voteSum}</span>
+								</div>
+								<div className="item link">
+									<i className="icon-link"></i>
+								</div>
+								<div className="item flag">
+									<i className="icon-flag"></i>
+								</div>
 							</div>
-							<div className="item remove">
-								<i className="icon-trash"></i>
-							</div>
-
-							<div className="item link">
-								<i className="icon-link"></i>
-							</div>
-							<div className="item flag">
-								<i className="icon-flag"></i>
-							</div>
-						</div>
+						}
 					</div>
 				);
 			return (
@@ -695,16 +704,10 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 	return {
 		'CardView': React.createClass({
 			mixins: [backboneModel],
-			componentDidMount: function () {
-				// var cardBodySpan = this.refs.cardBodySpan.getDOMNode();
-				// if ($(cardBodySpan).height() < 70) {
-				// 	$(cardBodySpan).css('font-size', '21px');
-				// }
-			},
+			componentDidMount: function () {},
 			render: function () {
 				function gotoPost () {
 					app.navigate('/posts/'+post.id, {trigger:true});
-					// app.navigate('')
 				}
 				var post = this.props.model.attributes;
 				var mediaUserStyle = {
@@ -769,7 +772,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 
 				return (
 					<div>
-						<PostHeader model={this.props.model} new={this.props.new} />
+						<PostHeader model={this.props.model} parent={this.props.parent} new={this.props.new} />
 
 						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>
@@ -792,7 +795,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var post = this.props.model.attributes;
 				return (
 					<div>
-						<PostHeader model={this.props.model} new={this.props.new} />
+						<PostHeader model={this.props.model} parent={this.props.parent} new={this.props.new} />
 
 						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>
@@ -815,20 +818,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var post = this.props.model.attributes;
 				return (
 					<div>
-						<div className="postHeader">
-							<time data-time-count={1*new Date(post.published)}>
-								{window.calcTimeFrom(post.published)}
-							</time>
-							<div className="type">
-								{post.translatedType}
-							</div>
-							<div className="postTitle">
-								{this.props.model.get('content').title}
-							</div>
-							<div className="tags">
-								<TagList tags={post.tags} />
-							</div>
-						</div>
+						<PostHeader model={this.props.model} parent={this.props.parent} new={this.props.new} />
 
 						<div className="postBody" dangerouslySetInnerHTML={{__html: this.props.model.get('content').body}}>
 						</div>
