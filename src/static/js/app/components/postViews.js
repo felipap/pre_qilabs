@@ -633,7 +633,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								React.DOM.div( {className:"item remove", onClick:this.props.parent.onClickTrash}, 
 									React.DOM.i( {className:"icon-trash"})
 								),
-								React.DOM.div( {className:"item link"}, 
+								React.DOM.div( {className:"item link", onClick:this.props.parent.onClickLink}, 
 									React.DOM.i( {className:"icon-link"})
 								)
 							)
@@ -642,10 +642,10 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 									onClick:this.props.parent.toggleVote}, 
 									React.DOM.i( {className:"icon-heart-o"}),React.DOM.span( {className:"count"}, post.voteSum)
 								),
-								React.DOM.div( {className:"item link"}, 
+								React.DOM.div( {className:"item link", onClick:this.props.parent.onClickLink}, 
 									React.DOM.i( {className:"icon-link"})
 								),
-								React.DOM.div( {className:"item flag"}, 
+								React.DOM.div( {className:"item flag", onClick:this.props.parent.onClickFlag}, 
 									React.DOM.i( {className:"icon-flag"})
 								)
 							)

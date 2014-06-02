@@ -633,7 +633,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 								<div className="item remove" onClick={this.props.parent.onClickTrash}>
 									<i className="icon-trash"></i>
 								</div>
-								<div className="item link">
+								<div className="item link" onClick={this.props.parent.onClickLink}>
 									<i className="icon-link"></i>
 								</div>
 							</div>
@@ -642,10 +642,10 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 									onClick={this.props.parent.toggleVote}>
 									<i className="icon-heart-o"></i><span className="count">{post.voteSum}</span>
 								</div>
-								<div className="item link">
+								<div className="item link" onClick={this.props.parent.onClickLink}>
 									<i className="icon-link"></i>
 								</div>
-								<div className="item flag">
+								<div className="item flag" onClick={this.props.parent.onClickFlag}>
 									<i className="icon-flag"></i>
 								</div>
 							</div>
