@@ -105,6 +105,7 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 				var self = this;
 				// This only works because showInput starts out as false.
 				if (this.refs && this.refs.input) {
+					this.refs.input.getDOMNode().focus();
 					$(this.refs.input.getDOMNode()).autosize();
 					if (this.props.small) {
 						$(this.refs.input.getDOMNode()).keyup(function (e) {
@@ -162,11 +163,6 @@ define(['jquery', 'backbone', 'underscore', 'components.postModels', 'react', 'm
 							this.state.showInput?(
 								React.DOM.div( {className:"commentInputSection "+(this.props.small?"small":'')}, 
 									React.DOM.form( {className:"formPostComment", onSubmit:this.handleSubmit}, 
-										
-											this.props.small?
-											null
-											:React.DOM.h4(null, "Comente essa publicação"),
-										
 										React.DOM.textarea( {required:"required", ref:"input", type:"text", placeholder:"Seu comentário aqui..."}),
 										React.DOM.button( {'data-action':"send-comment", onClick:this.handleSubmit}, "Enviar")
 									)
