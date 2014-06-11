@@ -204,12 +204,8 @@
 	}
 
 	.bg-cover {
-		background: #fff fixed no-repeat center top;
+		background: #fff fixed no-repeat center center;
 	}
-
-	// .bg-cover {
-	// 	.blur(3);
-	// }
 
 	.blackout {
 		.blackout(.7);
@@ -217,12 +213,12 @@
 
 	.pWrapper {
 		width: 1000px;
-		margin: 20px auto;
+		margin: 20px auto 11px;
 
 		.header {
 			color: white;
-			padding: 50px;
-			min-height: 200px;
+			margin: 3% 0 50px;
+			// min-height: 200px;
 			text-align: center;
 			.title {
 				font: bold 100px museo;
@@ -247,6 +243,7 @@
 				// width: 48%;
 				display: block;
 				color: white;
+				.box-shadow(0,0,5px, .5);
 
 				label {
 					color: white;
@@ -282,6 +279,9 @@
 			}
 			.guideVestibular {
 				background: @COLOR2;
+			}
+			.guideVestibularMilitar {
+				background: mix(@COLOR2, #000);
 			}
 			.guideQuimica {
 				background: mix(@COLOR3, @COLOR4, 25%);
