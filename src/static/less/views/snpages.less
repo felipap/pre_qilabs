@@ -23,7 +23,7 @@
 @import "pages/bpost.less";
 
 html {
-	overflow: hidden;
+	overflow-x: hidden;
 }
 
 .invisible {
@@ -49,7 +49,7 @@ body.sidebarOpen {
 	}
 }
 
-#rightContainer {
+.cContainer.right {
 	height: 100%;
 	background: #EEE;
 	.translate(100%);
@@ -97,16 +97,20 @@ body.sidebarOpen {
 .cContainer {
 	background: #EAEAEA; // url(/static/images/cubes.png);
 	background-position-y: -1px;
-	position: absolute;
 	overflow-x: hidden;
+	position: relative;
 	overflow-y: auto;
-	top: @navbar-height;
-	bottom: 0;
 	width: 100%;
 	min-width: @minPageWidth;
 	border-top: 1px solid #DDD;
 	.transition-transform(.3s, ease-out);
 	z-index: 15;
+
+	&.scrollable {
+		position: absolute;
+		top: @navbar-height;
+		bottom: 0;
+	}
 
 	& > .close-btn {
 		position: absolute;

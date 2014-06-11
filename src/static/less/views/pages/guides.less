@@ -203,8 +203,16 @@
 		background: url(/static/images/noisy_grid.png);
 	}
 
+	.bg-cover {
+		background: #fff fixed no-repeat center top;
+	}
+
+	// .bg-cover {
+	// 	.blur(3);
+	// }
+
 	.blackout {
-		.blackout(.6);
+		.blackout(.7);
 	}
 
 	.pWrapper {
@@ -217,19 +225,16 @@
 			min-height: 200px;
 			text-align: center;
 			.title {
-				font: bold 89px museo;
+				font: bold 100px museo;
 				text-transform: uppercase;
 				margin-bottom: 10px;
 				.icon-bulb { margin-top: -1%; }
 			}
 			.sub {
-				font: 16px museo-sans;
-				margin-bottom: 30px;
+				font: 17px museo-sans;
+				// margin-bottom: 30px;
 			}
-			input {
-			display: none;
-				width: 400px;
-			}
+			input { display: none ;}
 		}
 
 		table {
@@ -254,6 +259,10 @@
 				}
 
 				.guideIcon {
+					// display: ;
+					float: left;
+					font-size: 40px;
+					margin: -5px 10px 0 0;
 					i {
 						color: white;
 					}
@@ -263,10 +272,19 @@
 				background: @COLOR4;
 			}
 			.guideApplication {
-				background: mix(@COLOR3, @COLOR4);
+				background: mix(@COLOR3, @COLOR4, 75%);
+			}
+			.guideMatematica {
+				background: mix(@COLOR1, @COLOR2);
+			}
+			.guideFisica {
+				background: mix(@COLOR1, #777);
 			}
 			.guideVestibular {
 				background: @COLOR2;
+			}
+			.guideQuimica {
+				background: mix(@COLOR3, @COLOR4, 25%);
 			}
 		}
 	}

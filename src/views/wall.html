@@ -9,7 +9,7 @@
 		<div id="resultsContainer">
 		{% spaceless %}
 			<div class="timeline">
-			
+			{#
 				<div class="cardView">
 					<div class="cardHeader">
 						<span class="cardType">AVISO</span>
@@ -637,10 +637,24 @@
 						"1394698469534" data-time-long="true">há 15 dias</time>
 					</div>
 				</div>
-			
+			#}
 			</div>
 		{% endspaceless %}
 		</div>
 	</div>
+
+	<script>
+		function addClass (el, className) {
+			if (el.classList) { el.classList.add(className); }
+			else if (el.className.split(' ').indexOf(className)==-1) {
+				el.className += ' ' + className;
+			}
+		}
+		(window.resizeCardsPanel = function () {
+			document.getElementById("globalContainer").style.height = (document.body.offsetHeight - document.getElementById("globalContainer").getBoundingClientRect().top)+"px";
+			addClass(document.getElementById("globalContainer"), 'scrollable');
+		})();
+		window.addEventListener('resize', resizeCardsPanel);
+	</script>
 
 {% endblock %}
