@@ -237,7 +237,7 @@ define([
 		this.c = component;
 		if (!noNavbar)
 			$(e).addClass('pContainer');
-		$(e).addClass(opts.class || '');
+		$(e).addClass((opts && opts.class) || '');
 		$(e).addClass('invisible').hide().appendTo('body');
 		if (dataPage)
 			e.dataset.page = dataPage;
