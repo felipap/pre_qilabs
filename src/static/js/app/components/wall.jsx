@@ -231,6 +231,8 @@ define([
 
 	var Page = function (component, dataPage, noNavbar, opts) {
 
+		var opts = _.extend({}, opts);
+
 		component.props.page = this;
 		var e = document.createElement('div');
 		this.e = e;
