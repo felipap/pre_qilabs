@@ -368,7 +368,7 @@ define([
 		},
 
 		renderWall: function (url) {
-			return;
+			// return;
 			this.postList = new postModels.postList([], {url:url});
 			if (!this.postWall) {
 				this.postWall = React.renderComponent(CardsPanelView(null ),
