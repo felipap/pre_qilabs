@@ -1,14 +1,5 @@
-<!DOCTYPE html>{#
-<!--
-     _/_/_/_/_/     _/_/       _/        _/_/_/_/  _/_/_/    _/_/_/
-    _/      _/     _/_/       _/        _/    _/  _/    _/ _/
-   _/      _/     _/_/       _/        _/_/_/_/  _/_/_/    _/_/_/
-  _/    _/_/     _/_/       _/        _/    _/  _/    _/       _/
- _/_/_/_/_/_/   _/_/  _/   _/_/_/_/  _/    _/  _/_/_/-   _/_/_/
-
-QI Labs ® 2014
--->
-#}<html class="no-js">
+<!DOCTYPE html>
+<html class="no-js">
 <head>
 <title>{% block title %}QI LABS.org{% endblock %}</title>
 <meta charset="utf-8">
@@ -18,11 +9,12 @@ QI Labs ® 2014
 <meta name="keywords" content="QI Labs, Oportunidades, Estudantes,">
 <meta name="viewport" content="width=device-width">
 <meta name="author" content="width=device-width">
-<!-- <link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Lato|Open+Sans:300,600,700,800' /> -->
+<link rel="stylesheet" href='http://fonts.googleapis.com/css?family=Lato|Open+Sans:300,600,700,800' />
 {% block head %}{% endblock %}
 <script>_flash_msgs={{ JSON.stringify(messages) }}</script>
 </head>
-<!--[if lt IE 8]> <body data-page="{{ dataPage }}"> class="lt-ie9"> <![endif]-->
+<!--[if lt IE 8]>
+<body data-page="{{ dataPage }}"> class="lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
 <body data-page="{{ dataPage }}"> <!--<![endif]-->
 	{% block body %}
@@ -36,7 +28,7 @@ QI Labs ® 2014
 			{% set requirejsView = 'common' %}
 		{% endif %}
 		{% set jsViewFile = getMediaUrl('buildjs/app/views/'+requirejsView) %}
-		{% if true || app.env === 'development' %}
+		{% if app.env === 'development' %}
 			<script src="/static/js/vendor/require.js"></script>
 			<script>
 				require(["{{ getMediaUrl('js/config.js') }}"], function () {

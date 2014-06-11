@@ -106,7 +106,7 @@ getChildrenRoutes = function(children) {
             });
           }
           console.log('tree', JSON.stringify(pathTree, null, 4));
-          return res.render('pages/guide_pages/page', {
+          return res.render('pages/guides/page', {
             guideData: guideData,
             guide: guideData[gpath],
             tree: pathTree
@@ -122,9 +122,9 @@ getChildrenRoutes = function(children) {
 };
 
 pages = {
-  name: 'guide_home',
+  name: 'guides_page',
   get: function(req, res) {
-    return res.endJson(req.app.routes);
+    return res.render('pages/guides/home', {});
   },
   children: getChildrenRoutes(guideMap)
 };

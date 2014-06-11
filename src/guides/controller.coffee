@@ -97,7 +97,7 @@ getChildrenRoutes = (children) ->
 
 						console.log 'tree', JSON.stringify(pathTree, null, 4)
 
-						res.render 'pages/guide_pages/page', {
+						res.render 'pages/guides/page', {
 							guideData: guideData,
 							guide: guideData[gpath],
 							tree: pathTree
@@ -109,10 +109,10 @@ getChildrenRoutes = (children) ->
 	return routes
 
 pages = {
-	name: 'guide_home'
+	name: 'guides_page'
 	get: (req, res) ->
-		res.endJson req.app.routes
-		# res.render 'guide', {}
+		# res.endJson req.app.routes
+		res.render 'pages/guides/home', {}
 	children: getChildrenRoutes(guideMap)
 }
 
