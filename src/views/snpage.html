@@ -15,6 +15,8 @@
 
 {% block body %}
 
+	{% block preBody %}{% endblock %}
+	
 	{% include 'components/navbar.html' with navbarOpts %}
 	{% include 'components/sidebar.html' %}
 

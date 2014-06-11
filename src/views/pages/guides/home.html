@@ -31,9 +31,14 @@ set navbarOpts = {
 }
 %}
 
-{% block globalContainer %}
+{% block preBody %}
 <div class="bg-cover" style="background-image: url({{ getMediaUrl('images/u/asm.jpg') }});"></div>
 <div class="blackout"></div>
+{% parent %}
+
+{% endblock %}
+
+{% block globalContainer %}
 
 <div class="pWrapper">
 	<div class="header">
