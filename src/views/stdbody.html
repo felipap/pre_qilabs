@@ -28,7 +28,7 @@
 			{% set requirejsView = 'common' %}
 		{% endif %}
 		{% set jsViewFile = getMediaUrl('buildjs/app/views/'+requirejsView) %}
-		{% if app.env === 'development' %}
+		{% if false && app.env === 'development' %}
 			<script src="/static/js/vendor/require.js"></script>
 			<script>
 				require(["{{ getMediaUrl('js/config.js') }}"], function () {
