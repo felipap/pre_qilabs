@@ -84,11 +84,11 @@ module.exports = {
       return res.redirect('/auth/facebook');
     }
   },
-  '/config': {
-    name: 'config',
+  '/settings': {
+    name: 'settings',
     permissions: [required.login],
     get: function(req, res) {
-      return res.render('pages/config', {});
+      return res.render('pages/settings', {});
     }
   },
   '/tags/:tagId': {

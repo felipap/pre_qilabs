@@ -53,11 +53,11 @@ module.exports = {
 		get: (req, res) ->
 			res.redirect('/auth/facebook')
 
-	'/config':
-		name: 'config'
+	'/settings':
+		name: 'settings'
 		permissions: [required.login]
 		get: (req, res) ->
-			res.render 'pages/config', {}
+			res.render 'pages/settings', {}
 
 	'/tags/:tagId':
 		permissions: [required.login]
