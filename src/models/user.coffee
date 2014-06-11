@@ -250,7 +250,7 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 
 	Post
 		.find { parentPost: null, published:{ $lt:opts.maxDate } }
-		.populate 'author actor target object', select: User.PopulateFields
+		.populate {path: 'author', model:'Resource', select: User.PopulateFields}
 		.exec (err, docs) =>
 			return callback(err) if err
 			if not docs.length or not docs[docs.length]

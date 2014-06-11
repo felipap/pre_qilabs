@@ -394,7 +394,9 @@ UserSchema.methods.getTimeline = function(opts, callback) {
     published: {
       $lt: opts.maxDate
     }
-  }).populate('author actor target object', {
+  }).populate({
+    path: 'author',
+    model: 'Resource',
     select: User.PopulateFields
   }).exec((function(_this) {
     return function(err, docs) {
