@@ -247,7 +247,26 @@ fetchTimelinePostAndActivities = (opts, postConds, actvConds, cb) ->
 UserSchema.methods.getTimeline = (opts, callback) ->
 	assertArgs({$contains:'maxDate'}, '$isCb')
 	self = @
-	
+
+	Post
+		.find { parentPost: null, published:{ $lt:opts.maxDate } }
+		.populate 'author actor target object', select: User.PopulateFields
+		.exec (err, docs) =>
+			return callback(err) if err
+			if not docs.length or not docs[docs.length]
+				minDate = 0
+			else
+				minDate = docs[docs.length-1].published
+
+			async.map docs, (post, done) ->
+				if post instanceof Post
+					Post.count {type:'Comment', parentPost:post}, (err, ccount) ->
+						Post.count {type:'Answer', parentPost:post}, (err, acount) ->
+							done(err, _.extend(post.toJSON(), {childrenCount:{Answer:acount,Comment:ccount}}))
+				else done(null, post.toJSON)
+			, (err, results) -> callback(err, results, minDate)
+
+	return
 	# Get inboxed posts older than the opts.maxDate determined by the user.
 	Inbox
 		.find { recipient:self.id, dateSent:{ $lt:opts.maxDate }}
