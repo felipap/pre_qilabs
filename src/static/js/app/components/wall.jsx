@@ -418,6 +418,8 @@ define([
 		initialize: function () {
 			new WorkspaceRouter;
 			Backbone.history.start({ pushState:false, hashChange:true });
+			// Backbone.history.start({ pushState:true });
+
 		}
 	};
 });

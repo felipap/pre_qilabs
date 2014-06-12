@@ -5,7 +5,6 @@ define([
 	], function ($) {
 
 	$("body").tooltip({selector:'[data-toggle=tooltip]'});
-	$("[data-toggle=dialog]").xdialog();
 
 	(function setCSRFToken () {
 		$.ajaxPrefilter(function(options, _, xhr) {

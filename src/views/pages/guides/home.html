@@ -46,17 +46,15 @@ set navbarOpts = {
 			QI <i class="icon-bulb"></i> Guias
 		</div>
 		<div class="sub">
-			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-			tempor incididunt.
+			A Enciclopédia dos gênios. LOL
 		</div>
 		<input class="" type="text" />
 	</div>
 
-
 	<table>
 		<tr colspan="3">
 			<td>
-				<div class="guideBox superGuideBox guideApplication">
+				<a href="/guias/application" class="guideBox superGuideBox guideApplication">
 					<div class="guideIcon">
 						<i class="icon-university"></i>
 					</div>
@@ -64,8 +62,8 @@ set navbarOpts = {
 					<summary>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 					quis nostrud.</summary>
-				</div>
-				<div class="guideBox superGuideBox guideVestibular">
+				</a>
+				<a href="/guias/vestibular" class="guideBox superGuideBox guideVestibular">
 					<div class="guideIcon">
 						<i class="icon-cap"></i>
 					</div>
@@ -73,8 +71,8 @@ set navbarOpts = {
 					<summary>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 					quis nostrud.</summary>
-				</div>
-				<div class="guideBox superGuideBox guideVestibularMilitar">
+				</a>
+				<a href="/guias/vestibular-militar" class="guideBox superGuideBox guideVestibularMilitar">
 					<div class="guideIcon">
 						<i class="icon-cap"></i>
 					</div>
@@ -82,10 +80,10 @@ set navbarOpts = {
 					<summary>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 					quis nostrud.</summary>
-				</div>
+				</a>
 			</td>
 			<td>
-				<div class="guideBox superGuideBox guideMatematica">
+				<a href="/guias/matematica" class="guideBox superGuideBox guideMatematica">
 					<div class="guideIcon">
 						<i class="icon-sum"></i>
 					</div>
@@ -93,8 +91,8 @@ set navbarOpts = {
 					<summary>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 					quis nostrud.</summary>
-				</div>
-				<div class="guideBox superGuideBox guideFisica">
+				</a>
+				<a href="/guias/fisica" class="guideBox superGuideBox guideFisica">
 					<div class="guideIcon">
 						<i class="icon-magnet"></i>
 					</div>
@@ -102,8 +100,8 @@ set navbarOpts = {
 					<summary>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 					quis nostrud.</summary>
-				</div>
-				<div class="guideBox superGuideBox guideQuimica">
+				</a>
+				<a href="/guias/quimica" class="guideBox superGuideBox guideQuimica">
 					<div class="guideIcon">
 						<i class="icon-flask"></i>
 					</div>
@@ -111,19 +109,28 @@ set navbarOpts = {
 					<summary>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 					quis nostrud.</summary>
-				</div>
+				</a>
 			</td>
 			
 		</tr>
 	</table>
-
-
 </div>
+
 {#
-<div id="cards" class="wall grid">
-	<div id="resultsContainer">
+{% if user %}
+<div class="latestCards">
+	<label>Últimas Atualizações</label>
+
+	<div id="cards" class="wall grid line">
+		<div id="resultsContainer">
+		</div>
 	</div>
 </div>
+{% else %}
+<footer>
+<a href="/" class="brand">QI <i class="icon-bulb"></i> LABS · 2014</a>
+</footer>
+{% endif %}
 #}
 
 {% endblock %}

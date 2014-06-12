@@ -205,10 +205,12 @@
 
 	.bg-cover {
 		background: #fff fixed no-repeat center center;
+		position: fixed;
 	}
 
 	.blackout {
 		.blackout(.7);
+		position: fixed;
 	}
 
 	.pWrapper {
@@ -289,9 +291,34 @@
 		}
 	}
 
-	.wall {
-		min-height: 100px;
-		border-top: 1px solid #DDD;
-		background: #EEE;
+	.latestCards {
+		label {
+			font: bolder 25px "Open Sans";
+			display: block;
+			padding: 20px;
+			text-align: center;
+			color: white;
+		}
+
+		.wall {
+			background: #AAA;
+			min-height: 100px;
+			// border-top: 1px solid #DDD;
+			max-height: 240px;
+			overflow: hidden;
+			// background: #EEE;
+		}
+	}
+
+	footer {
+		text-align: center;
+		color: white;
+		padding: 10px 0 20px;
+
+		.brand {
+			font: 17px museo;
+			color: white;
+			text-transform: uppercase;
+		}
 	}
 }

@@ -42,9 +42,9 @@ function setUpPassport() {
 						lastAccess: new Date(),
 					});
 					user.save(function (err, user) {
-							if (err) done(err);
-							done(null, user);
-						});
+						if (err) done(err);
+						done(null, user);
+					});
 				}
 				// request({url:'https://graph.facebook.com/'+profile.id+'?fields=likes.limit(1000)&access_token='+accessToken, json:true}, function (error, response, body) {
 				// 		if (!error && response.statusCode == 200) {
