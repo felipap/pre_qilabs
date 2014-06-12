@@ -1,9 +1,13 @@
 {% extends '../../snpage.html' %}
 {% set dataPage="guide_home" %}
-{% set requirejsView="profile" %}
+{% set requirejsView=false %}
 
 {% import '../../macros/tags.html' as tagMacros %}
 {% import '../../macros/metaTags.html' as metaTagMacros %}
+
+{% block pageTitle %}
+Guias · QI Labs.org
+{% endblock %}
 
 {% block head %}
 	<script>conf={postsRoot:'/api/users/{{ user.id }}/posts'};
@@ -46,7 +50,7 @@ set navbarOpts = {
 			QI <i class="icon-bulb"></i> Guias
 		</div>
 		<div class="sub">
-			A Enciclopédia dos gênios. LOL
+			A Enciclopédia para os futuros gênios. LOL
 		</div>
 		<input class="" type="text" />
 	</div>

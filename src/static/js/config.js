@@ -12,8 +12,6 @@ requirejs.config({
 		'views.profile':	'app/views/profile',
 		'views.config':		'app/views/config',
 		'views.front':		'app/views/front',
-		// 'app.guide':		'app/app/guide',
-		// 'app.mural':		'app/app/mural',
 		// Components
 		'components.postForms': 'app/components/postForms',
 		'components.postViews':	'app/components/postViews',
@@ -32,8 +30,6 @@ requirejs.config({
 		'react':				'vendor/react-addons-0.10.0',
 		'react-addons':			'vendor/react-addons-0.10.0',
 		'medium-editor': 		'vendor/medium-editor',
-		// 'react.backbone':	'vendor/react.backbone',
-		// 'showdown':			'vendor/showdown.min',
 		'bootstrap.tooltip':	'vendor/bootstrap/tooltip',
 		'bootstrap.dropdown':	'vendor/bootstrap/dropdown',
 		'bootstrap.popover':	'vendor/bootstrap/popover',
