@@ -233,5 +233,24 @@
 			display: none;
 		}
 	}
+
+	.cardView > .cardFoot {
+		border-top: 2px solid #EEE;
+		.transition;
+	}
+	.cardView:hover .cardFoot {
+		border-top-width: 3px;
+	}
 }
 
+
+.cardView[data-tag=olimpiadas] .cardFoot { border-top-color: @COLOR_OLIMPIADAS; }
+.cardView[data-tag=application] .cardFoot { border-top-color: @COLOR_APPLICATION; }
+.cardView[data-tag=olimpiadas-matematica] .cardFoot { border-top-color: @COLOR_OLIMPIADAS_MATEMATICA; }
+.cardView[data-tag=olimpiadas-informatica] .cardFoot { border-top-color: @COLOR_OLIMPIADAS_INFORMATICA; }
+.cardView[data-tag=olimpiadas-fisica] .cardFoot { border-top-color: @COLOR_OLIMPIADAS_FISICA; }
+.cardView[data-tag=vestibular] .cardFoot { border-top-color: @COLOR_VESTIBULAR; }
+.cardView[data-tag=voluntariado] .cardFoot { border-top-color: @COLOR_VOLUNTARIADO; }
+.cardView[data-tag=vestibular-militar] .cardFoot { border-top-color: @COLOR_VESTIBULAR_MILITAR; }
+.cardView[data-tag=olimpiadas-quimica] .cardFoot { border-top-color: @COLOR_OLIMPIADAS_QUIMICA; }
+.cardView[data-tag=aprendendo-linguas] .cardFoot { border-top-color: lighten(@COLOR2, 10%); }
