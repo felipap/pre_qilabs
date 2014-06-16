@@ -359,7 +359,10 @@ define([
 			'':
 				function () {
 					this.closePages();
-					this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
+					// return;
+					setTimeout(function () {
+						this.renderWall(window.conf.postsRoot || '/api/me/timeline/posts');
+					}.bind(this), 2000);
 				},
 		},
 
@@ -370,7 +373,6 @@ define([
 		},
 
 		renderWall: function (url) {
-			return;
 			this.postList = new postModels.postList([], {url:url});
 			if (!this.postWall) {
 				this.postWall = React.renderComponent(CardsPanelView(null ),
