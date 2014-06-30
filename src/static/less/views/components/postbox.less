@@ -32,7 +32,6 @@
 			margin: auto;
 
 			width: (@postColWidth+50);
-			// .rounded(3px);
 			.box-shadow(0,0,10px,.5);
 
 			.postHeader {
@@ -173,14 +172,15 @@
 			.postBody {
 				clear: both;
 				overflow: hidden;
-				font-size: 17px;
 				color: #333;
 				padding: @postColPadding;
 
+				font-size: 16px;
 				.postBodyFormatting;
 
 				& > img, & > iframe {
 					margin: 30px 0;
+					max-width: 100%;
 				}
 				p:first-child img:first-child {
 					max-width: 820px;
