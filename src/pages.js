@@ -95,7 +95,7 @@ module.exports = {
     permissions: [required.login],
     get: function(req, res) {
       return res.render('pages/tag', {
-        profile: profile,
+        profile: req.user,
         follows: bool
       });
     }

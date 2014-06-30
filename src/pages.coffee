@@ -65,7 +65,7 @@ module.exports = {
 			# req.user.genProfile (err, profile) ->
 			# 	req.user.doesFollowUser req.user, (err, bool) ->
 			res.render 'pages/tag',
-				profile: profile
+				profile: req.user
 				follows: bool
 
 	'/u/:username':
