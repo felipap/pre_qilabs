@@ -1,7 +1,7 @@
 
 {% macro _makeMeta(property, value, ifno) %}{% if value %}<meta property="{{ property }}" content="{{ value }}" />{% else %}{% if ifno %}<meta property="{{ property }}" content="{{ ifno }}" />{% endif %}{% endif %}{% endmacro %}
 
-{% macro google(url) %}
+{% macro meta(obj) %}
 	{{ _makeMeta("description", obj.description, "") }}
 	{{ _makeMeta("keywords", obj.keywords, "") }}
 	{{ _makeMeta("author", obj.author, "") }}

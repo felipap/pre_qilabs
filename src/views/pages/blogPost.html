@@ -15,6 +15,9 @@
 	{{ tagMacros.stylesheet(getMediaUrl('css/snpages.min.css')) }}
 
 	{% block meta %}
+	{{ metaTagMacros.meta({
+		author: post.author.name,
+	}) }}
 	{{ metaTagMacros.facebook({
 		title: post.content.title+" · QI Labs.org",
 		image: post.author.avatarUrl,
