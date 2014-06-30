@@ -1,13 +1,8 @@
 
 .postBodyFormatting () {
-	h1 {
-		font-size: 2em;
-	}
-
-	h2 {
-		font-size: 1.2em;
-	}
-
+	
+	h1 { font-size: 2em; }
+	h2 { font-size: 1.2em; }
 	h1, h2 {
 		margin-top: 25px;
 		margin-bottom: 10px;
@@ -16,13 +11,21 @@
 	p {
 		margin: 0 0 20px;
 		line-height: 1.5;
-	}
-	
-	p > br:first-child:last-child {
-		display: none;
+
+		& > br:first-child:last-child {
+			display: none;
+		}
+
+		& > img:last-child {
+			margin: 30px 0 10px;
+		}
+		& > img:first-child {
+			margin-top: 0;
+		}
 	}
 
-	& > img, & > iframe {
+	& > img,
+	& > iframe {
 		max-width: @postColWidth;
 		margin: 30px 0;
 		border: none;
@@ -37,10 +40,6 @@
 		}
 	}
 
-	p > img:last-child {
-		margin: 30px 0 10px;
-	}
-	
 	blockquote {
 		padding: 10px 20px;
 		margin: 0 0 20px;
