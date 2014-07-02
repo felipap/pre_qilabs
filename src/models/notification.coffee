@@ -120,17 +120,18 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 				# assert
 				cb ?= ->
 				# Find and delete older notifications from the same follower.
-				Notification.findOne {
-					type:Types.NewFollower,
-					agent:followerObj,
-					recipient:followeeObj
-					}, (err, doc) ->
-						if doc #
-							doc.remove(()->)
-						notifyUser followeeObj, followerObj, {
-							type: Types.NewFollower
-							# resources: []
-						}, cb
+				cb()
+				# Notification.findOne {
+				# 	type:Types.NewFollower,
+				# 	agent:followerObj,
+				# 	recipient:followeeObj
+				# 	}, (err, doc) ->
+				# 		if doc #
+				# 			doc.remove(()->)
+				# 		notifyUser followeeObj, followerObj, {
+				# 			type: Types.NewFollower
+				# 			# resources: []
+				# 		}, cb
 
 
 NotificationSchema.statics.Types = Types
