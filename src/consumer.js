@@ -30,7 +30,7 @@ module.exports = function () {
 					return done(err || {message: 'post is '+post});
 				}
 
-				console.log('Resources found:', err, docs)
+				console.log('Resources found:', err, docs && docs.length)
 
 				async.mapLimit(docs, 5, function (resource, done) {
 					inbox = new Inbox({
