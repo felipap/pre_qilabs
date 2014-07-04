@@ -114,7 +114,8 @@ $('form').on('submit', function (e) {
 				$("#abientot").html('<h1>Quase pronto...</h1> Só precisamos confirmar o seu endereço de email. Para garantir o seu convite, clique no link do email que acabamos de enviar para <strong>'+email+'</strong>!').find('a').remove().slideDown();
 			});
 		} else {
-			$("#bubbleMaster").html('<h2>Ops!</h2>'+response.msg.replace(/<a\b[^>]*>/i,"").replace(/<\/a>/i, "")).fadeIn();
+			// A hack? Worse.
+			$("#bubbleMaster").html('<h2>Ops!</h2>'+response.msg.replace(/\s?<a.*<\/a>/g,'')).fadeIn();
 		}
 	}).fail(function () {
 		$("#bubbleMaster").html("Ops! Erro no servidor.").fadeIn();	
