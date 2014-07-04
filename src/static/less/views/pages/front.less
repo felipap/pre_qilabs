@@ -143,8 +143,8 @@
 					display: block;
 					margin-bottom: 20px;
 					width: 100%;
-					.rounded(0)
-;					outline: none;
+					.rounded(0);
+					outline: none;
 					font: 18px museo-sans;
 					border: none;
 					padding: 7px 0;
@@ -159,7 +159,7 @@
 					}
 				}
 
-				button {
+				button, input[type=submit] {
 					width: 100%;
 					text-transform: uppercase;
 					.high-xbtn(white, @COLOR3);
@@ -167,6 +167,7 @@
 			}
 			#abientot {
 				display: none;
+				font-size: 15px;
 				h1 {
 					font: bold 28px museo-sans;
 				}
@@ -177,6 +178,7 @@
 				.me {
 					text-align: right;
 				}
+				padding-bottom: 10px; /* compensate */
 			}
 		}
 

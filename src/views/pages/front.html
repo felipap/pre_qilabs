@@ -12,7 +12,7 @@ QI Labs.org
 	{% block meta %}
 	{{ metaTagMacros.facebook({
 		title: "QILabs",
-		description: 'Junte-se à lista de espera!'
+		description: 'O lugar na internet para quem carrega lâmpadas na cabeça.'
 	}) }}
 	{{ metaTagMacros.meta({
 		title: "QILabs",
@@ -65,7 +65,7 @@ QI Labs.org
 			</div>
 		</div>
 		<div class="board">
-			<form onSubmit="return false">
+<!-- 			<form onSubmit="return false">
 				<label>Seu nome</label>
 				<input type="text" name="name" />
 				<div class="bubble" id="nameBubble"></div>
@@ -75,22 +75,64 @@ QI Labs.org
 				<input type="hidden" name="_csrf" value="{{ token }}" />
 				<button disabled data-action="send-form">Solicitar convite</button>
 			</form>
+ -->		
+ 			<form action="//qilabs.us8.list-manage.com/subscribe/post-json?u=b604ea3253042ed09f625ee93&id=eda821923d&c=?" method="post" method="get">
+ 				<div id="bubbleMaster"></div>
+				<label>Seu nome</label>
+				<input type="text" value="" name="FNAME">
+				<div class="bubble" id="nameBubble"></div>
+				<label>Seu email</label>
+				<input type="email" value="" name="EMAIL">
+				<div class="bubble" id="emailBubble"></div>
+				<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+				<div style="position: absolute; left: -5000px;"><input type="text" name="filldonot" tabindex="-1" value=""></div>
+				<input type="submit" value="Pedir convite" name="subscribe" data-action='send-form'class="button" disabled>
+			</form>
 			<div id="abientot">
-				<h1>Pedido processado! :)</h1>
-				<h2>Nos falaremos em breve.</h2>
-				<div class="me">– Felipe</div>
 			</div>
 		</div>
 		<div class="footer">
 			QI Labs.org, 2014
 		</div>
-	</section>
+
+</div>
+</section>
 
 <script src="/static/js/vendor/jquery-2.0.3.min.js"></script>
 <script src="/static/js/vendor/modernizr-2.6.2.min.js"></script>
-<script src="/static/js/vendor/bootstrap/tooltip.js"></script>
 <script>
-$("body").tooltip({selector:'[data-toggle=tooltip]'});
+
+if (window.location.hash === '#yey') {
+	$("#bubbleMaster").html('<h2>Seu pedido foi confirmado!</h2> Até breve.<br/> – Equipe QI Labs.').fadeIn();
+}
+
+$('form').on('submit', function (e) {
+	e.preventDefault();
+
+	var email = document.querySelector('form input[name=EMAIL]').value.replace(/^\s+|\s+$/g, ''),
+		name = document.querySelector('form input[name=FNAME]').value.replace(/^\s+|\s+$/g, '');
+
+	$.ajax({
+		type: $(this).attr('method'),
+		url: $(this).attr('action'),
+		dataType: 'json',
+		cache: false,
+		dataType: 'json',
+		contentType: "application/json; charset=utf-8",
+		data: $(this).serialize(),
+	}).done(function (response) {
+		console.log(arguments)
+		if (response.result == 'success') {
+			$('form').slideUp(function () {
+				$("#abientot").html('<h1>Quase pronto...</h1> Só precisamos confirmar o seu endereço de email. Para garantir o seu convite, clique no link do email que acabamos de enviar para <strong>'+email+'</strong>!').slideDown();
+			});
+		} else {
+			$("#bubbleMaster").html(response.msg).fadeIn();
+		}
+	}).fail(function () {
+		$("#bubbleMaster").html("Ops! Erro no servidor.").fadeIn();	
+	});
+});
 (function setCSRFToken () {
 	$.ajaxPrefilter(function(options, _, xhr) {
 		if (!options.crossDomain) {
@@ -99,57 +141,26 @@ $("body").tooltip({selector:'[data-toggle=tooltip]'});
 		}
 	});
 })();
-$("[name=email], [name=name]").on('keypress keyup focusout change', function () {
-	var email = document.querySelector('form [name=email]').value.replace(/^\s+|\s+$/g, ''),
-		name = document.querySelector('form [name=name]').value.replace(/^\s+|\s+$/g, '');
 
+function isValid(name, email) {
 	if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-		if (/\w{3,}/.test(name)) {
-			document.querySelector("[data-action=send-form]").disabled = false;
-		} else {
-			document.querySelector("[data-action=send-form]").disabled = true;
-		}
-	} else {
-		document.querySelector("[data-action=send-form]").disabled = true;
-	}
+		return !!(/\w{3,}/.test(name));
+	} else
+		return false;
+}
+
+$("[name=EMAIL], [name=FNAME]").on('keypress keyup focusout change', function () {
+	var email = document.querySelector('form [name=EMAIL]').value.replace(/^\s+|\s+$/g, ''),
+		name = document.querySelector('form [name=FNAME]').value.replace(/^\s+|\s+$/g, '');
+
+	if ($('[name=filldonot]').val()) return;
+
+	document.querySelector("[data-action=send-form]").disabled = !isValid(name, email);
 });
 $(".bubble, #bubbleMaster").click(function () {
 	$(this).fadeOut();
 });
-$("[data-action=send-form]").click(function () {
-	var email = document.querySelector('form [name=email]').value.replace(/^\s+|\s+$/g, ''),
-		name = document.querySelector('form [name=name]').value.replace(/^\s+|\s+$/g, '');
-	$.ajax({
-		type: 'POST',
-		url: '/waitlist',
-		dataType: 'json',
-		data: { email: email, name: name }
-	}).done(function (response) {
-		if (response.error == false) {
-			$('form').slideUp(function () {
-				$("#abientot").slideDown();
-			});
-		} else {
-			if (response.field == 'email') {
-				$("#emailBubble").html(response.message).fadeIn();
-				$("[name=email]").addClass('invalid');
-				$("[name=email]").one('keypress keyup', function () {
-					$(this).removeClass('invalid');
-				});
-			} else if (response.field == 'name') {
-				$("#nameBubble").html(response.message).fadeIn();
-				$("[name=name]").addClass('invalid');
-				$("[name=name]").one('keypress keyup', function () {
-					$(this).removeClass('invalid');
-				});
-			} else if (response.message) {
-				$("#bubbleMaster").html(response.message).fadeIn();
-			}
-		}
-	}).fail(function () {
-		$("#bubbleMaster").html("Ops! Erro no servidor.").fadeIn();	
-	});
-});
+// $("[data-action=send-form]").click();
 </script>
 
 {% endblock %}
