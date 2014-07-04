@@ -7,16 +7,21 @@ User = Resource.model 'User'
 Post = Resource.model 'Post'
 
 module.exports = {
+	permissions: [required.login],
 	children: {
 		':userId':
 			children:
 				'/posts':
-					get: [required.login,
-						(req, res) ->
-							return unless userId = req.paramToObjectId('userId') 
+					get: (req, res) ->
+							console.log userId = req.paramToObjectId('userId')
+							return unless userId = req.paramToObjectId('userId')
+
 							# req.logMe("fetched board of user #{req.params.userId}")
 							if isNaN(maxDate = parseInt(req.query.maxDate))
 								maxDate = Date.now()
+
+							console.log('fetching')
+
 							User.findOne {_id:userId}, req.handleErrResult((user) ->
 								User.getUserTimeline user, { maxDate: maxDate },
 									req.handleErrResult((docs, minDate=-1) ->
@@ -26,10 +31,8 @@ module.exports = {
 										}
 									)
 							)
-					]
 				'/followers':
-					get: [required.login,
-						(req, res) ->
+					get: (req, res) ->
 							return unless userId = req.paramToObjectId('userId')
 							User.findOne {_id:userId}, req.handleErrResult((user) ->
 								user.getPopulatedFollowers (err, results) ->
@@ -38,10 +41,8 @@ module.exports = {
 									else
 										res.endJson { data:results }
 							)
-					]
 				'/following':
-					get: [required.login,
-						(req, res) ->
+					get: (req, res) ->
 							return unless userId = req.paramToObjectId('userId')
 							User.findOne {_id:userId}, req.handleErrResult((user) ->
 								user.getPopulatedFollowing (err, results) ->
@@ -50,10 +51,8 @@ module.exports = {
 									else
 										res.endJson { data:results }
 							)
-					]
 				'/follow':
-					post: [required.login,
-						(req, res) ->
+					post: (req, res) ->
 							return unless userId = req.paramToObjectId('userId')
 							User.findOne {_id: userId}, req.handleErrResult((user) ->
 								req.user.dofollowUser user, (err, done) ->
@@ -61,16 +60,13 @@ module.exports = {
 										error: !!err,
 									}
 							)
-					]
 				'/unfollow':
-					post: [required.login,
-						(req, res) ->
+					post: (req, res) ->
 							return unless userId = req.paramToObjectId('userId')
 							User.findOne {_id: userId}, (err, user) ->
 								req.user.unfollowUser user, (err, done) ->
 									res.endJson {
 										error: !!err,
 									}
-					]
 	}
 }

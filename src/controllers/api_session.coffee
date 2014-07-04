@@ -6,9 +6,7 @@ Resource = mongoose.model 'Resource'
 
 User = Resource.model 'User'
 Post = Resource.model 'Post'
-Tag  = mongoose.model 'Tag'
 Inbox = mongoose.model 'Inbox'
-Group = Resource.model 'Group'
 Follow = Resource.model 'Follow'
 Activity = Resource.model 'Activity'
 Subscriber = mongoose.model 'Subscriber'
@@ -33,9 +31,6 @@ module.exports = {
 					.populate 'resource'
 					.exec (err, inboxs) ->
 						res.endJson { err:err, inboxs:inboxs } 
-			else if req.query.group?
-				Group.find {}, (err, groups) ->
-					res.endJson { group:groups } 
 			else if req.query.notification?
 				Notification.find {}, (err, notifics) ->
 					res.endJson { notifics:notifics } 
@@ -54,25 +49,24 @@ module.exports = {
 				res.endJson { ip: req.ip, session: req.session } 
 				Activity.find {}, (err, notes) ->
 			else
+				# This could be much better with icedcoffeescript
 				User.find {}, (err, users) ->
 					Post.find {}, (err, posts) ->
 						Inbox.find {}, (err, inboxs) ->
 							Subscriber.find {}, (err, subscribers) ->
 								Follow.find {}, (err, follows) ->
 									Notification.find {}, (err, notifics) ->
-										Group.find {}, (err, groups) ->
-											Activity.find {}, (err, notes) ->
-												obj =
-													ip: req.ip
-													group: groups
-													inboxs: inboxs
-													notifics: notifics
-													session: req.session
-													users: users
-													posts: posts
-													follows: follows
-													notes: notes
-													subscribers: subscribers
-												res.endJson obj
+										Activity.find {}, (err, notes) ->
+											obj =
+												ip: req.ip
+												inboxs: inboxs
+												notifics: notifics
+												session: req.session
+												users: users
+												posts: posts
+												follows: follows
+												notes: notes
+												subscribers: subscribers
+											res.endJson obj
 	}
 }

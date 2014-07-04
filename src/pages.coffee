@@ -12,7 +12,6 @@ Resource = mongoose.model 'Resource'
 
 Post 	= Resource.model 'Post'
 User 	= Resource.model 'User'
-Group 	= Resource.model 'Group'
 
 Subscriber = mongoose.model 'Subscriber'
 

@@ -6,7 +6,7 @@ async = require 'async'
 _ = require 'underscore'
 
 jobber = require('../jobber.js')((e) ->
-	mongoose = require 'mongoose'
+	mongoose = require('../../src/config/mongoose.js')()
 
 	Resource = mongoose.model 'Resource'
 	Post = Resource.model 'Post'
@@ -27,10 +27,10 @@ jobber = require('../jobber.js')((e) ->
 					user.stats.following = cfollowing
 					user.stats.followers = cfollowers
 					user.stats.posts = posts.length
-					likes = 0
+					votes = 0
 					for post in posts
-						likes += post.votes.length
-					user.stats.likes = likes
+						votes += post.votes.length
+					user.stats.votes = votes
 					console.log "Saving new user stats: ", user.stats
 					user.save () ->
 						e.quit()

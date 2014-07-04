@@ -24,16 +24,6 @@ FollowSchema = new mongoose.Schema({
 });
 
 FollowSchema.pre('remove', function(next) {
-  return Inbox.remove({
-    recipient: this.follower,
-    author: this.followee
-  }, function(err, result) {
-    console.log("Removing " + err + " " + result + " inboxes on unfollow.");
-    return next();
-  });
-});
-
-FollowSchema.pre('remove', function(next) {
   return Notification.remove({
     type: Notification.Types.NewFollower,
     agent: this.follower,

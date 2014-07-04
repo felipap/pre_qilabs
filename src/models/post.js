@@ -1,4 +1,4 @@
-var Notification, ObjectId, Post, PostSchema, Resource, TransTypes, Types, assert, assertArgs, async, mongoose, smallify, urlify, _,
+var Notification, ObjectId, Post, PostSchema, Resource, TransTypes, Types, assert, async, mongoose, please, smallify, urlify, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -9,7 +9,9 @@ _ = require('underscore');
 
 async = require('async');
 
-assertArgs = require('./lib/assertArgs');
+please = require('../lib/please.js');
+
+please.args.extend(require('./lib/pleaseModels.js'));
 
 Notification = mongoose.model('Notification');
 
@@ -226,7 +228,7 @@ PostSchema.methods.fillChildren = function(cb) {
 };
 
 PostSchema.statics.countList = function(docs, cb) {
-  assertArgs({
+  please.args({
     $isA: Array
   }, '$isCb');
   return async.map(docs, function(post, done) {
@@ -253,6 +255,10 @@ PostSchema.statics.countList = function(docs, cb) {
   }, function(err, results) {
     return cb(err, results);
   });
+};
+
+PostSchema.statics.fromObject = function(object) {
+  return new Post(void 0, void 0, true).init(object);
 };
 
 PostSchema.statics.Types = Types;

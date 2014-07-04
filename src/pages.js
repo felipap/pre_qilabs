@@ -1,4 +1,4 @@
-var Group, Post, Resource, Subscriber, User, mongoose, required, util;
+var Post, Resource, Subscriber, User, mongoose, required, util;
 
 mongoose = require('mongoose');
 
@@ -11,8 +11,6 @@ Resource = mongoose.model('Resource');
 Post = Resource.model('Post');
 
 User = Resource.model('User');
-
-Group = Resource.model('Group');
 
 Subscriber = mongoose.model('Subscriber');
 

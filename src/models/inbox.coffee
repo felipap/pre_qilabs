@@ -15,7 +15,9 @@ See http://blog.mongodb.org/post/65612078649
 
 mongoose = require 'mongoose'
 async 	 = require 'async'
-assertArgs = require './lib/assertArgs'
+
+please = require '../lib/please.js'
+please.args.extend(require('./lib/pleaseModels.js'))
 
 Types =
 	Post: 'Post'
@@ -41,7 +43,7 @@ InboxSchema.pre 'save', (next) ->
 ## Statics #####################################################################
 
 InboxSchema.statics.fillInboxes = (recipients, opts, cb) ->
-	assertArgs({'$isA':Array}, {$contains:['resource','author']}, '$isCb')
+	please.args({'$isA':Array}, {$contains:['resource','author']}, '$isCb')
 
 	if not recipients.length
 		return cb(false, [])
@@ -56,7 +58,7 @@ InboxSchema.statics.fillInboxes = (recipients, opts, cb) ->
 	), cb)
 
 InboxSchema.statics.fillUserInboxWithResources = (recipient, resources, cb) ->
-	assertArgs({'$isModel':'User'},{'$isA':Array},'$isCb')
+	please.args({'$isModel':'User'},{'$isA':Array},'$isCb')
 
 	if not resources.length
 		return cb(false, [])

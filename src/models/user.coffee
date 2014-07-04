@@ -13,7 +13,10 @@ _ = require 'underscore'
 async = require 'async'
 assert = require 'assert'
 
-assertArgs = require './lib/assertArgs'
+jobs = require '../config/kue.js'
+
+please = require '../lib/please.js'
+please.args.extend(require './lib/pleaseModels.js')
 
 Resource = mongoose.model 'Resource'
 
@@ -22,11 +25,10 @@ Notification = mongoose.model 'Notification'
 
 Inbox 	= mongoose.model 'Inbox'
 Follow 	= Resource.model 'Follow'
-Group 	= Resource.model 'Group'
 Post 	= Resource.model 'Post'
 
 # PopulateFields = 'name username path profileUrl avatarUrl data followee follower updated published parentPost type voteSum'
-PopulateFields = '-memberships -accesssToken -firstAccess -followingTags'
+PopulateFields = '-accesssToken -firstAccess -followingTags'
 
 ObjectId = mongoose.Types.ObjectId
 
@@ -169,7 +171,7 @@ UserSchema.methods.doesFollowUser = (user, cb) ->
 #### Actions
 
 UserSchema.methods.dofollowUser = (user, cb) ->
-	assertArgs({$isModel:'User'},'$isCb')
+	please.args({$isModel:'User'},'$isCb')
 	self = @
 	if ''+user.id is ''+self.id # Can't follow myself
 		return cb(true)
@@ -182,32 +184,39 @@ UserSchema.methods.dofollowUser = (user, cb) ->
 					followee: user
 				}
 				doc.save()
-				user.update {$inc: {'stats.followers': 1}}, ->
+	
+				# Notify followed user
+				Notification.Trigger(self, Notification.Types.NewFollower)(self, user, ->)
+				# Trigger creation of activity to timeline
+				Activity.Trigger(self, Notification.Types.NewFollower)({
+					follow: doc,
+					follower: self,
+					followee: user
+				}, ->)
+
+				jobs.create('user follow', {
+					title: "New follow: #{self.name} → #{user.name}",
+					follower: self,
+					followee: user,
+				}).save()
 			cb(err, !!doc)
 
-			# Notify followed user
-			Notification.Trigger(self, Notification.Types.NewFollower)(self, user, ->)
-			# Trigger creation of activity to timeline
-			Activity.Trigger(self, Notification.Types.NewFollower)({
-				follow: doc,
-				follower: self,
-				followee: user
-			}, ->)
-			# Populate follower inbox with at most 100 resources from followed user
-			Resource.find()
-				.or [{__t:'Post', group:null, parentPost:null, author:user._id},{__t:'Activity', group:null, actor:user._id}]
-				.limit(100)
-				.exec (err, docs) ->
-					console.log 'Resources found:', err, docs.length
-					Inbox.fillUserInboxWithResources(self, docs, ->)
 
 UserSchema.methods.unfollowUser = (user, cb) ->
-	assertArgs({$isModel:User}, '$isCb')
+	please.args({$isModel:User}, '$isCb')
+	self = @
+
 	Follow.findOne { follower:@, followee:user },
 		(err, doc) =>
 			return cb(err) if err
 			if doc then doc.remove cb
 			user.update {$dec: {'stats.followers': 1}}, ->
+
+			jobs.create('user unfollow', {
+				title: "New unfollow: #{self.name} → #{user.name}",
+				followee: user,
+				follower: self,
+			}).save()
 
 ################################################################################
 ## related to fetching Timelines and Inboxes ###################################
@@ -217,55 +226,32 @@ HandleLimit = (func) ->
 		docs = _.filter(_docs, (e) -> e)
 		func(err,docs)
 
-fetchTimelinePostAndActivities = (opts, postConds, actvConds, cb) ->
-	assertArgs({$contains:['maxDate']})
-
-	Post
-		.find _.extend({parentPost:null, published:{$lt:opts.maxDate-1}}, postConds)
-		.sort '-published'
-		.populate 'author'
-		.limit opts.limit or 20
-		.exec HandleLimit (err, docs) ->
-			return cb(err) if err
-			minPostDate = 1*(docs.length and docs[docs.length-1].published) or 0
-			async.parallel [ # Fill post comments and get activities in that time.
-				(next) ->
-					Activity
-						.find _.extend(actvConds, updated:{$lt:opts.maxDate,$gt:minPostDate})
-						.populate 'resource actor target object'
-						.exec next
-				(next) ->
-					Post.countList docs, next
-			], HandleLimit (err, results) -> # Merge results and call back
-				all = _.sortBy((results[0]||[]).concat(results[1]), (p) -> -p.published)
-				cb(err, all, minPostDate)
-
 ###
 # Behold.
 ###
 UserSchema.methods.getTimeline = (opts, callback) ->
-	assertArgs({$contains:'maxDate'}, '$isCb')
+	please.args({$contains:'maxDate'}, '$isCb')
 	self = @
 
-	Post
-		.find { parentPost: null, published:{ $lt:opts.maxDate } }
-		.populate {path: 'author', model:'Resource', select: User.PopulateFields}
-		.exec (err, docs) =>
-			return callback(err) if err
-			if not docs.length or not docs[docs.length]
-				minDate = 0
-			else
-				minDate = docs[docs.length-1].published
+	# Post
+	# 	.find { parentPost: null, published:{ $lt:opts.maxDate } }
+	# 	.populate {path: 'author', model:'Resource', select: User.PopulateFields}
+	# 	.exec (err, docs) =>
+	# 		return callback(err) if err
+	# 		if not docs.length or not docs[docs.length]
+	# 			minDate = 0
+	# 		else
+	# 			minDate = docs[docs.length-1].published
 
-			async.map docs, (post, done) ->
-				if post instanceof Post
-					Post.count {type:'Comment', parentPost:post}, (err, ccount) ->
-						Post.count {type:'Answer', parentPost:post}, (err, acount) ->
-							done(err, _.extend(post.toJSON(), {childrenCount:{Answer:acount,Comment:ccount}}))
-				else done(null, post.toJSON)
-			, (err, results) -> callback(err, results, minDate)
+	# 		async.map docs, (post, done) ->
+	# 			if post instanceof Post
+	# 				Post.count {type:'Comment', parentPost:post}, (err, ccount) ->
+	# 					Post.count {type:'Answer', parentPost:post}, (err, acount) ->
+	# 						done(err, _.extend(post.toJSON(), {childrenCount:{Answer:acount,Comment:ccount}}))
+	# 			else done(null, post.toJSON)
+	# 		, (err, results) -> callback(err, results, minDate)
 
-	return
+	# return
 	# Get inboxed posts older than the opts.maxDate determined by the user.
 	Inbox
 		.find { recipient:self.id, dateSent:{ $lt:opts.maxDate }}
@@ -299,12 +285,35 @@ UserSchema.methods.getTimeline = (opts, callback) ->
 
 UserSchema.statics.PopulateFields = PopulateFields
 
+fetchTimelinePostAndActivities = (opts, postConds, actvConds, cb) ->
+	please.args({$contains:['maxDate']})
+
+	Post
+		.find _.extend({parentPost:null, published:{$lt:opts.maxDate-1}}, postConds)
+		.sort '-published'
+		.populate 'author'
+		.limit opts.limit or 20
+		.exec HandleLimit (err, docs) ->
+			return cb(err) if err
+			minPostDate = 1*(docs.length and docs[docs.length-1].published) or 0
+			async.parallel [ # Fill post comments and get activities in that time.
+				(next) ->
+					Activity
+						.find _.extend(actvConds, updated:{$lt:opts.maxDate,$gt:minPostDate})
+						.populate 'resource actor target object'
+						.exec next
+				(next) ->
+					Post.countList docs, next
+			], HandleLimit (err, results) -> # Merge results and call back
+				all = _.sortBy((results[0]||[]).concat(results[1]), (p) -> -p.published)
+				cb(err, all, minPostDate)
+
 UserSchema.statics.getUserTimeline = (user, opts, cb) ->
-	assertArgs({$isModel:User}, {$contains:'maxDate'})
+	please.args({$isModel:User}, {$contains:'maxDate'})
 	fetchTimelinePostAndActivities(
 		{maxDate: opts.maxDate},
-		{group:null, author:user, parentPost:null},
-		{actor:user, group:null},
+		{author:user, parentPost:null},
+		{actor:user},
 		(err, all, minPostDate) -> cb(err, all, minPostDate)
 	)
 
@@ -315,11 +324,10 @@ UserSchema.statics.getUserTimeline = (user, opts, cb) ->
 Create a post object with type comment.
 ###
 UserSchema.methods.postToParentPost = (parentPost, data, cb) ->
-	assertArgs({$isModel:Post},{$contains:['content','type']},'$isCb')
+	please.args({$isModel:Post},{$contains:['content','type']},'$isCb')
 	# Detect repeated posts and comments!
 	comment = new Post {
 		author: @
-		group: parentPost.group
 		content: {
 			body: data.content.body
 		}
@@ -327,6 +335,7 @@ UserSchema.methods.postToParentPost = (parentPost, data, cb) ->
 		type: data.type
 	}
 	comment.save cb
+	
 	Notification.Trigger(@, Notification.Types.PostComment)(comment, parentPost, ->)
 
 ###
@@ -334,7 +343,7 @@ Create a post object and fan out through inboxes.
 ###
 UserSchema.methods.createPost = (data, cb) ->
 	self = @
-	assertArgs({$contains:['content','type','tags']}, '$isCb')
+	please.args({$contains:['content','type','tags']}, '$isCb')
 	post = new Post {
 		author: self.id
 		content: {
@@ -344,9 +353,6 @@ UserSchema.methods.createPost = (data, cb) ->
 		type: data.type
 		tags: data.tags
 	}
-	if data.groupId
-		post.group = data.groupId
-
 	self = @
 	post.save (err, post) =>
 		console.log('post save:', err, post)
@@ -354,35 +360,46 @@ UserSchema.methods.createPost = (data, cb) ->
 		# Callback now, what happens later doesn't concern the user.
 		cb(err, post)
 		if err then return
-		if post.group
-			return
 
 		self.update { $inc: { 'stats.posts': 1 }}, ->
 
-		# Make separate job for this.
-		# Iter through followers and fill inboxes.
-		self.getPopulatedFollowers (err, followers) =>
-			Inbox.fillInboxes([self].concat(followers), {
-				resource: post.id,
-				type: Inbox.Types.Post,
-				author: self.id
-			}, () -> )
+		jobs.create('post new', {
+			title: "New post: #{self.name} posted #{post.id}",
+			author: self,
+			post: post,
+		}).save()
 
 UserSchema.methods.upvotePost = (post, cb) ->
-	assertArgs({$isModel:Post}, '$isCb')
-	post.votes.addToSet(''+@id)
-	post.save(cb)
-
-	if not post.parentPost
-		User.findById post.author, (err, author) ->
-			if not err
-				author.update { $inc: { 'stats.votes': 1 }}, ->
+	self = @
+	please.args({$isModel:Post}, '$isCb')
+	if ''+post.author == ''+@id
+		cb()
+	else
+		post.votes.addToSet(''+@id)
+		post.save (err) ->
+			cb.apply(this, arguments)
+			unless err
+				jobs.create('post upvote', {
+					title: "New upvote: #{self.name} → #{post.id}",
+					authorId: post.author,
+					post: post,
+					agent: @,
+				}).save()
 
 UserSchema.methods.unupvotePost = (post, cb) ->
-	assertArgs({$isModel:Post}, '$isCb')
-	if (i = post.votes.indexOf(@.id)) > -1
+	please.args({$isModel:Post}, '$isCb')
+	console.log(post.votes)
+	if (i = post.votes.indexOf(@id)) > -1
+		console.log('not')
 		post.votes.splice(i,1)
-		post.save(cb)
+		post.save (err) ->
+			cb.apply(this, arguments)
+			unless err
+				jobs.create('post unupvote', {
+					authorId: post.author,
+					post: post,
+					agent: @,
+				}).save()
 	else
 		return cb(null, post)
 
@@ -405,6 +422,12 @@ UserSchema.methods.getNotifications = (limit, cb) ->
 		.sort '-dateSent'
 		.exec cb
 
+UserSchema.statics.fromObject = (object) ->
+	new User(undefined, undefined, true).init(object)
+
 UserSchema.plugin(require('./lib/hookedModelPlugin'));
 
+# module.exports = (app) ->
+# 	jobs = require('../config/kue.js')
+# 	return User = Resource.discriminator "User", UserSchema
 module.exports = User = Resource.discriminator "User", UserSchema

@@ -381,12 +381,12 @@ define([
 					this.postList.fetch({reset:true});
 				}.bind(this));
 				var fetchMore = this.postList.tryFetchMore.bind(app.postList);
-				$('#globalContainer').scroll(function() {
-					if ($('#content').outerHeight()-($('#globalContainer').scrollTop()+$('#globalContainer').outerHeight())<5) {
+				$('#globalContainer').scroll(_.throttle(function() {
+					if ($('#cards').outerHeight()-($('#globalContainer').scrollTop()+$('#globalContainer').outerHeight())< 5) {
 						console.log('fetching more')
 						fetchMore();
 					}
-				});
+				}, 300));
 			}
 		},
 	});

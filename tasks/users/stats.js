@@ -6,7 +6,7 @@ _ = require('underscore');
 
 jobber = require('../jobber.js')(function(e) {
   var Follow, Post, Resource, User, mongoose, targetUserId;
-  mongoose = require('mongoose');
+  mongoose = require('../../src/config/mongoose.js')();
   Resource = mongoose.model('Resource');
   Post = Resource.model('Post');
   User = Resource.model('User');
@@ -36,16 +36,16 @@ jobber = require('../jobber.js')(function(e) {
           author: user,
           parentPost: null
         }, function(err, posts) {
-          var likes, post, _i, _len;
+          var post, votes, _i, _len;
           user.stats.following = cfollowing;
           user.stats.followers = cfollowers;
           user.stats.posts = posts.length;
-          likes = 0;
+          votes = 0;
           for (_i = 0, _len = posts.length; _i < _len; _i++) {
             post = posts[_i];
-            likes += post.votes.length;
+            votes += post.votes.length;
           }
-          user.stats.likes = likes;
+          user.stats.votes = votes;
           console.log("Saving new user stats: ", user.stats);
           return user.save(function() {
             return e.quit();

@@ -8,7 +8,8 @@ async = require 'async'
 _ = require 'underscore'
 assert = require 'assert'
 
-assertArgs = require './lib/assertArgs'
+please = require '../lib/please.js'
+please.args.extend(require('./lib/pleaseModels.js'))
 
 Resource = mongoose.model 'Resource'
 
@@ -78,7 +79,7 @@ NotificationSchema.pre 'save', (next) ->
 ## Statics #####################################################################
 
 notifyUser = (recpObj, agentObj, data, cb) ->
-	assertArgs({$isModel:'User'},{$isModel:'User'},{$contains:['url','type']},'$isCb')
+	please.args({$isModel:'User'},{$isModel:'User'},{$contains:['url','type']},'$isCb')
 	
 	User = Resource.model 'User'
 
@@ -121,17 +122,18 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 				cb ?= ->
 				# Find and delete older notifications from the same follower.
 				cb()
-				# Notification.findOne {
-				# 	type:Types.NewFollower,
-				# 	agent:followerObj,
-				# 	recipient:followeeObj
-				# 	}, (err, doc) ->
-				# 		if doc #
-				# 			doc.remove(()->)
-				# 		notifyUser followeeObj, followerObj, {
-				# 			type: Types.NewFollower
-				# 			# resources: []
-				# 		}, cb
+				Notification.findOne {
+					type:Types.NewFollower,
+					agent:followerObj,
+					recipient:followeeObj
+					}, (err, doc) ->
+						if doc #
+							doc.remove(()->)
+						notifyUser followeeObj, followerObj, {
+							type: Types.NewFollower
+							# resources: []
+							url: followeeObj.path
+						}, cb
 
 
 NotificationSchema.statics.Types = Types

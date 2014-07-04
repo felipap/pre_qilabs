@@ -1,4 +1,4 @@
-var Group, Post, Resource, User, checks, defaultSanitizerOptions, mongoose, required, sanitizeBody, sanitizerOptions, _,
+var Post, Resource, User, checks, defaultSanitizerOptions, mongoose, required, sanitizeBody, sanitizerOptions, _,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 mongoose = require('mongoose');
@@ -12,8 +12,6 @@ _ = require('underscore');
 User = Resource.model('User');
 
 Post = Resource.model('Post');
-
-Group = mongoose.model('Group');
 
 defaultSanitizerOptions = {
   allowedTags: ['h1', 'h2', 'b', 'em', 'strong', 'a', 'img', 'u', 'ul', 'li', 'blockquote', 'p', 'br', 'i'],

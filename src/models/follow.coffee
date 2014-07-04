@@ -22,12 +22,6 @@ FollowSchema = new mongoose.Schema {
 ################################################################################
 ## Middlewares #################################################################
 
-# Remove inboxes on unfollow
-FollowSchema.pre 'remove', (next) ->
-	Inbox.remove { recipient:@follower, author:@followee }, (err, result) ->
-		console.log "Removing #{err} #{result} inboxes on unfollow."
-		next()
-
 # Remove follow notifications on unfollow
 FollowSchema.pre 'remove', (next) ->
 	Notification.remove {

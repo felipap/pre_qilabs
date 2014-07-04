@@ -4,10 +4,12 @@ mongoose.connect(process.env.MONGOLAB_URI
 	|| process.env.MONGOHQ_URL
 	|| 'mongodb://localhost/madb');
 
-require('../models/lib/resourceObject')
+require('../models/lib/resourceObject');
 
-// Keep user as last one.
-var models = ['notification', 'inbox', 'post', 'follow', 'subscriber', 'tag', 'activity', 'topic', 'group', 'user'];
+// module.exports = function (app) {
+// // Keep user as last one.
+// }
+var models = ['notification', 'inbox', 'post', 'follow', 'subscriber', 'activity', 'user'];
 for (var i=0; i<models.length; i++)
 	require('../models/'+models[i]);
 

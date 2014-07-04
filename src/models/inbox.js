@@ -5,13 +5,15 @@ TODO:
 - and fan-out read for non-active users.
 See http://blog.mongodb.org/post/65612078649
  */
-var Inbox, InboxSchema, Types, assertArgs, async, mongoose;
+var Inbox, InboxSchema, Types, async, mongoose, please;
 
 mongoose = require('mongoose');
 
 async = require('async');
 
-assertArgs = require('./lib/assertArgs');
+please = require('../lib/please.js');
+
+please.args.extend(require('./lib/pleaseModels.js'));
 
 Types = {
   Post: 'Post'
@@ -49,7 +51,7 @@ InboxSchema.pre('save', function(next) {
 });
 
 InboxSchema.statics.fillInboxes = function(recipients, opts, cb) {
-  assertArgs({
+  please.args({
     '$isA': Array
   }, {
     $contains: ['resource', 'author']
@@ -71,7 +73,7 @@ InboxSchema.statics.fillInboxes = function(recipients, opts, cb) {
 };
 
 InboxSchema.statics.fillUserInboxWithResources = function(recipient, resources, cb) {
-  assertArgs({
+  please.args({
     '$isModel': 'User'
   }, {
     '$isA': Array

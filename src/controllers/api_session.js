@@ -1,4 +1,4 @@
-var Activity, Follow, Group, Inbox, Notification, Post, Resource, Subscriber, Tag, User, mongoose, required;
+var Activity, Follow, Inbox, Notification, Post, Resource, Subscriber, User, mongoose, required;
 
 mongoose = require('mongoose');
 
@@ -10,11 +10,7 @@ User = Resource.model('User');
 
 Post = Resource.model('Post');
 
-Tag = mongoose.model('Tag');
-
 Inbox = mongoose.model('Inbox');
-
-Group = Resource.model('Group');
 
 Follow = Resource.model('Follow');
 
@@ -47,12 +43,6 @@ module.exports = {
           return res.endJson({
             err: err,
             inboxs: inboxs
-          });
-        });
-      } else if (req.query.group != null) {
-        return Group.find({}, function(err, groups) {
-          return res.endJson({
-            group: groups
           });
         });
       } else if (req.query.notification != null) {
@@ -96,23 +86,20 @@ module.exports = {
               return Subscriber.find({}, function(err, subscribers) {
                 return Follow.find({}, function(err, follows) {
                   return Notification.find({}, function(err, notifics) {
-                    return Group.find({}, function(err, groups) {
-                      return Activity.find({}, function(err, notes) {
-                        var obj;
-                        obj = {
-                          ip: req.ip,
-                          group: groups,
-                          inboxs: inboxs,
-                          notifics: notifics,
-                          session: req.session,
-                          users: users,
-                          posts: posts,
-                          follows: follows,
-                          notes: notes,
-                          subscribers: subscribers
-                        };
-                        return res.endJson(obj);
-                      });
+                    return Activity.find({}, function(err, notes) {
+                      var obj;
+                      obj = {
+                        ip: req.ip,
+                        inboxs: inboxs,
+                        notifics: notifics,
+                        session: req.session,
+                        users: users,
+                        posts: posts,
+                        follows: follows,
+                        notes: notes,
+                        subscribers: subscribers
+                      };
+                      return res.endJson(obj);
                     });
                   });
                 });

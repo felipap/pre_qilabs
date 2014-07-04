@@ -11,7 +11,6 @@ Subscriber = mongoose.model('Subscriber');
 module.exports = {
   children: {
     'session': require('./api_session'),
-    'labs': require('./api_labs'),
     'posts': require('./api_posts'),
     'users': require('./api_users'),
     'me': require('./api_me')

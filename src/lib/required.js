@@ -7,74 +7,76 @@ var _ = require('underscore');
 
 var Resource = mongoose.model('Resource');
 var Post = Resource.model('Post');
-var	Group = Resource.model('Group');
 
 function extendErr (err, label) {
 	return _.extend(err,{required:(err.required||[]).concat(label)});
 }
 
-
 var permissions = {
 
-	labs: {
-		selfCanSee: function (labId, req, res, callback) {
-			var mem = _.findWhere(req.user.memberships,{group:''+labId});
-			if (mem) {
-				callback();
-			} else {
-				Group.findById(labId, req.handleErrResult(function (group) {
-					res.locals.lab = group;
-					if ( 1|| group.visibility === Group.Permissions.Public) {
-						callback();
-					} else {
-						return callback({ permission:"selfCanSee" });
-					}
-				}));
-			}
-		},
-		selfIsMember: function (labId, req, res, callback) {
-			var mem = _.findWhere(req.user.memberships,{group:''+labId});
-			if (mem) {
-				callback();
-			} else {
-				return callback({ permission:"labs.selfIsMember" });
-			}
-		},
-		selfIsModerator: function (labId, req, res, callback) {
-			var mem = _.findWhere(req.user.memberships,{group:''+labId});
-			if (mem.permission === Group.MembershipTypes.Moderator) {
-				callback();
-			} else {
-				return callback({ permission:"labs.selfIsModerator" });
-			}
-		},
-	},
+	// labs: {
+	// 	selfCanSee: function (labId, req, res, callback) {
+	// 		var mem = _.findWhere(req.user.memberships,{group:''+labId});
+	// 		if (mem) {
+	// 			callback();
+	// 		} else {
+	// 			Group.findById(labId, req.handleErrResult(function (group) {
+	// 				res.locals.lab = group;
+	// 				if ( 1|| group.visibility === Group.Permissions.Public) {
+	// 					callback();
+	// 				} else {
+	// 					return callback({ permission:"selfCanSee" });
+	// 				}
+	// 			}));
+	// 		}
+	// 	},
+	// 	selfIsMember: function (labId, req, res, callback) {
+	// 		var mem = _.findWhere(req.user.memberships,{group:''+labId});
+	// 		if (mem) {
+	// 			callback();
+	// 		} else {
+	// 			return callback({ permission:"labs.selfIsMember" });
+	// 		}
+	// 	},
+	// 	selfIsModerator: function (labId, req, res, callback) {
+	// 		var mem = _.findWhere(req.user.memberships,{group:''+labId});
+	// 		if (mem.permission === Group.MembershipTypes.Moderator) {
+	// 			callback();
+	// 		} else {
+	// 			return callback({ permission:"labs.selfIsModerator" });
+	// 		}
+	// 	},
+	// },
 
 	posts: {
 		selfCanSee: function (postId, req, res, callback) {
-			Post.findById(postId, req.handleErrResult(function (post) {
-				// A priori, all posts are visible if not within a private group.
-				if (!post.group) {
-					callback();
-				} else {
-					permissions.labs.selfCanSee(post.group, req, res, function (err) {
-						callback( err ? extendErr(err, 'posts.selfCanSee') : undefined);
-					});
-				}
-			}));
+			console.err("Warning: selfCanSee might not make sense anymore. Please, felipe, make up your mind.")
+			callback();
+			// Post.findById(postId, req.handleErrResult(function (post) {
+			// 	// A priori, all posts are visible if not within a private group.
+			// 	if (!post.group) {
+			//		callback();
+			// 	} else {
+			// 		permissions.labs.selfCanSee(post.group, req, res, function (err) {
+			// 			callback( err ? extendErr(err, 'posts.selfCanSee') : undefined);
+			// 		});
+			// 	}
+			// }));
 		},
 
 		selfCanComment: function (postId, req, res, callback) {
-			Post.findById(postId, req.handleErrResult(function (post) {
-				// A priori, all posts are visible if not within a private group.
-				if (!post.group) {
-					callback();
-				} else {
-					permissions.labs.selfIsMember(post.group, req, res, function (err) {
-						callback( err ? extendErr(err, 'posts.selfCanComment') : undefined);
-					});
-				}
-			}));
+			console.err("Warning: selfCanSee might not make sense anymore. Please, felipe, make up your mind.")
+			callback();
+			// Post.findById(postId, req.handleErrResult(function (post) {
+			// 	// A priori, all posts are visible if not within a private group.
+			// 	if (!post.group) {
+			// 		callback();
+			// 	} else {
+			// 		permissions.labs.selfIsMember(post.group, req, res, function (err) {
+			// 			callback( err ? extendErr(err, 'posts.selfCanComment') : undefined);
+			// 		});
+			// 	}
+			// }));
 		},
 
 		selfOwns: function (postId, req, res, callback) {

@@ -7,7 +7,9 @@ mongoose = require 'mongoose'
 assert = require 'assert'
 _ = require 'underscore'
 async = require 'async'
-assertArgs = require './lib/assertArgs'
+
+please = require '../lib/please.js'
+please.args.extend(require('./lib/pleaseModels.js'))
 
 Notification = mongoose.model 'Notification'
 Resource = mongoose.model 'Resource'
@@ -149,8 +151,7 @@ PostSchema.methods.fillChildren = (cb) ->
 ## Statics #####################################################################
 
 # PostSchema.statics.stuffList = (docs, cb) ->
-# 	assertArgs({$isA:Array},'$isCb')
-
+# 	please.args({$isA:Array},'$isCb')
 # 	async.map docs, (post, done) ->
 # 			if post instanceof Post
 # 				post.fillChildren(done)
@@ -159,7 +160,7 @@ PostSchema.methods.fillChildren = (cb) ->
 # 			cb(err, results)
 
 PostSchema.statics.countList = (docs, cb) ->
-	assertArgs({$isA:Array},'$isCb')
+	please.args({$isA:Array},'$isCb')
 
 	async.map docs, (post, done) ->
 		if post instanceof Post
@@ -170,6 +171,9 @@ PostSchema.statics.countList = (docs, cb) ->
 	, (err, results) ->
 		cb(err, results)
 
+
+PostSchema.statics.fromObject = (object) ->
+	new Post(undefined, undefined, true).init(object)
 
 PostSchema.statics.Types = Types
 

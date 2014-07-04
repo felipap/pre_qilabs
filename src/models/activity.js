@@ -1,4 +1,4 @@
-var Activity, ActivitySchema, ContentHtmlTemplates, Inbox, Notification, ObjectId, Resource, Types, assert, assertArgs, async, createActivityAndInbox, mongoose, _;
+var Activity, ActivitySchema, ContentHtmlTemplates, Inbox, Notification, ObjectId, Resource, Types, assert, async, createActivityAndInbox, mongoose, please, _;
 
 assert = require('assert');
 
@@ -10,7 +10,9 @@ mongoose = require('mongoose');
 
 ObjectId = mongoose.Schema.ObjectId;
 
-assertArgs = require('./lib/assertArgs');
+please = require('../lib/please.js');
+
+please.args.extend(require('./lib/pleaseModels.js'));
 
 Resource = mongoose.model('Resource');
 
@@ -97,7 +99,7 @@ ActivitySchema.pre('save', function(next) {
 
 createActivityAndInbox = function(agentObj, data, cb) {
   var activity;
-  assertArgs({
+  please.args({
     $isModel: 'User'
   }, {
     $contains: ['verb', 'url', 'actor', 'object']
@@ -130,7 +132,7 @@ ActivitySchema.statics.Trigger = function(agentObj, activityType) {
     case Types.NewFollower:
       return function(opts, cb) {
         var genericData;
-        assertArgs({
+        please.args({
           follow: {
             $isModel: 'Follow'
           },
@@ -153,67 +155,6 @@ ActivitySchema.statics.Trigger = function(agentObj, activityType) {
           return createActivityAndInbox(opts.follower, _.extend(genericData, {
             url: opts.follower.profileUrl,
             object: opts.follow
-          }), function() {});
-        });
-      };
-    case Types.GroupCreated:
-      return function(opts, cb) {
-        var genericData;
-        assertArgs({
-          creator: {
-            $isModel: 'User'
-          },
-          group: {
-            $isModel: 'Group'
-          }
-        }, '$isCb', arguments);
-        genericData = {
-          verb: activityType,
-          actor: opts.creator,
-          object: opts.group
-        };
-        return Activity.remove(genericData, function(err, count) {
-          if (err) {
-            console.log('trigger err:', err);
-          }
-          return createActivityAndInbox(opts.creator, _.extend(genericData, {
-            url: opts.group.path
-          }), function() {});
-        });
-      };
-    case Types.GroupMemberAdded:
-      return function(opts, cb) {
-        var genericData;
-        assertArgs({
-          actor: {
-            $isModel: 'User'
-          },
-          member: {
-            $isModel: 'User'
-          },
-          group: {
-            $isModel: 'Group'
-          }
-        }, '$isCb', arguments);
-        console.log('hi');
-        genericData = {
-          verb: activityType,
-          object: opts.member,
-          target: opts.group
-        };
-        return Activity.remove(genericData, function(err, count) {
-          if (err) {
-            console.log('trigger err:', err);
-          }
-          console.log('here');
-          createActivityAndInbox(opts.member, _.extend(genericData, {
-            actor: opts.actor,
-            url: opts.group.path
-          }), function() {});
-          return createActivityAndInbox(opts.member, _.extend(genericData, {
-            actor: opts.actor,
-            url: opts.group.path,
-            group: opts.group
           }), function() {});
         });
       };

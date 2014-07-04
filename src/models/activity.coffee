@@ -10,7 +10,8 @@ mongoose = require 'mongoose'
 
 ObjectId = mongoose.Schema.ObjectId
 
-assertArgs = require './lib/assertArgs'
+please = require '../lib/please.js'
+please.args.extend(require('./lib/pleaseModels.js'))
 
 Resource = mongoose.model 'Resource'
 Inbox = mongoose.model 'Inbox'
@@ -76,7 +77,7 @@ ActivitySchema.pre 'save', (next) ->
 ## Statics #####################################################################
 
 createActivityAndInbox = (agentObj, data, cb) ->
-	assertArgs({$isModel:'User'},
+	please.args({$isModel:'User'},
 		{$contains:['verb', 'url', 'actor', 'object']},'$isCb')
 
 	activity = new Activity {
@@ -102,7 +103,7 @@ ActivitySchema.statics.Trigger = (agentObj, activityType) ->
 	switch activityType
 		when Types.NewFollower
 			return (opts, cb) ->
-				assertArgs({
+				please.args({
 					follow:{$isModel:'Follow'},
 					followee:{$isModel:'User'},
 					follower:{$isModel:'User'}
@@ -120,51 +121,51 @@ ActivitySchema.statics.Trigger = (agentObj, activityType) ->
 						url: opts.follower.profileUrl
 						object: opts.follow
 					}), ->
-		when Types.GroupCreated
-			return (opts, cb) ->
-				assertArgs({
-					creator:{$isModel:'User'},
-					group:{$isModel:'Group'},
-					}, '$isCb', arguments)
+		# when Types.GroupCreated
+		# 	return (opts, cb) ->
+		# 		please.args({
+		# 			creator:{$isModel:'User'},
+		# 			group:{$isModel:'Group'},
+		# 			}, '$isCb', arguments)
 
-				genericData = {
-					verb:activityType,
-					actor:opts.creator,
-					object:opts.group
-				}
-				Activity.remove genericData, (err, count) ->
-					if err then console.log 'trigger err:', err
-					createActivityAndInbox opts.creator, _.extend(genericData, {
-						url: opts.group.path
-					}), ->
-		when Types.GroupMemberAdded
-			return (opts, cb) ->
-				assertArgs({
-					actor:{$isModel:'User'},
-					member:{$isModel:'User'},
-					group:{$isModel:'Group'},
-					}, '$isCb', arguments)
+		# 		genericData = {
+		# 			verb:activityType,
+		# 			actor:opts.creator,
+		# 			object:opts.group
+		# 		}
+		# 		Activity.remove genericData, (err, count) ->
+		# 			if err then console.log 'trigger err:', err
+		# 			createActivityAndInbox opts.creator, _.extend(genericData, {
+		# 				url: opts.group.path
+		# 			}), ->
+		# when Types.GroupMemberAdded
+		# 	return (opts, cb) ->
+		# 		please.args({
+		# 			actor:{$isModel:'User'},
+		# 			member:{$isModel:'User'},
+		# 			group:{$isModel:'Group'},
+		# 			}, '$isCb', arguments)
 
-				console.log('hi')
+		# 		console.log('hi')
 
-				genericData = {
-					verb:activityType,
-					object:opts.member,
-					target:opts.group,
-				}
+		# 		genericData = {
+		# 			verb:activityType,
+		# 			object:opts.member,
+		# 			target:opts.group,
+		# 		}
 				
-				Activity.remove genericData, (err, count) ->
-					if err then console.log 'trigger err:', err
-					console.log('here')
-					createActivityAndInbox opts.member, _.extend(genericData, {
-						actor: opts.actor,
-						url: opts.group.path,
-					}), ->
-					createActivityAndInbox opts.member, _.extend(genericData, {
-						actor: opts.actor,
-						url: opts.group.path,
-						group: opts.group
-					}), ->
+		# 		Activity.remove genericData, (err, count) ->
+		# 			if err then console.log 'trigger err:', err
+		# 			console.log('here')
+		# 			createActivityAndInbox opts.member, _.extend(genericData, {
+		# 				actor: opts.actor,
+		# 				url: opts.group.path,
+		# 			}), ->
+		# 			createActivityAndInbox opts.member, _.extend(genericData, {
+		# 				actor: opts.actor,
+		# 				url: opts.group.path,
+		# 				group: opts.group
+		# 			}), ->
 		else
 			throw "Unrecognized Activity Type passed to Trigger."
 

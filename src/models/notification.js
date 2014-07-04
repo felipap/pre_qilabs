@@ -1,4 +1,4 @@
-var MsgHtmlTemplates, MsgTemplates, Notification, NotificationSchema, Resource, Types, assert, assertArgs, async, mongoose, notifyUser, _;
+var MsgHtmlTemplates, MsgTemplates, Notification, NotificationSchema, Resource, Types, assert, async, mongoose, notifyUser, please, _;
 
 mongoose = require('mongoose');
 
@@ -8,7 +8,9 @@ _ = require('underscore');
 
 assert = require('assert');
 
-assertArgs = require('./lib/assertArgs');
+please = require('../lib/please.js');
+
+please.args.extend(require('./lib/pleaseModels.js'));
 
 Resource = mongoose.model('Resource');
 
@@ -114,7 +116,7 @@ NotificationSchema.pre('save', function(next) {
 
 notifyUser = function(recpObj, agentObj, data, cb) {
   var User, note;
-  assertArgs({
+  please.args({
     $isModel: 'User'
   }, {
     $isModel: 'User'
@@ -172,6 +174,7 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
         if (cb == null) {
           cb = function() {};
         }
+        cb();
         return Notification.findOne({
           type: Types.NewFollower,
           agent: followerObj,
@@ -181,7 +184,8 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
             doc.remove(function() {});
           }
           return notifyUser(followeeObj, followerObj, {
-            type: Types.NewFollower
+            type: Types.NewFollower,
+            url: followeeObj.path
           }, cb);
         });
       };

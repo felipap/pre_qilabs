@@ -8,7 +8,6 @@ _ = require 'underscore'
 
 User = Resource.model 'User'
 Post = Resource.model 'Post'
-Group  = mongoose.model 'Group'
 
 ##
 

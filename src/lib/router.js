@@ -1,6 +1,6 @@
 
 /* router.js
-** for qilabs.org, by @f03lipe
+** for QILabs.org, by @f03lipe
 **
 ** Route an object with many pages.
 **

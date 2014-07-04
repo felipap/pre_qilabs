@@ -3,7 +3,7 @@
 GUIDELINES for development:
 - Never directly use request parameters or data.
  */
-var Activity, Follow, Group, HandleLimit, Inbox, Notification, ObjectId, PopulateFields, Post, Resource, User, UserSchema, assert, assertArgs, async, fetchTimelinePostAndActivities, mongoose, _;
+var Activity, Follow, HandleLimit, Inbox, Notification, ObjectId, PopulateFields, Post, Resource, User, UserSchema, assert, async, fetchTimelinePostAndActivities, jobs, mongoose, please, _;
 
 mongoose = require('mongoose');
 
@@ -13,7 +13,11 @@ async = require('async');
 
 assert = require('assert');
 
-assertArgs = require('./lib/assertArgs');
+jobs = require('../config/kue.js');
+
+please = require('../lib/please.js');
+
+please.args.extend(require('./lib/pleaseModels.js'));
 
 Resource = mongoose.model('Resource');
 
@@ -25,11 +29,9 @@ Inbox = mongoose.model('Inbox');
 
 Follow = Resource.model('Follow');
 
-Group = Resource.model('Group');
-
 Post = Resource.model('Post');
 
-PopulateFields = '-memberships -accesssToken -firstAccess -followingTags';
+PopulateFields = '-accesssToken -firstAccess -followingTags';
 
 ObjectId = mongoose.Types.ObjectId;
 
@@ -258,7 +260,7 @@ UserSchema.methods.doesFollowUser = function(user, cb) {
 
 UserSchema.methods.dofollowUser = function(user, cb) {
   var self;
-  assertArgs({
+  please.args({
     $isModel: 'User'
   }, '$isCb');
   self = this;
@@ -276,42 +278,29 @@ UserSchema.methods.dofollowUser = function(user, cb) {
           followee: user
         });
         doc.save();
-        user.update({
-          $inc: {
-            'stats.followers': 1
-          }
+        Notification.Trigger(self, Notification.Types.NewFollower)(self, user, function() {});
+        Activity.Trigger(self, Notification.Types.NewFollower)({
+          follow: doc,
+          follower: self,
+          followee: user
         }, function() {});
+        jobs.create('user follow', {
+          title: "New follow: " + self.name + " → " + user.name,
+          follower: self,
+          followee: user
+        }).save();
       }
-      cb(err, !!doc);
-      Notification.Trigger(self, Notification.Types.NewFollower)(self, user, function() {});
-      Activity.Trigger(self, Notification.Types.NewFollower)({
-        follow: doc,
-        follower: self,
-        followee: user
-      }, function() {});
-      return Resource.find().or([
-        {
-          __t: 'Post',
-          group: null,
-          parentPost: null,
-          author: user._id
-        }, {
-          __t: 'Activity',
-          group: null,
-          actor: user._id
-        }
-      ]).limit(100).exec(function(err, docs) {
-        console.log('Resources found:', err, docs.length);
-        return Inbox.fillUserInboxWithResources(self, docs, function() {});
-      });
+      return cb(err, !!doc);
     };
   })(this));
 };
 
 UserSchema.methods.unfollowUser = function(user, cb) {
-  assertArgs({
+  var self;
+  please.args({
     $isModel: User
   }, '$isCb');
+  self = this;
   return Follow.findOne({
     follower: this,
     followee: user
@@ -323,11 +312,16 @@ UserSchema.methods.unfollowUser = function(user, cb) {
       if (doc) {
         doc.remove(cb);
       }
-      return user.update({
+      user.update({
         $dec: {
           'stats.followers': 1
         }
       }, function() {});
+      return jobs.create('user unfollow', {
+        title: "New unfollow: " + self.name + " → " + user.name,
+        followee: user,
+        follower: self
+      }).save();
     };
   })(this));
 };
@@ -342,42 +336,6 @@ HandleLimit = function(func) {
   };
 };
 
-fetchTimelinePostAndActivities = function(opts, postConds, actvConds, cb) {
-  assertArgs({
-    $contains: ['maxDate']
-  });
-  return Post.find(_.extend({
-    parentPost: null,
-    published: {
-      $lt: opts.maxDate - 1
-    }
-  }, postConds)).sort('-published').populate('author').limit(opts.limit || 20).exec(HandleLimit(function(err, docs) {
-    var minPostDate;
-    if (err) {
-      return cb(err);
-    }
-    minPostDate = 1 * (docs.length && docs[docs.length - 1].published) || 0;
-    return async.parallel([
-      function(next) {
-        return Activity.find(_.extend(actvConds, {
-          updated: {
-            $lt: opts.maxDate,
-            $gt: minPostDate
-          }
-        })).populate('resource actor target object').exec(next);
-      }, function(next) {
-        return Post.countList(docs, next);
-      }
-    ], HandleLimit(function(err, results) {
-      var all;
-      all = _.sortBy((results[0] || []).concat(results[1]), function(p) {
-        return -p.published;
-      });
-      return cb(err, all, minPostDate);
-    }));
-  }));
-};
-
 
 /*
  * Behold.
@@ -385,57 +343,10 @@ fetchTimelinePostAndActivities = function(opts, postConds, actvConds, cb) {
 
 UserSchema.methods.getTimeline = function(opts, callback) {
   var self;
-  assertArgs({
+  please.args({
     $contains: 'maxDate'
   }, '$isCb');
   self = this;
-  Post.find({
-    parentPost: null,
-    published: {
-      $lt: opts.maxDate
-    }
-  }).populate({
-    path: 'author',
-    model: 'Resource',
-    select: User.PopulateFields
-  }).exec((function(_this) {
-    return function(err, docs) {
-      var minDate;
-      if (err) {
-        return callback(err);
-      }
-      if (!docs.length || !docs[docs.length]) {
-        minDate = 0;
-      } else {
-        minDate = docs[docs.length - 1].published;
-      }
-      return async.map(docs, function(post, done) {
-        if (post instanceof Post) {
-          return Post.count({
-            type: 'Comment',
-            parentPost: post
-          }, function(err, ccount) {
-            return Post.count({
-              type: 'Answer',
-              parentPost: post
-            }, function(err, acount) {
-              return done(err, _.extend(post.toJSON(), {
-                childrenCount: {
-                  Answer: acount,
-                  Comment: ccount
-                }
-              }));
-            });
-          });
-        } else {
-          return done(null, post.toJSON);
-        }
-      }, function(err, results) {
-        return callback(err, results, minDate);
-      });
-    };
-  })(this));
-  return;
   return Inbox.find({
     recipient: self.id,
     dateSent: {
@@ -494,8 +405,44 @@ UserSchema.methods.getTimeline = function(opts, callback) {
 
 UserSchema.statics.PopulateFields = PopulateFields;
 
+fetchTimelinePostAndActivities = function(opts, postConds, actvConds, cb) {
+  please.args({
+    $contains: ['maxDate']
+  });
+  return Post.find(_.extend({
+    parentPost: null,
+    published: {
+      $lt: opts.maxDate - 1
+    }
+  }, postConds)).sort('-published').populate('author').limit(opts.limit || 20).exec(HandleLimit(function(err, docs) {
+    var minPostDate;
+    if (err) {
+      return cb(err);
+    }
+    minPostDate = 1 * (docs.length && docs[docs.length - 1].published) || 0;
+    return async.parallel([
+      function(next) {
+        return Activity.find(_.extend(actvConds, {
+          updated: {
+            $lt: opts.maxDate,
+            $gt: minPostDate
+          }
+        })).populate('resource actor target object').exec(next);
+      }, function(next) {
+        return Post.countList(docs, next);
+      }
+    ], HandleLimit(function(err, results) {
+      var all;
+      all = _.sortBy((results[0] || []).concat(results[1]), function(p) {
+        return -p.published;
+      });
+      return cb(err, all, minPostDate);
+    }));
+  }));
+};
+
 UserSchema.statics.getUserTimeline = function(user, opts, cb) {
-  assertArgs({
+  please.args({
     $isModel: User
   }, {
     $contains: 'maxDate'
@@ -503,12 +450,10 @@ UserSchema.statics.getUserTimeline = function(user, opts, cb) {
   return fetchTimelinePostAndActivities({
     maxDate: opts.maxDate
   }, {
-    group: null,
     author: user,
     parentPost: null
   }, {
-    actor: user,
-    group: null
+    actor: user
   }, function(err, all, minPostDate) {
     return cb(err, all, minPostDate);
   });
@@ -521,14 +466,13 @@ Create a post object with type comment.
 
 UserSchema.methods.postToParentPost = function(parentPost, data, cb) {
   var comment;
-  assertArgs({
+  please.args({
     $isModel: Post
   }, {
     $contains: ['content', 'type']
   }, '$isCb');
   comment = new Post({
     author: this,
-    group: parentPost.group,
     content: {
       body: data.content.body
     },
@@ -547,7 +491,7 @@ Create a post object and fan out through inboxes.
 UserSchema.methods.createPost = function(data, cb) {
   var post, self;
   self = this;
-  assertArgs({
+  please.args({
     $contains: ['content', 'type', 'tags']
   }, '$isCb');
   post = new Post({
@@ -559,9 +503,6 @@ UserSchema.methods.createPost = function(data, cb) {
     type: data.type,
     tags: data.tags
   });
-  if (data.groupId) {
-    post.group = data.groupId;
-  }
   self = this;
   return post.save((function(_this) {
     return function(err, post) {
@@ -570,39 +511,39 @@ UserSchema.methods.createPost = function(data, cb) {
       if (err) {
         return;
       }
-      if (post.group) {
-        return;
-      }
       self.update({
         $inc: {
           'stats.posts': 1
         }
       }, function() {});
-      return self.getPopulatedFollowers(function(err, followers) {
-        return Inbox.fillInboxes([self].concat(followers), {
-          resource: post.id,
-          type: Inbox.Types.Post,
-          author: self.id
-        }, function() {});
-      });
+      return jobs.create('post new', {
+        title: "New post: " + self.name + " posted " + post.id,
+        author: self,
+        post: post
+      }).save();
     };
   })(this));
 };
 
 UserSchema.methods.upvotePost = function(post, cb) {
-  assertArgs({
+  var self;
+  self = this;
+  please.args({
     $isModel: Post
   }, '$isCb');
-  post.votes.addToSet('' + this.id);
-  post.save(cb);
-  if (!post.parentPost) {
-    return User.findById(post.author, function(err, author) {
+  if ('' + post.author === '' + this.id) {
+    return cb();
+  } else {
+    post.votes.addToSet('' + this.id);
+    return post.save(function(err) {
+      cb.apply(this, arguments);
       if (!err) {
-        return author.update({
-          $inc: {
-            'stats.votes': 1
-          }
-        }, function() {});
+        return jobs.create('post upvote', {
+          title: "New upvote: " + self.name + " → " + post.id,
+          authorId: post.author,
+          post: post,
+          agent: this
+        }).save();
       }
     });
   }
@@ -610,12 +551,23 @@ UserSchema.methods.upvotePost = function(post, cb) {
 
 UserSchema.methods.unupvotePost = function(post, cb) {
   var i;
-  assertArgs({
+  please.args({
     $isModel: Post
   }, '$isCb');
+  console.log(post.votes);
   if ((i = post.votes.indexOf(this.id)) > -1) {
+    console.log('not');
     post.votes.splice(i, 1);
-    return post.save(cb);
+    return post.save(function(err) {
+      cb.apply(this, arguments);
+      if (!err) {
+        return jobs.create('post unupvote', {
+          authorId: post.author,
+          post: post,
+          agent: this
+        }).save();
+      }
+    });
   } else {
     return cb(null, post);
   }
@@ -634,6 +586,10 @@ UserSchema.methods.getNotifications = function(limit, cb) {
   return Notification.find({
     recipient: this
   }).limit(limit).sort('-dateSent').exec(cb);
+};
+
+UserSchema.statics.fromObject = function(object) {
+  return new User(void 0, void 0, true).init(object);
 };
 
 UserSchema.plugin(require('./lib/hookedModelPlugin'));
