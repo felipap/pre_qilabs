@@ -37,7 +37,7 @@ NotificationSchema = new mongoose.Schema {
 	agent:		 	{ type: mongoose.Schema.ObjectId, ref: 'User', required: true }
 	agentName:	 	{ type: String }
 	recipient:	 	{ type: mongoose.Schema.ObjectId, ref: 'User', required: true, index: 1 }
-	dateSent:		{ type: Date, index: 1 }
+	dateSent:		{ type: Date, index: 1, default: Date.now }
 	type:			{ type: String, required: true }
 	seen:			{ type: Boolean, default: false }
 	accessed:		{ type: Boolean, default: false }
@@ -70,10 +70,6 @@ NotificationSchema.virtual('msgHtml').get ->
 
 ################################################################################
 ## Middlewares #################################################################
-
-NotificationSchema.pre 'save', (next) ->
-	@dateSent ?= new Date()
-	next()
 
 ################################################################################
 ## Statics #####################################################################
@@ -132,7 +128,7 @@ NotificationSchema.statics.Trigger = (agentObj, type) ->
 						notifyUser followeeObj, followerObj, {
 							type: Types.NewFollower
 							# resources: []
-							url: followeeObj.path
+							url: followerObj.path
 						}, cb
 
 

@@ -49,7 +49,8 @@ NotificationSchema = new mongoose.Schema({
   },
   dateSent: {
     type: Date,
-    index: 1
+    index: 1,
+    "default": Date.now
   },
   type: {
     type: String,
@@ -105,13 +106,6 @@ NotificationSchema.virtual('msgHtml').get(function() {
   }
   console.warn("No html template found for notification of type" + this.type);
   return "Notificação " + this.type;
-});
-
-NotificationSchema.pre('save', function(next) {
-  if (this.dateSent == null) {
-    this.dateSent = new Date();
-  }
-  return next();
 });
 
 notifyUser = function(recpObj, agentObj, data, cb) {
@@ -185,7 +179,7 @@ NotificationSchema.statics.Trigger = function(agentObj, type) {
           }
           return notifyUser(followeeObj, followerObj, {
             type: Types.NewFollower,
-            url: followeeObj.path
+            url: followerObj.path
           }, cb);
         });
       };

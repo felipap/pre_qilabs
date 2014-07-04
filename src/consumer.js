@@ -22,7 +22,7 @@ module.exports = function () {
 
 		// Create new inboxes
 		Resource.find()
-			.or([{__t: 'Post', parentPost: null, author: followee.id},{__t: 'Activity', actor: followee.id}])
+			.or([{__t: 'Post', parentPost: null, author: followee._id},{__t: 'Activity', actor: followee._id}])
 			.limit(100)
 			.exec(function (err, docs) {
 				if (err || !docs) {
