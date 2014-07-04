@@ -1,12 +1,16 @@
 
 var kue = require('kue')
+var url = require('url')
 
-kue.redis.createClient = function () {
+if (process.env.REDISTOGO_URL) {
 	var redisUrl = url.parse(process.env.REDISTOGO_URL)
-	var client = redis.createClient(redisUrl.port, redisUrl.hostname)
-	if (redisUrl.auth)
-		client.auth(redisUrl.auth.split(':')[1])
-	return client
+	module.exports = kue.createQueue({
+		redis: {
+			port: redisUrl.port,
+			host: redisUrl.hostname,
+			auth: redisUrl.auth && redisUrl.auth.split(':')[1]
+		}
+	})
+} else {
+	module.exports = kue.createQueue({})
 }
-
-module.exports = kue.createQueue()
