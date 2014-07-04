@@ -13,8 +13,6 @@ Resource = mongoose.model 'Resource'
 Post 	= Resource.model 'Post'
 User 	= Resource.model 'User'
 
-Subscriber = mongoose.model 'Subscriber'
-
 module.exports = {
 	'/':
 		name: 'index'
@@ -26,27 +24,6 @@ module.exports = {
 				req.user.save()
 			else
 				res.render 'pages/front'
-
-	'/waitlist':
-		permissions: [required.logout]
-		post: (req, res) ->
-			req.assert('email', 'Email inválido.').notEmpty().isEmail()
-
-			if errors = req.validationErrors()
-				return res.endJson({error:true,field:'email',message:'Esse email não é inválido? ;)'})
-			
-			req.body.email = req.body.email.toLowerCase()
-			
-			Subscriber.findOne {email:req.body.email}, (err, doc) ->
-				if err
-					return res.endJson({error:true, message:'Estamos com problemas para processar o seu pedido.'})
-				if doc
-					return res.endJson({error:true, field:'email', message:'Esse email já foi registrado.'})
-				s = new Subscriber { name: req.body.name, email: req.body.email }
-				s.save (err, t) ->
-					if err
-						return res.endJson({error:true, message:'Estamos com problemas para processar o seu pedido.'})
-					res.endJson({error:false})
 
 	'/entrar':
 		get: (req, res) ->

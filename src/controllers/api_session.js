@@ -1,4 +1,4 @@
-var Activity, Follow, Inbox, Notification, Post, Resource, Subscriber, User, mongoose, required;
+var Activity, Follow, Inbox, Notification, Post, Resource, User, mongoose, required;
 
 mongoose = require('mongoose');
 
@@ -15,8 +15,6 @@ Inbox = mongoose.model('Inbox');
 Follow = Resource.model('Follow');
 
 Activity = Resource.model('Activity');
-
-Subscriber = mongoose.model('Subscriber');
 
 Notification = mongoose.model('Notification');
 
@@ -63,12 +61,6 @@ module.exports = {
             follows: follows
           });
         });
-      } else if (req.query.subscriber != null) {
-        return Subscriber.find({}, function(err, subscribers) {
-          return res.endJson({
-            subscribers: subscribers
-          });
-        });
       } else if (req.query.note != null) {
         return res.endJson({
           notes: notes
@@ -83,24 +75,21 @@ module.exports = {
         return User.find({}, function(err, users) {
           return Post.find({}, function(err, posts) {
             return Inbox.find({}, function(err, inboxs) {
-              return Subscriber.find({}, function(err, subscribers) {
-                return Follow.find({}, function(err, follows) {
-                  return Notification.find({}, function(err, notifics) {
-                    return Activity.find({}, function(err, notes) {
-                      var obj;
-                      obj = {
-                        ip: req.ip,
-                        inboxs: inboxs,
-                        notifics: notifics,
-                        session: req.session,
-                        users: users,
-                        posts: posts,
-                        follows: follows,
-                        notes: notes,
-                        subscribers: subscribers
-                      };
-                      return res.endJson(obj);
-                    });
+              return Follow.find({}, function(err, follows) {
+                return Notification.find({}, function(err, notifics) {
+                  return Activity.find({}, function(err, notes) {
+                    var obj;
+                    obj = {
+                      ip: req.ip,
+                      inboxs: inboxs,
+                      notifics: notifics,
+                      session: req.session,
+                      users: users,
+                      posts: posts,
+                      follows: follows,
+                      notes: notes
+                    };
+                    return res.endJson(obj);
                   });
                 });
               });

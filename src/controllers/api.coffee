@@ -9,8 +9,6 @@ The controller for /api/* calls.
 
 mongoose = require 'mongoose'
 
-Subscriber = mongoose.model 'Subscriber'
-
 # Starts at '/api'
 module.exports = {
 	children: {

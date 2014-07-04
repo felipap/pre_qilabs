@@ -9,7 +9,6 @@ Post = Resource.model 'Post'
 Inbox = mongoose.model 'Inbox'
 Follow = Resource.model 'Follow'
 Activity = Resource.model 'Activity'
-Subscriber = mongoose.model 'Subscriber'
 Notification = mongoose.model 'Notification'
 
 module.exports = {
@@ -40,9 +39,6 @@ module.exports = {
 			else if req.query.follow?
 				Follow.find {}, (err, follows) ->
 					res.endJson { follows:follows } 
-			else if req.query.subscriber?
-				Subscriber.find {}, (err, subscribers) ->
-					res.endJson { subscribers:subscribers }
 			else if req.query.note?
 					res.endJson { notes:notes }
 			else if req.query.session?
@@ -53,20 +49,18 @@ module.exports = {
 				User.find {}, (err, users) ->
 					Post.find {}, (err, posts) ->
 						Inbox.find {}, (err, inboxs) ->
-							Subscriber.find {}, (err, subscribers) ->
-								Follow.find {}, (err, follows) ->
-									Notification.find {}, (err, notifics) ->
-										Activity.find {}, (err, notes) ->
-											obj =
-												ip: req.ip
-												inboxs: inboxs
-												notifics: notifics
-												session: req.session
-												users: users
-												posts: posts
-												follows: follows
-												notes: notes
-												subscribers: subscribers
-											res.endJson obj
+							Follow.find {}, (err, follows) ->
+								Notification.find {}, (err, notifics) ->
+									Activity.find {}, (err, notes) ->
+										obj =
+											ip: req.ip
+											inboxs: inboxs
+											notifics: notifics
+											session: req.session
+											users: users
+											posts: posts
+											follows: follows
+											notes: notes
+										res.endJson obj
 	}
 }

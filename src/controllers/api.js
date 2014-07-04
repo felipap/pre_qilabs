@@ -2,11 +2,9 @@
 /*
 The controller for /api/* calls.
  */
-var Subscriber, mongoose;
+var mongoose;
 
 mongoose = require('mongoose');
-
-Subscriber = mongoose.model('Subscriber');
 
 module.exports = {
   children: {

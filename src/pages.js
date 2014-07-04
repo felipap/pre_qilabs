@@ -1,4 +1,4 @@
-var Post, Resource, Subscriber, User, mongoose, required, util;
+var Post, Resource, User, mongoose, required, util;
 
 mongoose = require('mongoose');
 
@@ -11,8 +11,6 @@ Resource = mongoose.model('Resource');
 Post = Resource.model('Post');
 
 User = Resource.model('User');
-
-Subscriber = mongoose.model('Subscriber');
 
 module.exports = {
   '/': {
@@ -27,54 +25,6 @@ module.exports = {
       } else {
         return res.render('pages/front');
       }
-    }
-  },
-  '/waitlist': {
-    permissions: [required.logout],
-    post: function(req, res) {
-      var errors;
-      req.assert('email', 'Email inválido.').notEmpty().isEmail();
-      if (errors = req.validationErrors()) {
-        return res.endJson({
-          error: true,
-          field: 'email',
-          message: 'Esse email não é inválido? ;)'
-        });
-      }
-      req.body.email = req.body.email.toLowerCase();
-      return Subscriber.findOne({
-        email: req.body.email
-      }, function(err, doc) {
-        var s;
-        if (err) {
-          return res.endJson({
-            error: true,
-            message: 'Estamos com problemas para processar o seu pedido.'
-          });
-        }
-        if (doc) {
-          return res.endJson({
-            error: true,
-            field: 'email',
-            message: 'Esse email já foi registrado.'
-          });
-        }
-        s = new Subscriber({
-          name: req.body.name,
-          email: req.body.email
-        });
-        return s.save(function(err, t) {
-          if (err) {
-            return res.endJson({
-              error: true,
-              message: 'Estamos com problemas para processar o seu pedido.'
-            });
-          }
-          return res.endJson({
-            error: false
-          });
-        });
-      });
     }
   },
   '/entrar': {
