@@ -65,17 +65,6 @@ QI Labs.org
 			</div>
 		</div>
 		<div class="board">
-<!-- 			<form onSubmit="return false">
-				<label>Seu nome</label>
-				<input type="text" name="name" />
-				<div class="bubble" id="nameBubble"></div>
-				<label>Seu email</label>
-				<div class="bubble" id="emailBubble"></div>
-				<input type="email" name="email" />
-				<input type="hidden" name="_csrf" value="{{ token }}" />
-				<button disabled data-action="send-form">Solicitar convite</button>
-			</form>
- -->		
  			<form action="//qilabs.us8.list-manage.com/subscribe/post-json?u=b604ea3253042ed09f625ee93&id=eda821923d&c=?" method="post" method="get">
  				<div id="bubbleMaster"></div>
 				<label>Seu nome</label>
@@ -108,10 +97,8 @@ if (window.location.hash === '#yey') {
 
 $('form').on('submit', function (e) {
 	e.preventDefault();
-
 	var email = document.querySelector('form input[name=EMAIL]').value.replace(/^\s+|\s+$/g, ''),
 		name = document.querySelector('form input[name=FNAME]').value.replace(/^\s+|\s+$/g, '');
-
 	$.ajax({
 		type: $(this).attr('method'),
 		url: $(this).attr('action'),
@@ -124,23 +111,15 @@ $('form').on('submit', function (e) {
 		console.log(arguments)
 		if (response.result == 'success') {
 			$('form').slideUp(function () {
-				$("#abientot").html('<h1>Quase pronto...</h1> Só precisamos confirmar o seu endereço de email. Para garantir o seu convite, clique no link do email que acabamos de enviar para <strong>'+email+'</strong>!').slideDown();
+				$("#abientot").html('<h1>Quase pronto...</h1> Só precisamos confirmar o seu endereço de email. Para garantir o seu convite, clique no link do email que acabamos de enviar para <strong>'+email+'</strong>!').find('a').remove().slideDown();
 			});
 		} else {
-			$("#bubbleMaster").html(response.msg).fadeIn();
+			$("#bubbleMaster").html('<h2>Ops!</h2>'+response.msg.replace(/<a\b[^>]*>/i,"").replace(/<\/a>/i, "")).fadeIn();
 		}
 	}).fail(function () {
 		$("#bubbleMaster").html("Ops! Erro no servidor.").fadeIn();	
 	});
 });
-(function setCSRFToken () {
-	$.ajaxPrefilter(function(options, _, xhr) {
-		if (!options.crossDomain) {
-			xhr.setRequestHeader('X-CSRF-Token',
-				$("meta[name='csrf-token']").attr('content'));
-		}
-	});
-})();
 
 function isValid(name, email) {
 	if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -152,15 +131,12 @@ function isValid(name, email) {
 $("[name=EMAIL], [name=FNAME]").on('keypress keyup focusout change', function () {
 	var email = document.querySelector('form [name=EMAIL]').value.replace(/^\s+|\s+$/g, ''),
 		name = document.querySelector('form [name=FNAME]').value.replace(/^\s+|\s+$/g, '');
-
 	if ($('[name=filldonot]').val()) return;
-
 	document.querySelector("[data-action=send-form]").disabled = !isValid(name, email);
 });
 $(".bubble, #bubbleMaster").click(function () {
 	$(this).fadeOut();
 });
-// $("[data-action=send-form]").click();
 </script>
 
 {% endblock %}
