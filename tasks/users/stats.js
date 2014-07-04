@@ -6,7 +6,7 @@ _ = require('underscore');
 
 jobber = require('../jobber.js')(function(e) {
   var Follow, Post, Resource, User, mongoose, targetUserId;
-  mongoose = require('../../src/config/mongoose.js')();
+  mongoose = require('../../src/config/mongoose.js');
   Resource = mongoose.model('Resource');
   Post = Resource.model('Post');
   User = Resource.model('User');

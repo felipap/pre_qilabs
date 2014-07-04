@@ -6,7 +6,7 @@ async = require 'async'
 _ = require 'underscore'
 
 jobber = require('../jobber.js')((e) ->
-	mongoose = require('../../src/config/mongoose.js')()
+	mongoose = require('../../src/config/mongoose.js')
 
 	Resource = mongoose.model 'Resource'
 	Post = Resource.model 'Post'
