@@ -76,7 +76,7 @@ app.use(require('csurf')());
 /******************************************************************************/
 /** BEGINNING of a SHOULD_NOT_TOUCH_ZONE **************************************/
 app.use(function(req, res, next){
-	res.locals.token = req.session._csrf;	// Add csrf token to views.
+	res.locals.token = req.csrfToken();	// Add csrf token to views.
 	next();
 });
 app.use(require('connect-flash')()); 		// Flash messages middleware
