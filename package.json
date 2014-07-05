@@ -30,7 +30,7 @@
     "grunt-react": "^0.7.0"
   },
   "dependencies": {
-    "mongoose": "^3.8.1",
+    "mongoose": "^3.8.12",
     "express": "^4.4.5",
     "tumblr": "0.1.1",
     "ejs": "0.8.3",
@@ -44,7 +44,7 @@
     "request": "2.22.0",
     "swig": "~1.0.0",
     "consolidate": "~0.9.1",
-    "connect-mongo": "^0.3.3",
+    "connect-mongo": "^0.4.1",
     "connect": "~2.8.5",
     "ejs-locals": "~1.0.2",
     "connect-flash": "~0.1.1",
