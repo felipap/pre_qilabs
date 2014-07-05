@@ -12,6 +12,7 @@ try { require('./config/env.js') } catch (e) {}
 var _
 ,	express = require('express')				// framework
 ,	helmet 	= require('helmet')					// middlewares with security headers
+, 	bParser	= require('body-parser') 			// 
 ,	passport= require('passport') 				// authentication framework
 ,	swig 	= require('swig')					// template language processor
 ,	expressWinston = require('express-winston') // Logging
@@ -33,10 +34,10 @@ app.engine('html', swig.renderFile);
 app.set('view engine', 'html'); 			// make '.html' the default
 app.set('views', app.config.viewsRoot); 	// set views for error and 404 pages
 app.set('view cache', false);
-app.use(require('connect').compress());
+app.use(require('compression')());
 app.use(express.static(pathLib.join(app.config.staticRoot, 'robots.txt')));
 app.use(express.static(pathLib.join(app.config.staticRoot, 'people.txt')));
-app.use(express.favicon(pathLib.join(app.config.staticRoot, 'favicon.ico')));
+app.use(require('static-favicon')(pathLib.join(app.config.staticRoot, 'favicon.ico')));
 
 require('./consumer.js')();
 
@@ -46,21 +47,29 @@ if (app.get('env') === 'development') {
 
 /******************************************************************************/
 /* BEGINNING of a DO_NO_TOUCH_ZONE ********************************************/
-app.use(helmet.defaults())
-app.use(express.methodOverride());
-app.use(express.bodyParser());
+app.use(helmet.defaults());
+app.use(bParser.urlencoded({ extended: true }));
+app.use(bParser.json());
+app.use(require('method-override')());
 app.use(require('express-validator')());
 app.use(app.config.staticUrl, express.static(app.config.staticRoot));
-app.use(express.cookieParser());
-app.use(express.session({
-	secret: process.env.SESSION_SECRET || 'mysecret',
+app.use(require('cookie-parser')());
+
+var session = require('express-session')
+var store = require('connect-mongo')(session)
+
+app.use(session({
+	secret: process.env.SESSION_SECRET || 'mysecretes',
 	maxAge: new Date(Date.now() + 3600000),
-	store: 	new (require('connect-mongo')(express))({
-		mongoose_connection: mongoose.connection
+	store: new store({
+		// mongoose_connection: mongoose.connection		
+		db: mongoose.connection.db
 	}),
-	cookie: {httpOnly: true}, // secure: true},
+	cookie: { httpOnly: true }, // secure: true},
+	resave: true,
+	saveUninitialized: true
 }));
-app.use(express.csrf());
+app.use(require('csurf')());
 /** END of a DO_NO_TOUCH_ZONE -----------------------------------------------**/
 /**--------------------------------------------------------------------------**/
 
@@ -99,7 +108,6 @@ app.use(expressWinston.logger({
 	msg: "<{{(req.user && req.user.username) || 'anonymous' + '@' + req.connection.remoteAddress}}>: HTTP {{req.method}} {{req.url}}"
 }));
 /***************************** Don't remove. **********************************/
-app.use(app.router); 
 /******************************************************************************/
 /** Error logging (must be after app.use(app.router)) *************************/
 // app.use(expressWinston.errorLogger({
@@ -112,20 +120,19 @@ app.use(app.router);
 // }));
 /**--------------------------------------------------------------------------**/
 
-// app.use(express.logger());
+require('./config/locals/all.js')(app);
 
-app.locals(require('./config/locals/all.js')(app));
+var router = require('./lib/router.js')(app); // Pass routes through router.js
+router(require('./app/controllers.js'));
+router(require('./guides/controllers.js'));
+router(require('./api/controllers.js'));
 
-app.use(require('./config/middlewares/handle_500.js')); // Handle 500 before routes
-require('./lib/router.js')(app)(require('./pages.js')); // Pass routes through router.js
 app.use(require('./config/middlewares/handle_404.js')); // Handle 404 after routes
+app.use(require('./config/middlewares/handle_500.js')); // Handle 500 before routes
 
 /******************************************************************************/
 /* BEGINNING of a DO_NO_TOUCH_ZONE ********************************************/
-var server = require('http')
-		.createServer(app)
-		.listen(process.env.PORT || 3000, function () {
-	console.log('Server on port %d in %s mode', server.address().port, app.settings.env);
-});
+var s = app.listen(process.env.PORT || 3000);
+console.log('Server on port %d in %s mode', s.address().port, app.settings.env);
 /** END of a DO_NO_TOUCH_ZONE -----------------------------------------------**/
 /**--------------------------------------------------------------------------**/

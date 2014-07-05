@@ -5,7 +5,7 @@ var fsLib = require('fs')
 
 module.exports = function(app) {
 
-	return {
+	_.extend(app.locals, {
 		errors: {},
 		getPageUrl: function (name, args) { // (name, args... to fill pageurl if known)
 			if (typeof app.locals.urls[name] !== 'undefined') {
@@ -122,5 +122,5 @@ module.exports = function(app) {
 			semantic_version: 'α1',
 			env: app.get('env')
 		},
-	}
+	});
 }

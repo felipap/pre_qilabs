@@ -109,11 +109,13 @@ getChildrenRoutes = (children) ->
 	return routes
 
 pages = {
-	name: 'guides_page'
-	get: (req, res) ->
-		# res.endJson req.app.routes
-		res.render 'pages/guides/home', {}
-	children: getChildrenRoutes(guideMap)
+	'/guias': {
+		name: 'guides_page'
+		get: (req, res) ->
+			# res.endJson req.app.routes
+			res.render 'pages/guides/home', {}
+		children: getChildrenRoutes(guideMap)
+	}
 }
 
 # console.log 'map', JSON.stringify(guideMap, null, 4), '\n\n'

@@ -11,7 +11,7 @@ function setUpPassport() {
 	passport.use(new (require('passport-facebook').Strategy)({
 			clientID: process.env.facebook_app_id,
 			clientSecret: process.env.facebook_secret,
-			callbackURL: "/auth/facebook/callback"
+			callbackURL: "/api/auth/facebook/callback"
 		},
 		function (accessToken, refreshToken, profile, done) {
 			var User = require('mongoose').model('Resource').model('User');

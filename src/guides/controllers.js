@@ -122,11 +122,13 @@ getChildrenRoutes = function(children) {
 };
 
 pages = {
-  name: 'guides_page',
-  get: function(req, res) {
-    return res.render('pages/guides/home', {});
-  },
-  children: getChildrenRoutes(guideMap)
+  '/guias': {
+    name: 'guides_page',
+    get: function(req, res) {
+      return res.render('pages/guides/home', {});
+    },
+    children: getChildrenRoutes(guideMap)
+  }
 };
 
 converter = new showdown.converter();
